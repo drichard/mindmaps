@@ -66,6 +66,7 @@ var View = function(toolbar, canvas, statusbar) {
 	this.canvas.enableScroll();
 };
 
+
 var AppPresenter = function(view) {
 	this.view = view;
 };
