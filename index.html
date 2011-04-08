@@ -4,13 +4,17 @@
 <meta charset="utf-8">
 <title>MindMaps</title>
 <link rel="stylesheet" href="css/style.css">
-<link type="text/css" rel="stylesheet"
-	href="css/smoothness/jquery-ui-1.8.11.custom.css" />
+<link rel="stylesheet" href="css/smoothness/jquery-ui-1.8.11.custom.css" />
 
-<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.11.custom.min.js"></script>
-<script type="text/javascript" src="js/jquery.scrollview.js"></script>
-<script type="text/javascript" src="js/script.js"></script>
+<!-- TODO bundle scripts -->
+<!-- jquery -->
+<script src="js/jquery-1.5.1.min.js"></script>
+<script src="js/jquery-ui-1.8.11.custom.min.js"></script>
+<script src="js/jquery.scrollview.js"></script>
+
+<script src="js/microevent.js"></script>
+
+<script src="js/script.js"></script>
 </head>
 <body>
 	<div id="container">
@@ -22,27 +26,25 @@
 
 				<div class="buttons">
 					<div class="buttonset">
-						<button>open</button>
-						<button>save</button>
+						<button id="button-add">add</button>
+						<button id="button-delete">delete</button>
 					</div>
 
 					<div class="buttonset">
-						<button>add</button>
-						<button>delete</button>
+						<button id="button-undo">undo</button>
+						<button id="button-redo">redo</button>
 					</div>
 
 					<div class="buttonset">
-						<button>undo</button>
-						<button>redo</button>
+						<button id="button-copy">copy</button>
+						<button id="button-cut">cut</button>
+						<button id="button-paste">paste</button>
 					</div>
 
-					<div class="buttonset">
-						<button>copy</button>
-						<button>cut</button>
-						<button>paste</button>
+					<div id="buttons-right">
+						<button id="button-save">save</button>
+						<button id="button-close">close</button>
 					</div>
-
-					<button id="button-close">close</button>
 				</div>
 			</div>
 		</div>

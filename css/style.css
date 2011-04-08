@@ -55,7 +55,6 @@ html,body {
 }
 
 #header {
-	background-color: #CCC;
 	border-bottom: 1px solid #AAA;
 	overflow: hidden; /* causes container to stretch vertically */
 	width: 100%;
@@ -76,6 +75,7 @@ html,body {
 }
 
 #toolbar {
+	background-color: #BBB;
 	overflow: hidden;
 	width: 100%;
 }
@@ -88,7 +88,7 @@ html,body {
 	float: left;
 }
 
-#button-close {
+#buttons-right {
 	float: right;
 	margin-right: 8px;
 }
