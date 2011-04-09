@@ -21,8 +21,8 @@ Node.prototype.addChild = function(node) {
 };
 
 Node.prototype.removeChild = function(node) {
-	this.children.remove(node);
 	node.parentId = null;
+	this.children.remove(node);
 };
 
 Node.prototype.isRoot = function() {
@@ -41,7 +41,6 @@ Node.prototype.isLeaf = function() {
  * @returns {Array}
  */
 Node.prototype.getChildren = function(recursive) {
-	console.log("get children");
 	var nodes = [];
 
 	this.children.each(function(node) {
@@ -76,9 +75,7 @@ Node.prototype.forEachDescendant = function(func) {
 
 var MindMap = function() {
 	this.nodes = new NodeMap();
-	this.root = new Node();
-
-	this.nodes.add(this.root);
+	this.root = this.createNode();
 };
 
 MindMap.prototype.createNode = function() {
