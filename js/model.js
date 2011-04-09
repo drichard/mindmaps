@@ -1,14 +1,14 @@
 var Node = function() {
-	this.id = Util.createUUID();
+	this.id = Util.getId();
 	/** avoid circular reference to parent for serialization */
 	this.parentId = null;
-	this.children = new NodeSet();
+	this.children = new NodeMap();
 	this.text = {
 		caption : "New Node",
 		font : {
-			weight: "normal",
-			size: "inherit",
-			color: "black"
+			weight : "normal",
+			size : "inherit",
+			color : "black"
 		}
 	};
 	this.offset = Point.ZERO;
@@ -26,17 +26,37 @@ Node.prototype.removeChild = function(node) {
 };
 
 Node.prototype.isRoot = function() {
-	return parent == null;
+	return this.parentId == null;
 };
 
 Node.prototype.isLeaf = function() {
-	return this.children.size() == 0; 
+	return this.children.size() == 0;
+};
+
+/**
+ * Gets the children of the node. Traverses the whole sub tree if recursive is
+ * true.
+ * 
+ * @param recursive
+ * @returns {Array}
+ */
+Node.prototype.getChildren = function(recursive) {
+	var nodes = [];
+
+	this.children.each(function(node) {
+		if (recursive) {
+			node.getChildren(true);
+		}
+		nodes.push(node);
+	});
+
+	return nodes;
 };
 
 var MindMap = function() {
-	this.nodes = new NodeSet();
+	this.nodes = new NodeMap();
 	this.root = new Node();
-	
+
 	this.nodes.add(this.root);
 };
 
@@ -47,23 +67,18 @@ MindMap.prototype.createNode = function() {
 };
 
 MindMap.prototype.removeNode = function(node) {
-	function removeNodeFromNodeSet(node) {
-		if (node == null) {
-			console.log("null");
-		}
-		var childNodes = node.children.values();
-		for (var child in childNodes) {
-			removeNodeFromNodeSet(child);
-		}
-		this.nodes.remove(node);
-	}
-	
-	// clear master table
-	removeNodeFromNodeSet(node);
-	
-	// detach from parent
-	var parent = this.nodes[node.parentId];
+	// detach node from parent
+	var parent = this.nodes.get(node.parentId);
 	parent.removeChild(node);
+
+	// clear nodes table: remove node and its children
+	var children = node.getChildren(true);
+
+	_.each(children, _.bind(function(node) {
+		this.nodes.remove(node);
+	}, this));
+
+	this.nodes.remove(node);
 };
 
 var Document = function() {

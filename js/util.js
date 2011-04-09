@@ -12,6 +12,12 @@ Util.createUUID = function() {
 	});
 };
 
+// TODO
+var id = 0;
+Util.getId = function() {
+	return id++;
+};
+
 
 /**
  * Point class.
@@ -21,42 +27,3 @@ var Point = function(x, y) {
 	this.y = y;
 };
 Point.ZERO = new Point(0, 0);
-
-
-/**
- * Set implementation for nodes.
- */
-var NodeSet = function() {
-	this.nodes = {};
-	this.count = 0;
-};
-
-NodeSet.prototype.add = function(node) {
-	if (!this.nodes.hasOwnProperty(node.id)) {
-		this.nodes[node.id] = node;
-		this.count++;
-		return true;
-	}
-	return false;
-};
-
-NodeSet.prototype.remove = function(node) {
-	if (this.nodes.hasOwnProperty(node.id)) {
-		delete this.nodes[node.id];
-		this.count--;
-		return true;
-	}
-	return false;
-};
-
-NodeSet.prototype.size = function() {
-	return this.count;
-};
-
-NodeSet.prototype.values = function() {
-	var values = [];
-	for (var node in this.nodes) {
-		values.push(this.nodes[node]);
-	}
-	return values;
-};
