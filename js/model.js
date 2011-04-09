@@ -1,6 +1,5 @@
 var Node = function() {
 	this.id = Util.getId();
-	/** avoid circular reference to parent for serialization */
 	this.parentId = null;
 	this.children = new NodeMap();
 	this.text = {
@@ -23,6 +22,7 @@ Node.prototype.addChild = function(node) {
 
 Node.prototype.removeChild = function(node) {
 	this.children.remove(node);
+	node.parentId = null;
 };
 
 Node.prototype.isRoot = function() {
@@ -41,16 +41,37 @@ Node.prototype.isLeaf = function() {
  * @returns {Array}
  */
 Node.prototype.getChildren = function(recursive) {
+	console.log("get children");
 	var nodes = [];
 
 	this.children.each(function(node) {
 		if (recursive) {
-			node.getChildren(true);
+			var childNodes = node.getChildren(true);
+			_.each(childNodes, function(child) {
+				nodes.push(child);
+			});
 		}
 		nodes.push(node);
 	});
 
 	return nodes;
+};
+
+/**
+ * Traverses all child nodes.
+ */
+Node.prototype.forEachChild = function(func) {
+	this.children.each(func);
+};
+
+/**
+ * Traverses all child nodes recursively.
+ */
+Node.prototype.forEachDescendant = function(func) {
+	this.children.each(function(node) {
+		func(node);
+		node.forEachDescendant(func);
+	});
 };
 
 var MindMap = function() {
@@ -72,11 +93,10 @@ MindMap.prototype.removeNode = function(node) {
 	parent.removeChild(node);
 
 	// clear nodes table: remove node and its children
-	var children = node.getChildren(true);
-
-	_.each(children, _.bind(function(node) {
-		this.nodes.remove(node);
-	}, this));
+	var self = this;
+	node.forEachDescendant(function(node) {
+		self.nodes.remove(node);
+	});
 
 	this.nodes.remove(node);
 };

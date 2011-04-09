@@ -41,7 +41,7 @@ NodeMap.prototype.values = function() {
  * @param callback, first argument should be the node.
  */
 NodeMap.prototype.each = function(callback) {
-	_.each(this.nodes, function(value) {
-		callback(value);
+	_.each(this.nodes, function(node) {
+		callback(node);
 	});
 };

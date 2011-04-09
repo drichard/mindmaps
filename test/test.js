@@ -1,4 +1,51 @@
-module("nodemap");
+module("models");
+test("node - basic operations", function() {
+	var x = new Node();
+	var y0 = new Node();
+	var y1 = new Node();
+	var z0 = new Node();
+	var z1 = new Node();
+	var z2 = new Node();
+	
+	x.addChild(y0);
+	x.addChild(y1);
+	y0.addChild(z0);
+	y0.addChild(z1);
+	y0.addChild(z2);
+	
+	ok(x.isRoot(), "x should be root");
+	ok(z2.isLeaf(), "z2 should be leaf");
+	notStrictEqual(y0.isRoot(), true, "y0 is not a root");
+	notStrictEqual(y0.isLeaf(), true, "y0 is not a leaf");
+	
+	equal(x.getChildren(false).length, 2, "x should have two direct children");
+	equal(x.getChildren(true).length, 5, "x should have 5 children");
+	
+	
+	x.forEachChild(function(node) {
+		node.edgeColor = "yellow";
+	});
+	equal(y0.edgeColor, "yellow");
+	equal(y1.edgeColor, "yellow");
+	notEqual(z0.edgeColor, "yellow");
+	
+	x.forEachDescendant(function(node) {
+		node.edgeColor = "green";
+	});
+	equal(y0.edgeColor, "green");
+	equal(y1.edgeColor, "green");
+	equal(z0.edgeColor, "green");
+	equal(z1.edgeColor, "green");
+	equal(z2.edgeColor, "green");
+	
+	
+	x.removeChild(y0);
+	ok(y0.isRoot(), "y0 is root now");
+	x.removeChild(y1);
+	ok(x.isLeaf());
+	ok(y1.isRoot());
+});
+
 test("nodeset operations", function() {
 	var ns = new NodeMap();
 	var x = new Node();
@@ -35,8 +82,6 @@ test("nodeset operations", function() {
 	equal(x.text.caption, "changed", "text must have changed");
 	equal(y.text.caption, "changed", "text must have changed");
 });
-
-module("mindmap");
 
 test("create a simple map", function() {
 	var mm = new MindMap();
