@@ -1,6 +1,6 @@
 var Node = function() {
 	this.id = Util.getId();
-	this.parentId = null;
+	this.parent = null;
 	this.children = new NodeMap();
 	this.text = {
 		caption : "New Node",
@@ -31,7 +31,7 @@ Node.prototype.toJSON = function() {
 
 	var obj = {
 		id : this.id,
-		parentId : this.parentId,
+		parentId : this.parent ? this.parent.id : null,
 		text : this.text,
 		offset : this.offset,
 		collapseChildren : this.collapseChildren,
@@ -55,9 +55,8 @@ Node.fromJSON = function(json) {
 Node.fromObject = function(obj) {
 	var node = new Node();
 	node.id = obj.id;
-	node.parentId = obj.parentId;
 	node.text = obj.text;
-	node.offset = obj.offset;
+	node.offset = Point.fromObject(obj.offset);
 	node.collapseChildren = obj.collapseChildren;
 	node.edgeColor = obj.edgeColor;
 
@@ -71,21 +70,34 @@ Node.fromObject = function(obj) {
 };
 
 Node.prototype.addChild = function(node) {
-	node.parentId = this.id;
+	node.parent = this;
 	this.children.add(node);
 };
 
 Node.prototype.removeChild = function(node) {
-	node.parentId = null;
+	node.parent = null;
 	this.children.remove(node);
 };
 
 Node.prototype.isRoot = function() {
-	return this.parentId == null;
+	return this.parent == null;
 };
 
 Node.prototype.isLeaf = function() {
 	return this.children.size() == 0;
+};
+
+/**
+ * 
+ * @returns The root of the tree structure.
+ */
+Node.prototype.getRoot = function() {
+	var root = this;
+	while (root.parent) {
+		root = root.parent;
+	}
+	
+	return root;
 };
 
 /**
@@ -128,20 +140,51 @@ Node.prototype.forEachDescendant = function(func) {
 	});
 };
 
-var MindMap = function() {
+/**
+ * Creates a new mind map.
+ * 
+ * @param root -
+ *            optional root node
+ */
+var MindMap = function(root) {
+	/**
+	 * nodes is only used for quick lookup of a node by id. Each node must be
+	 * registered in this map via createNode() or addNode(node).
+	 */
 	this.nodes = new NodeMap();
-	this.root = this.createNode();
+	this.root = root || new Node();
+	this.addNode(this.root);
+};
+
+MindMap.fromJSON = function(json) {
+	return MindMap.fromObject(JSON.parse(json));
+};
+
+MindMap.fromObject = function(obj) {
+	var root = Node.fromObject(obj.root);
+	var mm = new MindMap(root);
+
+	// register all nodes in the map
+	root.forEachDescendant(function(descendant) {
+		mm.addNode(descendant);
+	});
+	
+	return mm;
 };
 
 MindMap.prototype.createNode = function() {
 	var node = new Node();
-	this.nodes.add(node);
+	this.addNode(node);
 	return node;
+};
+
+MindMap.prototype.addNode = function(node) {
+	this.nodes.add(node);
 };
 
 MindMap.prototype.removeNode = function(node) {
 	// detach node from parent
-	var parent = this.nodes.get(node.parentId);
+	var parent = node.parent;
 	parent.removeChild(node);
 
 	// clear nodes table: remove node and its children
@@ -159,38 +202,11 @@ MindMap.prototype.removeNode = function(node) {
  * Only return root.
  */
 MindMap.prototype.toJSON = function() {
-	return this.root;
-};
+	var obj = {
+		root : this.root
+	};
 
-function testSer() {
-	var mm = getSimpleMap();
-	var str = JSON.stringify(mm);
-	console.log(str);
-	var parsedMap = JSON.parse(str, function(key, value) {
-		console.log(key, value);
-		return value;
-	});
-
-	return parsedMap;
-}
-
-MindMap.load = function(mapAsJson) {
-	var mm = new MindMap();
-	var parsedMap = JSON.parse(mapAsJson, function(key, value) {
-		if (value instanceof Object) {
-			console.log(key, value, value[key]);
-		}
-	});
-
-	function makeNodes(obj) {
-		var node = new Node();
-
-		_.each(obj.children, function(child) {
-
-		});
-	}
-
-	return mm;
+	return obj;
 };
 
 var Document = function() {

@@ -97,6 +97,10 @@ test("node - basic operations", function() {
 	equal(z1.edgeColor, "green");
 	equal(z2.edgeColor, "green");
 	
+	// test root
+	equal(z2.getRoot().id, x.id);
+	equal(x.getRoot().id, x.id);
+	
 	
 	x.removeChild(y0);
 	ok(y0.isRoot(), "y0 is root now");
@@ -159,7 +163,7 @@ test("create a simple map", function() {
 	equal(mm.nodes.size(), 3, "3 nodes in node set");
 	
 	root.addChild(x);
-	equal(x.parentId, root.id, "child's parentId is right");
+	equal(x.parent.id, root.id, "child's parentId is right");
 	
 	x.addChild(y);
 	ok(y.isLeaf(), "y should be leaf");
@@ -177,7 +181,24 @@ test("create a simple map", function() {
 test("node serialization", function() {
 	var root = getDefaultTestMap().root;
 	var json = JSON.stringify(root);
-	var restoredRoot = Node.fromJSON(json);
-	ok(_.isEqual(root, restoredRoot), "compare both objects");
+	var restored = Node.fromJSON(json);
+	
+	// test equality
+	equal(root.id, restored.id);
+	equal(root.parent, restored.parent);
+	equal(root.edgeColor, restored.edgeColor);
+	equal(root.children.count, restored.children.count);
+	deepEqual(root.offset, restored.offset);
+	equal(root.collapseChildren, restored.collapseChildren);
+});
+
+test("map serialization", function() {
+	var mm = getDefaultTestMap();
+	var json = JSON.stringify(mm);
+	var restored = MindMap.fromJSON(json);
+	
+	// test equality
+	equal(mm.nodes.count, restored.nodes.count, "all nodes should be registered");
+	equal(mm.root.id, restored.root.id);
 });
 

@@ -12,7 +12,7 @@ Util.createUUID = function() {
 	});
 };
 
-// TODO
+// TODO id management
 var id = 0;
 Util.getId = function() {
 	return id++;
@@ -26,4 +26,9 @@ var Point = function(x, y) {
 	this.x = x;
 	this.y = y;
 };
+
+Point.fromObject = function(obj) {
+	return new Point(obj.x, obj.y);
+};
+
 Point.ZERO = new Point(0, 0);
