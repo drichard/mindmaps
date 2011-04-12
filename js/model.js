@@ -15,32 +15,6 @@ var Node = function() {
 	this.edgeColor = "blue";
 };
 
-/**
- * Returns a presentation of this node and its children ready for serialization.
- */
-Node.prototype.toJSON = function() {
-	// copy all children into array
-	var self = this;
-	var children = (function() {
-		var result = [];
-		self.forEachChild(function(child) {
-			result.push(child.toJSON());
-		});
-		return result;
-	})();
-
-	var obj = {
-		id : this.id,
-		parentId : this.parent ? this.parent.id : null,
-		text : this.text,
-		offset : this.offset,
-		collapseChildren : this.collapseChildren,
-		edgeColor : this.edgeColor,
-		children : children
-	};
-
-	return obj;
-};
 
 /**
  * Creates a node object by parsing JSON text.
@@ -69,6 +43,39 @@ Node.fromObject = function(obj) {
 	return node;
 };
 
+/**
+ * Returns a presentation of this node and its children ready for serialization.
+ * Called by JSON.stringify().
+ */
+Node.prototype.toJSON = function() {
+	// copy all children into array
+	var self = this;
+	var children = (function() {
+		var result = [];
+		self.forEachChild(function(child) {
+			result.push(child.toJSON());
+		});
+		return result;
+	})();
+
+	var obj = {
+		id : this.id,
+		// store parent as id since we have to avoid circular references
+		parentId : this.parent ? this.parent.id : null,
+		text : this.text,
+		offset : this.offset,
+		collapseChildren : this.collapseChildren,
+		edgeColor : this.edgeColor,
+		children : children
+	};
+
+	return obj;
+};
+
+Node.prototype.serialize = function() {
+	return JSON.stringify(this);
+};
+
 Node.prototype.addChild = function(node) {
 	node.parent = this;
 	this.children.add(node);
@@ -80,11 +87,11 @@ Node.prototype.removeChild = function(node) {
 };
 
 Node.prototype.isRoot = function() {
-	return this.parent == null;
+	return this.parent === null;
 };
 
 Node.prototype.isLeaf = function() {
-	return this.children.size() == 0;
+	return this.children.size() === 0;
 };
 
 /**
@@ -96,7 +103,7 @@ Node.prototype.getRoot = function() {
 	while (root.parent) {
 		root = root.parent;
 	}
-	
+
 	return root;
 };
 
@@ -168,8 +175,24 @@ MindMap.fromObject = function(obj) {
 	root.forEachDescendant(function(descendant) {
 		mm.addNode(descendant);
 	});
-	
+
 	return mm;
+};
+
+/**
+ * Called by JSON.stringify().
+ * 
+ * Only return root.
+ */
+MindMap.prototype.toJSON = function() {
+	var obj = {
+		root : this.root
+	};
+	return obj;
+};
+
+MindMap.prototype.serialize = function() {
+	return JSON.stringify(this);
 };
 
 MindMap.prototype.createNode = function() {
@@ -196,19 +219,6 @@ MindMap.prototype.removeNode = function(node) {
 	this.nodes.remove(node);
 };
 
-/**
- * Called by JSON.stringify().
- * 
- * Only return root.
- */
-MindMap.prototype.toJSON = function() {
-	var obj = {
-		root : this.root
-	};
-
-	return obj;
-};
-
 var Document = function() {
 	this.id = Util.createUUID();
 	this.mindmap = new MindMap();
@@ -216,4 +226,38 @@ var Document = function() {
 		created : new Date(),
 		modified : new Date()
 	};
+};
+
+Document.fromJSON = function(json) {
+	return Document.fromObject(JSON.parse(json));
+};
+
+Document.fromObject = function(obj) {
+	var doc = new Document();
+	doc.id = obj.id;
+	doc.mindmap = MindMap.fromObject(obj.mindmap);
+	doc.dates = {
+		created : new Date(obj.dates.created),
+		modified : new Date(obj.dates.modified)
+	};
+
+	return doc;
+};
+
+Document.prototype.toJSON = function() {
+	var obj = {
+		id : this.id,
+		mindmap : this.mindmap,
+		dates : {
+			// store dates in milliseconds since epoch
+			created : this.dates.created.getTime(),
+			modified : this.dates.modified.getTime()
+		}
+	};
+
+	return obj;
+};
+
+Document.prototype.serialize = function() {
+	return JSON.stringify(this);
 };

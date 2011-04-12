@@ -180,7 +180,7 @@ test("create a simple map", function() {
 
 test("node serialization", function() {
 	var root = getDefaultTestMap().root;
-	var json = JSON.stringify(root);
+	var json = root.serialize();
 	var restored = Node.fromJSON(json);
 	
 	// test equality
@@ -190,15 +190,34 @@ test("node serialization", function() {
 	equal(root.children.count, restored.children.count);
 	deepEqual(root.offset, restored.offset);
 	equal(root.collapseChildren, restored.collapseChildren);
+	
+	// test functions
+	raises(restored.addChild(new Node()));
 });
 
 test("map serialization", function() {
 	var mm = getDefaultTestMap();
-	var json = JSON.stringify(mm);
+	var json = mm.serialize();
 	var restored = MindMap.fromJSON(json);
 	
 	// test equality
 	equal(mm.nodes.count, restored.nodes.count, "all nodes should be registered");
 	equal(mm.root.id, restored.root.id);
+	
+	// test functions
+	raises(restored.createNode());
 });
 
+test("document serialization", function() {
+	var doc = new Document();
+	doc.mindmap = getDefaultTestMap();
+	
+	var json = doc.serialize();
+	var restored = Document.fromJSON(json);
+	
+	equal(doc.id, restored.id);
+	deepEqual(doc.dates, restored.dates);
+	
+	// test functions
+	ok(restored.mindmap.createNode());
+});
