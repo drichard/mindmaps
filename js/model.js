@@ -15,6 +15,61 @@ var Node = function() {
 	this.edgeColor = "blue";
 };
 
+/**
+ * Returns a presentation of this node and its children ready for serialization.
+ */
+Node.prototype.toJSON = function() {
+	// copy all children into array
+	var self = this;
+	var children = (function() {
+		var result = [];
+		self.forEachChild(function(child) {
+			result.push(child.toJSON());
+		});
+		return result;
+	})();
+
+	var obj = {
+		id : this.id,
+		parentId : this.parentId,
+		text : this.text,
+		offset : this.offset,
+		collapseChildren : this.collapseChildren,
+		edgeColor : this.edgeColor,
+		children : children
+	};
+
+	return obj;
+};
+
+/**
+ * Creates a node object by parsing JSON text.
+ */
+Node.fromJSON = function(json) {
+	return Node.fromObject(JSON.parse(json));
+};
+
+/**
+ * Creates a node from an object as a result of a JSON parser.
+ */
+Node.fromObject = function(obj) {
+	var node = new Node();
+	node.id = obj.id;
+	node.parentId = obj.parentId;
+	node.text = obj.text;
+	node.offset = obj.offset;
+	node.collapseChildren = obj.collapseChildren;
+	node.edgeColor = obj.edgeColor;
+
+	// extract all children from array of objects
+	_.each(obj.children, function(child) {
+		var childNode = Node.fromObject(child);
+		node.addChild(childNode);
+	});
+
+	return node;
+};
+
 Node.prototype.addChild = function(node) {
 	node.parentId = this.id;
 	this.children.add(node);
@@ -91,11 +146,51 @@ MindMap.prototype.removeNode = function(node) {
 
 	// clear nodes table: remove node and its children
 	var self = this;
-	node.forEachDescendant(function(node) {
-		self.nodes.remove(node);
+	node.forEachDescendant(function(descendant) {
+		self.nodes.remove(descendant);
 	});
 
 	this.nodes.remove(node);
+};
+
+/**
+ * Called by JSON.stringify().
+ * 
+ * Only return root.
+ */
+MindMap.prototype.toJSON = function() {
+	return this.root;
+};
+
+function testSer() {
+	var mm = getSimpleMap();
+	var str = JSON.stringify(mm);
+	console.log(str);
+	var parsedMap = JSON.parse(str, function(key, value) {
+		console.log(key, value);
+		return value;
+	});
+
+	return parsedMap;
+}
+
+MindMap.load = function(mapAsJson) {
+	var mm = new MindMap();
+	var parsedMap = JSON.parse(mapAsJson, function(key, value) {
+		if (value instanceof Object) {
+			console.log(key, value, value[key]);
+		}
+	});
+
+	function makeNodes(obj) {
+		var node = new Node();
+
+		_.each(obj.children, function(child) {
+
+		});
+	}
+
+	return mm;
 };
 
 var Document = function() {

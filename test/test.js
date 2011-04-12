@@ -45,6 +45,18 @@ function getDefaultTestMap() {
 	return mm;
 }
 
+function getSimpleMap() {
+	var mm = new MindMap();
+	var root = mm.root;
+	
+	var n0 = mm.createNode();
+	var n1 = mm.createNode();
+	root.addChild(n0);
+	root.addChild(n1);
+	
+	return mm;
+}
+
 module("models");
 test("node - basic operations", function() {
 	var x = new Node();
@@ -162,10 +174,10 @@ test("create a simple map", function() {
 	
 });
 
-test("serialization", function() {
-	console.log('saf');
-	var map = getDefaultTestMap();
-	var mapStr = JSON.stringify(map.root);
-	ok(mapStr);
-	console.log(mapStr);
+test("node serialization", function() {
+	var root = getDefaultTestMap().root;
+	var json = JSON.stringify(root);
+	var restoredRoot = Node.fromJSON(json);
+	ok(_.isEqual(root, restoredRoot), "compare both objects");
 });
+
