@@ -1,3 +1,5 @@
+// TODO save to hdd
+
 var LocalStorage = (function() {
 	return {
 		clear : function() {
