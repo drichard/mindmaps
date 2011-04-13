@@ -116,6 +116,7 @@ Node.prototype.getRoot = function() {
  * 
  * @param recursive
  * @returns {Array}
+ * @deprecated
  */
 Node.prototype.getChildren = function(recursive) {
 	var nodes = [];
