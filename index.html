@@ -51,6 +51,8 @@
 						<button id="button-paste">paste</button>
 					</div>
 
+					<button id="button-draw">redraw</button>
+
 					<div id="buttons-right">
 						<button id="button-save">save</button>
 						<button id="button-close">close</button>
@@ -60,7 +62,10 @@
 		</div>
 		<div id="content">
 			<div id="canvas-container">
-				<div id="canvas"></div>
+				<div id="canvas-bg"></div>
+				<canvas id="canvas" width="3000" height="3000"
+					style="position: absolute; top: 0; left: 0;">here be canvas</canvas>
+				<div id="node-holder" style="position: absolute; top: 0; left: 0;"></div>
 			</div>
 		</div>
 		<div id="footer"></div>

@@ -98,15 +98,20 @@ html,body {
 }
 
 #canvas-container {
+	position: absolute;
 	width: 100%;
 	overflow: auto;
 }
 
-#canvas {
+#canvas-bg {
 	width: 3000px;
 	height: 1000px;
 	background-color: white;
 	background-image: url("../img/grid.gif");
+}
+
+#canvas {
+	
 }
 
 #footer {

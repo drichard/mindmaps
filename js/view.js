@@ -1,5 +1,6 @@
 var Canvas = function() {
 	this.$canvasContainer = $("#canvas-container");
+	this.$background = $("#canvas-bg");
 	this.$canvas = $("#canvas");
 	
 	this.setHeight = function(height) {
@@ -9,10 +10,16 @@ var Canvas = function() {
 	this.enableScroll = function() {
 		this.$canvasContainer.scrollview();
 	};
+	
+	this.getContext = function() {
+		return this.$canvas[0].getContext("2d");
+	};
 };
 
 var ToolBar = function() {
 	var self = this;
+	MicroEvent.mixin(ToolBar);
+	
 	this.$toolbar = $("#header");
 	
 	$("#toolbar button").button();
@@ -26,7 +33,14 @@ var ToolBar = function() {
 	$("#button-close").button("option", "icons", {
 		primary : "ui-icon-circle-close"
 	});
+	
+	$("#button-draw").button();
+	$("#button-draw").click(function() {
+		self.publish("buttonDrawClicked");
+	});
 };
+
+
 
 var StatusBar = function() {
 	this.$statusbar = $("#footer");
