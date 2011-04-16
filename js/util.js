@@ -39,6 +39,15 @@ Point.fromObject = function(obj) {
 	return new Point(obj.x, obj.y);
 };
 
+Point.prototype.clone = function() {
+	return new Point(this.x, this.y);
+};
+
+Point.prototype.add = function(point) {
+	this.x += point.x;
+	this.y += point.y;
+};
+
 Point.ZERO = new Point(0, 0);
 
 /**

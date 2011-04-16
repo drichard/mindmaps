@@ -48,6 +48,21 @@ test("node - basic operations", function() {
 	ok(y1.isRoot());
 });
 
+test("node getPosition", function() {
+	var root = new Node();
+	root.offset = new Point(100, 100);
+	var n1 = new Node();
+	n1.offset = new Point(100, 0);
+	var n2 = new Node();
+	n2.offset = new Point(50, 100);
+	
+	root.addChild(n1);
+	n1.addChild(n2);
+	
+	var pos = n2.getPosition();
+	deepEqual(pos, new Point(250, 200));
+});
+
 test("nodeset operations", function() {
 	var ns = new NodeMap();
 	var x = new Node();

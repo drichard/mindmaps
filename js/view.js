@@ -1,6 +1,6 @@
 var Canvas = function() {
 	this.$canvasContainer = $("#canvas-container");
-	this.$background = $("#canvas-bg");
+	this.$drawingArea = $("#drawing-area");
 	this.$canvas = $("#canvas");
 	
 	this.setHeight = function(height) {

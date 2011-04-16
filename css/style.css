@@ -103,7 +103,7 @@ html,body {
 	overflow: auto;
 }
 
-#canvas-bg {
+#drawing-area {
 	width: 3000px;
 	height: 1000px;
 	background-color: white;

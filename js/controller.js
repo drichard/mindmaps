@@ -31,12 +31,15 @@ var ViewNodeManager = function(map) {
 	MicroEvent.mixin(ViewNodeManager);
 
 	var $nodeHolder = $("#node-holder");
-	
-	
-	function updatePosition(node) {
-		
-	}
-	
+
+	this.updatePosition = function(node) {
+		var pos = node.getPosition();
+		node.$label.css({
+			left: pos.x + "px",
+			top: pos.y + "px"
+		});
+	};
+
 	function createNodeLabels(node, position) {
 		var x = position.x + node.offset.x;
 		var y = position.y + node.offset.y;
@@ -61,11 +64,17 @@ var ViewNodeManager = function(map) {
 			cursor : "move"
 		}).appendTo($nodeHolder);
 
+		node.$label = $label;
 		// $label.draggable();
 
 		var pX, pY;
 		var startX, startY;
+
+		// avoid fire drag event after dragend. TODO check if this is still
+		// needed
+		var dragging = false;
 		$label.bind("dragstart", function(e) {
+			dragging = true;
 			console.log(e.pageX, e.clientX, e.offsetX);
 
 			startX = $label.position().left;
@@ -78,24 +87,36 @@ var ViewNodeManager = function(map) {
 			console.log("drag start");
 		});
 
-		$label.bind("drag", function(e) {
-			// console.log("dragging");
-			var diffLeft = e.pageX - pX;
-			var diffTop = e.pageY - pY;
-			//self.publish("nodeDragged", node, new Point(diffLeft, diffTop));
-		});
+		var onDrag = _.throttle(function(e) {
+			if (dragging) {
+				var diffLeft = e.pageX - pX;
+				var diffTop = e.pageY - pY;
+
+				if (Math.abs(diffLeft) < 1 && Math.abs(diffTop) < 1) {
+					e.stopPropagation();
+					return;
+				}
+
+				pX = e.pageX;
+				pY = e.pageY;
+
+				console.log("dragging");
+				self.publish("nodeDrag", node, new Point(diffLeft, diffTop));
+			}
+		}, 10);
+		$label.bind("drag", onDrag);
 
 		$label.bind("dragend", function(e) {
+			dragging = false;
 			var diffLeft = e.pageX - pX;
 			var diffTop = e.pageY - pY;
-			
+
 			$label.css({
 				left : startX + diffLeft + "px",
 				top : startY + diffTop + "px"
 			});
-			
+
 			self.publish("nodeDragged", node, new Point(diffLeft, diffTop));
-			
 
 			$(this).css("opacity", 1);
 			console.log("drag end");
@@ -123,10 +144,17 @@ var AppPresenter = function(view) {
 	cgd.draw();
 
 	var vnm = new ViewNodeManager(map);
-	
-	vnm.subscribe("nodeDragged", function(node, offset) {
+
+	vnm.subscribe("nodeDrag", function(node, offset) {
 		node.offset.x += offset.x;
 		node.offset.y += offset.y;
+		cgd.draw();
+		vnm.updatePosition(node);
+	});
+
+	vnm.subscribe("nodeDragged", function(node, offset) {
+		// node.offset.x += offset.x;
+		// node.offset.y += offset.y;
 		cgd.draw();
 		vnm.updatePosition(node);
 	});

@@ -18,7 +18,6 @@ var Node = function() {
 	this.edgeColor = "blue";
 };
 
-
 /**
  * Creates a node object by parsing JSON text.
  */
@@ -108,6 +107,20 @@ Node.prototype.getRoot = function() {
 	}
 
 	return root;
+};
+
+/**
+ * Gets the position of the node relative to the root.
+ */
+Node.prototype.getPosition = function() {
+	var pos = this.offset.clone();
+	var node = this.parent;
+	
+	while (node) {
+		pos.add(node.offset);
+		node = node.parent;
+	}
+	return pos;
 };
 
 /**
