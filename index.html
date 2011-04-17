@@ -63,8 +63,9 @@
 		<div id="content">
 			<div id="canvas-container">
 				<div id="drawing-area"></div>
-				<canvas id="canvas" width="3000" height="3000"
-					style="position: absolute; top: 0; left: 0;">here be canvas</canvas>
+				<!-- scroller has a higher z-index than the lines. therefore they dont get triggered
+				and scrolling still works -->
+				<div id="scroller"></div>
 				<div id="node-holder" style="position: absolute; top: 0; left: 0;"></div>
 			</div>
 		</div>

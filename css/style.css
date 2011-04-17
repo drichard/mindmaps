@@ -110,6 +110,15 @@ html,body {
 	background-image: url("../img/grid.gif");
 }
 
+#scroller {
+	width: 3000px;
+	height: 1000px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 2; /* */
+}
+
 #canvas {
 	
 }

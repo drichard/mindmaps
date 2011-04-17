@@ -1,7 +1,7 @@
 var Canvas = function() {
 	this.$canvasContainer = $("#canvas-container");
 	this.$drawingArea = $("#drawing-area");
-	this.$canvas = $("#canvas");
+	
 	
 	this.setHeight = function(height) {
 		this.$canvasContainer.height(height);
@@ -12,6 +12,18 @@ var Canvas = function() {
 	};
 	
 	this.getContext = function() {
+		this.$canvas = $("<canvas>", {
+			
+			id: "canvas"
+		}).attr({
+			width: "3000",
+			height: "3000"
+		}).css({
+			position: "absolute",
+			top: "0",
+			left: "0"
+		}).prependTo(this.$drawingArea);
+			
 		return this.$canvas[0].getContext("2d");
 	};
 };
@@ -70,5 +82,4 @@ var AppView = function(toolbar, canvas, statusbar) {
 
 	// set initial canvas size
 	this.resizeCanvas();
-	this.canvas.enableScroll();
 };
