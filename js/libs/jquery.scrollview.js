@@ -22,24 +22,15 @@
  * ================================
  */
 (function() {
-    function ScrollView(){ this.initialize.apply(this, arguments) }
+    function ScrollView(){ this.initialize.apply(this, arguments); }
     ScrollView.prototype = {
         initialize: function(container, config){
                 // setting cursor.
                 var gecko = navigator.userAgent.indexOf("Gecko/") != -1;
                 var opera = navigator.userAgent.indexOf("Opera/") != -1;
                 var mac = navigator.userAgent.indexOf("Mac OS") != -1;
-                if (opera) {
-                    this.grab = "default";
-                    this.grabbing = "move";
-                } else if (!(mac && gecko) && config) {
-                    if (config.grab) {
-                       this.grab = "url(\"" + config.grab + "\"),default";
-                    }
-                    if (config.grabbing) {
-                       this.grabbing = "url(" + config.grabbing + "),move";
-                    }
-                } else if (gecko) {
+                
+                if (gecko) {
                     this.grab = "-moz-grab";
                     this.grabbing = "-moz-grabbing";
                 } else {
@@ -47,6 +38,18 @@
                     this.grabbing = "move";
                 }
                 
+                if (opera) {
+                    this.grab = "default";
+                    this.grabbing = "move";
+                } else if (!(mac && gecko) && config && config.grab && config.grabbing) {
+                    if (config.grab) {
+                       this.grab = "url(\"" + config.grab + "\"),default";
+                    }
+                    if (config.grabbing) {
+                       this.grabbing = "url(" + config.grabbing + "),move";
+                    }
+                }
+                	
                 // Get container and image.
                 this.m = $(container);
                 

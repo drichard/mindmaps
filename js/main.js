@@ -17,9 +17,16 @@ $(function() {
 	var map = getBinaryMapWithDepth(5);
 	eventBus.publish("mindMapLoaded", map);
 	
-	var scroller = $("#scroller").css("cursor", "-moz-grab");
-	var drawArea = $("#drawing-area").css("cursor", "-moz-grab");
 	
-	appView.canvas.enableScroll();
-	//$("#canvas-container").scrollview({scrollArea: scroller});
+	
+	// TODO fix scrolling
+	// #scroller doesnt resize
+	// #drawing-area doesnt grow
+	//canvas.enableScroll();
+	//$("#scroller").scrollview();
+	var scroller = $("#scroller");
+	var drawArea = $("#drawing-area");
+	
+	//appView.canvas.enableScroll();
+	$("#canvas-container").scrollview({scrollArea: scroller});
 });

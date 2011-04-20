@@ -22,12 +22,6 @@ var AppView = function(toolbar, canvas, statusbar) {
 
 	// set initial canvas size
 	this.setCanvasSize();
-	
-	// TODO fix scrolling
-	// #scroller doesnt resize
-	// #drawing-area doesnt grow
-	//canvas.enableScroll();
-	//$("#scroller").scrollview();
 };
 
 

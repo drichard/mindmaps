@@ -100,23 +100,34 @@ html,body {
 }
 
 #drawing-area {
-	width: 3000px;
-	height: 1000px;
+	width: 4000px;
+	height: 2000px;
 	background-color: white;
 	background-image: url("../img/grid.gif");
 }
 
 #scroller {
-	width: 3000px;
-	height: 1000px;
+	width: 4000px;
+	height: 2000px;
 	position: absolute;
 	left: 0;
 	top: 0;
 	z-index: 2; /* */
 }
 
-#canvas {
-	
+#drawing-area .line-canvas {
+	position: absolute;
+	z-index: 1;
+}
+
+#drawing-area .node-container {
+	position: absolute;
+}
+
+#drawing-area .node-caption {
+	position: absolute;
+	cursor: move;
+	z-index: 1000;
 }
 
 #bottombar {
