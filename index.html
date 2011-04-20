@@ -16,19 +16,23 @@
 <script src="js/libs/microevent.js"></script>
 <script src="js/libs/underscore.js"></script>
 
-<script src="js/document.js"></script>
-<script src="js/mindmap.js"></script>
-<script src="js/node.js"></script>
-<script src="js/nodemap.js"></script>
-<script src="js/view.js"></script>
-<script src="js/controller.js"></script>
-<script src="js/main.js"></script>
-<script src="js/util.js"></script>
+<script src="js/Document.js"></script>
+<script src="js/MindMap.js"></script>
+<script src="js/Node.js"></script>
+<script src="js/NodeMap.js"></script>
+
+<script src="js/EventBus.js"></script>
+<script src="js/ToolBar.js"></script>
+<script src="js/StatusBar.js"></script>
+<script src="js/Canvas.js"></script>
+<script src="js/Application.js"></script>
+<script src="js/Main.js"></script>
+<script src="js/Util.js"></script>
 
 </head>
 <body>
 	<div id="container">
-		<div id="header">
+		<div id="topbar">
 			<div id="toolbar">
 				<div id="logo">
 					<span>LOGO</span>
@@ -60,16 +64,15 @@
 				</div>
 			</div>
 		</div>
-		<div id="content">
-			<div id="canvas-container">
-				<div id="drawing-area"></div>
-				<!-- scroller has a higher z-index than the lines. therefore they dont get triggered
+		<div id="canvas-container">
+			<div id="drawing-area"></div>
+			<!-- scroller has a higher z-index than the lines. therefore they dont get triggered
 				and scrolling still works -->
-				<div id="scroller"></div>
-				<div id="node-holder" style="position: absolute; top: 0; left: 0;"></div>
-			</div>
+			<div id="scroller"></div>
 		</div>
-		<div id="footer"></div>
+		<div id="bottombar">
+			<div id="statusbar"></div>
+		</div>
 	</div>
 </body>
 </html>
