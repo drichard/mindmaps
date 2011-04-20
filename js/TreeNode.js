@@ -1,7 +1,7 @@
 /**
  * Constructor for a tree node.
  */
-var Node = function() {
+var TreeNode = function() {
 	this.id = Util.getId();
 	this.parent = null;
 	this.children = new NodeMap();
@@ -21,15 +21,15 @@ var Node = function() {
 /**
  * Creates a node object by parsing JSON text.
  */
-Node.fromJSON = function(json) {
-	return Node.fromObject(JSON.parse(json));
+TreeNode.fromJSON = function(json) {
+	return TreeNode.fromObject(JSON.parse(json));
 };
 
 /**
  * Creates a node from an object as a result of a JSON parser.
  */
-Node.fromObject = function(obj) {
-	var node = new Node();
+TreeNode.fromObject = function(obj) {
+	var node = new TreeNode();
 	node.id = obj.id;
 	node.text = obj.text;
 	node.offset = Point.fromObject(obj.offset);
@@ -38,7 +38,7 @@ Node.fromObject = function(obj) {
 
 	// extract all children from array of objects
 	_.each(obj.children, function(child) {
-		var childNode = Node.fromObject(child);
+		var childNode = TreeNode.fromObject(child);
 		node.addChild(childNode);
 	});
 
@@ -49,7 +49,7 @@ Node.fromObject = function(obj) {
  * Returns a presentation of this node and its children ready for serialization.
  * Called by JSON.stringify().
  */
-Node.prototype.toJSON = function() {
+TreeNode.prototype.toJSON = function() {
 	// copy all children into array
 	var self = this;
 	var children = (function() {
@@ -74,25 +74,25 @@ Node.prototype.toJSON = function() {
 	return obj;
 };
 
-Node.prototype.serialize = function() {
+TreeNode.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
-Node.prototype.addChild = function(node) {
+TreeNode.prototype.addChild = function(node) {
 	node.parent = this;
 	this.children.add(node);
 };
 
-Node.prototype.removeChild = function(node) {
+TreeNode.prototype.removeChild = function(node) {
 	node.parent = null;
 	this.children.remove(node);
 };
 
-Node.prototype.isRoot = function() {
+TreeNode.prototype.isRoot = function() {
 	return this.parent === null;
 };
 
-Node.prototype.isLeaf = function() {
+TreeNode.prototype.isLeaf = function() {
 	return this.children.size() === 0;
 };
 
@@ -100,7 +100,7 @@ Node.prototype.isLeaf = function() {
  * 
  * @returns The root of the tree structure.
  */
-Node.prototype.getRoot = function() {
+TreeNode.prototype.getRoot = function() {
 	var root = this;
 	while (root.parent) {
 		root = root.parent;
@@ -112,7 +112,7 @@ Node.prototype.getRoot = function() {
 /**
  * Gets the position of the node relative to the root.
  */
-Node.prototype.getPosition = function() {
+TreeNode.prototype.getPosition = function() {
 	var pos = this.offset.clone();
 	var node = this.parent;
 	
@@ -131,7 +131,7 @@ Node.prototype.getPosition = function() {
  * @returns {Array}
  * @deprecated
  */
-Node.prototype.getChildren = function(recursive) {
+TreeNode.prototype.getChildren = function(recursive) {
 	var nodes = [];
 
 	this.children.each(function(node) {
@@ -150,14 +150,14 @@ Node.prototype.getChildren = function(recursive) {
 /**
  * Traverses all child nodes.
  */
-Node.prototype.forEachChild = function(func) {
+TreeNode.prototype.forEachChild = function(func) {
 	this.children.each(func);
 };
 
 /**
  * Traverses all child nodes recursively.
  */
-Node.prototype.forEachDescendant = function(func) {
+TreeNode.prototype.forEachDescendant = function(func) {
 	this.children.each(function(node) {
 		func(node);
 		node.forEachDescendant(func);

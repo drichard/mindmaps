@@ -75,26 +75,30 @@
                         this.yp = e.pageY;
                         return false;
                 })
-                .mouseout(function(){ self.stopgrab() })
-                .mouseup(function(){ self.stopgrab() })
-                .dblclick(function(){
-                        var _m = self.m;
-                        var off = _m.offset();
-                        var dx = this.xp - off.left - _m.width() / 2;
-                        if (dx < 0) {
-                                dx = "+=" + dx + "px";
-                        } else {
-                                dx = "-=" + -dx + "px";
-                        }
-                        var dy = this.yp - off.top - _m.height() / 2;
-                        if (dy < 0) {
-                                dy = "+=" + dy + "px";
-                        } else {
-                                dy = "-=" + -dy + "px";
-                        }
-                        _m.animate({ scrollLeft:  dx, scrollTop: dy },
-                                "normal", "swing");
-                });
+                .mouseout(function(){ self.stopgrab(); })
+                .mouseup(function(){ self.stopgrab(); });
+                
+                if (config && config.doubleClick) {
+                	 this.i.dblclick(function(){
+                         var _m = self.m;
+                         var off = _m.offset();
+                         var dx = this.xp - off.left - _m.width() / 2;
+                         if (dx < 0) {
+                                 dx = "+=" + dx + "px";
+                         } else {
+                                 dx = "-=" + -dx + "px";
+                         }
+                         var dy = this.yp - off.top - _m.height() / 2;
+                         if (dy < 0) {
+                                 dy = "+=" + dy + "px";
+                         } else {
+                                 dy = "-=" + -dy + "px";
+                         }
+                         _m.animate({ scrollLeft:  dx, scrollTop: dy },
+                                 "normal", "swing");
+                 });
+                }
+               
                 
                 this.centering();
         },

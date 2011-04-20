@@ -40,7 +40,22 @@ table {
 }
 
 /*
-	user styles
+	USER STYLES
+*/
+
+/*
+	UTIL
+*/
+.no-select {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+/*
+	APPLICATION
 */
 html,body {
 	height: 100%; /* needed for container min-height */
@@ -115,19 +130,38 @@ html,body {
 	z-index: 2; /* */
 }
 
-#drawing-area .line-canvas {
+.mindmap .line-canvas {
 	position: absolute;
 	z-index: 1;
 }
 
-#drawing-area .node-container {
+.mindmap .node-container {
 	position: absolute;
 }
 
-#drawing-area .node-caption {
+.mindmap .node-caption {
 	position: absolute;
 	cursor: move;
 	z-index: 1000;
+}
+
+.mindmap .button-collapse {
+	top: 20px;
+	width: 16px;
+	height: 16px;
+	background-image: url("../img/plus-minus.gif");
+	background-repeat: no-repeat;
+	position: relative;
+	z-index: 1000;
+	cursor: pointer;
+}
+
+.mindmap .button-collapse.closed {
+	background-position: 0px 0px;
+}
+
+.mindmap .button-collapse.open {
+	background-position: 0px -16px;
 }
 
 #bottombar {

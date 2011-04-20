@@ -64,10 +64,12 @@ function getBinaryMapWithDepth(depth) {
 		}
 
 		var left = mm.createNode();
+		left.text.caption = "Node " + left.id;
 		node.addChild(left);
 		createTwoChildren(left, depth - 1);
 
 		var right = mm.createNode();
+		right.text.caption = "Node " + right.id;
 		node.addChild(right);
 		createTwoChildren(right, depth - 1);
 	}

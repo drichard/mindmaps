@@ -43,15 +43,19 @@ var MindMapRenderer = function(map) {
 		// ctx.lineTo(startX + offsetX, startY + offsetY);
 		ctx.stroke();
 
-		// control points
-		ctx.beginPath();
-		ctx.fillStyle = "red";
-		ctx.arc(cp1x, cp1y, 4, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.beginPath();
-		ctx.fillStyle = "green";
-		ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
-		ctx.fill();
+		var drawControlPoints = false;
+
+		if (drawControlPoints) {
+			// control points
+			ctx.beginPath();
+			ctx.fillStyle = "red";
+			ctx.arc(cp1x, cp1y, 4, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.fillStyle = "green";
+			ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
+			ctx.fill();
+		}
 	};
 
 	var positionCanvas = function($canvas, offsetX, offsetY) {
@@ -85,6 +89,10 @@ var MindMapRenderer = function(map) {
 			depth : depth
 		}).appendTo($parent);
 
+		if (node.isRoot()) {
+			$node.addClass("mindmap root");
+		}
+
 		// node drag behaviour
 		$node.draggable({
 			handle : "div.node-caption:first",
@@ -113,13 +121,33 @@ var MindMapRenderer = function(map) {
 		// text
 		var $text = $("<div/>", {
 			class : "node-caption",
-			text : node.text.caption,
-			click : function(e) {
-				e.preventDefault();
-				console.log(node.id, "clicked");
-				return false;
-			}
+			text : node.text.caption
 		}).appendTo($node);
+
+		if (!node.isLeaf()) {
+			// collapse button
+			var iconClass = node.collapseChildren ? "closed" : "open";
+			var $collapseButton = $("<div/>", {
+				class : "button-collapse no-select " + iconClass
+			}).click(function(e) {
+				e.preventDefault();
+				
+				// TODO move to presenter
+				// TODO event model changed event
+				if (node.collapseChildren) {
+					// show children
+					$node.children(".node-container").show();
+					node.collapseChildren = false;
+					$collapseButton.removeClass("closed").addClass("open");
+				} else {
+					// hide children
+					$node.children(".node-container").hide();
+					node.collapseChildren = true;
+					$collapseButton.removeClass("open").addClass("closed");
+				}
+				return false;
+			}).appendTo($node);
+		}
 
 		// draw canvas to parent if node is not a root
 		if (!node.isRoot()) {

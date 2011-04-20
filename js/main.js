@@ -1,6 +1,6 @@
 $(function() {
 	var eventBus = new EventBus();
-	
+
 	var toolbar = new ToolBarView();
 	var toolbarPresenter = new ToolBarPresenter(toolbar);
 
@@ -12,21 +12,22 @@ $(function() {
 
 	var appView = new AppView(toolbar, canvas, statusbar);
 	var appPresenter = new AppPresenter(appView);
-	//appPresenter.init();
-	
+	// appPresenter.init();
+
 	var map = getBinaryMapWithDepth(5);
 	eventBus.publish("mindMapLoaded", map);
-	
-	
-	
+
 	// TODO fix scrolling
 	// #scroller doesnt resize
 	// #drawing-area doesnt grow
-	//canvas.enableScroll();
-	//$("#scroller").scrollview();
+	// canvas.enableScroll();
+	// $("#scroller").scrollview();
 	var scroller = $("#scroller");
 	var drawArea = $("#drawing-area");
-	
-	//appView.canvas.enableScroll();
-	$("#canvas-container").scrollview({scrollArea: scroller});
+
+	// appView.canvas.enableScroll();
+	$("#canvas-container").scrollview({
+		scrollArea : scroller,
+		doubleClick : false
+	});
 });

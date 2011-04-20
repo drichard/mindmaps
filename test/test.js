@@ -1,11 +1,11 @@
 module("models");
 test("node - basic operations", function() {
-	var x = new Node();
-	var y0 = new Node();
-	var y1 = new Node();
-	var z0 = new Node();
-	var z1 = new Node();
-	var z2 = new Node();
+	var x = new TreeNode();
+	var y0 = new TreeNode();
+	var y1 = new TreeNode();
+	var z0 = new TreeNode();
+	var z1 = new TreeNode();
+	var z2 = new TreeNode();
 
 	x.addChild(y0);
 	x.addChild(y1);
@@ -49,11 +49,11 @@ test("node - basic operations", function() {
 });
 
 test("node getPosition", function() {
-	var root = new Node();
+	var root = new TreeNode();
 	root.offset = new Point(100, 100);
-	var n1 = new Node();
+	var n1 = new TreeNode();
 	n1.offset = new Point(100, 0);
-	var n2 = new Node();
+	var n2 = new TreeNode();
 	n2.offset = new Point(50, 100);
 	
 	root.addChild(n1);
@@ -65,8 +65,8 @@ test("node getPosition", function() {
 
 test("nodeset operations", function() {
 	var ns = new NodeMap();
-	var x = new Node();
-	var y = new Node();
+	var x = new TreeNode();
+	var y = new TreeNode();
 
 	var add = ns.add(x);
 	ok(add, "node added");
@@ -90,7 +90,7 @@ test("nodeset operations", function() {
 	equal(values.length, ns.count, "values should equal the amount of nodes");
 
 	_.each(values, function(value) {
-		ok(value instanceof Node, "values should be nodes");
+		ok(value instanceof TreeNode, "values should be nodes");
 	});
 
 	ns.each(function(node) {
@@ -103,7 +103,7 @@ test("nodeset operations", function() {
 test("create a simple map", function() {
 	var mm = new MindMap();
 	var root = mm.root;
-	ok(root instanceof Node, "root is a node");
+	ok(root instanceof TreeNode, "root is a node");
 	ok(root.isRoot(), "root is root");
 	ok(root.isLeaf(), "root is also a leaf");
 	equal(mm.nodes.size(), 1, "1 node in node set");
@@ -135,7 +135,7 @@ test("create a simple map", function() {
 test("node serialization", function() {
 	var root = getDefaultTestMap().root;
 	var json = root.serialize();
-	var restored = Node.fromJSON(json);
+	var restored = TreeNode.fromJSON(json);
 
 	// test equality
 	equal(root.id, restored.id);
@@ -146,7 +146,7 @@ test("node serialization", function() {
 	equal(root.collapseChildren, restored.collapseChildren);
 
 	// test functions
-	raises(restored.addChild(new Node()));
+	raises(restored.addChild(new TreeNode()));
 });
 
 test("map serialization", function() {
