@@ -54,7 +54,7 @@ html,body {
 	min-height: 100%;
 }
 
-#header {
+#topbar {
 	border-bottom: 1px solid #AAA;
 	overflow: hidden; /* causes container to stretch vertically */
 	width: 100%;
@@ -93,10 +93,6 @@ html,body {
 	margin-right: 8px;
 }
 
-#content {
-	background-color: #D3E2E6;
-}
-
 #canvas-container {
 	position: absolute;
 	width: 100%;
@@ -123,11 +119,11 @@ html,body {
 	
 }
 
-#footer {
+#bottombar {
 	position: fixed; /* absolute caused scroll bar, depending on border */
 	width: 100%;
 	bottom: 0;
-	background: #DDD;
+	background: #EEE;
 	border-top: 1px solid #AAA;
 	height: 20px;
 }

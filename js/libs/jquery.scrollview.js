@@ -49,7 +49,12 @@
                 
                 // Get container and image.
                 this.m = $(container);
-                this.i = this.m.children().css("cursor", this.grab);
+                
+                if (config && config.scrollArea) {
+                	this.i = config.scrollArea.css("cursor", this.grab);
+                } else {
+                	this.i = this.m.children().css("cursor", this.grab);
+                }
                 
                 this.isgrabbing = false;
                 
