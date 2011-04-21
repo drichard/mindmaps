@@ -109,11 +109,6 @@ var DefaultCanvasView = function() {
 				if (node.isRoot()) {
 					return false;
 				}
-
-				// select on drag
-				if (self.nodeSelected) {
-					self.nodeSelected(node);
-				}
 			},
 			drag : function(e, ui) {
 				// reposition and draw canvas while dragging
@@ -144,7 +139,7 @@ var DefaultCanvasView = function() {
 		var $text = $("<div/>", {
 			class : "node-caption no-select",
 			text : node.text.caption
-		}).click(function() {
+		}).mousedown(function() {
 			// TODO prevent firing event after drag
 			if (self.nodeSelected) {
 				self.nodeSelected(node);
