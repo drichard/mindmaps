@@ -46,3 +46,4 @@ Document.prototype.toJSON = function() {
 Document.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
+
