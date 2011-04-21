@@ -15,7 +15,7 @@ var LocalDocumentStorage = (function() {
 		var json = localStorage.getItem(key);
 		return json ? Document.fromJSON(json) : null;
 	};
-
+	
 	// public API
 	return {
 		/**

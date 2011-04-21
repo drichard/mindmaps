@@ -96,6 +96,10 @@ TreeNode.prototype.isLeaf = function() {
 	return this.children.size() === 0;
 };
 
+TreeNode.prototype.getParent = function() {
+	return this.parent;
+};
+
 /**
  * 
  * @returns The root of the tree structure.

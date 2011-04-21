@@ -1,32 +1,30 @@
 var CanvasView = function() {
 	MicroEvent.mixin(CanvasView);
-	this.$canvasContainer = $("#canvas-container");
-	this.$drawingArea = $("#drawing-area");
-	this.renderer = new MindMapRenderer(this);
 
 	this.setHeight = function(height) {
-		this.$canvasContainer.height(height);
+		this.getContainer().height(height);
 	};
 
 	this.enableScroll = function() {
-		this.$canvasContainer.scrollview();
+		this.getContainer().scrollview();
+	};
+
+	this.getDrawingArea = function() {
+		return $("#drawing-area");
+	};
+
+	this.getContainer = function() {
+		return $("#canvas-container");
 	};
 };
 
 CanvasView.prototype.drawMap = function(map) {
-	this.renderer.draw(map, this.$drawingArea);
+	throw new Error("Not implemented");
 };
 
 var DefaultCanvasView = function() {
-	
-};
-DefaultCanvasView.prototype = new CanvasView();
+	var self = this;
 
-
-
-var MindMapRenderer = function(view) {
-	this.view = view;
-	
 	var drawConnection = function(canvas, depth, offsetX, offsetY) {
 		// console.log("drawing");
 		var ctx = canvas.getContext("2d");
@@ -83,7 +81,7 @@ var MindMapRenderer = function(view) {
 		});
 	};
 
-	function createNode(node, $parent, depth) {
+	var createNode = function(node, $parent, depth) {
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
 
@@ -106,10 +104,15 @@ var MindMapRenderer = function(view) {
 		$node.draggable({
 			handle : "div.node-caption:first",
 			start : function() {
-				console.log("drag start");
+				// console.log("drag start");
 				// cant drag root
 				if (node.isRoot()) {
 					return false;
+				}
+
+				// select on drag
+				if (self.nodeSelected) {
+					self.nodeSelected(node);
 				}
 			},
 			drag : function(e, ui) {
@@ -121,37 +124,44 @@ var MindMapRenderer = function(view) {
 
 				positionLineCanvas($canvas, offsetX, offsetY);
 				drawConnection($canvas[0], depth, offsetX, offsetY);
-				
+
 				// fire dragging event
-				if (view.nodeDragging) {
-					view.nodeDragging();
+				if (self.nodeDragging) {
+					self.nodeDragging();
 				}
 			},
 			stop : function(e, ui) {
 				var pos = new Point(ui.position.left, ui.position.top);
-				
+
 				// fire dragged event
-				if (view.nodeDragged) {
-					view.nodeDragged(node, pos);
+				if (self.nodeDragged) {
+					self.nodeDragged(node, pos);
 				}
 			}
 		});
 
-		// text
+		// text caption
 		var $text = $("<div/>", {
-			class : "node-caption",
+			class : "node-caption no-select",
 			text : node.text.caption
+		}).click(function() {
+			// TODO prevent firing event after drag
+			if (self.nodeSelected) {
+				self.nodeSelected(node);
+			}
 		}).appendTo($node);
 
+		// collapse button
 		if (!node.isLeaf()) {
-			// collapse button
 			var $collapseButton = $("<div/>", {
-				class : "button-collapse no-select "
+				class : "button-collapse no-select"
 			}).click(function(e) {
+				// fire event
+				if (self.collapseButtonClicked) {
+					self.collapseButtonClicked(node);
+				}
+
 				e.preventDefault();
-				
-				view.collapseButtonClicked(node);
-				
 				return false;
 			}).appendTo($node);
 		}
@@ -175,67 +185,130 @@ var MindMapRenderer = function(view) {
 		node.forEachChild(function(child) {
 			createNode(child, $node, depth + 1);
 		});
-	}
+	};
 
-	this.draw = function(map, $container) {
+	this.drawMap = function(map) {
 		// clear map first
-		$container.children(".root").remove();
-		
+		var container = this.getDrawingArea();
+		container.children(".root").remove();
+
 		var root = map.root;
 
 		// center root
-		var center = new Point($container.width() / 2, $container.height() / 2);
+		var center = new Point(container.width() / 2, container.height() / 2);
 		root.offset = center;
 
-		createNode(root, $container, 0);
-		
+		createNode(root, container, 0);
+
 		// run a 2nd pass and toggle visibility
 		// can only do that after the tree is completely constructed
 		root.forEachDescendant(function(node) {
 			if (node.collapseChildren) {
-				view.closeNode(node);
+				self.closeNode(node);
 			} else {
-				view.openNode(node);
+				self.openNode(node);
 			}
 		});
-		
+
+		// TODO deselect on click in void?
+		$("#scroller").click(function() {
+			console.log("click drawing area");
+		});
+
 	};
-	
-	view.closeNode = function(node) {
-		//console.log("closing node ", node.id);
+
+	this.selectNode = function(node) {
+		var $node = $("#node-" + node.id);
+		var $text = $node.children(".node-caption").first();
+
+		$text.addClass("selected");
+	};
+
+	this.deselectNode = function(node) {
+		var $node = $("#node-" + node.id);
+		var $text = $node.children(".node-caption").first();
+
+		$text.removeClass("selected");
+	};
+
+	this.closeNode = function(node) {
+		// console.log("closing node ", node.id);
 		var $node = $("#node-" + node.id);
 		$node.children(".node-container").hide();
-		
+
 		var $collapseButton = $node.children(".button-collapse").first();
 		$collapseButton.removeClass("open").addClass("closed");
 	};
-	
-	view.openNode = function(node) {
-		//console.log("opening node ", node.id);
+
+	this.openNode = function(node) {
+		// console.log("opening node ", node.id);
 		var $node = $("#node-" + node.id);
 		$node.children(".node-container").show();
-		
+
 		var $collapseButton = $node.children(".button-collapse").first();
 		$collapseButton.removeClass("closed").addClass("open");
 	};
+
+	this.deleteNode = function(node) {
+		var $node = $("#node-" + node.id);
+		$node.remove();
+	};
+
+	this.removeCollapseButton = function(node) {
+		var $node = $("#node-" + node.id);
+		$node.children(".button-collapse").remove();
+	};
 };
 
-var CanvasPresenter = function(view, eventBus) {
-	this.view = view;
+// inherit from base canvas view
+DefaultCanvasView.prototype = new CanvasView();
 
-	eventBus.subscribe("documentLoaded", function(doc) {
-		console.log("draw doc", doc);
-		view.drawMap(doc.mindmap);
+var CanvasPresenter = function(view, eventBus) {
+	var self = this;
+	this.view = view;
+	this.map = null;
+	var selectedNode = null;
+
+	eventBus.subscribe("documentOpened", function(doc) {
+		// console.log("draw doc", doc);
+		self.map = doc.mindmap;
+		view.drawMap(self.map);
 	});
-	
+
+	eventBus.subscribe("deleteSelectedNodeRequested", function() {
+		var node = selectedNode;
+		if (node) {
+			// remove from model
+			var parent = node.getParent();
+			parent.removeChild(node);
+
+			// update view
+			view.deleteNode(node);
+			if (parent.isLeaf()) {
+				view.removeCollapseButton(parent);
+			}
+		}
+	});
+
+	view.nodeSelected = function(node) {
+		// deselect old node
+		if (selectedNode) {
+			view.deselectNode(selectedNode);
+		}
+
+		// select node and save reference
+		view.selectNode(node);
+		selectedNode = node;
+	};
+
 	view.nodeDragging = function() {
 	};
-	
+
 	view.nodeDragged = function(node, offset) {
-		console.log(node.id, offset.toString());
+		// console.log(node.id, offset.toString());
 		node.offset = offset;
 	};
-	
+
 	view.collapseButtonClicked = function(node) {
 		if (node.collapseChildren) {
 			node.collapseChildren = false;

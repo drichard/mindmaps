@@ -5,6 +5,15 @@ var ToolBarView = function() {
 	this.$toolbar = $("#toolbar");
 	
 	$("#toolbar button").button();
+	
+	
+	$("#button-delete").click(function() {
+		if (self.deleteButtonClicked) {
+			self.deleteButtonClicked();
+		}
+	});
+	
+	
 	$("#toolbar .buttonset").buttonset();
 	$("#button-undo").button("disable");
 	$("#button-redo").button("disable");
@@ -40,6 +49,11 @@ var ToolBarView = function() {
 
 var ToolBarPresenter = function(view, eventBus) {
 	this.view = view;
+	
+	view.deleteButtonClicked = function() {
+		eventBus.publish("deleteSelectedNodeRequested");
+	};
+	
 	
 	view.saveButtonClicked = function() {
 		eventBus.publish("saveDocumentRequested");

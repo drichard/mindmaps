@@ -143,10 +143,16 @@ html,body {
 	position: absolute;
 	cursor: move;
 	z-index: 1000;
+	padding: 4px;
+}
+
+.mindmap .node-caption.selected {
+	border: 2px solid red;
+	border-radius: 5px;
 }
 
 .mindmap .button-collapse {
-	top: 20px;
+	left: 40px;
 	width: 16px;
 	height: 16px;
 	background-image: url("../img/plus-minus.gif");

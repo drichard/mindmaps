@@ -7,7 +7,7 @@ $(function() {
 	var saveDocPresenter = new SaveDocumentPresenter(eventBus);
 	var loadDocPresenter = new LoadDocumentPresenter(eventBus);
 	
-	var canvas = new CanvasView();
+	var canvas = new DefaultCanvasView();
 	var canvasPresenter = new CanvasPresenter(canvas, eventBus);
 
 	var statusbar = new StatusBarView();
@@ -21,7 +21,7 @@ $(function() {
 	var doc = new Document();
 	doc.mindmap = map;
 	
-	eventBus.publish("documentLoaded", doc);
+	eventBus.publish("documentOpened", doc);
 
 	// TODO fix scrolling
 	// #scroller doesnt resize
@@ -54,7 +54,7 @@ var LoadDocumentPresenter = function(eventBus) {
 		}
 
 		var loadedDoc = LocalDocumentStorage.loadDocument(docId);
-		eventBus.publish("documentLoaded", loadedDoc);
+		eventBus.publish("documentOpened", loadedDoc);
 	});
 	
 	eventBus.subscribe("documentSaved", function(doc) {
@@ -64,7 +64,7 @@ var LoadDocumentPresenter = function(eventBus) {
 };
 
 var SaveDocumentPresenter = function(eventBus) {
-	eventBus.subscribe("documentLoaded", function(doc){
+	eventBus.subscribe("documentOpened", function(doc){
 		this.doc = doc;
 	});
 	
