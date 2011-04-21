@@ -88,7 +88,7 @@ var DefaultCanvasView = function() {
 		// div node container
 		var $node = $("<div/>", {
 			id : "node-" + node.id,
-			class : "node-container"
+			className : "node-container"
 		}).css({
 			left : offsetX + "px",
 			top : offsetY + "px"
@@ -137,10 +137,10 @@ var DefaultCanvasView = function() {
 
 		// text caption
 		var $text = $("<div/>", {
-			class : "node-caption no-select",
+			className : "node-caption no-select",
 			text : node.text.caption
 		}).mousedown(function() {
-			// TODO prevent firing event after drag
+			// fire selected event
 			if (self.nodeSelected) {
 				self.nodeSelected(node);
 			}
@@ -149,7 +149,7 @@ var DefaultCanvasView = function() {
 		// collapse button
 		if (!node.isLeaf()) {
 			var $collapseButton = $("<div/>", {
-				class : "button-collapse no-select"
+				className : "button-collapse no-select"
 			}).click(function(e) {
 				// fire event
 				if (self.collapseButtonClicked) {
@@ -164,7 +164,7 @@ var DefaultCanvasView = function() {
 		// draw canvas to parent if node is not a root
 		if (!node.isRoot()) {
 			// create canvas element
-			var $canvas = $("<canvas>", {
+			var $canvas = $("<canvas/>", {
 				id : "canvas-node-" + node.id,
 				class : "line-canvas"
 			});
@@ -212,15 +212,19 @@ var DefaultCanvasView = function() {
 
 	};
 
+	var get$node = function(node) {
+		return $("#node-" + node.id);
+	};
+
 	this.selectNode = function(node) {
-		var $node = $("#node-" + node.id);
+		var $node = get$node(node);
 		var $text = $node.children(".node-caption").first();
 
 		$text.addClass("selected");
 	};
 
 	this.deselectNode = function(node) {
-		var $node = $("#node-" + node.id);
+		var $node = get$node(node);
 		var $text = $node.children(".node-caption").first();
 
 		$text.removeClass("selected");
@@ -228,7 +232,7 @@ var DefaultCanvasView = function() {
 
 	this.closeNode = function(node) {
 		// console.log("closing node ", node.id);
-		var $node = $("#node-" + node.id);
+		var $node = get$node(node);
 		$node.children(".node-container").hide();
 
 		var $collapseButton = $node.children(".button-collapse").first();
@@ -237,7 +241,7 @@ var DefaultCanvasView = function() {
 
 	this.openNode = function(node) {
 		// console.log("opening node ", node.id);
-		var $node = $("#node-" + node.id);
+		var $node = get$node(node);
 		$node.children(".node-container").show();
 
 		var $collapseButton = $node.children(".button-collapse").first();
@@ -245,12 +249,17 @@ var DefaultCanvasView = function() {
 	};
 
 	this.deleteNode = function(node) {
-		var $node = $("#node-" + node.id);
+		// TODO remove
+		var n = new Date;
+		var $node = get$node(node);
+		var n1 = new Date;
 		$node.remove();
+		var n2 = new Date;
+		console.log(n1-n, n2-n1);
 	};
 
 	this.removeCollapseButton = function(node) {
-		var $node = $("#node-" + node.id);
+		var $node = get$node(node);
 		$node.children(".button-collapse").remove();
 	};
 };
