@@ -48,6 +48,10 @@ Point.prototype.add = function(point) {
 	this.y += point.y;
 };
 
+Point.prototype.toString = function() {
+	return "{x: " + this.x + " y: " + this.y + "}";
+};
+
 Point.ZERO = new Point(0, 0);
 
 /**

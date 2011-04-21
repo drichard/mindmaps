@@ -2,6 +2,7 @@ var CanvasView = function() {
 	MicroEvent.mixin(CanvasView);
 	this.$canvasContainer = $("#canvas-container");
 	this.$drawingArea = $("#drawing-area");
+	this.renderer = new MindMapRenderer(this);
 
 	this.setHeight = function(height) {
 		this.$canvasContainer.height(height);
@@ -13,11 +14,19 @@ var CanvasView = function() {
 };
 
 CanvasView.prototype.drawMap = function(map) {
-	var renderer = new MindMapRenderer(map);
-	renderer.draw(this.$drawingArea);
+	this.renderer.draw(map, this.$drawingArea);
 };
 
-var MindMapRenderer = function(map) {
+var DefaultCanvasView = function() {
+	
+};
+DefaultCanvasView.prototype = new CanvasView();
+
+
+
+var MindMapRenderer = function(view) {
+	this.view = view;
+	
 	var drawConnection = function(canvas, depth, offsetX, offsetY) {
 		// console.log("drawing");
 		var ctx = canvas.getContext("2d");
@@ -58,7 +67,7 @@ var MindMapRenderer = function(map) {
 		}
 	};
 
-	var positionCanvas = function($canvas, offsetX, offsetY) {
+	var positionLineCanvas = function($canvas, offsetX, offsetY) {
 		var width = Math.abs(offsetX);
 		var height = Math.abs(offsetY);
 
@@ -110,11 +119,21 @@ var MindMapRenderer = function(map) {
 				var offsetY = ui.position.top;
 				var depth = $node.data("depth");
 
-				positionCanvas($canvas, offsetX, offsetY);
+				positionLineCanvas($canvas, offsetX, offsetY);
 				drawConnection($canvas[0], depth, offsetX, offsetY);
+				
+				// fire dragging event
+				if (view.nodeDragging) {
+					view.nodeDragging();
+				}
 			},
-			stop : function() {
-
+			stop : function(e, ui) {
+				var pos = new Point(ui.position.left, ui.position.top);
+				
+				// fire dragged event
+				if (view.nodeDragged) {
+					view.nodeDragged(node, pos);
+				}
 			}
 		});
 
@@ -126,25 +145,13 @@ var MindMapRenderer = function(map) {
 
 		if (!node.isLeaf()) {
 			// collapse button
-			var iconClass = node.collapseChildren ? "closed" : "open";
 			var $collapseButton = $("<div/>", {
-				class : "button-collapse no-select " + iconClass
+				class : "button-collapse no-select "
 			}).click(function(e) {
 				e.preventDefault();
 				
-				// TODO move to presenter
-				// TODO event model changed event
-				if (node.collapseChildren) {
-					// show children
-					$node.children(".node-container").show();
-					node.collapseChildren = false;
-					$collapseButton.removeClass("closed").addClass("open");
-				} else {
-					// hide children
-					$node.children(".node-container").hide();
-					node.collapseChildren = true;
-					$collapseButton.removeClass("open").addClass("closed");
-				}
+				view.collapseButtonClicked(node);
+				
 				return false;
 			}).appendTo($node);
 		}
@@ -158,7 +165,7 @@ var MindMapRenderer = function(map) {
 			});
 
 			// position and draw connection
-			positionCanvas($canvas, offsetX, offsetY);
+			positionLineCanvas($canvas, offsetX, offsetY);
 			drawConnection($canvas[0], depth, offsetX, offsetY);
 
 			$canvas.appendTo($node);
@@ -170,7 +177,10 @@ var MindMapRenderer = function(map) {
 		});
 	}
 
-	this.draw = function($container) {
+	this.draw = function(map, $container) {
+		// clear map first
+		$container.children(".root").remove();
+		
 		var root = map.root;
 
 		// center root
@@ -178,13 +188,61 @@ var MindMapRenderer = function(map) {
 		root.offset = center;
 
 		createNode(root, $container, 0);
+		
+		// run a 2nd pass and toggle visibility
+		// can only do that after the tree is completely constructed
+		root.forEachDescendant(function(node) {
+			if (node.collapseChildren) {
+				view.closeNode(node);
+			} else {
+				view.openNode(node);
+			}
+		});
+		
+	};
+	
+	view.closeNode = function(node) {
+		//console.log("closing node ", node.id);
+		var $node = $("#node-" + node.id);
+		$node.children(".node-container").hide();
+		
+		var $collapseButton = $node.children(".button-collapse").first();
+		$collapseButton.removeClass("open").addClass("closed");
+	};
+	
+	view.openNode = function(node) {
+		//console.log("opening node ", node.id);
+		var $node = $("#node-" + node.id);
+		$node.children(".node-container").show();
+		
+		var $collapseButton = $node.children(".button-collapse").first();
+		$collapseButton.removeClass("closed").addClass("open");
 	};
 };
 
 var CanvasPresenter = function(view, eventBus) {
 	this.view = view;
 
-	eventBus.subscribe("mindMapLoaded", function(map) {
-		view.drawMap(map);
+	eventBus.subscribe("documentLoaded", function(doc) {
+		console.log("draw doc", doc);
+		view.drawMap(doc.mindmap);
 	});
+	
+	view.nodeDragging = function() {
+	};
+	
+	view.nodeDragged = function(node, offset) {
+		console.log(node.id, offset.toString());
+		node.offset = offset;
+	};
+	
+	view.collapseButtonClicked = function(node) {
+		if (node.collapseChildren) {
+			node.collapseChildren = false;
+			view.openNode(node);
+		} else {
+			node.collapseChildren = true;
+			view.closeNode(node);
+		}
+	};
 };

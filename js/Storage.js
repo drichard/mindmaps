@@ -28,6 +28,7 @@ var LocalDocumentStorage = (function() {
 			// update modified date
 			doc.dates.modified = new Date();
 			localStorage.setItem(prefix + doc.id, doc.serialize());
+			return doc;
 		},
 
 		/**
