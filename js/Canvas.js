@@ -2,18 +2,18 @@ var CanvasView = function() {
 	MicroEvent.mixin(CanvasView);
 
 	this.setHeight = function(height) {
-		this.getContainer().height(height);
+		this.$getContainer().height(height);
 	};
 
 	this.enableScroll = function() {
-		this.getContainer().scrollview();
+		this.$getContainer().scrollview();
 	};
 
-	this.getDrawingArea = function() {
+	this.$getDrawingArea = function() {
 		return $("#drawing-area");
 	};
 
-	this.getContainer = function() {
+	this.$getContainer = function() {
 		return $("#canvas-container");
 	};
 };
@@ -86,7 +86,7 @@ var DefaultCanvasView = function() {
 
 	this.createNode = function(node, $parent, depth) {
 		var parent = node.getParent();
-		var $parent = $parent || get$node(parent);
+		var $parent = $parent || $getNode(parent);
 		var depth = depth || node.getDepth();
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
@@ -230,7 +230,7 @@ var DefaultCanvasView = function() {
 
 	this.drawMap = function(map) {
 		// clear map first
-		var container = this.getDrawingArea();
+		var container = this.$getDrawingArea();
 		container.children(".root").remove();
 
 		var root = map.root;
@@ -248,19 +248,19 @@ var DefaultCanvasView = function() {
 
 	};
 
-	var get$node = function(node) {
+	var $getNode = function(node) {
 		return $("#node-" + node.id);
 	};
 
 	this.selectNode = function(node) {
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		var $text = $node.children(".node-caption").first();
 
 		$text.addClass("selected");
 	};
 
 	this.deselectNode = function(node) {
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		var $text = $node.children(".node-caption").first();
 
 		$text.removeClass("selected");
@@ -268,7 +268,7 @@ var DefaultCanvasView = function() {
 
 	this.closeNode = function(node) {
 		// console.log("closing node ", node.id);
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		$node.children(".node-container").hide();
 
 		var $collapseButton = $node.children(".button-collapse").first();
@@ -277,7 +277,7 @@ var DefaultCanvasView = function() {
 
 	this.openNode = function(node) {
 		// console.log("opening node ", node.id);
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		$node.children(".node-container").show();
 
 		var $collapseButton = $node.children(".button-collapse").first();
@@ -287,7 +287,7 @@ var DefaultCanvasView = function() {
 	this.deleteNode = function(node) {
 		// TODO remove
 		var n = new Date;
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		var n1 = new Date;
 		$node.remove();
 		var n2 = new Date;
@@ -308,14 +308,14 @@ var DefaultCanvasView = function() {
 			return false;
 		});
 
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		$node.data({
 			collapseButton : true
 		}).append($collapseButton);
 	};
 
 	this.removeCollapseButton = function(node) {
-		var $node = get$node(node);
+		var $node = $getNode(node);
 		$node.data({
 			collapseButton : false
 		}).children(".button-collapse").remove();
@@ -383,10 +383,13 @@ var CanvasPresenter = function(view, eventBus) {
 
 	view.nodeDragged = function(node, offset) {
 		// console.log(node.id, offset.toString());
+		
+		// update model
 		node.offset = offset;
 	};
 
 	view.collapseButtonClicked = function(node) {
+		// toggle node visibility
 		if (node.collapseChildren) {
 			node.collapseChildren = false;
 			view.openNode(node);
@@ -403,6 +406,7 @@ var CanvasPresenter = function(view, eventBus) {
 			return;
 		}
 
+		// create new node
 		var node = new TreeNode();
 		node.offset = new Point(offsetX, offsetY);
 		parent.addChild(node);
