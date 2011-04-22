@@ -15,7 +15,7 @@ var TreeNode = function() {
 	};
 	this.offset = Point.ZERO;
 	this.collapseChildren = false;
-	this.edgeColor = "blue";
+	this.edgeColor = "black";
 };
 
 /**
@@ -119,12 +119,28 @@ TreeNode.prototype.getRoot = function() {
 TreeNode.prototype.getPosition = function() {
 	var pos = this.offset.clone();
 	var node = this.parent;
-	
+
 	while (node) {
 		pos.add(node.offset);
 		node = node.parent;
 	}
 	return pos;
+};
+
+/**
+ * Gets the depth of the node. Root has a depth of 0.
+ * @returns {Number}
+ */
+TreeNode.prototype.getDepth = function() {
+	var node = this.parent;
+	var depth = 0;
+	
+	while (node) {
+		depth++;
+		node = node.parent;
+	}
+	
+	return depth;
 };
 
 /**

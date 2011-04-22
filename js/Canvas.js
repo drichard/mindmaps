@@ -84,23 +84,20 @@ var DefaultCanvasView = function() {
 		});
 	};
 
-	this.addChild = function(node, parent) {
-		this.createNode(node, get$node(parent), 2);
-	};
-
 	this.createNode = function(node, $parent, depth) {
+		var parent = node.getParent();
+		var $parent = $parent || get$node(parent);
+		var depth = depth || node.getDepth();
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
 
 		// div node container
 		var $node = $("<div/>", {
 			id : "node-" + node.id,
-			className : "node-container"
+			"class" : "node-container"
 		}).css({
 			left : offsetX + "px",
 			top : offsetY + "px"
-		}).data({
-			depth : depth
 		}).appendTo($parent);
 
 		if (node.isRoot()) {
@@ -152,7 +149,7 @@ var DefaultCanvasView = function() {
 
 		// text caption
 		var $text = $("<div/>", {
-			className : "node-caption no-select",
+			"class" : "node-caption no-select",
 			text : node.text.caption
 		}).mousedown(function() {
 			// fire selected event
@@ -161,24 +158,24 @@ var DefaultCanvasView = function() {
 			}
 		}).appendTo($node);
 
-		// collapse button
-		var notRootOrLeaf = !(node.isLeaf() || node.isRoot());
-		if (notRootOrLeaf) {
-			var $collapseButton = $("<div/>", {
-				className : "button-collapse no-select"
-			}).click(function(e) {
-				// fire event
-				if (self.collapseButtonClicked) {
-					self.collapseButtonClicked(node);
-				}
-
-				e.preventDefault();
-				return false;
-			}).appendTo($node);
+		// create collapse button for parent if he hasn't one already
+		var parentCollapseButton = $parent.data("collapseButton");
+		if (!parentCollapseButton && !node.isRoot()) {
+			this.createCollapseButton(parent);
 		}
 
-		var $controller = $("<div/>", {
+		// toggle visibility
+		if (!node.isRoot()) {
+			if (parent.collapseChildren) {
+				$node.hide();
+			} else {
+				$node.show();
+			}
+		}
 
+		// red dot creator element
+		var $creator = $("<div/>", {
+			"class" : "creator"
 		}).css({
 			width : "10px",
 			height : "10px",
@@ -191,7 +188,7 @@ var DefaultCanvasView = function() {
 			"z-index" : "1000"
 		}).appendTo($node);
 
-		$controller.draggable({
+		$creator.draggable({
 			distance : 15,
 			revert : true,
 			revertDuration : 0,
@@ -201,8 +198,10 @@ var DefaultCanvasView = function() {
 			drag : function(e, ui) {
 			},
 			stop : function(e, ui) {
-				self.controllerDragStopped(node, ui.position.left,
-						ui.position.top);
+				if (self.creatorDragStopped) {
+					self.creatorDragStopped(node, ui.position.left,
+							ui.position.top);
+				}
 			}
 		});
 
@@ -240,21 +239,11 @@ var DefaultCanvasView = function() {
 		var center = new Point(container.width() / 2, container.height() / 2);
 		root.offset = center;
 
-		self.createNode(root, container, 0);
-
-		// run a 2nd pass and toggle visibility
-		// can only do that after the tree is completely constructed
-		root.forEachDescendant(function(node) {
-			if (node.collapseChildren) {
-				self.closeNode(node);
-			} else {
-				self.openNode(node);
-			}
-		});
+		self.createNode(root, container);
 
 		// TODO deselect on click in void?
 		$("#scroller").click(function() {
-			console.log("click drawing area");
+			console.log("click scroller");
 		});
 
 	};
@@ -305,9 +294,31 @@ var DefaultCanvasView = function() {
 		console.log(n1 - n, n2 - n1);
 	};
 
+	this.createCollapseButton = function(node) {
+		var openClosed = node.collapseChildren ? "closed" : "open";
+		var $collapseButton = $("<div/>", {
+			"class" : "button-collapse no-select " + openClosed
+		}).click(function(e) {
+			// fire event
+			if (self.collapseButtonClicked) {
+				self.collapseButtonClicked(node);
+			}
+
+			e.preventDefault();
+			return false;
+		});
+
+		var $node = get$node(node);
+		$node.data({
+			collapseButton : true
+		}).append($collapseButton);
+	};
+
 	this.removeCollapseButton = function(node) {
 		var $node = get$node(node);
-		$node.children(".button-collapse").remove();
+		$node.data({
+			collapseButton : false
+		}).children(".button-collapse").remove();
 	};
 };
 
@@ -351,8 +362,7 @@ var CanvasPresenter = function(view, eventBus) {
 		this.deleteSelectedNode();
 	});
 
-	// listen to events from view
-	view.nodeSelected = function(node) {
+	var selectNode = function(node) {
 		// deselect old node
 		if (selectedNode) {
 			view.deselectNode(selectedNode);
@@ -361,6 +371,11 @@ var CanvasPresenter = function(view, eventBus) {
 		// select node and save reference
 		view.selectNode(node);
 		selectedNode = node;
+	};
+
+	// listen to events from view
+	view.nodeSelected = function(node) {
+		selectNode(node);
 	};
 
 	view.nodeDragging = function() {
@@ -381,16 +396,25 @@ var CanvasPresenter = function(view, eventBus) {
 		}
 	};
 
-	view.controllerDragStopped = function(parent, offsetX, offsetY) {
+	view.creatorDragStopped = function(parent, offsetX, offsetY) {
+		// disregard if the creator was only dragged a bit
 		var distance = Util.distance(offsetX, offsetY);
 		if (distance < 50) {
-			console.log(distance);
 			return;
 		}
-		
+
 		var node = new TreeNode();
 		node.offset = new Point(offsetX, offsetY);
 		parent.addChild(node);
-		view.addChild(node, parent);
+		node.edgeColor = parent.edgeColor;
+
+		// open parent node when creating a new child and the other children are
+		// hidden
+		if (parent.collapseChildren) {
+			parent.collapseChildren = false;
+			view.openNode(parent);
+		}
+		view.createNode(node);
+		selectNode(node);
 	};
 };

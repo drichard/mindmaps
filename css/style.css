@@ -163,11 +163,11 @@ html,body {
 }
 
 .mindmap .button-collapse.closed {
-	background-position: 0px 0px;
+	background-position: 0px -16px;
 }
 
 .mindmap .button-collapse.open {
-	background-position: 0px -16px;
+	background-position: 0px 0px;
 }
 
 #bottombar {
