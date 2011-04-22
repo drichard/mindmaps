@@ -30,4 +30,5 @@ var AppPresenter = function(view) {
 };
 
 AppPresenter.prototype.init = function() {
+	// register application wide shortcuts
 };

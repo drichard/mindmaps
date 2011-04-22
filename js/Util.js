@@ -26,6 +26,10 @@ function timeit(func, caption) {
 	console.log(caption || "", diff, "ms");
 }
 
+Util.distance = function(offsetX, offsetY) {
+	return Math.sqrt(offsetX*offsetX + offsetY*offsetY);
+};
+
 
 /**
  * Point class.
@@ -106,6 +110,16 @@ function getBinaryMapWithDepth(depth) {
 		var right = c[1];
 		setOffset(right, depth+1, offsetY + offsetY/2);
 	}
+	
+	// color nodes
+	c[0].edgeColor = "blue";
+	c[0].forEachDescendant(function (node) {
+		node.edgeColor = "blue";
+	});
+	c[1].edgeColor = "green";
+	c[1].forEachDescendant(function (node) {
+		node.edgeColor = "green";
+	});
 
 	return mm;
 }

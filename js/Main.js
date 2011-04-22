@@ -15,9 +15,9 @@ $(function() {
 
 	var appView = new AppView(toolbar, canvas, statusbar);
 	var appPresenter = new AppPresenter(appView);
-	// appPresenter.init();
+	appPresenter.init();
 
-	var map = getBinaryMapWithDepth(8);
+	var map = getBinaryMapWithDepth(5);
 	var doc = new Document();
 	doc.mindmap = map;
 	

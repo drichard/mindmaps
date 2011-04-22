@@ -25,12 +25,15 @@ CanvasView.prototype.drawMap = function(map) {
 var DefaultCanvasView = function() {
 	var self = this;
 
-	var drawConnection = function(canvas, depth, offsetX, offsetY) {
+	var drawConnection = function(canvas, depth, offsetX, offsetY, color) {
 		// console.log("drawing");
 		var ctx = canvas.getContext("2d");
 
 		var lineWidth = 10 - depth || 1;
 		ctx.lineWidth = lineWidth;
+
+		ctx.strokeStyle = color;
+		ctx.fillStyle = color;
 
 		var startX = offsetX > 0 ? 0 : -offsetX;
 		var startY = offsetY > 0 ? 0 : -offsetY;
@@ -81,7 +84,11 @@ var DefaultCanvasView = function() {
 		});
 	};
 
-	var createNode = function(node, $parent, depth) {
+	this.addChild = function(node, parent) {
+		this.createNode(node, get$node(parent), 2);
+	};
+
+	this.createNode = function(node, $parent, depth) {
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
 
@@ -100,6 +107,13 @@ var DefaultCanvasView = function() {
 			$node.addClass("mindmap root");
 		}
 
+		// TODO if performance suffers: use event delegation for click and drag
+		// handlers. have a look at .live(), .delegate()
+		// liveDraggable:
+		// http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
+		// delegation would mean that i dont have to attach event handlers to
+		// newly created elements
+
 		// node drag behaviour
 		$node.draggable({
 			handle : "div.node-caption:first",
@@ -115,10 +129,11 @@ var DefaultCanvasView = function() {
 				var $canvas = $("#canvas-node-" + node.id);
 				var offsetX = ui.position.left;
 				var offsetY = ui.position.top;
-				var depth = $node.data("depth");
+				// var depth = $node.data("depth");
+				var color = node.edgeColor;
 
 				positionLineCanvas($canvas, offsetX, offsetY);
-				drawConnection($canvas[0], depth, offsetX, offsetY);
+				drawConnection($canvas[0], depth, offsetX, offsetY, color);
 
 				// fire dragging event
 				if (self.nodeDragging) {
@@ -147,7 +162,8 @@ var DefaultCanvasView = function() {
 		}).appendTo($node);
 
 		// collapse button
-		if (!node.isLeaf()) {
+		var notRootOrLeaf = !(node.isLeaf() || node.isRoot());
+		if (notRootOrLeaf) {
 			var $collapseButton = $("<div/>", {
 				className : "button-collapse no-select"
 			}).click(function(e) {
@@ -161,6 +177,35 @@ var DefaultCanvasView = function() {
 			}).appendTo($node);
 		}
 
+		var $controller = $("<div/>", {
+
+		}).css({
+			width : "10px",
+			height : "10px",
+			background : "red",
+			position : "absolute",
+			left : "40px",
+			top : "20px",
+			border : "1px solid red",
+			"border-radius" : "7px",
+			"z-index" : "1000"
+		}).appendTo($node);
+
+		$controller.draggable({
+			distance : 15,
+			revert : true,
+			revertDuration : 0,
+			start : function() {
+
+			},
+			drag : function(e, ui) {
+			},
+			stop : function(e, ui) {
+				self.controllerDragStopped(node, ui.position.left,
+						ui.position.top);
+			}
+		});
+
 		// draw canvas to parent if node is not a root
 		if (!node.isRoot()) {
 			// create canvas element
@@ -169,16 +214,18 @@ var DefaultCanvasView = function() {
 				class : "line-canvas"
 			});
 
+			var color = node.edgeColor;
+
 			// position and draw connection
 			positionLineCanvas($canvas, offsetX, offsetY);
-			drawConnection($canvas[0], depth, offsetX, offsetY);
+			drawConnection($canvas[0], depth, offsetX, offsetY, color);
 
 			$canvas.appendTo($node);
 		}
 
 		// draw child nodes
 		node.forEachChild(function(child) {
-			createNode(child, $node, depth + 1);
+			self.createNode(child, $node, depth + 1);
 		});
 	};
 
@@ -193,7 +240,7 @@ var DefaultCanvasView = function() {
 		var center = new Point(container.width() / 2, container.height() / 2);
 		root.offset = center;
 
-		createNode(root, container, 0);
+		self.createNode(root, container, 0);
 
 		// run a 2nd pass and toggle visibility
 		// can only do that after the tree is completely constructed
@@ -255,7 +302,7 @@ var DefaultCanvasView = function() {
 		var n1 = new Date;
 		$node.remove();
 		var n2 = new Date;
-		console.log(n1-n, n2-n1);
+		console.log(n1 - n, n2 - n1);
 	};
 
 	this.removeCollapseButton = function(node) {
@@ -273,13 +320,12 @@ var CanvasPresenter = function(view, eventBus) {
 	this.map = null;
 	var selectedNode = null;
 
-	eventBus.subscribe("documentOpened", function(doc) {
-		// console.log("draw doc", doc);
-		self.map = doc.mindmap;
-		view.drawMap(self.map);
+	// TODO restrict keys on canvas area?
+	$(document).bind("keydown", "del", function() {
+		self.deleteSelectedNode();
 	});
 
-	eventBus.subscribe("deleteSelectedNodeRequested", function() {
+	this.deleteSelectedNode = function() {
 		var node = selectedNode;
 		if (node) {
 			// remove from model
@@ -292,8 +338,20 @@ var CanvasPresenter = function(view, eventBus) {
 				view.removeCollapseButton(parent);
 			}
 		}
+	};
+
+	// listen to global events
+	eventBus.subscribe("documentOpened", function(doc) {
+		// console.log("draw doc", doc);
+		self.map = doc.mindmap;
+		view.drawMap(self.map);
 	});
 
+	eventBus.subscribe("deleteSelectedNodeRequested", function() {
+		this.deleteSelectedNode();
+	});
+
+	// listen to events from view
 	view.nodeSelected = function(node) {
 		// deselect old node
 		if (selectedNode) {
@@ -321,5 +379,18 @@ var CanvasPresenter = function(view, eventBus) {
 			node.collapseChildren = true;
 			view.closeNode(node);
 		}
+	};
+
+	view.controllerDragStopped = function(parent, offsetX, offsetY) {
+		var distance = Util.distance(offsetX, offsetY);
+		if (distance < 50) {
+			console.log(distance);
+			return;
+		}
+		
+		var node = new TreeNode();
+		node.offset = new Point(offsetX, offsetY);
+		parent.addChild(node);
+		view.addChild(node, parent);
 	};
 };
