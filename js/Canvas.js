@@ -149,6 +149,7 @@ var DefaultCanvasView = function() {
 
 		// text caption
 		var $text = $("<div/>", {
+			id : "node-caption-" + node.id,
 			"class" : "node-caption no-select",
 			text : node.text.caption
 		}).mousedown(function() {
@@ -252,6 +253,7 @@ var DefaultCanvasView = function() {
 		// TODO deselect on click in void?
 		$("#scroller").click(function() {
 			// console.log("click scroller");
+			self.mapClicked();
 		});
 
 	};
@@ -259,18 +261,20 @@ var DefaultCanvasView = function() {
 	var $getNode = function(node) {
 		return $("#node-" + node.id);
 	};
+	
+	var $getNodeCaption = function(node) {
+		return $("#node-caption-" + node.id);
+	};
 
 	this.selectNode = function(node) {
-		var $node = $getNode(node);
-		var $text = $node.children(".node-caption").first();
+		var $text = $getNodeCaption(node);
 
 		$text.addClass("selected");
 	};
 
 	this.deselectNode = function(node) {
-		var $node = $getNode(node);
-		var $text = $node.children(".node-caption").first();
-
+		var $text = $getNodeCaption(node);
+		
 		$text.removeClass("selected");
 	};
 
@@ -347,7 +351,8 @@ var DefaultCanvasView = function() {
 
 	this.editNodeCaption = function(node) {
 		var $node = $getNode(node);
-		var $text = $node.children(".node-caption").first();
+		var $text = $getNodeCaption(node);
+		
 		var content = $text.text();
 
 		// TODO show editor in place of node caption
@@ -362,8 +367,7 @@ var DefaultCanvasView = function() {
 	};
 	
 	this.setNodeText = function(node, value) {
-		var $node = $getNode(node);
-		var $text = $node.children(".node-caption").first();
+		var $text = $getNodeCaption(node);
 		$text.text(value);
 	};
 };
@@ -431,7 +435,7 @@ var CanvasPresenter = function(view, eventBus) {
 
 	// listen to events from view
 	view.nodeSelected = function(node) {
-		if (selectedNode == node) {
+		if (selectedNode === node) {
 			// dont select nodes twice
 			return;
 		}
@@ -466,6 +470,17 @@ var CanvasPresenter = function(view, eventBus) {
 			node.collapseChildren = true;
 			view.closeNode(node);
 		}
+	};
+	
+	// clicked the void
+	view.mapClicked = function(node) {
+		// deselect old node
+		if (selectedNode) {
+			view.deselectNode(selectedNode);
+			selectedNode = null;
+		}
+		
+		view.cancelNodeCaptionEdit();
 	};
 
 	view.collapseButtonClicked = function(node) {
