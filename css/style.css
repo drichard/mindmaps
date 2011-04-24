@@ -162,6 +162,19 @@ html,body {
 	position: relative;
 	z-index: 1000;
 	cursor: pointer;
+	width: 16px;
+}
+
+.mindmap .creator-nub {
+	width: 10px;
+	height: 10px;
+	background: red;
+	position: absolute;
+	left: 40px;
+	top: 20px;
+	border: 1px solid red;
+	border-radius: 7px;
+	z-index: 1000;
 }
 
 .mindmap .button-collapse.closed {

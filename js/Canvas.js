@@ -37,8 +37,31 @@ var DefaultCanvasView = function() {
 		return $("#node-caption-" + node.id);
 	};
 
-	var drawConnection = function(canvas, depth, offsetX, offsetY, color) {
-		// console.log("drawing");
+	var drawLineCanvas = function($canvas, depth, offsetX, offsetY, color) {
+		/**
+		 * Positions the canvas correctly.
+		 */
+		var setPosition = function($canvas, offsetX, offsetY) {
+			var width = Math.abs(offsetX);
+			var height = Math.abs(offsetY);
+
+			var left = offsetX < 0 ? 0 : -width;
+			var top = offsetY < 0 ? 0 : -height;
+
+			$canvas.attr({
+				width : width,
+				height : height
+			}).css({
+				left : left + "px",
+				top : top + "px"
+			});
+		};
+
+		// 1. set position of canvas
+		setPosition($canvas, offsetX, offsetY);
+
+		// 2. draw the thing
+		var canvas = $canvas[0];
 		var ctx = canvas.getContext("2d");
 
 		var lineWidth = 10 - depth || 1;
@@ -80,36 +103,20 @@ var DefaultCanvasView = function() {
 		}
 	};
 
-	var positionLineCanvas = function($canvas, offsetX, offsetY) {
-		var width = Math.abs(offsetX);
-		var height = Math.abs(offsetY);
-
-		var left = offsetX < 0 ? 0 : -width;
-		var top = offsetY < 0 ? 0 : -height;
-
-		$canvas.attr({
-			width : width,
-			height : height
-		}).css({
-			left : left + "px",
-			top : top + "px"
-		});
-	};
-	
-
-
 	this.drawMap = function(map) {
+		var drawingArea = this.$getDrawingArea();
+
 		// clear map first
-		var container = this.$getDrawingArea();
-		container.children(".root").remove();
+		drawingArea.children().remove();
 
 		var root = map.root;
 
 		// center root
-		var center = new Point(container.width() / 2, container.height() / 2);
+		var center = new Point(drawingArea.width() / 2,
+				drawingArea.height() / 2);
 		root.offset = center;
 
-		self.createNode(root, container);
+		self.createNode(root, drawingArea);
 
 		// TODO deselect on click in void?
 		$("#scroller").click(function() {
@@ -118,6 +125,11 @@ var DefaultCanvasView = function() {
 		});
 	};
 
+	// canvas used by the creator tool to draw new lines
+	var $creatorCanvas = $("<canvas/>", {
+		id : "creator-canvas",
+		"class" : "line-canvas"
+	});
 
 	this.createNode = function(node, $parent, depth) {
 		var parent = node.getParent();
@@ -161,11 +173,9 @@ var DefaultCanvasView = function() {
 				var $canvas = $getNodeCanvas(node);
 				var offsetX = ui.position.left;
 				var offsetY = ui.position.top;
-				// var depth = $node.data("depth");
 				var color = node.edgeColor;
 
-				positionLineCanvas($canvas, offsetX, offsetY);
-				drawConnection($canvas[0], depth, offsetX, offsetY, color);
+				drawLineCanvas($canvas, depth, offsetX, offsetY, color);
 
 				// fire dragging event
 				if (self.nodeDragging) {
@@ -220,29 +230,29 @@ var DefaultCanvasView = function() {
 
 		// red dot creator element
 		var $creator = $("<div/>", {
-			"class" : "creator"
-		}).css({
-			width : "10px",
-			height : "10px",
-			background : "red",
-			position : "absolute",
-			left : "40px",
-			top : "20px",
-			border : "1px solid red",
-			"border-radius" : "7px",
-			"z-index" : "1000"
+			"class" : "creator-nub"
 		}).appendTo($node);
 
 		$creator.draggable({
-			distance : 15,
 			revert : true,
 			revertDuration : 0,
 			start : function() {
-
+				// show creator canvas
+				$creatorCanvas.appendTo($creator);
 			},
 			drag : function(e, ui) {
+				// update creator canvas
+				var offsetX = ui.position.left;
+				var offsetY = ui.position.top;
+				var color = node.edgeColor;
+
+				// set depth+1 because we are drawing the canvas for the child
+				drawLineCanvas($creatorCanvas, depth + 1, offsetX, offsetY,
+						color);
 			},
 			stop : function(e, ui) {
+				// remove creator canvas, gets replaced by real canvas
+				$creatorCanvas.detach();
 				if (self.creatorDragStopped) {
 					self.creatorDragStopped(node, ui.position.left,
 							ui.position.top);
@@ -255,14 +265,13 @@ var DefaultCanvasView = function() {
 			// create canvas element
 			var $canvas = $("<canvas/>", {
 				id : "node-canvas-" + node.id,
-				class : "line-canvas"
+				"class" : "line-canvas"
 			});
 
 			var color = node.edgeColor;
 
 			// position and draw connection
-			positionLineCanvas($canvas, offsetX, offsetY);
-			drawConnection($canvas[0], depth, offsetX, offsetY, color);
+			drawLineCanvas($canvas, depth, offsetX, offsetY, color);
 
 			$canvas.appendTo($node);
 		}
@@ -272,7 +281,7 @@ var DefaultCanvasView = function() {
 			self.createNode(child, $node, depth + 1);
 		});
 	};
-	
+
 	this.deleteNode = function(node) {
 		// TODO remove
 		var n = new Date;
@@ -384,7 +393,7 @@ DefaultCanvasView.prototype = new CanvasView();
 
 var CanvasPresenter = function(view, eventBus) {
 	var self = this;
-	
+
 	this.view = view;
 	this.map = null;
 	var selectedNode = null;
@@ -530,7 +539,7 @@ var CanvasPresenter = function(view, eventBus) {
 		if (!str) {
 			return;
 		}
-		
+
 		var node = selectedNode;
 		if (!node) {
 			console.error("edit for unselected node!");
@@ -539,7 +548,7 @@ var CanvasPresenter = function(view, eventBus) {
 
 		// update model
 		node.setCaption(str);
-		
+
 		// set view
 		view.setNodeText(node, str);
 	};
