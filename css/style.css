@@ -139,6 +139,15 @@ html,body {
 	position: absolute;
 }
 
+.mindmap .root > .node-caption {
+	background: white;
+	border: 3px solid orange;
+	border-radius: 10px 10px 10px 10px;
+	font-size: 20px;
+	font-weight: bold;
+	padding: 6px;
+}
+
 .mindmap .node-caption {
 	position: absolute;
 	cursor: move;

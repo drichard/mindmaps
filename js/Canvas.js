@@ -104,19 +104,21 @@ var DefaultCanvasView = function() {
 	};
 
 	this.drawMap = function(map) {
-		var drawingArea = this.$getDrawingArea();
+		var $drawingArea = this.$getDrawingArea();
+		$drawingArea.addClass("mindmap");
 
 		// clear map first
-		drawingArea.children().remove();
+		$drawingArea.children().remove();
 
 		var root = map.root;
 
 		// center root
-		var center = new Point(drawingArea.width() / 2,
-				drawingArea.height() / 2);
+		var center = new Point($drawingArea.width() / 2,
+				$drawingArea.height() / 2);
 		root.offset = center;
+		root.setCaption("Root");
 
-		self.createNode(root, drawingArea);
+		self.createNode(root, $drawingArea);
 
 		// TODO deselect on click in void?
 		$("#scroller").click(function() {
@@ -131,6 +133,21 @@ var DefaultCanvasView = function() {
 		"class" : "line-canvas"
 	});
 
+	/**
+	 * Inserts a new node including all of its children into the DOM.
+	 * 
+	 * @param node -
+	 *            The model of the node.
+	 * @param $parent -
+	 *            optional jquery parent object the new node is appended to.
+	 *            Usually the parent node. If argument is omitted, the
+	 *            getParent() method of the node is called to resolve the
+	 *            parent.
+	 * @param depth -
+	 *            Optional. The depth of the tree relative to the root. If
+	 *            argument is omitted the getDepth() method of the node is
+	 *            called to resolve the depth.
+	 */
 	this.createNode = function(node, $parent, depth) {
 		var parent = node.getParent();
 		var $parent = $parent || $getNode(parent);
@@ -148,7 +165,7 @@ var DefaultCanvasView = function() {
 		}).appendTo($parent);
 
 		if (node.isRoot()) {
-			$node.addClass("mindmap root");
+			$node.addClass("root");
 		}
 
 		// TODO if performance suffers: use event delegation for click and drag
@@ -268,11 +285,8 @@ var DefaultCanvasView = function() {
 				"class" : "line-canvas"
 			});
 
-			var color = node.edgeColor;
-
 			// position and draw connection
-			drawLineCanvas($canvas, depth, offsetX, offsetY, color);
-
+			drawLineCanvas($canvas, depth, offsetX, offsetY, node.edgeColor);
 			$canvas.appendTo($node);
 		}
 
