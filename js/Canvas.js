@@ -156,6 +156,14 @@ var DefaultCanvasView = function() {
 			if (self.nodeSelected) {
 				self.nodeSelected(node);
 			}
+		}).mouseup(function() {
+			if (self.nodeReleased) {
+				self.nodeReleased(node);
+			}
+		}).dblclick(function() {
+			if (self.nodeDoubleClicked) {
+				self.nodeDoubleClicked(node);
+			}
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -243,7 +251,7 @@ var DefaultCanvasView = function() {
 
 		// TODO deselect on click in void?
 		$("#scroller").click(function() {
-			console.log("click scroller");
+			// console.log("click scroller");
 		});
 
 	};
@@ -320,6 +328,44 @@ var DefaultCanvasView = function() {
 			collapseButton : false
 		}).children(".button-collapse").remove();
 	};
+
+	// text input for node edits.
+	var $captionEditor = $("<input/>", {
+		type : "text"
+	}).css({
+		position : "absolute",
+		"z-index" : 1000,
+		top : "30px"
+	}).bind("keydown", "esc", function() {
+		$captionEditor.detach();
+	}).bind("keydown", "return", function() {
+		console.log("retur");
+		var value = $captionEditor.val();
+		self.nodeCaptionEditCommitted(value);
+		$captionEditor.detach();
+	});
+
+	this.editNodeCaption = function(node) {
+		var $node = $getNode(node);
+		var $text = $node.children(".node-caption").first();
+		var content = $text.text();
+
+		// TODO show editor in place of node caption
+		// show editor
+		$captionEditor.attr({
+			value : content
+		}).appendTo($node).select();
+	};
+
+	this.cancelNodeCaptionEdit = function() {
+		$captionEditor.detach();
+	};
+	
+	this.setNodeText = function(node, value) {
+		var $node = $getNode(node);
+		var $text = $node.children(".node-caption").first();
+		$text.text(value);
+	};
 };
 
 // inherit from base canvas view
@@ -334,6 +380,13 @@ var CanvasPresenter = function(view, eventBus) {
 	// TODO restrict keys on canvas area?
 	$(document).bind("keydown", "del", function() {
 		self.deleteSelectedNode();
+	});
+
+	// TODO restrict keys on canvas area?
+	$(document).bind("keydown", "space", function() {
+		if (selectedNode) {
+			self.toggleCollapse(selectedNode);
+		}
 	});
 
 	this.deleteSelectedNode = function() {
@@ -359,7 +412,7 @@ var CanvasPresenter = function(view, eventBus) {
 	});
 
 	eventBus.subscribe("deleteSelectedNodeRequested", function() {
-		this.deleteSelectedNode();
+		self.deleteSelectedNode();
 	});
 
 	var selectNode = function(node) {
@@ -368,6 +421,9 @@ var CanvasPresenter = function(view, eventBus) {
 			view.deselectNode(selectedNode);
 		}
 
+		// remove edit input in case it was active
+		view.cancelNodeCaptionEdit();
+
 		// select node and save reference
 		view.selectNode(node);
 		selectedNode = node;
@@ -375,20 +431,33 @@ var CanvasPresenter = function(view, eventBus) {
 
 	// listen to events from view
 	view.nodeSelected = function(node) {
+		if (selectedNode == node) {
+			// dont select nodes twice
+			return;
+		}
+
 		selectNode(node);
 	};
+
+	view.nodeDoubleClicked = function(node){
+		view.editNodeCaption(node);
+	};
+	
+	view.nodeReleased = function(node) {
+	};
+
 
 	view.nodeDragging = function() {
 	};
 
 	view.nodeDragged = function(node, offset) {
 		// console.log(node.id, offset.toString());
-		
+
 		// update model
 		node.offset = offset;
 	};
 
-	view.collapseButtonClicked = function(node) {
+	this.toggleCollapse = function(node) {
 		// toggle node visibility
 		if (node.collapseChildren) {
 			node.collapseChildren = false;
@@ -397,6 +466,10 @@ var CanvasPresenter = function(view, eventBus) {
 			node.collapseChildren = true;
 			view.closeNode(node);
 		}
+	};
+
+	view.collapseButtonClicked = function(node) {
+		self.toggleCollapse(node);
 	};
 
 	view.creatorDragStopped = function(parent, offsetX, offsetY) {
@@ -419,6 +492,26 @@ var CanvasPresenter = function(view, eventBus) {
 			view.openNode(parent);
 		}
 		view.createNode(node);
+		
+		// select and go into edit mode on new node
 		selectNode(node);
+		view.editNodeCaption(node);
+	};
+	
+	view.nodeCaptionEditCommitted = function(str) {
+		// avoid whitespace only strings
+		var str = $.trim(str);
+		if (!str) {
+			return;
+		}
+		// TODO sanitize value
+		var node = selectedNode;
+		if (!node) {
+			console.error("edit for unselected node!");
+			return;
+		}
+		
+		node.setCaption(str);
+		view.setNodeText(node, str);
 	};
 };

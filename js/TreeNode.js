@@ -183,3 +183,7 @@ TreeNode.prototype.forEachDescendant = function(func) {
 		node.forEachDescendant(func);
 	});
 };
+
+TreeNode.prototype.setCaption = function(caption) {
+	this.text.caption = caption;
+};
