@@ -95,6 +95,29 @@ var DefaultCanvasView = function() {
 			top : top + "px"
 		});
 	};
+	
+
+
+	this.drawMap = function(map) {
+		// clear map first
+		var container = this.$getDrawingArea();
+		container.children(".root").remove();
+
+		var root = map.root;
+
+		// center root
+		var center = new Point(container.width() / 2, container.height() / 2);
+		root.offset = center;
+
+		self.createNode(root, container);
+
+		// TODO deselect on click in void?
+		$("#scroller").click(function() {
+			// console.log("click scroller");
+			self.mapClicked();
+		});
+	};
+
 
 	this.createNode = function(node, $parent, depth) {
 		var parent = node.getParent();
@@ -166,12 +189,12 @@ var DefaultCanvasView = function() {
 			text : node.text.caption
 		}).mousedown(function() {
 			// fire selected event
-			if (self.nodeSelected) {
-				self.nodeSelected(node);
+			if (self.nodeMouseDown) {
+				self.nodeMouseDown(node);
 			}
 		}).mouseup(function() {
-			if (self.nodeReleased) {
-				self.nodeReleased(node);
+			if (self.nodeMouseUp) {
+				self.nodeMouseUp(node);
 			}
 		}).dblclick(function() {
 			if (self.nodeDoubleClicked) {
@@ -249,34 +272,23 @@ var DefaultCanvasView = function() {
 			self.createNode(child, $node, depth + 1);
 		});
 	};
-
-	this.drawMap = function(map) {
-		// clear map first
-		var container = this.$getDrawingArea();
-		container.children(".root").remove();
-
-		var root = map.root;
-
-		// center root
-		var center = new Point(container.width() / 2, container.height() / 2);
-		root.offset = center;
-
-		self.createNode(root, container);
-
-		// TODO deselect on click in void?
-		$("#scroller").click(function() {
-			// console.log("click scroller");
-			self.mapClicked();
-		});
-
+	
+	this.deleteNode = function(node) {
+		// TODO remove
+		var n = new Date;
+		var $node = $getNode(node);
+		var n1 = new Date;
+		$node.remove();
+		var n2 = new Date;
+		console.log(n1 - n, n2 - n1);
 	};
 
-	this.selectNode = function(node) {
+	this.highlightNode = function(node) {
 		var $text = $getNodeCaption(node);
 		$text.addClass("selected");
 	};
 
-	this.deselectNode = function(node) {
+	this.unhighlightNode = function(node) {
 		var $text = $getNodeCaption(node);
 		$text.removeClass("selected");
 	};
@@ -299,16 +311,6 @@ var DefaultCanvasView = function() {
 		$collapseButton.removeClass("closed").addClass("open");
 	};
 
-	this.deleteNode = function(node) {
-		// TODO remove
-		var n = new Date;
-		var $node = $getNode(node);
-		var n1 = new Date;
-		$node.remove();
-		var n2 = new Date;
-		console.log(n1 - n, n2 - n1);
-	};
-
 	this.createCollapseButton = function(node) {
 		var openClosed = node.collapseChildren ? "closed" : "open";
 		var $collapseButton = $("<div/>", {
@@ -323,6 +325,7 @@ var DefaultCanvasView = function() {
 			return false;
 		});
 
+		// remember that collapseButton was set and attach to node
 		var $node = $getNode(node);
 		$node.data({
 			collapseButton : true
@@ -359,6 +362,7 @@ var DefaultCanvasView = function() {
 		var content = $text.text();
 
 		// TODO show editor in place of node caption
+
 		// show editor
 		$captionEditor.attr({
 			value : content
@@ -380,6 +384,7 @@ DefaultCanvasView.prototype = new CanvasView();
 
 var CanvasPresenter = function(view, eventBus) {
 	var self = this;
+	
 	this.view = view;
 	this.map = null;
 	var selectedNode = null;
@@ -423,34 +428,40 @@ var CanvasPresenter = function(view, eventBus) {
 	});
 
 	var selectNode = function(node) {
-		// deselect old node
-		if (selectedNode) {
-			view.deselectNode(selectedNode);
+		// dont select the same node twice
+		if (selectedNode === node) {
+			return;
 		}
+
+		// deselect old node
+		deselectCurrentNode();
 
 		// remove edit input in case it was active
 		view.cancelNodeCaptionEdit();
 
 		// select node and save reference
-		view.selectNode(node);
+		view.highlightNode(node);
 		selectedNode = node;
 	};
 
-	// listen to events from view
-	view.nodeSelected = function(node) {
-		if (selectedNode === node) {
-			// dont select nodes twice
-			return;
+	var deselectCurrentNode = function(node) {
+		// deselect old node
+		if (selectedNode) {
+			view.unhighlightNode(selectedNode);
+			selectedNode = null;
 		}
+	};
 
+	// listen to events from view
+	view.nodeMouseDown = function(node) {
 		selectNode(node);
+	};
+
+	view.nodeMouseUp = function(node) {
 	};
 
 	view.nodeDoubleClicked = function(node) {
 		view.editNodeCaption(node);
-	};
-
-	view.nodeReleased = function(node) {
 	};
 
 	view.nodeDragging = function() {
@@ -476,12 +487,10 @@ var CanvasPresenter = function(view, eventBus) {
 
 	// clicked the void
 	view.mapClicked = function(node) {
-		// deselect old node
-		if (selectedNode) {
-			view.deselectNode(selectedNode);
-			selectedNode = null;
-		}
+		// deselect any node
+		deselectCurrentNode();
 
+		// cancel the edit
 		view.cancelNodeCaptionEdit();
 	};
 
@@ -521,14 +530,17 @@ var CanvasPresenter = function(view, eventBus) {
 		if (!str) {
 			return;
 		}
-		// TODO sanitize value
+		
 		var node = selectedNode;
 		if (!node) {
 			console.error("edit for unselected node!");
 			return;
 		}
 
+		// update model
 		node.setCaption(str);
+		
+		// set view
 		view.setNodeText(node, str);
 	};
 };
