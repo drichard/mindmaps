@@ -25,6 +25,18 @@ CanvasView.prototype.drawMap = function(map) {
 var DefaultCanvasView = function() {
 	var self = this;
 
+	var $getNodeCanvas = function(node) {
+		return $("#node-canvas-" + node.id);
+	};
+
+	var $getNode = function(node) {
+		return $("#node-" + node.id);
+	};
+
+	var $getNodeCaption = function(node) {
+		return $("#node-caption-" + node.id);
+	};
+
 	var drawConnection = function(canvas, depth, offsetX, offsetY, color) {
 		// console.log("drawing");
 		var ctx = canvas.getContext("2d");
@@ -123,7 +135,7 @@ var DefaultCanvasView = function() {
 			},
 			drag : function(e, ui) {
 				// reposition and draw canvas while dragging
-				var $canvas = $("#canvas-node-" + node.id);
+				var $canvas = $getNodeCanvas(node);
 				var offsetX = ui.position.left;
 				var offsetY = ui.position.top;
 				// var depth = $node.data("depth");
@@ -168,8 +180,9 @@ var DefaultCanvasView = function() {
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
-		var parentCollapseButton = $parent.data("collapseButton");
-		if (!parentCollapseButton && !node.isRoot()) {
+		var parentAlreadyHasCollapseButton = $parent.data("collapseButton");
+		var nodeOrParentIsRoot = node.isRoot() || parent.isRoot();
+		if (!parentAlreadyHasCollapseButton && !nodeOrParentIsRoot) {
 			this.createCollapseButton(parent);
 		}
 
@@ -218,7 +231,7 @@ var DefaultCanvasView = function() {
 		if (!node.isRoot()) {
 			// create canvas element
 			var $canvas = $("<canvas/>", {
-				id : "canvas-node-" + node.id,
+				id : "node-canvas-" + node.id,
 				class : "line-canvas"
 			});
 
@@ -258,23 +271,13 @@ var DefaultCanvasView = function() {
 
 	};
 
-	var $getNode = function(node) {
-		return $("#node-" + node.id);
-	};
-	
-	var $getNodeCaption = function(node) {
-		return $("#node-caption-" + node.id);
-	};
-
 	this.selectNode = function(node) {
 		var $text = $getNodeCaption(node);
-
 		$text.addClass("selected");
 	};
 
 	this.deselectNode = function(node) {
 		var $text = $getNodeCaption(node);
-		
 		$text.removeClass("selected");
 	};
 
@@ -352,7 +355,7 @@ var DefaultCanvasView = function() {
 	this.editNodeCaption = function(node) {
 		var $node = $getNode(node);
 		var $text = $getNodeCaption(node);
-		
+
 		var content = $text.text();
 
 		// TODO show editor in place of node caption
@@ -365,7 +368,7 @@ var DefaultCanvasView = function() {
 	this.cancelNodeCaptionEdit = function() {
 		$captionEditor.detach();
 	};
-	
+
 	this.setNodeText = function(node, value) {
 		var $text = $getNodeCaption(node);
 		$text.text(value);
@@ -443,13 +446,12 @@ var CanvasPresenter = function(view, eventBus) {
 		selectNode(node);
 	};
 
-	view.nodeDoubleClicked = function(node){
+	view.nodeDoubleClicked = function(node) {
 		view.editNodeCaption(node);
 	};
-	
+
 	view.nodeReleased = function(node) {
 	};
-
 
 	view.nodeDragging = function() {
 	};
@@ -471,7 +473,7 @@ var CanvasPresenter = function(view, eventBus) {
 			view.closeNode(node);
 		}
 	};
-	
+
 	// clicked the void
 	view.mapClicked = function(node) {
 		// deselect old node
@@ -479,7 +481,7 @@ var CanvasPresenter = function(view, eventBus) {
 			view.deselectNode(selectedNode);
 			selectedNode = null;
 		}
-		
+
 		view.cancelNodeCaptionEdit();
 	};
 
@@ -507,12 +509,12 @@ var CanvasPresenter = function(view, eventBus) {
 			view.openNode(parent);
 		}
 		view.createNode(node);
-		
+
 		// select and go into edit mode on new node
 		selectNode(node);
 		view.editNodeCaption(node);
 	};
-	
+
 	view.nodeCaptionEditCommitted = function(str) {
 		// avoid whitespace only strings
 		var str = $.trim(str);
@@ -525,7 +527,7 @@ var CanvasPresenter = function(view, eventBus) {
 			console.error("edit for unselected node!");
 			return;
 		}
-		
+
 		node.setCaption(str);
 		view.setNodeText(node, str);
 	};
