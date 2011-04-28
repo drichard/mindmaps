@@ -116,7 +116,6 @@ var DefaultCanvasView = function() {
 		var center = new Point($drawingArea.width() / 2,
 				$drawingArea.height() / 2);
 		root.offset = center;
-		root.setCaption("Root");
 
 		self.createNode(root, $drawingArea);
 
@@ -448,10 +447,22 @@ var CanvasPresenter = function(view, eventBus) {
 
 	// listen to global events
 	eventBus.subscribe("documentOpened", function(doc) {
-		// console.log("draw doc", doc);
 		self.map = doc.mindmap;
 		view.drawMap(self.map);
 	});
+	
+	eventBus.subscribe("newDocumentCreated", function(doc) {
+		var map = doc.mindmap;
+		self.map = map;
+		view.drawMap(map);
+		
+		var root = map.root;
+		selectNode(root);
+		view.editNodeCaption(root);
+	});
+	
+	
+	
 
 	eventBus.subscribe("deleteSelectedNodeRequested", function() {
 		self.deleteSelectedNode();
