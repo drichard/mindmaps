@@ -1,3 +1,6 @@
+// global debug flag
+var DEBUG = true;
+
 var ApplicationModel = function() {
 	var document = null;
 	

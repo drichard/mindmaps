@@ -1,6 +1,11 @@
 var OpenDocumentView = function() {
 	var self = this;
-	var $openDialog = $("#open-dialog").dialog({
+	
+	// create dialog
+	var $openDialog = $("<div/>", {
+		id: "#open-dialog",
+		title: "Open document"
+	}).dialog({
 		autoOpen : false,
 		modal : true
 	});
@@ -37,6 +42,7 @@ var OpenDocumentPresenter = function(eventBus, appModel, view) {
 		appModel.setDocument(doc);
 		eventBus.publish("DocumentOpenedEvent");
 	};
+	
 	
 	this.go = function(){
 		var docs = LocalDocumentStorage.getDocuments();
