@@ -40,7 +40,7 @@ var OpenDocumentPresenter = function(eventBus, appModel, view) {
 	view.documentClicked = function(doc) {
 		view.hideOpenDialog();
 		appModel.setDocument(doc);
-		eventBus.publish("DocumentOpenedEvent");
+		eventBus.publish(Event.DOCUMENT_OPENED);
 	};
 	
 	

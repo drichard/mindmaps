@@ -21,17 +21,17 @@ var ApplicationModel = function() {
 
 var AppController = function(eventBus, appModel) {
 	function bind() {
-		eventBus.subscribe("SaveDocumentEvent", function(){
+		eventBus.subscribe(Event.SAVE_DOCUMENT, function(){
 			var presenter = new SaveDocumentPresenter(eventBus, appModel, new SaveDocumentView());
 			presenter.go();
 		});
 		
-		eventBus.subscribe("OpenDocumentEvent", function(){
+		eventBus.subscribe(Event.OPEN_DOCUMENT, function(){
 			var presenter = new OpenDocumentPresenter(eventBus, appModel, new OpenDocumentView());
 			presenter.go();
 		});
 		
-		eventBus.subscribe("NewDocumentEvent", function(){
+		eventBus.subscribe(Event.NEW_DOCUMENT, function(){
 			var presenter = new NewDocumentPresenter(eventBus, appModel, new NewDocumentView());
 			presenter.go();
 		});

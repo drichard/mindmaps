@@ -31,12 +31,13 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	// listen to global events
-	eventBus.subscribe("DocumentOpenedEvent", function() {
+	eventBus.subscribe(Event.DOCUMENT_OPENED, function() {
 		var map = appModel.getMindMap();
 		view.drawMap(map);
 	});
 
-	eventBus.subscribe("DocumentCreatedEvent", function() {
+	eventBus.subscribe(Event.DOCUMENT_CREATED, function() {
+		// TODO center view
 		var map = appModel.getMindMap();
 		view.drawMap(map);
 
@@ -45,7 +46,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		view.editNodeCaption(root);
 	});
 
-	eventBus.subscribe("DeleteSelectedNodeEvent", function() {
+	eventBus.subscribe(Event.DELETE_SELECTED_NODE, function() {
 		self.deleteSelectedNode();
 	});
 

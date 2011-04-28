@@ -57,7 +57,7 @@ var SaveDocumentPresenter = function(eventBus, appModel, view) {
 		doc.setTitle(title);
 		
 		var savedDoc = LocalDocumentStorage.saveDocument(doc);
-		eventBus.publish("DocumentSavedEvent");
+		eventBus.publish(Event.DOCUMENT_SAVED);
 		view.hideSaveDialog();
 	};
 
