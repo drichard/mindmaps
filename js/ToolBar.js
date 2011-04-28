@@ -1,11 +1,8 @@
 var ToolBarView = function() {
 	var self = this;
-	MicroEvent.mixin(ToolBarView);
-	
-	this.$toolbar = $("#toolbar");
 	
 	$("#toolbar button").button();
-	
+	$("#toolbar .buttonset").buttonset();
 	
 	$("#button-delete").click(function() {
 		if (self.deleteButtonClicked) {
@@ -13,8 +10,6 @@ var ToolBarView = function() {
 		}
 	});
 	
-	
-	$("#toolbar .buttonset").buttonset();
 	$("#button-undo").button("disable");
 	$("#button-redo").button("disable");
 
@@ -24,13 +19,12 @@ var ToolBarView = function() {
 		}
 	});
 	
-	
 	$("#button-open").click(function() {
 		if (self.openButtonClicked) {
 			self.openButtonClicked();
 		}
 	});
-	
+
 	
 	$("#button-save").button("option", "icons", {
 		primary : "ui-icon-disk"
@@ -47,30 +41,23 @@ var ToolBarView = function() {
 	});
 	
 	$("#button-draw").button();
-	$("#button-draw").click(function() {
-		self.publish("buttonDrawClicked");
-	});
-	
 };
 
 
-var ToolBarPresenter = function(view, eventBus) {
-	this.view = view;
-	
+var ToolBarPresenter = function(eventBus, view) {
 	view.deleteButtonClicked = function() {
-		eventBus.publish("deleteSelectedNodeRequested");
+		eventBus.publish("DeleteSelectedNodeEvent");
 	};
 	
-	
 	view.saveButtonClicked = function() {
-		eventBus.publish("saveDocumentRequested");
+		eventBus.publish("SaveDocumentEvent");
 	};
 	
 	view.openButtonClicked = function() {
-		eventBus.publish("openDocumentRequested");
+		eventBus.publish("OpenDocumentEvent");
 	};
 	
 	view.newButtonClicked = function() {
-		eventBus.publish("newDocumentRequested");
+		eventBus.publish("NewDocumentEvent");
 	};
 };
