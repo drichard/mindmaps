@@ -5,7 +5,9 @@ $(function() {
 	var toolbarPresenter = new ToolBarPresenter(toolbar, eventBus);
 
 	var saveDocPresenter = new SaveDocumentPresenter(eventBus);
-	var loadDocPresenter = new LoadDocumentPresenter(eventBus);
+	
+	var openDocView = new OpenDocumentView();
+	var openDocPresenter = new OpenDocumentPresenter(openDocView, eventBus);
 	
 	var canvas = new DefaultCanvasView();
 	var canvasPresenter = new CanvasPresenter(canvas, eventBus);
@@ -38,23 +40,51 @@ $(function() {
 	});
 });
 
-var LoadDocumentPresenter = function(eventBus) {
+var OpenDocumentView = function() {
+	var $openDialog = $("#open-dialog");
+	$openDialog.dialog({
+		autoOpen: false,
+		modal: true
+	});
+	
+	this.showOpenDialog = function(docs){
+		// clear dialog
+		$openDialog.children().remove();
+		
+		var $list = $("<ul/>");
+		_.each(docs, function(doc) {
+			var $listItem = $("<li/>", {
+				text: doc.id
+			});
+			$list.append($listItem);
+		});
+		$openDialog.append($list);
+		
+		$openDialog.dialog("open");
+	};
+};
+
+var OpenDocumentPresenter = function(view, eventBus) {
 	var recentDocId = null;
 	
 	eventBus.subscribe("openDocumentRequested", function(){
 		// TODO present load dialog
+		var docs = LocalDocumentStorage.getDocuments();
 		
-		var docId;
-		if (recentDocId) {
-			docId = recentDocId;
-		} else {
-			// get any
-			var docs = LocalDocumentStorage.getDocuments();
-			docId = docs[0].id;
-		}
-
-		var loadedDoc = LocalDocumentStorage.loadDocument(docId);
-		eventBus.publish("documentOpened", loadedDoc);
+		view.showOpenDialog(docs);
+		
+		
+//		var docId;
+//		if (recentDocId) {
+//			docId = recentDocId;
+//		} else {
+//			// get any
+//			var docs = LocalDocumentStorage.getDocuments();
+//			docId = docs[0].id;
+//		}
+//
+//		var loadedDoc = LocalDocumentStorage.loadDocument(docId);
+//		eventBus.publish("documentOpened", loadedDoc);
 	});
 	
 	eventBus.subscribe("documentSaved", function(doc) {

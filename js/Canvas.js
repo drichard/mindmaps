@@ -208,6 +208,12 @@ var DefaultCanvasView = function() {
 				}
 			}
 		});
+		
+		
+		// TODO check this out
+//		$node.mousedown(function(e){ 
+//			console.log(e.target, e.currentTarget);
+//		});
 
 		// text caption
 		var $text = $("<div/>", {
@@ -428,6 +434,7 @@ var CanvasPresenter = function(view, eventBus) {
 		var node = selectedNode;
 		if (node) {
 			// remove from model
+			// TODO delete from mindmap.nodes?
 			var parent = node.getParent();
 			parent.removeChild(node);
 

@@ -18,6 +18,13 @@ var ToolBarView = function() {
 	$("#button-undo").button("disable");
 	$("#button-redo").button("disable");
 
+	$("#button-new").click(function() {
+		if (self.newButtonClicked) {
+			self.newButtonClicked();
+		}
+	});
+	
+	
 	$("#button-open").click(function() {
 		if (self.openButtonClicked) {
 			self.openButtonClicked();
@@ -61,5 +68,9 @@ var ToolBarPresenter = function(view, eventBus) {
 	
 	view.openButtonClicked = function() {
 		eventBus.publish("openDocumentRequested");
+	};
+	
+	view.newButtonClicked = function() {
+		eventBus.publish("newDocumentRequested");
 	};
 };
