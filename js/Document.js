@@ -47,3 +47,6 @@ Document.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
+Document.prototype.setTitle = function(title) {
+	this.title = title;
+};

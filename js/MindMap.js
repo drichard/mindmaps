@@ -69,3 +69,7 @@ MindMap.prototype.removeNode = function(node) {
 
 	this.nodes.remove(node);
 };
+
+MindMap.prototype.getRoot = function() {
+	return this.root;
+};

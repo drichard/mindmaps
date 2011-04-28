@@ -187,3 +187,7 @@ TreeNode.prototype.forEachDescendant = function(func) {
 TreeNode.prototype.setCaption = function(caption) {
 	this.text.caption = caption;
 };
+
+TreeNode.prototype.getCaption = function() {
+	return this.text.caption;
+};
