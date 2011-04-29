@@ -1,6 +1,7 @@
 var CanvasPresenter = function(eventBus, appModel, view) {
 	var self = this;
 	var selectedNode = null;
+	var creator = view.getCreator();
 
 	// TODO restrict keys on canvas area?
 	$(document).bind("keydown", "del", function() {
@@ -29,9 +30,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		var node = selectedNode;
 		if (node) {
 			// remove from model
-			// TODO delete from mindmap.nodes?
-			var parent = node.getParent();
-			parent.removeChild(node);
+			var map = appModel.getMindMap();
+			map.removeNode(node);
 
 			// update view
 			view.deleteNode(node);
@@ -68,6 +68,11 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 
 	// listen to events from view
 	view.nodeMouseEnter = function(node) {
+		if (view.isNodeDragging() || creator.isDragging()) {
+			// dont relocate the creator if we are dragging
+			return;
+		}
+		
 		creator.attachToNode(node);
 	};
 	
@@ -103,8 +108,6 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	// CREATOR TOOL
-	var creator = view.getCreator();
-
 	creator.dragStarted = function(node) {
 		// set edge color for new node. inherit from parent or random when root
 		var color = node.isRoot() ? Util.randomColor() : node.edgeColor;
@@ -119,7 +122,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		// create new node
-		var node = new TreeNode();
+		var map = appModel.getMindMap();
+		var node = map.createNode();
 		node.offset = new Point(offsetX, offsetY);
 		node.edgeColor = creator.lineColor;
 		parent.addChild(node);

@@ -26,6 +26,7 @@ CanvasView.prototype.drawMap = function(map) {
 
 var DefaultCanvasView = function() {
 	var self = this;
+	var nodeDragging = false;
 	var creator = new Creator();
 
 	function makeDraggable() {
@@ -100,7 +101,6 @@ var DefaultCanvasView = function() {
 		ctx.stroke();
 
 		var drawControlPoints = false;
-
 		if (drawControlPoints) {
 			// control points
 			ctx.beginPath();
@@ -220,6 +220,8 @@ var DefaultCanvasView = function() {
 				if (node.isRoot()) {
 					return false;
 				}
+				
+				nodeDragging = true;
 			},
 			drag : function(e, ui) {
 				// reposition and draw canvas while dragging
@@ -236,6 +238,7 @@ var DefaultCanvasView = function() {
 				}
 			},
 			stop : function(e, ui) {
+				nodeDragging = false;
 				var pos = new Point(ui.position.left, ui.position.top);
 
 				// fire dragged event
@@ -404,9 +407,15 @@ var DefaultCanvasView = function() {
 	this.getCreator = function() {
 		return creator;
 	};
+	
+	this.isNodeDragging = function() {
+		return nodeDragging;
+	};
 
 	function Creator() {
 		var self = this;
+		var dragging = false;
+		
 		this.node = null;
 		this.lineColor = null;
 
@@ -425,6 +434,7 @@ var DefaultCanvasView = function() {
 			revert : true,
 			revertDuration : 0,
 			start : function() {
+				dragging = true;
 				// show creator canvas
 				$canvas.show();
 				if (self.dragStarted) {
@@ -441,6 +451,7 @@ var DefaultCanvasView = function() {
 						self.lineColor);
 			},
 			stop : function(e, ui) {
+				dragging = false;
 				// remove creator canvas, gets replaced by real canvas
 				$canvas.hide();
 				if (self.dragStopped) {
@@ -468,6 +479,10 @@ var DefaultCanvasView = function() {
 
 		this.setLineColor = function(color) {
 			this.lineColor = color;
+		};
+		
+		this.isDragging = function() {
+			return dragging;
 		};
 	}
 };
