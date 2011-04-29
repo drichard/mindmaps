@@ -152,6 +152,10 @@ var DefaultCanvasView = function() {
 //				self.mapClicked();
 //			}
 //		});
+		
+//		$drawingArea.delegate("div.node-caption", "mousedown", function(e){
+//			console.log("zap");
+//		});
 	};
 
 	// canvas used by the creator tool to draw new lines
