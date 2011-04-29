@@ -4,17 +4,28 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 
 	// TODO restrict keys on canvas area?
 	$(document).bind("keydown", "del", function() {
-		self.deleteSelectedNode();
+		deleteSelectedNode();
 	});
 
 	// TODO restrict keys on canvas area?
 	$(document).bind("keydown", "space", function() {
 		if (selectedNode) {
-			self.toggleCollapse(selectedNode);
+			toggleCollapse(selectedNode);
 		}
 	});
 
-	this.deleteSelectedNode = function() {
+	var toggleCollapse = function(node) {
+		// toggle node visibility
+		if (node.collapseChildren) {
+			node.collapseChildren = false;
+			view.openNode(node);
+		} else {
+			node.collapseChildren = true;
+			view.closeNode(node);
+		}
+	};
+
+	var deleteSelectedNode = function() {
 		var node = selectedNode;
 		if (node) {
 			// remove from model
@@ -29,26 +40,6 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			}
 		}
 	};
-
-	// listen to global events
-	eventBus.subscribe(Event.DOCUMENT_OPENED, function() {
-		var map = appModel.getMindMap();
-		view.drawMap(map);
-	});
-
-	eventBus.subscribe(Event.DOCUMENT_CREATED, function() {
-		// TODO center view
-		var map = appModel.getMindMap();
-		view.drawMap(map);
-
-		var root = map.root;
-		selectNode(root);
-		view.editNodeCaption(root);
-	});
-
-	eventBus.subscribe(Event.DELETE_SELECTED_NODE, function() {
-		self.deleteSelectedNode();
-	});
 
 	var selectNode = function(node) {
 		// dont select the same node twice
@@ -97,17 +88,6 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		node.offset = offset;
 	};
 
-	this.toggleCollapse = function(node) {
-		// toggle node visibility
-		if (node.collapseChildren) {
-			node.collapseChildren = false;
-			view.openNode(node);
-		} else {
-			node.collapseChildren = true;
-			view.closeNode(node);
-		}
-	};
-
 	// clicked the void
 	view.mapClicked = function(node) {
 		// deselect any node
@@ -118,7 +98,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	view.collapseButtonClicked = function(node) {
-		self.toggleCollapse(node);
+		toggleCollapse(node);
 	};
 
 	view.creatorDragStopped = function(parent, offsetX, offsetY) {
@@ -166,4 +146,34 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		// set view
 		view.setNodeText(node, str);
 	};
+
+	this.go = function() {
+		view.makeDraggable();
+		view.center();
+	};
+	
+	function bind() {
+		// listen to global events
+		eventBus.subscribe(Event.DOCUMENT_OPENED, function() {
+			var map = appModel.getMindMap();
+			view.drawMap(map);
+			view.center();
+		});
+
+		eventBus.subscribe(Event.DOCUMENT_CREATED, function() {
+			var map = appModel.getMindMap();
+			view.drawMap(map);
+			view.center();
+
+			var root = map.root;
+			selectNode(root);
+			view.editNodeCaption(root);
+		});
+
+		eventBus.subscribe(Event.DELETE_SELECTED_NODE, function() {
+			deleteSelectedNode();
+		});
+	}
+
+	bind();
 };

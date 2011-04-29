@@ -57,18 +57,4 @@ $(function() {
 	// var doc = new Document();
 	// doc.mindmap = map;
 	// eventBus.publish("documentOpened", doc);
-
-	// TODO fix scrolling
-	// #scroller doesnt resize
-	// #drawing-area doesnt grow
-	// canvas.enableScroll();
-	// $("#scroller").scrollview();
-	var scroller = $("#scroller");
-	var drawArea = $("#drawing-area");
-
-	// appView.canvas.enableScroll();
-	$("#canvas-container").scrollview({
-		scrollArea : scroller,
-		doubleClick : false
-	});
 });

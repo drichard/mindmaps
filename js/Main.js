@@ -1,4 +1,4 @@
-var MainView = function(toolbar, canvas, statusbar) {
+var MainView = function() {
 	var self = this;
 
 	/**
@@ -10,6 +10,14 @@ var MainView = function(toolbar, canvas, statusbar) {
 		var footerHeight = $("#bottombar").outerHeight(true);
 		var height = windowHeight - headerHeight - footerHeight;
 		this.canvas.setHeight(height);
+	};
+	
+	this.getSizeForCanvas = function() {
+		var windowHeight = $(window).height();
+		var headerHeight = $("#topbar").outerHeight(true);
+		var footerHeight = $("#bottombar").outerHeight(true);
+		var height = windowHeight - headerHeight - footerHeight;
+		return height;
 	};
 
 	
@@ -38,14 +46,15 @@ var MainPresenter = function(eventBus, appModel, view) {
 		var toolbarPresenter = new ToolBarPresenter(eventBus, toolbar);
 		
 		var canvas = new DefaultCanvasView();
+		view.setCanvas(canvas);
+		view.setCanvasSize();
 		var canvasPresenter = new CanvasPresenter(eventBus, appModel, canvas);
+		canvasPresenter.go();
 		
 		var statusbar = new StatusBarView();
 		//view.setStatusBar(statusbar);
 		var statusbarPresenter = new StatusBarPresenter(eventBus, statusbar);
 		
-		view.setCanvas(canvas);
-		view.setCanvasSize();
 	};
 };
 

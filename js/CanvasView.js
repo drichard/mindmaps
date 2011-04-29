@@ -14,6 +14,14 @@ var CanvasView = function() {
 	this.$getContainer = function() {
 		return $("#canvas-container");
 	};
+
+	this.center = function() {
+		var c = this.$getContainer();
+		var area = this.$getDrawingArea();
+		var w = area.width() - c.width();
+		var h = area.height() - c.height();
+		c.scrollLeft(w / 2).scrollTop(h / 2);
+	};
 };
 
 CanvasView.prototype.drawMap = function(map) {
@@ -22,6 +30,14 @@ CanvasView.prototype.drawMap = function(map) {
 
 var DefaultCanvasView = function() {
 	var self = this;
+	
+	this.makeDraggable = function() {
+		this.$getContainer().dragscrollable({
+			dragSelector : "#drawing-area, canvas.line-canvas",
+			acceptPropagatedEvent : false,
+			delegateMode : true
+		});
+	};
 
 	var $getNodeCanvas = function(node) {
 		return $("#node-canvas-" + node.id);
@@ -117,11 +133,25 @@ var DefaultCanvasView = function() {
 
 		self.createNode(root, $drawingArea);
 
-		// TODO deselect on click in void?
-		$("#scroller").click(function() {
-			// console.log("click scroller");
-			self.mapClicked();
-		});
+//		this.$getContainer().delegate("#drawing-area, canvas.line-canvas", "click", function(e){
+//			if (e.target != this) {
+//				return false;
+//			}
+//			
+//			if (self.$getContainer().hasClass("scrolling")) {
+//				console.log($(this), "scrolloing");
+//				return;
+//			}
+//			
+//			if (self.mapClicked) {
+//				self.mapClicked();
+//			}
+//		});
+//		$drawingArea.click(function(e) {
+//			if (self.mapClicked) {
+//				self.mapClicked();
+//			}
+//		});
 	};
 
 	// canvas used by the creator tool to draw new lines
@@ -205,12 +235,13 @@ var DefaultCanvasView = function() {
 				}
 			}
 		});
-		
-		
+
 		// TODO check this out
-//		$node.mousedown(function(e){ 
-//			console.log(e.target, e.currentTarget);
-//		});
+		// $node.mousedown(function(e){
+		// console.log(e.target, e.currentTarget);
+		// e.stopPropagation();
+		// return false;
+		// });
 
 		// text caption
 		var $text = $("<div/>", {
