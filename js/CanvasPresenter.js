@@ -159,8 +159,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	this.go = function() {
-		view.makeDraggable();
-		view.center();
+		view.init();
 	};
 
 	function bind() {

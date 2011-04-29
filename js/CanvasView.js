@@ -3,10 +3,6 @@ var CanvasView = function() {
 		this.$getContainer().height(height);
 	};
 
-	this.enableScroll = function() {
-		this.$getContainer().scrollview();
-	};
-
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
 	};
@@ -30,32 +26,33 @@ CanvasView.prototype.drawMap = function(map) {
 
 var DefaultCanvasView = function() {
 	var self = this;
+	var creator = new Creator();
 
-	this.makeDraggable = function() {
-		this.$getContainer().dragscrollable({
+	function makeDraggable() {
+		self.$getContainer().dragscrollable({
 			dragSelector : "#drawing-area, canvas.line-canvas",
 			acceptPropagatedEvent : false,
 			delegateMode : true
 		});
-	};
+	}
 
-	var $getNodeCanvas = function(node) {
+	function $getNodeCanvas(node) {
 		return $("#node-canvas-" + node.id);
-	};
+	}
 
-	var $getNode = function(node) {
+	function $getNode(node) {
 		return $("#node-" + node.id);
-	};
+	}
 
-	var $getNodeCaption = function(node) {
+	function $getNodeCaption(node) {
 		return $("#node-caption-" + node.id);
-	};
+	}
 
-	var drawLineCanvas = function($canvas, depth, offsetX, offsetY, color) {
+	function drawLineCanvas($canvas, depth, offsetX, offsetY, color) {
 		/**
 		 * Positions the canvas correctly.
 		 */
-		var setPosition = function($canvas, offsetX, offsetY) {
+		function setPosition($canvas, offsetX, offsetY) {
 			var width = Math.abs(offsetX);
 			var height = Math.abs(offsetY);
 
@@ -69,7 +66,7 @@ var DefaultCanvasView = function() {
 				left : left + "px",
 				top : top + "px"
 			});
-		};
+		}
 
 		// 1. set position of canvas
 		setPosition($canvas, offsetX, offsetY);
@@ -115,95 +112,62 @@ var DefaultCanvasView = function() {
 			ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
 			ctx.fill();
 		}
+	}
+
+	this.init = function() {
+		makeDraggable();
+		this.center();
+
+		var $drawingArea = this.$getDrawingArea();
+		$drawingArea.addClass("mindmap");
+
+		// setup delegates
+		// FIXME mousedown delegate does not work on drawingArea. WHY? works on
+		// root and container
+		this.$getContainer().delegate("div.node-caption", "mousedown",
+				function(e) {
+					var node = $(this).data("node");
+					if (self.nodeMouseDown) {
+						self.nodeMouseDown(node);
+					}
+				});
+
+		$drawingArea.delegate("div.node-caption", "mouseup", function(e) {
+			var node = $(this).data("node");
+			if (self.nodeMouseUp) {
+				self.nodeMouseUp(node);
+			}
+		});
+
+		$drawingArea.delegate("div.node-caption", "dblclick", function(e) {
+			var node = $(this).data("node");
+			if (self.nodeDoubleClicked) {
+				self.nodeDoubleClicked(node);
+			}
+		});
+
+		$drawingArea.delegate("div.node-caption", "mouseenter", function(e) {
+			var node = $(this).data("node");
+			if (self.nodeMouseEnter) {
+				self.nodeMouseEnter(node);
+			}
+		});
 	};
 
 	this.drawMap = function(map) {
 		var $drawingArea = this.$getDrawingArea();
-		$drawingArea.addClass("mindmap");
 
 		// clear map first
+		creator.detach();
 		$drawingArea.children().remove();
 
 		var root = map.root;
-
 		// center root
 		var center = new Point($drawingArea.width() / 2,
 				$drawingArea.height() / 2);
 		root.offset = center;
 
 		self.createNode(root, $drawingArea);
-	};
-
-	var Creator = function() {
-		var self = this;
-		this.node = null;
-		this.lineColor = null;
-		
-		
-		// red dot creator element
-		var $nub = $("<div/>", {
-			"class" : "creator-nub"
-		});
-
-		// canvas used by the creator tool to draw new lines
-		var $canvas = $("<canvas/>", {
-			id : "creator-canvas",
-			"class" : "line-canvas"
-		}).hide().appendTo($nub);
-
-		$nub.draggable({
-			revert : true,
-			revertDuration : 0,
-			start : function() {
-				// show creator canvas
-				$canvas.show();
-				if (self.dragStarted) {
-					self.dragStarted(self.node);
-				}
-			},
-			drag : function(e, ui) {
-				// update creator canvas
-				var offsetX = ui.position.left;
-				var offsetY = ui.position.top;
-
-				// set depth+1 because we are drawing the canvas for the child
-				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
-						self.lineColor);
-			},
-			stop : function(e, ui) {
-				// remove creator canvas, gets replaced by real canvas
-				$canvas.hide();
-				if (self.dragStopped) {
-					self.dragStopped(self.node, ui.position.left,
-							ui.position.top);
-				}
-			}
-		});
-
-		this.attachToNode = function(node) {
-			if (this.node === node) {
-				return;
-			}
-			
-			this.node = node;
-			this.depth = node.getDepth();
-			
-			var $node = $getNode(node);
-			$nub.appendTo($node);
-		};
-		
-		this.detach = function() {
-			$nub.detach();
-		};
-
-		this.setLineColor = function(color) {
-			this.lineColor = color;
-		};
-	};
-
-	var creator = new Creator();
-	this.getCreator = function() {
-		return creator;
 	};
 
 	/**
@@ -286,23 +250,8 @@ var DefaultCanvasView = function() {
 			id : "node-caption-" + node.id,
 			"class" : "node-caption no-select",
 			text : node.text.caption
-		}).mousedown(function() {
-			// fire selected event
-			if (self.nodeMouseDown) {
-				self.nodeMouseDown(node);
-			}
-		}).mouseup(function() {
-			if (self.nodeMouseUp) {
-				self.nodeMouseUp(node);
-			}
-		}).dblclick(function() {
-			if (self.nodeDoubleClicked) {
-				self.nodeDoubleClicked(node);
-			}
-		}).mouseenter(function() {
-			if (self.nodeMouseEnter) {
-				self.nodeMouseEnter(node);
-			}
+		}).data({
+			node : node
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -340,7 +289,7 @@ var DefaultCanvasView = function() {
 	this.deleteNode = function(node) {
 		// detach creator first, we need still him
 		creator.detach();
-		
+
 		// delete all DOM below
 		var $node = $getNode(node);
 		$node.remove();
@@ -451,6 +400,76 @@ var DefaultCanvasView = function() {
 		var $text = $getNodeCaption(node);
 		$text.text(value);
 	};
+
+	this.getCreator = function() {
+		return creator;
+	};
+
+	function Creator() {
+		var self = this;
+		this.node = null;
+		this.lineColor = null;
+
+		// red dot creator element
+		var $nub = $("<div/>", {
+			"class" : "creator-nub"
+		});
+
+		// canvas used by the creator tool to draw new lines
+		var $canvas = $("<canvas/>", {
+			id : "creator-canvas",
+			"class" : "line-canvas"
+		}).hide().appendTo($nub);
+
+		$nub.draggable({
+			revert : true,
+			revertDuration : 0,
+			start : function() {
+				// show creator canvas
+				$canvas.show();
+				if (self.dragStarted) {
+					self.dragStarted(self.node);
+				}
+			},
+			drag : function(e, ui) {
+				// update creator canvas
+				var offsetX = ui.position.left;
+				var offsetY = ui.position.top;
+
+				// set depth+1 because we are drawing the canvas for the child
+				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
+						self.lineColor);
+			},
+			stop : function(e, ui) {
+				// remove creator canvas, gets replaced by real canvas
+				$canvas.hide();
+				if (self.dragStopped) {
+					self.dragStopped(self.node, ui.position.left,
+							ui.position.top);
+				}
+			}
+		});
+
+		this.attachToNode = function(node) {
+			if (this.node === node) {
+				return;
+			}
+
+			this.node = node;
+			this.depth = node.getDepth();
+
+			var $node = $getNode(node);
+			$nub.appendTo($node);
+		};
+
+		this.detach = function() {
+			$nub.detach();
+		};
+
+		this.setLineColor = function(color) {
+			this.lineColor = color;
+		};
+	}
 };
 
 // inherit from base canvas view
