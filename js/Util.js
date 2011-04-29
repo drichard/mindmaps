@@ -18,6 +18,11 @@ Util.getId = function() {
 	return id++;
 };
 
+// from: http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript/5365036#5365036
+Util.randomColor = function() {
+	return "#"+((1<<24)*Math.random()|0).toString(16);
+};
+
 function timeit(func, caption) {
 	var start = new Date().getTime();
 	func();

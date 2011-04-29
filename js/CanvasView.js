@@ -30,7 +30,7 @@ CanvasView.prototype.drawMap = function(map) {
 
 var DefaultCanvasView = function() {
 	var self = this;
-	
+
 	this.makeDraggable = function() {
 		this.$getContainer().dragscrollable({
 			dragSelector : "#drawing-area, canvas.line-canvas",
@@ -133,33 +133,28 @@ var DefaultCanvasView = function() {
 
 		self.createNode(root, $drawingArea);
 
-//		this.$getContainer().delegate("#drawing-area, canvas.line-canvas", "click", function(e){
-//			if (e.target != this) {
-//				return false;
-//			}
-//			
-//			if (self.$getContainer().hasClass("scrolling")) {
-//				console.log($(this), "scrolloing");
-//				return;
-//			}
-//			
-//			if (self.mapClicked) {
-//				self.mapClicked();
-//			}
-//		});
-//		$drawingArea.click(function(e) {
-//			if (self.mapClicked) {
-//				self.mapClicked();
-//			}
-//		});
-		
-//		$drawingArea.delegate("div.node-caption", "mousedown", function(e){
-//			console.log("zap");
-//		});
+		// this.$getContainer().delegate("#drawing-area, canvas.line-canvas",
+		// "click", function(e) {
+		// if (e.target != this) {
+		// return false;
+		// }
+		//
+		// if (self.mapClicked) {
+		// self.mapClicked();
+		// }
+		// });
+
 	};
 
+	
+	var creator = {};
+	
+	this.getCreator = function() {
+		return creator;
+	};
+	
 	// canvas used by the creator tool to draw new lines
-	var $creatorCanvas = $("<canvas/>", {
+	creator.$canvas = $("<canvas/>", {
 		id : "creator-canvas",
 		"class" : "line-canvas"
 	});
@@ -240,13 +235,6 @@ var DefaultCanvasView = function() {
 			}
 		});
 
-		// TODO check this out
-		// $node.mousedown(function(e){
-		// console.log(e.target, e.currentTarget);
-		// e.stopPropagation();
-		// return false;
-		// });
-
 		// text caption
 		var $text = $("<div/>", {
 			id : "node-caption-" + node.id,
@@ -283,6 +271,7 @@ var DefaultCanvasView = function() {
 			}
 		}
 
+		// TODO delegate
 		// red dot creator element
 		var $creator = $("<div/>", {
 			"class" : "creator-nub"
@@ -293,23 +282,25 @@ var DefaultCanvasView = function() {
 			revertDuration : 0,
 			start : function() {
 				// show creator canvas
-				$creatorCanvas.appendTo($creator);
+				creator.$canvas.appendTo($creator);
+				if (creator.dragStarted) {
+					creator.dragStarted(node);
+				}
 			},
 			drag : function(e, ui) {
 				// update creator canvas
 				var offsetX = ui.position.left;
 				var offsetY = ui.position.top;
-				var color = node.edgeColor;
 
 				// set depth+1 because we are drawing the canvas for the child
-				drawLineCanvas($creatorCanvas, depth + 1, offsetX, offsetY,
-						color);
+				drawLineCanvas(creator.$canvas, depth + 1, offsetX, offsetY,
+						creator.lineColor);
 			},
 			stop : function(e, ui) {
 				// remove creator canvas, gets replaced by real canvas
-				$creatorCanvas.detach();
-				if (self.creatorDragStopped) {
-					self.creatorDragStopped(node, ui.position.left,
+				creator.$canvas.detach();
+				if (creator.dragStopped) {
+					creator.dragStopped(node, ui.position.left,
 							ui.position.top);
 				}
 			}
@@ -335,13 +326,8 @@ var DefaultCanvasView = function() {
 	};
 
 	this.deleteNode = function(node) {
-		// TODO remove
-		var n = new Date;
 		var $node = $getNode(node);
-		var n1 = new Date;
 		$node.remove();
-		var n2 = new Date;
-		console.log(n1 - n, n2 - n1);
 	};
 
 	this.highlightNode = function(node) {
@@ -408,30 +394,41 @@ var DefaultCanvasView = function() {
 		"z-index" : 1000,
 		top : "30px"
 	}).bind("keydown", "esc", function() {
-		$captionEditor.detach();
+		self.stopEditNodeCaption();
 	}).bind("keydown", "return", function() {
-		console.log("retur");
 		var value = $captionEditor.val();
-		self.nodeCaptionEditCommitted(value);
-		$captionEditor.detach();
+		if (self.nodeCaptionEditCommitted) {
+			self.nodeCaptionEditCommitted(value);
+		}
+	}).mousedown(function(e) {
+		e.stopPropagation();
 	});
+	var editorAttached = false;
 
 	this.editNodeCaption = function(node) {
 		var $node = $getNode(node);
 		var $text = $getNodeCaption(node);
-
 		var content = $text.text();
 
 		// TODO show editor in place of node caption
+
+		this.$getDrawingArea().bind("mousedown", function(e) {
+			self.stopEditNodeCaption();
+		});
 
 		// show editor
 		$captionEditor.attr({
 			value : content
 		}).appendTo($node).select();
+		editorAttached = true;
 	};
 
-	this.cancelNodeCaptionEdit = function() {
-		$captionEditor.detach();
+	this.stopEditNodeCaption = function() {
+		if (editorAttached) {
+			this.$getDrawingArea().unbind("mousedown");
+			$captionEditor.detach();
+			editorAttached = false;
+		}
 	};
 
 	this.setNodeText = function(node, value) {

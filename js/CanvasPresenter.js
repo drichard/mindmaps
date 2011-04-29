@@ -50,9 +50,6 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		// deselect old node
 		deselectCurrentNode();
 
-		// remove edit input in case it was active
-		view.cancelNodeCaptionEdit();
-
 		// select node and save reference
 		view.highlightNode(node);
 		selectedNode = node;
@@ -92,16 +89,23 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	view.mapClicked = function(node) {
 		// deselect any node
 		deselectCurrentNode();
-
-		// cancel the edit
-		view.cancelNodeCaptionEdit();
 	};
 
 	view.collapseButtonClicked = function(node) {
 		toggleCollapse(node);
 	};
 
-	view.creatorDragStopped = function(parent, offsetX, offsetY) {
+	var creator = view.getCreator();
+	
+	creator.dragStarted = function(node) {
+		if (node.isRoot()) {
+			creator.lineColor = Util.randomColor();
+		} else {
+			creator.lineColor = node.edgeColor;
+		}
+	};
+	
+	creator.dragStopped = function(parent, offsetX, offsetY) {
 		// disregard if the creator was only dragged a bit
 		var distance = Util.distance(offsetX, offsetY);
 		if (distance < 50) {
@@ -111,8 +115,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		// create new node
 		var node = new TreeNode();
 		node.offset = new Point(offsetX, offsetY);
+		node.edgeColor = creator.lineColor;
 		parent.addChild(node);
-		node.edgeColor = parent.edgeColor;
 
 		// open parent node when creating a new child and the other children are
 		// hidden
@@ -145,6 +149,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 
 		// set view
 		view.setNodeText(node, str);
+		view.stopEditNodeCaption();
 	};
 
 	this.go = function() {

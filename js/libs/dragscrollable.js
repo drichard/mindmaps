@@ -63,9 +63,23 @@
 		var dragscroll = {
 			mouseDownHandler : function(event) {
 				// mousedown, left click, check propagation
-				if (event.which != 1
-						|| (!event.data.acceptPropagatedEvent && event.target != this)) {
+				// if (event.which != 1
+				// || (!event.data.acceptPropagatedEvent && event.target !=
+				// this)) {
+				// return false;
+				// }
+
+				// fix:
+				// http://plugins.jquery.com/content/problems-input-boxes-inside-elements-draggable-area
+				if (event.which != 1) {
 					return false;
+				} else if (!event.data.acceptPropagatedEvent) {
+					if ((event.target.localName == "input")
+							|| (event.target.localName == "textarea")) {
+						return true;
+					} else if (event.target != this) {
+						return false;
+					}
 				}
 
 				// Initial coordinates will be the last when dragging
@@ -132,7 +146,8 @@
 
 			// Set mouse initiating event on the desired descendant
 			if (settings.delegateMode) {
-				$(this).delegate(settings.dragSelector, 'mousedown', data, dragscroll.mouseDownHandler);
+				$(this).delegate(settings.dragSelector, 'mousedown', data,
+						dragscroll.mouseDownHandler);
 			} else {
 				$(this).find(settings.dragSelector).bind('mousedown', data,
 						dragscroll.mouseDownHandler);
