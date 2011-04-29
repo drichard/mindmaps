@@ -168,7 +168,7 @@ html,body {
 	height: 16px;
 	background-image: url("../img/plus-minus.gif");
 	background-repeat: no-repeat;
-	position: relative;
+	position: absolute;
 	z-index: 1000;
 	cursor: pointer;
 	width: 16px;

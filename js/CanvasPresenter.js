@@ -52,6 +52,9 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 
 		// select node and save reference
 		view.highlightNode(node);
+
+		// show creator
+		creator.attachToNode(node);
 		selectedNode = node;
 	};
 
@@ -64,6 +67,10 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	// listen to events from view
+	view.nodeMouseEnter = function(node) {
+		creator.attachToNode(node);
+	};
+	
 	view.nodeMouseDown = function(node) {
 		selectNode(node);
 	};
@@ -95,16 +102,15 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		toggleCollapse(node);
 	};
 
+	// CREATOR TOOL
 	var creator = view.getCreator();
-	
+
 	creator.dragStarted = function(node) {
-		if (node.isRoot()) {
-			creator.lineColor = Util.randomColor();
-		} else {
-			creator.lineColor = node.edgeColor;
-		}
+		// set edge color for new node. inherit from parent or random when root
+		var color = node.isRoot() ? Util.randomColor() : node.edgeColor;
+		creator.setLineColor(color);
 	};
-	
+
 	creator.dragStopped = function(parent, offsetX, offsetY) {
 		// disregard if the creator was only dragged a bit
 		var distance = Util.distance(offsetX, offsetY);
@@ -156,7 +162,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		view.makeDraggable();
 		view.center();
 	};
-	
+
 	function bind() {
 		// listen to global events
 		eventBus.subscribe(Event.DOCUMENT_OPENED, function() {

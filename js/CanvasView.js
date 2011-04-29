@@ -132,32 +132,79 @@ var DefaultCanvasView = function() {
 		root.offset = center;
 
 		self.createNode(root, $drawingArea);
-
-		// this.$getContainer().delegate("#drawing-area, canvas.line-canvas",
-		// "click", function(e) {
-		// if (e.target != this) {
-		// return false;
-		// }
-		//
-		// if (self.mapClicked) {
-		// self.mapClicked();
-		// }
-		// });
-
 	};
 
-	
-	var creator = {};
-	
+	var Creator = function() {
+		var self = this;
+		this.node = null;
+		this.lineColor = null;
+		
+		
+		// red dot creator element
+		var $nub = $("<div/>", {
+			"class" : "creator-nub"
+		});
+
+		// canvas used by the creator tool to draw new lines
+		var $canvas = $("<canvas/>", {
+			id : "creator-canvas",
+			"class" : "line-canvas"
+		}).hide().appendTo($nub);
+
+		$nub.draggable({
+			revert : true,
+			revertDuration : 0,
+			start : function() {
+				// show creator canvas
+				$canvas.show();
+				if (self.dragStarted) {
+					self.dragStarted(self.node);
+				}
+			},
+			drag : function(e, ui) {
+				// update creator canvas
+				var offsetX = ui.position.left;
+				var offsetY = ui.position.top;
+
+				// set depth+1 because we are drawing the canvas for the child
+				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
+						self.lineColor);
+			},
+			stop : function(e, ui) {
+				// remove creator canvas, gets replaced by real canvas
+				$canvas.hide();
+				if (self.dragStopped) {
+					self.dragStopped(self.node, ui.position.left,
+							ui.position.top);
+				}
+			}
+		});
+
+		this.attachToNode = function(node) {
+			if (this.node === node) {
+				return;
+			}
+			
+			this.node = node;
+			this.depth = node.getDepth();
+			
+			var $node = $getNode(node);
+			$nub.appendTo($node);
+		};
+		
+		this.detach = function() {
+			$nub.detach();
+		};
+
+		this.setLineColor = function(color) {
+			this.lineColor = color;
+		};
+	};
+
+	var creator = new Creator();
 	this.getCreator = function() {
 		return creator;
 	};
-	
-	// canvas used by the creator tool to draw new lines
-	creator.$canvas = $("<canvas/>", {
-		id : "creator-canvas",
-		"class" : "line-canvas"
-	});
 
 	/**
 	 * Inserts a new node including all of its children into the DOM.
@@ -205,7 +252,6 @@ var DefaultCanvasView = function() {
 		$node.draggable({
 			handle : "div.node-caption:first",
 			start : function() {
-				// console.log("drag start");
 				// cant drag root
 				if (node.isRoot()) {
 					return false;
@@ -253,6 +299,10 @@ var DefaultCanvasView = function() {
 			if (self.nodeDoubleClicked) {
 				self.nodeDoubleClicked(node);
 			}
+		}).mouseenter(function() {
+			if (self.nodeMouseEnter) {
+				self.nodeMouseEnter(node);
+			}
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -262,53 +312,15 @@ var DefaultCanvasView = function() {
 			this.createCollapseButton(parent);
 		}
 
-		// toggle visibility
 		if (!node.isRoot()) {
+			// toggle visibility
 			if (parent.collapseChildren) {
 				$node.hide();
 			} else {
 				$node.show();
 			}
-		}
 
-		// TODO delegate
-		// red dot creator element
-		var $creator = $("<div/>", {
-			"class" : "creator-nub"
-		}).appendTo($node);
-
-		$creator.draggable({
-			revert : true,
-			revertDuration : 0,
-			start : function() {
-				// show creator canvas
-				creator.$canvas.appendTo($creator);
-				if (creator.dragStarted) {
-					creator.dragStarted(node);
-				}
-			},
-			drag : function(e, ui) {
-				// update creator canvas
-				var offsetX = ui.position.left;
-				var offsetY = ui.position.top;
-
-				// set depth+1 because we are drawing the canvas for the child
-				drawLineCanvas(creator.$canvas, depth + 1, offsetX, offsetY,
-						creator.lineColor);
-			},
-			stop : function(e, ui) {
-				// remove creator canvas, gets replaced by real canvas
-				creator.$canvas.detach();
-				if (creator.dragStopped) {
-					creator.dragStopped(node, ui.position.left,
-							ui.position.top);
-				}
-			}
-		});
-
-		// draw canvas to parent if node is not a root
-		if (!node.isRoot()) {
-			// create canvas element
+			// draw canvas to parent if node is not a root
 			var $canvas = $("<canvas/>", {
 				id : "node-canvas-" + node.id,
 				"class" : "line-canvas"
@@ -326,6 +338,10 @@ var DefaultCanvasView = function() {
 	};
 
 	this.deleteNode = function(node) {
+		// detach creator first, we need still him
+		creator.detach();
+		
+		// delete all DOM below
 		var $node = $getNode(node);
 		$node.remove();
 	};
