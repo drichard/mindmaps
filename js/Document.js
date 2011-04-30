@@ -1,6 +1,6 @@
 var Document = function() {
 	this.id = Util.createUUID();
-	this.title = "New Document";
+	this.title = null;
 	this.mindmap = new MindMap();
 	this.dates = {
 		created : new Date(),
@@ -45,6 +45,10 @@ Document.prototype.toJSON = function() {
 
 Document.prototype.serialize = function() {
 	return JSON.stringify(this);
+};
+
+Document.prototype.getTitle = function() {
+	return this.title;
 };
 
 Document.prototype.setTitle = function(title) {

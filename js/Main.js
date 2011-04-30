@@ -44,6 +44,7 @@ var MainPresenter = function(eventBus, appModel, view) {
 		var toolbar = new ToolBarView();
 		//view.setToolBar(toolbar);
 		var toolbarPresenter = new ToolBarPresenter(eventBus, toolbar);
+		toolbarPresenter.go();
 		
 		var canvas = new DefaultCanvasView();
 		view.setCanvas(canvas);

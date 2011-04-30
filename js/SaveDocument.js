@@ -21,14 +21,16 @@ var SaveDocumentView = function() {
 			}
 		}
 	});
-	
+
 	var $titleInput = $("<input/>", {
-		type: "text"
+		type : "text"
 	});
-	
-	var $content = $("<div/>").append($("<span>Save as: <span>")).append($titleInput);
+
+	// TODO optional save as button somewhere
+	var $content = $("<div/>").append($("<span>Save as: <span>")).append(
+			$titleInput);
 	$saveDialog.html($content);
-	
+
 	this.showSaveDialog = function(title) {
 		$saveDialog.dialog("open");
 	};
@@ -36,17 +38,18 @@ var SaveDocumentView = function() {
 	this.hideSaveDialog = function() {
 		$saveDialog.dialog("close");
 	};
-	
+
 	this.getDocumentTitle = function() {
 		return $titleInput.val();
 	};
-	
+
 	this.setDocumentTitle = function(title) {
 		$titleInput.val(title);
 	};
 };
 
 var SaveDocumentPresenter = function(eventBus, appModel, view) {
+
 	view.cancelButtonClicked = function() {
 		view.hideSaveDialog();
 	};
@@ -55,7 +58,6 @@ var SaveDocumentPresenter = function(eventBus, appModel, view) {
 		var doc = appModel.getDocument();
 		var title = view.getDocumentTitle();
 		doc.setTitle(title);
-		
 		var savedDoc = LocalDocumentStorage.saveDocument(doc);
 		eventBus.publish(Event.DOCUMENT_SAVED);
 		view.hideSaveDialog();
