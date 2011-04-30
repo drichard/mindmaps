@@ -70,6 +70,7 @@ $(function() {
 	var appModel = new ApplicationModel();
 	var appController = new AppController(eventBus, appModel);
 	appController.go();
+	eventBus.publish(Event.OPEN_DOCUMENT);
 
 	// var map = getBinaryMapWithDepth(5);
 	// var doc = new Document();
