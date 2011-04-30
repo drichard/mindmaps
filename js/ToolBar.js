@@ -1,5 +1,6 @@
 var ToolBarView = function() {
 	var self = this;
+	var saveButton = null;
 
 	this.init = function() {
 		$("#toolbar button").button();
@@ -26,11 +27,12 @@ var ToolBarView = function() {
 			}
 		});
 
-		$("#button-save").button("option", "icons", {
-			primary : "ui-icon-disk"
-		});
-
-		$("#button-save").click(function() {
+		saveButton = $("#button-save").button("option", {
+			icons : {
+				primary : "ui-icon-disk"
+			},
+			disabled : true
+		}).click(function() {
 			if (self.saveButtonClicked) {
 				self.saveButtonClicked();
 			}
@@ -41,6 +43,10 @@ var ToolBarView = function() {
 		});
 
 		$("#button-draw").button();
+		$("#button-binaryMap").button().click(function() {
+			self.bigMapButtonClicked();
+		});
+
 	};
 
 	/**
@@ -48,8 +54,7 @@ var ToolBarView = function() {
 	 */
 	this.showSaved = function() {
 		var timeout = 2000;
-		var saveButton = $("#button-save");
-		
+
 		saveButton.button("option", {
 			disabled : true,
 			label : "saved"
@@ -62,9 +67,13 @@ var ToolBarView = function() {
 			});
 		}, timeout);
 	};
+
+	this.enableSaveButton = function() {
+		saveButton.button("enable");
+	};
 };
 
-var ToolBarPresenter = function(eventBus, view) {
+var ToolBarPresenter = function(eventBus, appModel, view) {
 	// view callbacks
 	view.deleteButtonClicked = function() {
 		eventBus.publish(Event.DELETE_SELECTED_NODE);
@@ -82,9 +91,25 @@ var ToolBarPresenter = function(eventBus, view) {
 		eventBus.publish(Event.NEW_DOCUMENT);
 	};
 
+	view.bigMapButtonClicked = function() {
+		var map = getBinaryMapWithDepth(8);
+		var doc = new Document();
+		doc.mindmap = map;
+		appModel.setDocument(doc);
+		eventBus.publish(Event.DOCUMENT_OPENED, doc);
+	};
+
 	// global events
 	eventBus.subscribe(Event.DOCUMENT_SAVED, function() {
 		view.showSaved();
+	});
+
+	eventBus.subscribe(Event.DOCUMENT_CREATED, function() {
+		view.enableSaveButton();
+	});
+
+	eventBus.subscribe(Event.DOCUMENT_OPENED, function() {
+		view.enableSaveButton();
 	});
 
 	this.go = function() {

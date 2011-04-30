@@ -6,7 +6,7 @@ var TreeNode = function() {
 	this.parent = null;
 	this.children = new NodeMap();
 	this.text = {
-		caption : "New Node",
+		caption : "Node " + this.id,
 		font : {
 			weight : "normal",
 			size : "inherit",

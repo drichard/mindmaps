@@ -9,7 +9,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	});
 
 	// TODO restrict keys on canvas area?
-	$(document).bind("keydown", "space", function() {
+	$(document).bind("keydown", "space", function(e) {
+		e.preventDefault();
 		if (selectedNode) {
 			toggleCollapse(selectedNode);
 		}
@@ -29,8 +30,10 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	var deleteSelectedNode = function() {
 		var node = selectedNode;
 		if (node) {
-			// remove from model
+			var parent = node.getParent();
 			var map = appModel.getMindMap();
+			
+			// remove from model
 			map.removeNode(node);
 
 			// update view
@@ -70,10 +73,11 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	view.nodeMouseEnter = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
-			return;
+			//console.log("draggin: over node: ", node.id);
+		} else {
+			console.log("over node: ", node.id);
+			creator.attachToNode(node);
 		}
-		
-		creator.attachToNode(node);
 	};
 	
 	view.nodeMouseDown = function(node) {
@@ -160,6 +164,12 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		// set view
 		view.setNodeText(node, str);
 		view.stopEditNodeCaption();
+		
+		// change document title when node was renamed
+		if (node.isRoot()) {
+			var doc = appModel.getDocument();
+			doc.setTitle(str);
+		}
 	};
 
 	this.go = function() {

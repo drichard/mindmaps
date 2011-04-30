@@ -117,13 +117,13 @@ function getBinaryMapWithDepth(depth) {
 	}
 	
 	// color nodes
-	c[0].edgeColor = "blue";
+	c[0].edgeColor = Util.randomColor();
 	c[0].forEachDescendant(function (node) {
-		node.edgeColor = "blue";
+		node.edgeColor = Util.randomColor();
 	});
-	c[1].edgeColor = "green";
+	c[1].edgeColor = Util.randomColor();
 	c[1].forEachDescendant(function (node) {
-		node.edgeColor = "green";
+		node.edgeColor = Util.randomColor();
 	});
 
 	return mm;

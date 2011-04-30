@@ -122,9 +122,7 @@ var DefaultCanvasView = function() {
 		$drawingArea.addClass("mindmap");
 
 		// setup delegates
-		// FIXME mousedown delegate does not work on drawingArea. WHY? works on
-		// root and container
-		this.$getContainer().delegate("div.node-caption", "mousedown",
+		$drawingArea.delegate("div.node-caption", "mousedown",
 				function(e) {
 					var node = $(this).data("node");
 					if (self.nodeMouseDown) {
@@ -146,7 +144,7 @@ var DefaultCanvasView = function() {
 			}
 		});
 
-		$drawingArea.delegate("div.node-caption", "mouseenter", function(e) {
+		$drawingArea.delegate("div.node-caption", "mouseover", function(e) {
 			var node = $(this).data("node");
 			if (self.nodeMouseEnter) {
 				self.nodeMouseEnter(node);
@@ -155,6 +153,7 @@ var DefaultCanvasView = function() {
 	};
 
 	this.drawMap = function(map) {
+		var now = new Date().getTime();
 		var $drawingArea = this.$getDrawingArea();
 
 		// clear map first
@@ -168,6 +167,7 @@ var DefaultCanvasView = function() {
 		root.offset = center;
 
 		self.createNode(root, $drawingArea);
+		console.log("draw map ms: ", new Date().getTime() - now);
 	};
 
 	/**

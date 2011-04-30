@@ -137,6 +137,8 @@ html,body {
 
 .mindmap .node-container {
 	position: absolute;
+	width: 100px;
+	height: 40px;
 }
 
 .mindmap .root > .node-caption {
@@ -151,15 +153,18 @@ html,body {
 .mindmap .node-caption {
 	position: absolute;
 	cursor: move;
-	z-index: 1000;
+	z-index: 100;
 	padding: 4px;
 	min-width: 50px;
 	text-align: center;
+	background: white;
 }
 
 .mindmap .node-caption.selected {
 	border: 2px solid red;
 	border-radius: 5px;
+	background: yellow;
+	z-index: 1000;
 }
 
 .mindmap .button-collapse {
