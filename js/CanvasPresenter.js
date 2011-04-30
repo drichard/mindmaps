@@ -75,7 +75,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			// dont relocate the creator if we are dragging
 			//console.log("draggin: over node: ", node.id);
 		} else {
-			console.log("over node: ", node.id);
+			//console.log("over node: ", node.id);
 			creator.attachToNode(node);
 		}
 	};

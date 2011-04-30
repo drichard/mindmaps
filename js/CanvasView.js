@@ -122,13 +122,12 @@ var DefaultCanvasView = function() {
 		$drawingArea.addClass("mindmap");
 
 		// setup delegates
-		$drawingArea.delegate("div.node-caption", "mousedown",
-				function(e) {
-					var node = $(this).data("node");
-					if (self.nodeMouseDown) {
-						self.nodeMouseDown(node);
-					}
-				});
+		$drawingArea.delegate("div.node-caption", "mousedown", function(e) {
+			var node = $(this).data("node");
+			if (self.nodeMouseDown) {
+				self.nodeMouseDown(node);
+			}
+		});
 
 		$drawingArea.delegate("div.node-caption", "mouseup", function(e) {
 			var node = $(this).data("node");
@@ -144,7 +143,7 @@ var DefaultCanvasView = function() {
 			}
 		});
 
-		$drawingArea.delegate("div.node-caption", "mouseover", function(e) {
+		$drawingArea.delegate("div.node-caption", "mouseenter", function(e) {
 			var node = $(this).data("node");
 			if (self.nodeMouseEnter) {
 				self.nodeMouseEnter(node);
@@ -166,7 +165,13 @@ var DefaultCanvasView = function() {
 				$drawingArea.height() / 2);
 		root.offset = center;
 
+		// detach drawing area during map creation to avoid unnecessary DOM
+		// repaint events. (binary7 is 3 times faster)
+		var $parent = $drawingArea.parent();
+		$drawingArea.detach();
 		self.createNode(root, $drawingArea);
+		$drawingArea.appendTo($parent);
+
 		console.log("draw map ms: ", new Date().getTime() - now);
 	};
 
@@ -205,47 +210,46 @@ var DefaultCanvasView = function() {
 			$node.addClass("root");
 		}
 
-		// TODO if performance suffers: use event delegation for click and drag
-		// handlers. have a look at .live(), .delegate()
-		// liveDraggable:
-		// http://stackoverflow.com/questions/1805210/jquery-drag-and-drop-using-live-events
-		// delegation would mean that i dont have to attach event handlers to
-		// newly created elements
-
 		// node drag behaviour
-		$node.draggable({
-			handle : "div.node-caption:first",
-			start : function() {
-				// cant drag root
-				if (node.isRoot()) {
-					return false;
-				}
-				
-				nodeDragging = true;
-			},
-			drag : function(e, ui) {
-				// reposition and draw canvas while dragging
-				var $canvas = $getNodeCanvas(node);
-				var offsetX = ui.position.left;
-				var offsetY = ui.position.top;
-				var color = node.edgeColor;
+		/**
+		 * Only attach the drag handler once we mouse over it. this speeds up
+		 * loading of big maps.
+		 */
+		$node.one("mouseenter", function() {
+			$node.draggable({
+				handle : "div.node-caption:first",
+				start : function() {
+					// cant drag root
+					if (node.isRoot()) {
+						return false;
+					}
 
-				drawLineCanvas($canvas, depth, offsetX, offsetY, color);
+					nodeDragging = true;
+				},
+				drag : function(e, ui) {
+					// reposition and draw canvas while dragging
+					var $canvas = $getNodeCanvas(node);
+					var offsetX = ui.position.left;
+					var offsetY = ui.position.top;
+					var color = node.edgeColor;
 
-				// fire dragging event
-				if (self.nodeDragging) {
-					self.nodeDragging();
-				}
-			},
-			stop : function(e, ui) {
-				nodeDragging = false;
-				var pos = new Point(ui.position.left, ui.position.top);
+					drawLineCanvas($canvas, depth, offsetX, offsetY, color);
 
-				// fire dragged event
-				if (self.nodeDragged) {
-					self.nodeDragged(node, pos);
+					// fire dragging event
+					if (self.nodeDragging) {
+						self.nodeDragging();
+					}
+				},
+				stop : function(e, ui) {
+					nodeDragging = false;
+					var pos = new Point(ui.position.left, ui.position.top);
+
+					// fire dragged event
+					if (self.nodeDragged) {
+						self.nodeDragged(node, pos);
+					}
 				}
-			}
+			});
 		});
 
 		// text caption
@@ -380,7 +384,7 @@ var DefaultCanvasView = function() {
 
 		// TODO show editor in place of node caption
 
-		this.$getDrawingArea().bind("mousedown", function(e) {
+		this.$getDrawingArea().bind("mousedown.editNodeCaption", function(e) {
 			self.stopEditNodeCaption();
 		});
 
@@ -393,7 +397,7 @@ var DefaultCanvasView = function() {
 
 	this.stopEditNodeCaption = function() {
 		if (editorAttached) {
-			this.$getDrawingArea().unbind("mousedown");
+			this.$getDrawingArea().unbind("mousedown.editNodeCaption");
 			$captionEditor.detach();
 			editorAttached = false;
 		}
@@ -407,7 +411,7 @@ var DefaultCanvasView = function() {
 	this.getCreator = function() {
 		return creator;
 	};
-	
+
 	this.isNodeDragging = function() {
 		return nodeDragging;
 	};
@@ -415,7 +419,7 @@ var DefaultCanvasView = function() {
 	function Creator() {
 		var self = this;
 		var dragging = false;
-		
+
 		this.node = null;
 		this.lineColor = null;
 
@@ -480,7 +484,7 @@ var DefaultCanvasView = function() {
 		this.setLineColor = function(color) {
 			this.lineColor = color;
 		};
-		
+
 		this.isDragging = function() {
 			return dragging;
 		};
