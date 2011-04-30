@@ -141,11 +141,11 @@ html,body {
 	height: 40px;
 }
 
-.mindmap .root > .node-caption {
+.mindmap .root>.node-caption {
 	background: white;
 	border: 3px solid orange;
 	border-radius: 10px 10px 10px 10px;
-	font-size: 20px;
+	font-size: 2.5em;
 	font-weight: bold;
 	padding: 6px;
 }
@@ -158,6 +158,7 @@ html,body {
 	min-width: 50px;
 	text-align: center;
 	background: white;
+	font-size: 1.5em;
 }
 
 .mindmap .node-caption.selected {
@@ -189,6 +190,15 @@ html,body {
 	border: 1px solid red;
 	border-radius: 7px;
 	z-index: 1000;
+}
+
+.mindmap .caption-editor {
+	background: none;
+	border: 1px solid black;
+	font: inherit;
+	width: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 .mindmap .button-collapse.closed {

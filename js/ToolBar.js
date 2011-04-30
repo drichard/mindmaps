@@ -56,13 +56,11 @@ var ToolBarView = function() {
 		var timeout = 2000;
 
 		saveButton.button("option", {
-			disabled : true,
 			label : "saved"
 		});
 
 		setTimeout(function() {
 			saveButton.button("option", {
-				disabled : false,
 				label : "save"
 			});
 		}, timeout);

@@ -115,7 +115,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	creator.dragStarted = function(node) {
 		// set edge color for new node. inherit from parent or random when root
 		var color = node.isRoot() ? Util.randomColor() : node.edgeColor;
-		creator.setLineColor(color);
+		return color;
 	};
 
 	creator.dragStopped = function(parent, offsetX, offsetY) {
@@ -162,8 +162,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		node.setCaption(str);
 
 		// set view
+		view.stopEditNodeCaption(false);
 		view.setNodeText(node, str);
-		view.stopEditNodeCaption();
 		
 		// change document title when node was renamed
 		if (node.isRoot()) {

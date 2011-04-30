@@ -28,6 +28,11 @@ var DefaultCanvasView = function() {
 	var self = this;
 	var nodeDragging = false;
 	var creator = new Creator();
+	var captionEditor = new CaptionEditor();
+	
+	captionEditor.commit = function(text) {
+		self.nodeCaptionEditCommitted(text);
+	};
 
 	function makeDraggable() {
 		self.$getContainer().dragscrollable({
@@ -228,10 +233,10 @@ var DefaultCanvasView = function() {
 				},
 				drag : function(e, ui) {
 					// reposition and draw canvas while dragging
-					var $canvas = $getNodeCanvas(node);
 					var offsetX = ui.position.left;
 					var offsetY = ui.position.top;
 					var color = node.edgeColor;
+					var $canvas = $getNodeCanvas(node);
 
 					drawLineCanvas($canvas, depth, offsetX, offsetY, color);
 
@@ -255,7 +260,7 @@ var DefaultCanvasView = function() {
 		// text caption
 		var $text = $("<div/>", {
 			id : "node-caption-" + node.id,
-			"class" : "node-caption no-select",
+			"class" : "node-caption",
 			text : node.text.caption
 		}).data({
 			node : node
@@ -358,49 +363,66 @@ var DefaultCanvasView = function() {
 		}).children(".button-collapse").remove();
 	};
 
-	// text input for node edits.
-	var $captionEditor = $("<input/>", {
-		type : "text"
-	}).css({
-		position : "absolute",
-		"z-index" : 1000,
-		top : "30px"
-	}).bind("keydown", "esc", function() {
-		self.stopEditNodeCaption();
-	}).bind("keydown", "return", function() {
-		var value = $captionEditor.val();
-		if (self.nodeCaptionEditCommitted) {
-			self.nodeCaptionEditCommitted(value);
-		}
-	}).mousedown(function(e) {
-		e.stopPropagation();
-	});
-	var editorAttached = false;
+	function CaptionEditor() {
+		var self = this;
+		var attached = false;
+		var oldText = null;
+		var $text = null;
+		var $cancelArea = null;
 
-	this.editNodeCaption = function(node) {
-		var $node = $getNode(node);
-		var $text = $getNodeCaption(node);
-		var content = $text.text();
-
-		// TODO show editor in place of node caption
-
-		this.$getDrawingArea().bind("mousedown.editNodeCaption", function(e) {
-			self.stopEditNodeCaption();
+		// text input for node edits.
+		var $editor = $("<input/>", {
+			type : "text",
+			"class" : "caption-editor"
+		}).bind("keydown", "esc", function() {
+			self.stop(true);
+		}).bind("keydown", "return", function() {
+			if (self.commit) {
+				self.commit($editor.val());
+			}
+		}).mousedown(function(e) {
+			// avoid premature canceling
+			e.stopPropagation();
 		});
 
-		// show editor
-		$captionEditor.attr({
-			value : content
-		}).appendTo($node).select();
-		editorAttached = true;
+		this.edit = function($text_, $cancelArea_) {
+			$text = $text_;
+			$cancelArea = $cancelArea_;
+			oldText = $text.text();
+			$text.empty();
+
+			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
+				self.stop(true);
+			});
+
+			// show editor
+			$editor.attr({
+				value : oldText
+			}).appendTo($text).select();
+			attached = true;
+		};
+
+		this.stop = function(cancel) {
+			if (attached) {
+				attached = false;
+				$editor.detach();
+				$cancelArea.unbind("mousedown.editNodeCaption");
+			}
+
+			if (cancel) {
+				$text.text(oldText);
+			}
+		};
+	}
+
+	this.editNodeCaption = function(node) {
+		var $text = $getNodeCaption(node);
+		var $cancelArea = this.$getDrawingArea();
+		captionEditor.edit($text, $cancelArea);
 	};
 
-	this.stopEditNodeCaption = function() {
-		if (editorAttached) {
-			this.$getDrawingArea().unbind("mousedown.editNodeCaption");
-			$captionEditor.detach();
-			editorAttached = false;
-		}
+	this.stopEditNodeCaption = function(cancel) {
+		captionEditor.stop(cancel);
 	};
 
 	this.setNodeText = function(node, value) {
@@ -442,7 +464,7 @@ var DefaultCanvasView = function() {
 				// show creator canvas
 				$canvas.show();
 				if (self.dragStarted) {
-					self.dragStarted(self.node);
+					self.lineColor = self.dragStarted(self.node);
 				}
 			},
 			drag : function(e, ui) {
@@ -479,10 +501,6 @@ var DefaultCanvasView = function() {
 
 		this.detach = function() {
 			$nub.detach();
-		};
-
-		this.setLineColor = function(color) {
-			this.lineColor = color;
 		};
 
 		this.isDragging = function() {
