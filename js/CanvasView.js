@@ -29,7 +29,7 @@ var DefaultCanvasView = function() {
 	var nodeDragging = false;
 	var creator = new Creator();
 	var captionEditor = new CaptionEditor();
-	
+
 	captionEditor.commit = function(text) {
 		self.nodeCaptionEditCommitted(text);
 	};
@@ -52,6 +52,111 @@ var DefaultCanvasView = function() {
 
 	function $getNodeCaption(node) {
 		return $("#node-caption-" + node.id);
+	}
+
+	function drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
+			color) {
+		// TODO optimize
+		var left;
+		if (offsetX < 0) {
+			left = $node.width();
+		} else {
+			left = -(offsetX - $parent.width());
+		}
+
+		var top;
+		if (offsetY < 0) {
+			top = $node.height();
+		} else {
+			top = -(offsetY - $parent.height());
+		}
+
+		var width;
+		if (offsetX < 0) {
+			width = Math.abs($node.width() + offsetX);
+		} else {
+			width = offsetX - $parent.width();
+		}
+
+		var height;
+		if (offsetY < 0) {
+			var t;
+			if ($node.height() > offsetY) {
+				t = $node.height() + offsetY;
+			} else {
+				t = $node.height() - offsetY;
+			}
+
+			height = $parent.outerHeight() - t;
+
+		} else {
+			height = $node.outerHeight() + offsetY - $parent.height();
+		}
+
+		/**
+		 * Positions the canvas correctly.
+		 */
+		$canvas.attr({
+			width : width,
+			height : height
+		}).css({
+			// "border" : "1px solid #DDD",
+			left : left + "px",
+			top : top + "px"
+		});
+
+		// 2. draw the thing
+		var canvas = $canvas[0];
+		var ctx = canvas.getContext("2d");
+
+		var lineWidth = 10 - depth || 1;
+		ctx.lineWidth = lineWidth;
+
+		ctx.strokeStyle = color;
+		ctx.fillStyle = color;
+
+		var startX, startY, endX, endY;
+
+		if (left < 0) {
+			startX = 0;
+			endX = width;
+		} else {
+			startX = width;
+			endX = 0;
+		}
+
+		if (offsetY + $node.height() > $parent.height()) { // c
+			startY = 0 + lineWidth / 2;
+			endY = height - lineWidth / 2;
+		} else {
+			startY = height - lineWidth / 2;
+			endY = 0 + lineWidth / 2;
+		}
+
+		ctx.beginPath();
+		ctx.moveTo(startX, startY);
+
+		var cp1x = startX < endX ? endX / 5 : startX - (startX / 5);
+		var cp1y = startY;
+		var cp2x = Math.abs(startX - endX) / 2;
+		var cp2y = endY;
+		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
+		// ctx.lineTo(endX, endY);
+		ctx.stroke();
+
+		var drawControlPoints = false;
+		if (drawControlPoints) {
+			// control points
+			ctx.beginPath();
+			ctx.fillStyle = "red";
+			ctx.arc(cp1x, cp1y, 4, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.fillStyle = "green";
+			ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
+			ctx.fill();
+		}
+
 	}
 
 	function drawLineCanvas($canvas, depth, offsetX, offsetY, color) {
@@ -170,12 +275,20 @@ var DefaultCanvasView = function() {
 				$drawingArea.height() / 2);
 		root.offset = center;
 
-		// detach drawing area during map creation to avoid unnecessary DOM
-		// repaint events. (binary7 is 3 times faster)
-		var $parent = $drawingArea.parent();
-		$drawingArea.detach();
-		self.createNode(root, $drawingArea);
-		$drawingArea.appendTo($parent);
+		// 1.5. do NOT detach for now since DIV dont have widths and heights,
+		// and loading maps draws wrong canvases (or create nodes and then draw canvases)
+
+		var detach = false;
+		if (detach) {
+			// detach drawing area during map creation to avoid unnecessary DOM
+			// repaint events. (binary7 is 3 times faster)
+			var $parent = $drawingArea.parent();
+			$drawingArea.detach();
+			self.createNode(root, $drawingArea);
+			$drawingArea.appendTo($parent);
+		} else {
+			self.createNode(root, $drawingArea);
+		}
 
 		console.log("draw map ms: ", new Date().getTime() - now);
 	};
@@ -202,13 +315,22 @@ var DefaultCanvasView = function() {
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
 
+		var bb = "none";
+
+		if (!node.isRoot()) {
+			var bThickness = 10 - depth || 1;
+			var bColor = node.edgeColor;
+			var bb = bThickness + "px solid " + bColor;
+		}
+
 		// div node container
 		var $node = $("<div/>", {
 			id : "node-" + node.id,
 			"class" : "node-container"
 		}).css({
 			left : offsetX + "px",
-			top : offsetY + "px"
+			top : offsetY + "px",
+			"border-bottom" : bb
 		}).appendTo($parent);
 
 		if (node.isRoot()) {
@@ -238,7 +360,8 @@ var DefaultCanvasView = function() {
 					var color = node.edgeColor;
 					var $canvas = $getNodeCanvas(node);
 
-					drawLineCanvas($canvas, depth, offsetX, offsetY, color);
+					drawLineCanvas2($canvas, depth, offsetX, offsetY, $node,
+							$parent, color);
 
 					// fire dragging event
 					if (self.nodeDragging) {
@@ -288,7 +411,10 @@ var DefaultCanvasView = function() {
 			});
 
 			// position and draw connection
-			drawLineCanvas($canvas, depth, offsetX, offsetY, node.edgeColor);
+			// drawLineCanvas($canvas, depth, offsetX, offsetY, node.edgeColor);
+
+			drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
+					node.edgeColor);
 			$canvas.appendTo($node);
 		}
 
@@ -336,9 +462,10 @@ var DefaultCanvasView = function() {
 	};
 
 	this.createCollapseButton = function(node) {
-		var openClosed = node.collapseChildren ? "closed" : "open";
+		var position = node.offset.x > 0 ? " right" : " left";
+		var openClosed = node.collapseChildren ? " closed" : " open";
 		var $collapseButton = $("<div/>", {
-			"class" : "button-collapse no-select " + openClosed
+			"class" : "button-collapse no-select" + openClosed + position
 		}).click(function(e) {
 			// fire event
 			if (self.collapseButtonClicked) {
@@ -389,21 +516,29 @@ var DefaultCanvasView = function() {
 			$text = $text_;
 			$cancelArea = $cancelArea_;
 			oldText = $text.text();
+			var width = $text.width();
+			var height = $text.height();
 			$text.empty();
 
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
 				self.stop(true);
 			});
+			
+			$text.addClass("edit");
 
 			// show editor
 			$editor.attr({
 				value : oldText
+			}).css({
+				width : width + "px",
+				height : height + "px"
 			}).appendTo($text).select();
 			attached = true;
 		};
 
 		this.stop = function(cancel) {
 			if (attached) {
+				$text.removeClass("edit");
 				attached = false;
 				$editor.detach();
 				$cancelArea.unbind("mousedown.editNodeCaption");
@@ -475,6 +610,10 @@ var DefaultCanvasView = function() {
 				// set depth+1 because we are drawing the canvas for the child
 				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
 						self.lineColor);
+
+				var $node = $getNode(self.node);
+				drawLineCanvas2($canvas, self.depth + 1, offsetX, offsetY,
+						$nub, $node, self.lineColor);
 			},
 			stop : function(e, ui) {
 				dragging = false;

@@ -137,54 +137,65 @@ html,body {
 
 .mindmap .node-container {
 	position: absolute;
-	width: 100px;
-	height: 40px;
+	min-width: 80px;
+	min-height: 30px;
 }
 
-.mindmap .root>.node-caption {
+.mindmap .root > .node-caption {
 	background: white;
 	border: 3px solid orange;
 	border-radius: 10px 10px 10px 10px;
-	font-size: 2.5em;
+	font-size: 2em;
 	font-weight: bold;
-	padding: 6px;
+	padding: 4px;
+	width: 100px;
 }
 
 .mindmap .node-caption {
-	position: absolute;
+	position: relative;
 	cursor: move;
 	z-index: 100;
 	padding: 4px;
 	min-width: 50px;
 	text-align: center;
-	background: white;
 	font-size: 1.5em;
 }
 
 .mindmap .node-caption.selected {
 	border: 2px solid red;
 	border-radius: 5px;
-	background: yellow;
 	z-index: 1000;
 }
 
+.mindmap .node-caption.selected.edit {
+	border: 2px solid blue;
+}
+
 .mindmap .button-collapse {
-	top: 20px;
 	width: 16px;
 	height: 16px;
+	bottom: -12px;
 	background-image: url("../img/plus-minus.gif");
 	background-repeat: no-repeat;
+	background-color: white;
 	position: absolute;
 	z-index: 1000;
 	cursor: pointer;
-	width: 16px;
+}
+
+.mindmap .button-collapse.left {
+	left: 0;
+}
+
+.mindmap .button-collapse.right {
+	right: 0;
 }
 
 .mindmap .creator-nub {
 	width: 10px;
 	height: 10px;
 	background: red;
-	position: absolute;
+	position: absolute !important;
 	left: 40px;
 	top: 20px;
 	border: 1px solid red;
@@ -194,7 +205,7 @@ html,body {
 
 .mindmap .caption-editor {
 	background: none;
-	border: 1px solid black;
+	border: none;
 	font: inherit;
 	width: 100%;
 	margin: 0;
