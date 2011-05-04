@@ -176,6 +176,10 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		view.stopEditNodeCaption(false);
 		view.setNodeText(node, str);
 		
+		// redraw node in case height has changed
+		// TODO maybe only redraw if height has changed
+		view.redrawNode(node);
+		
 		// change document title when node was renamed
 		if (node.isRoot()) {
 			var doc = appModel.getDocument();

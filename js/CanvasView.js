@@ -67,7 +67,8 @@ var DefaultCanvasView = function() {
 		}
 
 		// is the node's border bottom bar above the parent's?
-		var nodeBelowParent = offsetY + $node.innerHeight() < $parent.innerHeight();
+		var nodeBelowParent = offsetY + $node.innerHeight() < $parent
+				.innerHeight();
 		if (nodeBelowParent) {
 			top = $node.innerHeight();
 			height = $parent.outerHeight() - offsetY - top;
@@ -108,7 +109,7 @@ var DefaultCanvasView = function() {
 			endX = 0;
 		}
 
-		if (nodeBelowParent) { // c
+		if (nodeBelowParent) {
 			startY = height - lineWidth / 2;
 			endY = 0 + lineWidth / 2;
 		} else {
@@ -245,7 +246,7 @@ var DefaultCanvasView = function() {
 			}
 			return false;
 		});
-		
+
 		$drawingArea.delegate("div.node-caption", "mouseover", function(e) {
 			if (e.target === this) {
 				var node = $(this).parent().data("node");
@@ -405,8 +406,6 @@ var DefaultCanvasView = function() {
 			});
 
 			// position and draw connection
-			// drawLineCanvas($canvas, depth, offsetX, offsetY, node.edgeColor);
-
 			drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
 					node.edgeColor);
 			$canvas.appendTo($node);
@@ -415,7 +414,7 @@ var DefaultCanvasView = function() {
 		if (node.isRoot()) {
 			$node.children().andSelf().addClass("root");
 		}
-		
+
 		// draw child nodes
 		node.forEachChild(function(child) {
 			self.createNode(child, $node, depth + 1);
@@ -511,6 +510,36 @@ var DefaultCanvasView = function() {
 		return nodeDragging;
 	};
 
+	this.redrawNode = function(node) {
+		function drawNodeCanvas(node) {
+			// TODO inline
+			var parent = node.getParent();
+			var depth = node.getDepth();
+			var offsetX = node.offset.x;
+			var offsetY = node.offset.y;
+			var color = node.edgeColor;
+
+			var $node = $getNode(node);
+			var $parent = $getNode(parent);
+			var $canvas = $getNodeCanvas(node);
+
+			drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
+					color);
+		}
+
+		// redraw canvas to parent
+		if (!node.isRoot()) {
+			drawNodeCanvas(node);
+		}
+
+		// redraw all child canvases
+		if (!node.isLeaf()) {
+			node.forEachChild(function(child) {
+				drawNodeCanvas(child);
+			});
+		}
+	};
+
 	function CaptionEditor() {
 		var self = this;
 		var attached = false;
@@ -580,9 +609,9 @@ var DefaultCanvasView = function() {
 		this.lineColor = null;
 
 		$wrapper = $("<div/>", {
-			id: "creator-wrapper"
+			id : "creator-wrapper"
 		});
-		
+
 		// red dot creator element
 		var $nub = $("<div/>", {
 			id : "creator-nub"
@@ -611,9 +640,6 @@ var DefaultCanvasView = function() {
 				var offsetY = ui.position.top;
 
 				// set depth+1 because we are drawing the canvas for the child
-				// drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
-				// self.lineColor);
-
 				var $node = $getNode(self.node);
 				drawLineCanvas2($canvas, self.depth + 1, offsetX, offsetY,
 						$nub, $node, self.lineColor);
@@ -637,18 +663,18 @@ var DefaultCanvasView = function() {
 			this.node = node;
 			this.depth = node.getDepth();
 			var $node = $getNode(node);
-			
+
 			// position the nub correctly
 			if (node.offset.x > 0) {
 				$wrapper.removeClass("left").addClass("right");
 			} else {
 				$wrapper.removeClass("right").addClass("left");
 			}
-			
+
 			// remove any positioning that the draggable might have caused
 			$wrapper.css({
-				left: "",
-				top: ""
+				left : "",
+				top : ""
 			});
 			$wrapper.appendTo($node);
 		};

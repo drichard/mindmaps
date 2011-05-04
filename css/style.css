@@ -237,6 +237,7 @@ html,body {
 	width: 24px;
 	height: 24px;
 	background-image: url("../img/creator-nub.png");
+	background-size: 24px 24px;
 	position: relative;
 	z-index: 1000;
 }
