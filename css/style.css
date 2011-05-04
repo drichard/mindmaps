@@ -143,17 +143,30 @@ html,body {
 }
 
 .mindmap .root.node-container {
-	border-bottom: 10px
+	border-bottom: 10px;
+	width: 1px;
+	min-width: 0px;
+	height: 20px;
 }
 
-.mindmap .root > .node-caption {
+.mindmap .root.node-caption {
+	cursor: default;
 	background: white;
 	border: 3px solid orange;
 	border-radius: 10px 10px 10px 10px;
 	font-size: 2em;
 	font-weight: bold;
 	width: 100px;
+	left: -50px;
+	position: absolute;
 }
+
+.mindmap .root.node-caption.selected {
+	border: 3px solid red;
+	border-radius: 10px;
+	padding: 4px;
+}
+
 
 .mindmap .node-caption {
 	position: relative;
@@ -206,23 +219,27 @@ html,body {
 	background-position: 0px 0px;
 }
 
-#creator-nub {
-	width: 24px;
-	height: 24px;
+
+#creator-wrapper {
 	position: absolute !important;
 	bottom: -16px;
-	z-index: 1000;
-	background-image: url("../img/creator-nub.png")
 }
 
-#creator-nub.left {
+#creator-wrapper.left {
 	left: -18px;
 }
 
-#creator-nub.right {
+#creator-wrapper.right {
 	right: -18px;
 }
 
+#creator-nub {
+	width: 24px;
+	height: 24px;
+	background-image: url("../img/creator-nub.png");
+	position: relative;
+	z-index: 1000;
+}
 
 #creator-nub:hover {
 	background-image: url("../img/creator-nub-selected.png")

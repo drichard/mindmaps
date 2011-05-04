@@ -333,10 +333,6 @@ var DefaultCanvasView = function() {
 			node : node
 		}).appendTo($parent);
 
-		if (node.isRoot()) {
-			$node.addClass("root");
-		}
-
 		// node drag behaviour
 		/**
 		 * Only attach the drag handler once we mouse over it. this speeds up
@@ -416,6 +412,10 @@ var DefaultCanvasView = function() {
 			$canvas.appendTo($node);
 		}
 
+		if (node.isRoot()) {
+			$node.children().andSelf().addClass("root");
+		}
+		
 		// draw child nodes
 		node.forEachChild(function(child) {
 			self.createNode(child, $node, depth + 1);
@@ -579,18 +579,22 @@ var DefaultCanvasView = function() {
 		this.node = null;
 		this.lineColor = null;
 
+		$wrapper = $("<div/>", {
+			id: "creator-wrapper"
+		});
+		
 		// red dot creator element
 		var $nub = $("<div/>", {
 			id : "creator-nub"
-		});
+		}).appendTo($wrapper);
 
 		// canvas used by the creator tool to draw new lines
 		var $canvas = $("<canvas/>", {
 			id : "creator-canvas",
 			"class" : "line-canvas"
-		}).hide().appendTo($nub);
+		}).hide().appendTo($wrapper);
 
-		$nub.draggable({
+		$wrapper.draggable({
 			revert : true,
 			revertDuration : 0,
 			start : function() {
@@ -634,21 +638,23 @@ var DefaultCanvasView = function() {
 			this.depth = node.getDepth();
 			var $node = $getNode(node);
 			
+			// position the nub correctly
 			if (node.offset.x > 0) {
-				$nub.removeClass("left").addClass("right");
+				$wrapper.removeClass("left").addClass("right");
 			} else {
-				$nub.removeClass("right").addClass("left");
+				$wrapper.removeClass("right").addClass("left");
 			}
 			
 			// remove any positioning that the draggable might have caused
-			$nub.css({
+			$wrapper.css({
 				left: "",
 				top: ""
-			}).appendTo($node);
+			});
+			$wrapper.appendTo($node);
 		};
 
 		this.detach = function() {
-			$nub.detach();
+			$wrapper.detach();
 		};
 
 		this.isDragging = function() {
