@@ -195,9 +195,8 @@ html,body {
 	width: 16px;
 	height: 16px;
 	bottom: -12px;
-	background-image: url("../img/plus-minus.gif");
+	background-image: url("../img/plus-minus.png");
 	background-repeat: no-repeat;
-	background-color: white;
 	position: absolute;
 	z-index: 1000;
 	cursor: pointer;
