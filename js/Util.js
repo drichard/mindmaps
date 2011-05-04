@@ -2,6 +2,7 @@ var Util = Util || {};
 
 /**
  * Creates a UUID in compliance with RFC4122.
+ * 
  * @returns a unique id as a String
  */
 Util.createUUID = function() {
@@ -18,9 +19,18 @@ Util.getId = function() {
 	return id++;
 };
 
-// from: http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript/5365036#5365036
 Util.randomColor = function() {
-	return "#"+((1<<24)*Math.random()|0).toString(16);
+	// http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript/5365036#5365036
+	// return "#"+((1<<24)*Math.random()|0).toString(16);
+
+	// http://paulirish.com/2009/random-hex-color-code-snippets/#comment-34808
+	// return '#'+~~(Math.random()*(1<<24)).toString(16);
+	
+	
+	// http://paulirish.com/2009/random-hex-color-code-snippets/#comment-34878
+	return (function(h) {
+		return '#000000'.substr(0, 7 - h.length) + h;
+	})((~~(Math.random() * (1 << 24))).toString(16));
 };
 
 function timeit(func, caption) {
@@ -32,9 +42,8 @@ function timeit(func, caption) {
 }
 
 Util.distance = function(offsetX, offsetY) {
-	return Math.sqrt(offsetX*offsetX + offsetY*offsetY);
+	return Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 };
-
 
 /**
  * Point class.
@@ -96,33 +105,33 @@ function getBinaryMapWithDepth(depth) {
 	// generate positions for all nodes.
 	// tree grows balanced from left to right
 	root.offset = new Point(400, 400);
-	//var offset = Math.pow(2, depth-1) * 10;
+	// var offset = Math.pow(2, depth-1) * 10;
 	var offset = 80;
 	var c = root.children.values();
 	setOffset(c[0], 0, -offset);
 	setOffset(c[1], 0, offset);
 	function setOffset(node, depth, offsetY) {
 		node.offset = new Point((depth + 1) * 50, offsetY);
-		
+
 		if (node.isLeaf()) {
 			return;
 		}
-		
+
 		var c = node.children.values();
 		var left = c[0];
-		setOffset(left, depth+1, offsetY - offsetY/2);
-		
+		setOffset(left, depth + 1, offsetY - offsetY / 2);
+
 		var right = c[1];
-		setOffset(right, depth+1, offsetY + offsetY/2);
+		setOffset(right, depth + 1, offsetY + offsetY / 2);
 	}
-	
+
 	// color nodes
 	c[0].edgeColor = Util.randomColor();
-	c[0].forEachDescendant(function (node) {
+	c[0].forEachDescendant(function(node) {
 		node.edgeColor = Util.randomColor();
 	});
 	c[1].edgeColor = Util.randomColor();
-	c[1].forEachDescendant(function (node) {
+	c[1].forEachDescendant(function(node) {
 		node.edgeColor = Util.randomColor();
 	});
 

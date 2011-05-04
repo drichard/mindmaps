@@ -70,7 +70,18 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	// listen to events from view
-	view.nodeMouseEnter = function(node) {
+	view.nodeMouseOver = function(node) {
+		if (view.isNodeDragging() || creator.isDragging()) {
+			// dont relocate the creator if we are dragging
+			//console.log("draggin: over node: ", node.id);
+		} else {
+			//console.log("over node: ", node.id);
+			creator.attachToNode(node);
+		}
+	};
+	
+	// listen to events from view
+	view.nodeCaptionMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
 			//console.log("draggin: over node: ", node.id);

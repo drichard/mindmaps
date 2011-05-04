@@ -138,7 +138,12 @@ html,body {
 .mindmap .node-container {
 	position: absolute;
 	min-width: 80px;
-	min-height: 30px;
+	padding-bottom: 2px;
+	display: inline-block;
+}
+
+.mindmap .root.node-container {
+	border-bottom: 10px
 }
 
 .mindmap .root > .node-caption {
@@ -147,7 +152,6 @@ html,body {
 	border-radius: 10px 10px 10px 10px;
 	font-size: 2em;
 	font-weight: bold;
-	padding: 4px;
 	width: 100px;
 }
 
@@ -157,12 +161,15 @@ html,body {
 	z-index: 100;
 	padding: 4px;
 	min-width: 50px;
+	max-width: 200px;
 	text-align: center;
 	font-size: 1.5em;
+	word-wrap: break-word;
 }
 
 .mindmap .node-caption.selected {
 	border: 2px solid red;
+	padding: 2px;
 	border-radius: 5px;
 	z-index: 1000;
 }
@@ -184,23 +191,41 @@ html,body {
 }
 
 .mindmap .button-collapse.left {
-	left: 0;
+	left: 4px;
 }
 
 .mindmap .button-collapse.right {
-	right: 0;
+	right: 4px;
 }
 
-.mindmap .creator-nub {
-	width: 10px;
-	height: 10px;
-	background: red;
+.mindmap .button-collapse.closed {
+	background-position: 0px -16px;
+}
+
+.mindmap .button-collapse.open {
+	background-position: 0px 0px;
+}
+
+#creator-nub {
+	width: 24px;
+	height: 24px;
 	position: absolute !important;
-	left: 40px;
-	top: 20px;
-	border: 1px solid red;
-	border-radius: 7px;
+	bottom: -16px;
 	z-index: 1000;
+	background-image: url("../img/creator-nub.png")
+}
+
+#creator-nub.left {
+	left: -18px;
+}
+
+#creator-nub.right {
+	right: -18px;
+}
+
+
+#creator-nub:hover {
+	background-image: url("../img/creator-nub-selected.png")
 }
 
 .mindmap .caption-editor {
@@ -212,13 +237,6 @@ html,body {
 	padding: 0;
 }
 
-.mindmap .button-collapse.closed {
-	background-position: 0px -16px;
-}
-
-.mindmap .button-collapse.open {
-	background-position: 0px 0px;
-}
 
 #bottombar {
 	position: fixed; /* absolute caused scroll bar, depending on border */

@@ -56,41 +56,24 @@ var DefaultCanvasView = function() {
 
 	function drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
 			color) {
-		// TODO optimize
-		var left;
+		var left, top, width, height;
+
 		if (offsetX < 0) {
 			left = $node.width();
+			width = Math.abs(offsetX) - left;
 		} else {
-			left = -(offsetX - $parent.width());
+			left = $parent.width() - offsetX;
+			width = -left;
 		}
 
-		var top;
-		if (offsetY < 0) {
-			top = $node.height();
+		// is the node's border bottom bar above the parent's?
+		var nodeBelowParent = offsetY + $node.innerHeight() < $parent.innerHeight();
+		if (nodeBelowParent) {
+			top = $node.innerHeight();
+			height = $parent.outerHeight() - offsetY - top;
 		} else {
-			top = -(offsetY - $parent.height());
-		}
-
-		var width;
-		if (offsetX < 0) {
-			width = Math.abs($node.width() + offsetX);
-		} else {
-			width = offsetX - $parent.width();
-		}
-
-		var height;
-		if (offsetY < 0) {
-			var t;
-			if ($node.height() > offsetY) {
-				t = $node.height() + offsetY;
-			} else {
-				t = $node.height() - offsetY;
-			}
-
-			height = $parent.outerHeight() - t;
-
-		} else {
-			height = $node.outerHeight() + offsetY - $parent.height();
+			top = $parent.innerHeight() - offsetY;
+			height = $node.outerHeight() - top;
 		}
 
 		/**
@@ -100,7 +83,7 @@ var DefaultCanvasView = function() {
 			width : width,
 			height : height
 		}).css({
-			// "border" : "1px solid #DDD",
+			// "border" : "1px solid green",
 			left : left + "px",
 			top : top + "px"
 		});
@@ -125,12 +108,12 @@ var DefaultCanvasView = function() {
 			endX = 0;
 		}
 
-		if (offsetY + $node.height() > $parent.height()) { // c
-			startY = 0 + lineWidth / 2;
-			endY = height - lineWidth / 2;
-		} else {
+		if (nodeBelowParent) { // c
 			startY = height - lineWidth / 2;
 			endY = 0 + lineWidth / 2;
+		} else {
+			startY = 0 + lineWidth / 2;
+			endY = height - lineWidth / 2;
 		}
 
 		ctx.beginPath();
@@ -233,31 +216,44 @@ var DefaultCanvasView = function() {
 
 		// setup delegates
 		$drawingArea.delegate("div.node-caption", "mousedown", function(e) {
-			var node = $(this).data("node");
+			var node = $(this).parent().data("node");
 			if (self.nodeMouseDown) {
 				self.nodeMouseDown(node);
 			}
 		});
 
 		$drawingArea.delegate("div.node-caption", "mouseup", function(e) {
-			var node = $(this).data("node");
+			var node = $(this).parent().data("node");
 			if (self.nodeMouseUp) {
 				self.nodeMouseUp(node);
 			}
 		});
 
 		$drawingArea.delegate("div.node-caption", "dblclick", function(e) {
-			var node = $(this).data("node");
+			var node = $(this).parent().data("node");
 			if (self.nodeDoubleClicked) {
 				self.nodeDoubleClicked(node);
 			}
 		});
 
-		$drawingArea.delegate("div.node-caption", "mouseenter", function(e) {
-			var node = $(this).data("node");
-			if (self.nodeMouseEnter) {
-				self.nodeMouseEnter(node);
+		$drawingArea.delegate("div.node-container", "mouseover", function(e) {
+			if (e.target === this) {
+				var node = $(this).data("node");
+				if (self.nodeMouseOver) {
+					self.nodeMouseOver(node);
+				}
 			}
+			return false;
+		});
+		
+		$drawingArea.delegate("div.node-caption", "mouseover", function(e) {
+			if (e.target === this) {
+				var node = $(this).parent().data("node");
+				if (self.nodeCaptionMouseOver) {
+					self.nodeCaptionMouseOver(node);
+				}
+			}
+			return false;
 		});
 	};
 
@@ -276,7 +272,8 @@ var DefaultCanvasView = function() {
 		root.offset = center;
 
 		// 1.5. do NOT detach for now since DIV dont have widths and heights,
-		// and loading maps draws wrong canvases (or create nodes and then draw canvases)
+		// and loading maps draws wrong canvases (or create nodes and then draw
+		// canvases)
 
 		var detach = false;
 		if (detach) {
@@ -321,6 +318,7 @@ var DefaultCanvasView = function() {
 			var bThickness = 10 - depth || 1;
 			var bColor = node.edgeColor;
 			var bb = bThickness + "px solid " + bColor;
+			console.log("ATTENTION ", bb);
 		}
 
 		// div node container
@@ -331,6 +329,8 @@ var DefaultCanvasView = function() {
 			left : offsetX + "px",
 			top : offsetY + "px",
 			"border-bottom" : bb
+		}).data({
+			node : node
 		}).appendTo($parent);
 
 		if (node.isRoot()) {
@@ -385,8 +385,6 @@ var DefaultCanvasView = function() {
 			id : "node-caption-" + node.id,
 			"class" : "node-caption",
 			text : node.text.caption
-		}).data({
-			node : node
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -490,6 +488,29 @@ var DefaultCanvasView = function() {
 		}).children(".button-collapse").remove();
 	};
 
+	this.editNodeCaption = function(node) {
+		var $text = $getNodeCaption(node);
+		var $cancelArea = this.$getDrawingArea();
+		captionEditor.edit($text, $cancelArea);
+	};
+
+	this.stopEditNodeCaption = function(cancel) {
+		captionEditor.stop(cancel);
+	};
+
+	this.setNodeText = function(node, value) {
+		var $text = $getNodeCaption(node);
+		$text.text(value);
+	};
+
+	this.getCreator = function() {
+		return creator;
+	};
+
+	this.isNodeDragging = function() {
+		return nodeDragging;
+	};
+
 	function CaptionEditor() {
 		var self = this;
 		var attached = false;
@@ -513,6 +534,7 @@ var DefaultCanvasView = function() {
 		});
 
 		this.edit = function($text_, $cancelArea_) {
+			// TODO put text into span and hide()
 			$text = $text_;
 			$cancelArea = $cancelArea_;
 			oldText = $text.text();
@@ -523,7 +545,7 @@ var DefaultCanvasView = function() {
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
 				self.stop(true);
 			});
-			
+
 			$text.addClass("edit");
 
 			// show editor
@@ -550,29 +572,6 @@ var DefaultCanvasView = function() {
 		};
 	}
 
-	this.editNodeCaption = function(node) {
-		var $text = $getNodeCaption(node);
-		var $cancelArea = this.$getDrawingArea();
-		captionEditor.edit($text, $cancelArea);
-	};
-
-	this.stopEditNodeCaption = function(cancel) {
-		captionEditor.stop(cancel);
-	};
-
-	this.setNodeText = function(node, value) {
-		var $text = $getNodeCaption(node);
-		$text.text(value);
-	};
-
-	this.getCreator = function() {
-		return creator;
-	};
-
-	this.isNodeDragging = function() {
-		return nodeDragging;
-	};
-
 	function Creator() {
 		var self = this;
 		var dragging = false;
@@ -582,7 +581,7 @@ var DefaultCanvasView = function() {
 
 		// red dot creator element
 		var $nub = $("<div/>", {
-			"class" : "creator-nub"
+			id : "creator-nub"
 		});
 
 		// canvas used by the creator tool to draw new lines
@@ -608,8 +607,8 @@ var DefaultCanvasView = function() {
 				var offsetY = ui.position.top;
 
 				// set depth+1 because we are drawing the canvas for the child
-				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
-						self.lineColor);
+				// drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
+				// self.lineColor);
 
 				var $node = $getNode(self.node);
 				drawLineCanvas2($canvas, self.depth + 1, offsetX, offsetY,
@@ -633,9 +632,19 @@ var DefaultCanvasView = function() {
 
 			this.node = node;
 			this.depth = node.getDepth();
-
 			var $node = $getNode(node);
-			$nub.appendTo($node);
+			
+			if (node.offset.x > 0) {
+				$nub.removeClass("left").addClass("right");
+			} else {
+				$nub.removeClass("right").addClass("left");
+			}
+			
+			// remove any positioning that the draggable might have caused
+			$nub.css({
+				left: "",
+				top: ""
+			}).appendTo($node);
 		};
 
 		this.detach = function() {
