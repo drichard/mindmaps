@@ -341,8 +341,8 @@ var DefaultCanvasView = function() {
 		$node.one("mouseenter", function() {
 			$node.draggable({
 				// could be set
-//				revert: true,
-//				revertDuration: 0,
+				// revert: true,
+				// revertDuration: 0,
 				handle : "div.node-caption:first",
 				start : function() {
 					// cant drag root
@@ -551,7 +551,7 @@ var DefaultCanvasView = function() {
 			left : node.offset.x + "px",
 			top : node.offset.y + "px"
 		});
-		
+
 		// redraw canvas to parent
 		drawNodeCanvas(node);
 	};
@@ -669,8 +669,12 @@ var DefaultCanvasView = function() {
 				// remove creator canvas, gets replaced by real canvas
 				$canvas.hide();
 				if (self.dragStopped) {
-					self.dragStopped(self.node, ui.position.left,
-							ui.position.top);
+					var $wp = $wrapper.position();
+					var nubLeft = ui.position.left;
+					var nubTop = ui.position.top;
+					var distance = Util.distance($wp.left - nubLeft, $wp.top
+							- nubTop);
+					self.dragStopped(self.node, nubLeft, nubTop, distance);
 				}
 			}
 		});

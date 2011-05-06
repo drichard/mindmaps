@@ -120,9 +120,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		return color;
 	};
 
-	creator.dragStopped = function(parent, offsetX, offsetY) {
+	creator.dragStopped = function(parent, offsetX, offsetY, distance) {
 		// disregard if the creator was only dragged a bit
-		var distance = Util.distance(offsetX, offsetY);
 		if (distance < 50) {
 			return;
 		}
