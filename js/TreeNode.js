@@ -2,6 +2,25 @@
  * Constructor for a tree node.
  */
 var TreeNode = function() {
+//	var defaults = {
+//		id : Util.getId(),
+//		parent : null,
+//		children : new NodeMap(),
+//		text : {
+//			caption : "Node " + id,
+//			font : {
+//				weight : "normal",
+//				size : "inherit",
+//				color : "black"
+//			}
+//		},
+//		offset : Point.ZERO,
+//		collapeChildren : false,
+//		edgeColor : "black"
+//	};
+//	
+//	_.extend(this, defaults, options);
+	
 	this.id = Util.getId();
 	this.parent = null;
 	this.children = new NodeMap();
@@ -129,17 +148,18 @@ TreeNode.prototype.getPosition = function() {
 
 /**
  * Gets the depth of the node. Root has a depth of 0.
+ * 
  * @returns {Number}
  */
 TreeNode.prototype.getDepth = function() {
 	var node = this.parent;
 	var depth = 0;
-	
+
 	while (node) {
 		depth++;
 		node = node.parent;
 	}
-	
+
 	return depth;
 };
 

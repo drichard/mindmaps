@@ -30,17 +30,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	var deleteSelectedNode = function() {
 		var node = selectedNode;
 		if (node) {
-			var parent = node.getParent();
-			var map = appModel.getMindMap();
-			
 			// remove from model
-			map.removeNode(node);
-
-			// update view
-			view.deleteNode(node);
-			if (parent.isLeaf()) {
-				view.removeCollapseButton(parent);
-			}
+			appModel.deleteNode(node);
 		}
 	};
 
@@ -73,24 +64,24 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	view.nodeMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
-			//console.log("draggin: over node: ", node.id);
+			// console.log("draggin: over node: ", node.id);
 		} else {
-			//console.log("over node: ", node.id);
+			// console.log("over node: ", node.id);
 			creator.attachToNode(node);
 		}
 	};
-	
+
 	// listen to events from view
 	view.nodeCaptionMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
-			//console.log("draggin: over node: ", node.id);
+			// console.log("draggin: over node: ", node.id);
 		} else {
-			//console.log("over node: ", node.id);
+			// console.log("over node: ", node.id);
 			creator.attachToNode(node);
 		}
 	};
-	
+
 	view.nodeMouseDown = function(node) {
 		selectNode(node);
 	};
@@ -106,10 +97,10 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	view.nodeDragged = function(node, offset) {
-		// console.log(node.id, offset.toString());
+		// view has updated itself
 
 		// update model
-		node.offset = offset;
+		appModel.moveNode(node, offset);
 	};
 
 	// clicked the void
@@ -136,24 +127,9 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			return;
 		}
 
-		// create new node
-		var map = appModel.getMindMap();
-		var node = map.createNode();
-		node.offset = new Point(offsetX, offsetY);
-		node.edgeColor = creator.lineColor;
-		parent.addChild(node);
-
-		// open parent node when creating a new child and the other children are
-		// hidden
-		if (parent.collapseChildren) {
-			parent.collapseChildren = false;
-			view.openNode(parent);
-		}
-		view.createNode(node);
-
-		// select and go into edit mode on new node
-		selectNode(node);
-		view.editNodeCaption(node);
+		// update the model
+		appModel.createNode(parent, new Point(offsetX, offsetY),
+				creator.lineColor, self);
 	};
 
 	view.nodeCaptionEditCommitted = function(str) {
@@ -169,22 +145,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			return;
 		}
 
-		// update model
-		node.setCaption(str);
-
-		// set view
-		view.stopEditNodeCaption(false);
-		view.setNodeText(node, str);
-		
-		// redraw node in case height has changed
-		// TODO maybe only redraw if height has changed
-		view.redrawNode(node);
-		
-		// change document title when node was renamed
-		if (node.isRoot()) {
-			var doc = appModel.getDocument();
-			doc.setTitle(str);
-		}
+		view.stopEditNodeCaption(true);
+		appModel.setNodeCaption(node, str);
 	};
 
 	this.go = function() {
@@ -211,6 +173,51 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 
 		eventBus.subscribe(Event.DELETE_SELECTED_NODE, function() {
 			deleteSelectedNode();
+		});
+
+		eventBus.subscribe(Event.NODE_MOVED, function(node) {
+			view.positionNode(node);
+		});
+
+		eventBus.subscribe(Event.NODE_TEXT_CAPTION_CHANGED, function(node) {
+			view.setNodeText(node, node.getCaption());
+
+			// redraw node in case height has changed
+			// TODO maybe only redraw if height has changed
+			view.redrawNodeConnectors(node);
+		});
+
+		eventBus.subscribe(Event.NODE_CREATED, function(node, origin) {
+			view.createNode(node);
+
+			// did we create this node inside the prenter ourselves?
+			if (origin === self) {
+				// open parent node when creating a new child and the other
+				// children are hidden
+				var parent = node.getParent();
+				if (parent.collapseChildren) {
+					// TODO not visible for nagivator
+					parent.collapseChildren = false;
+					view.openNode(parent);
+				}
+
+				// select and go into edit mode on new node
+				selectNode(node);
+				view.editNodeCaption(node);
+			}
+		});
+
+		eventBus.subscribe(Event.NODE_DELETED, function(node, parent) {
+			// reset selectedNode if we are deleting this one
+			if (node === selectedNode) {
+				selectedNode = null;
+			}
+			
+			// update view
+			view.deleteNode(node);
+			if (parent.isLeaf()) {
+				view.removeCollapseButton(parent);
+			}
 		});
 	}
 

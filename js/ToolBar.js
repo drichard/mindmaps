@@ -1,6 +1,8 @@
 var ToolBarView = function() {
 	var self = this;
-	var saveButton = null;
+	var $undoButton = null;
+	var $redoButton = null;
+	var $saveButton = null;
 
 	this.init = function() {
 		$("#toolbar button").button();
@@ -12,8 +14,17 @@ var ToolBarView = function() {
 			}
 		});
 
-		$("#button-undo").button("disable");
-		$("#button-redo").button("disable");
+		$undoButton = $("#button-undo").button("disable").click(function() {
+			if (self.undoButtonClicked) {
+				self.undoButtonClicked();
+			}
+		});
+
+		$redoButton = $("#button-redo").button("disable").click(function() {
+			if (self.redoButtonClicked) {
+				self.redoButtonClicked();
+			}
+		});
 
 		$("#button-new").click(function() {
 			if (self.newButtonClicked) {
@@ -27,7 +38,7 @@ var ToolBarView = function() {
 			}
 		});
 
-		saveButton = $("#button-save").button("option", {
+		$saveButton = $("#button-save").button("option", {
 			icons : {
 				primary : "ui-icon-disk"
 			},
@@ -55,19 +66,27 @@ var ToolBarView = function() {
 	this.showSaved = function() {
 		var timeout = 2000;
 
-		saveButton.button("option", {
+		$saveButton.button("option", {
 			label : "saved"
 		});
 
 		setTimeout(function() {
-			saveButton.button("option", {
+			$saveButton.button("option", {
 				label : "save"
 			});
 		}, timeout);
 	};
 
 	this.enableSaveButton = function() {
-		saveButton.button("enable");
+		$saveButton.button("enable");
+	};
+
+	this.setUndoButtonEnabled = function(enabled) {
+		$undoButton.button(enabled ? "enable" : "disable");
+	};
+
+	this.setRedoButtonEnabled = function(enabled) {
+		$redoButton.button(enabled ? "enable" : "disable");
 	};
 };
 
@@ -75,6 +94,16 @@ var ToolBarPresenter = function(eventBus, appModel, view) {
 	// view callbacks
 	view.deleteButtonClicked = function() {
 		eventBus.publish(Event.DELETE_SELECTED_NODE);
+	};
+
+	view.undoButtonClicked = function() {
+		// eventBus.publish(Event.UNDO_ACTION);
+		appModel.doUndo();
+	};
+
+	view.redoButtonClicked = function() {
+		// eventBus.publish(Event.REDO_ACTION);
+		appModel.doRedo();
 	};
 
 	view.saveButtonClicked = function() {
@@ -96,6 +125,13 @@ var ToolBarPresenter = function(eventBus, appModel, view) {
 		appModel.setDocument(doc);
 		eventBus.publish(Event.DOCUMENT_OPENED, doc);
 	};
+
+	// app model events
+	appModel.subscribe(ApplicationModel.Event.UNDO_STATE_CHANGE, function(
+			undoState, redoState) {
+		view.setUndoButtonEnabled(undoState);
+		view.setRedoButtonEnabled(redoState);
+	});
 
 	// global events
 	eventBus.subscribe(Event.DOCUMENT_SAVED, function() {

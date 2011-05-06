@@ -312,14 +312,13 @@ var DefaultCanvasView = function() {
 		var depth = depth || node.getDepth();
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
-		
+
 		var bb = "none";
 
 		if (!node.isRoot()) {
 			var bThickness = 10 - depth || 1;
 			var bColor = node.edgeColor;
 			var bb = bThickness + "px solid " + bColor;
-			console.log("ATTENTION ", bb);
 		}
 
 		// div node container
@@ -341,6 +340,9 @@ var DefaultCanvasView = function() {
 		 */
 		$node.one("mouseenter", function() {
 			$node.draggable({
+				// could be set
+//				revert: true,
+//				revertDuration: 0,
 				handle : "div.node-caption:first",
 				start : function() {
 					// cant drag root
@@ -510,22 +512,22 @@ var DefaultCanvasView = function() {
 		return nodeDragging;
 	};
 
-	this.redrawNode = function(node) {
-		function drawNodeCanvas(node) {
-			// TODO inline
-			var parent = node.getParent();
-			var depth = node.getDepth();
-			var offsetX = node.offset.x;
-			var offsetY = node.offset.y;
-			var color = node.edgeColor;
+	function drawNodeCanvas(node) {
+		// TODO inline
+		var parent = node.getParent();
+		var depth = node.getDepth();
+		var offsetX = node.offset.x;
+		var offsetY = node.offset.y;
+		var color = node.edgeColor;
 
-			var $node = $getNode(node);
-			var $parent = $getNode(parent);
-			var $canvas = $getNodeCanvas(node);
+		var $node = $getNode(node);
+		var $parent = $getNode(parent);
+		var $canvas = $getNodeCanvas(node);
 
-			drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
-					color);
-		}
+		drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent, color);
+	}
+
+	this.redrawNodeConnectors = function(node) {
 
 		// redraw canvas to parent
 		if (!node.isRoot()) {
@@ -538,6 +540,20 @@ var DefaultCanvasView = function() {
 				drawNodeCanvas(child);
 			});
 		}
+	};
+
+	this.positionNode = function(node) {
+		console.log("positioning node");
+		var $node = $getNode(node);
+		// TODO try animate
+		// position
+		$node.css({
+			left : node.offset.x + "px",
+			top : node.offset.y + "px"
+		});
+		
+		// redraw canvas to parent
+		drawNodeCanvas(node);
 	};
 
 	function CaptionEditor() {
@@ -566,7 +582,7 @@ var DefaultCanvasView = function() {
 			if (attached) {
 				return;
 			}
-			
+
 			// TODO put text into span and hide()
 			$text = $text_;
 			$cancelArea = $cancelArea_;

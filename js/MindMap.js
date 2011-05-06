@@ -54,6 +54,12 @@ MindMap.prototype.createNode = function() {
 
 MindMap.prototype.addNode = function(node) {
 	this.nodes.add(node);
+	
+	// add all children
+	var self = this;
+	node.forEachDescendant(function(descendant) {
+		self.nodes.add(descendant);
+	});
 };
 
 MindMap.prototype.removeNode = function(node) {

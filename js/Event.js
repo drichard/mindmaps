@@ -8,7 +8,11 @@ var Event = {
 	DOCUMENT_CREATED : "DocumentCreatedEvent",
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
 	DOCUMENT_SAVED : "DocumentSavedEvent",
-	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent"
+	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
+	NODE_MOVED : "NodeMovedEvent",
+	NODE_TEXT_CAPTION_CHANGED : "NodeTextCaptionChangedEvent",
+	NODE_CREATED : "NodeCreatedEvent",
+	NODE_DELETED : "NodeDeletedEvent"
 };
 
 /**
