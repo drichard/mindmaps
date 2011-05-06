@@ -312,7 +312,7 @@ var DefaultCanvasView = function() {
 		var depth = depth || node.getDepth();
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
-
+		
 		var bb = "none";
 
 		if (!node.isRoot()) {
@@ -563,12 +563,16 @@ var DefaultCanvasView = function() {
 		});
 
 		this.edit = function($text_, $cancelArea_) {
+			if (attached) {
+				return;
+			}
+			
 			// TODO put text into span and hide()
 			$text = $text_;
 			$cancelArea = $cancelArea_;
 			oldText = $text.text();
 			var width = $text.width();
-			var height = $text.height();
+			var height = $text.innerHeight();
 			$text.empty();
 
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {

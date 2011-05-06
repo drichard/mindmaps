@@ -121,18 +121,8 @@ html,body {
 	background-image: url("../img/grid.gif");
 }
 
-#scroller {
-	width: 4000px;
-	height: 2000px;
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 2; /* */
-}
-
 .mindmap .line-canvas {
 	position: absolute;
-	z-index: 1;
 }
 
 .mindmap .node-container {
@@ -149,25 +139,6 @@ html,body {
 	height: 20px;
 }
 
-.mindmap .root.node-caption {
-	cursor: default;
-	background: white;
-	border: 3px solid orange;
-	border-radius: 10px 10px 10px 10px;
-	font-size: 2em;
-	font-weight: bold;
-	width: 100px;
-	left: -50px;
-	position: absolute;
-}
-
-.mindmap .root.node-caption.selected {
-	border: 3px solid red;
-	border-radius: 10px;
-	padding: 4px;
-}
-
-
 .mindmap .node-caption {
 	position: relative;
 	cursor: move;
@@ -178,18 +149,47 @@ html,body {
 	text-align: center;
 	font-size: 1.5em;
 	word-wrap: break-word;
+	border-radius: 5px;
+}
+
+.mindmap .node-caption:hover {
+	border: 2px dotted #DDD;
+	padding: 2px;
 }
 
 .mindmap .node-caption.selected {
 	border: 2px solid red;
 	padding: 2px;
-	border-radius: 5px;
 	z-index: 1000;
 }
 
-.mindmap .node-caption.selected.edit {
+.mindmap .node-caption.edit {
 	border: 2px solid blue;
+	padding: 0px;
 }
+
+.mindmap .node-caption.root {
+	cursor: default;
+	background: white;
+	border: 3px solid orange;
+	border-radius: 10px 10px 10px 10px;
+	font-size: 2em;
+	font-weight: bold;
+	width: 100px;
+	left: -50px;
+	position: absolute;
+	padding: 4px;
+}
+
+.mindmap .node-caption.root.selected {
+	border-color: red;
+}
+
+.mindmap .node-caption.root.edit {
+	border-color: blue;
+	padding: 0 4px;
+}
+
 
 .mindmap .button-collapse {
 	width: 16px;
@@ -246,12 +246,14 @@ html,body {
 }
 
 .mindmap .caption-editor {
+	display: block; /** important for webkit */
 	background: none;
 	border: none;
 	font: inherit;
-	width: 100%;
 	margin: 0;
 	padding: 0;
+	outline: none;
+	text-align: center;
 }
 
 
