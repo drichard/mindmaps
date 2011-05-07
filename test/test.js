@@ -1,11 +1,11 @@
 module("models");
 test("node - basic operations", function() {
-	var x = new TreeNode();
-	var y0 = new TreeNode();
-	var y1 = new TreeNode();
-	var z0 = new TreeNode();
-	var z1 = new TreeNode();
-	var z2 = new TreeNode();
+	var x = new mindmaps.Node();
+	var y0 = new mindmaps.Node();
+	var y1 = new mindmaps.Node();
+	var z0 = new mindmaps.Node();
+	var z1 = new mindmaps.Node();
+	var z2 = new mindmaps.Node();
 
 	x.addChild(y0);
 	x.addChild(y1);
@@ -49,24 +49,24 @@ test("node - basic operations", function() {
 });
 
 test("node getPosition", function() {
-	var root = new TreeNode();
-	root.offset = new Point(100, 100);
-	var n1 = new TreeNode();
-	n1.offset = new Point(100, 0);
-	var n2 = new TreeNode();
-	n2.offset = new Point(50, 100);
-	
+	var root = new mindmaps.Node();
+	root.offset = new mindmaps.Point(100, 100);
+	var n1 = new mindmaps.Node();
+	n1.offset = new mindmaps.Point(100, 0);
+	var n2 = new mindmaps.Node();
+	n2.offset = new mindmaps.Point(50, 100);
+
 	root.addChild(n1);
 	n1.addChild(n2);
-	
+
 	var pos = n2.getPosition();
-	deepEqual(pos, new Point(250, 200));
+	deepEqual(pos, new mindmaps.Point(250, 200));
 });
 
 test("nodeset operations", function() {
-	var ns = new NodeMap();
-	var x = new TreeNode();
-	var y = new TreeNode();
+	var ns = new mindmaps.NodeMap();
+	var x = new mindmaps.Node();
+	var y = new mindmaps.Node();
 
 	var add = ns.add(x);
 	ok(add, "node added");
@@ -90,7 +90,7 @@ test("nodeset operations", function() {
 	equal(values.length, ns.count, "values should equal the amount of nodes");
 
 	_.each(values, function(value) {
-		ok(value instanceof TreeNode, "values should be nodes");
+		ok(value instanceof mindmaps.Node, "values should be nodes");
 	});
 
 	ns.each(function(node) {
@@ -101,9 +101,9 @@ test("nodeset operations", function() {
 });
 
 test("create a simple map", function() {
-	var mm = new MindMap();
+	var mm = new mindmaps.MindMap();
 	var root = mm.root;
-	ok(root instanceof TreeNode, "root is a node");
+	ok(root instanceof mindmaps.Node, "root is a node");
 	ok(root.isRoot(), "root is root");
 	ok(root.isLeaf(), "root is also a leaf");
 	equal(mm.nodes.size(), 1, "1 node in node set");
@@ -135,7 +135,7 @@ test("create a simple map", function() {
 test("node serialization", function() {
 	var root = getDefaultTestMap().root;
 	var json = root.serialize();
-	var restored = TreeNode.fromJSON(json);
+	var restored = mindmaps.Node.fromJSON(json);
 
 	// test equality
 	equal(root.id, restored.id);
@@ -146,13 +146,13 @@ test("node serialization", function() {
 	equal(root.collapseChildren, restored.collapseChildren);
 
 	// test functions
-	raises(restored.addChild(new TreeNode()));
+	raises(restored.addChild(new mindmaps.Node()));
 });
 
 test("map serialization", function() {
 	var mm = getDefaultTestMap();
 	var json = mm.serialize();
-	var restored = MindMap.fromJSON(json);
+	var restored = mindmaps.MindMap.fromJSON(json);
 
 	// test equality
 	equal(mm.nodes.count, restored.nodes.count,
@@ -164,11 +164,11 @@ test("map serialization", function() {
 });
 
 test("document serialization", function() {
-	var doc = new Document();
+	var doc = new mindmaps.Document();
 	doc.mindmap = getDefaultTestMap();
 
 	var json = doc.serialize();
-	var restored = Document.fromJSON(json);
+	var restored = mindmaps.Document.fromJSON(json);
 
 	equal(doc.id, restored.id);
 	equal(doc.title, restored.title);
@@ -180,57 +180,57 @@ test("document serialization", function() {
 
 test("documents in local storage", function() {
 	// clear storage
-	LocalDocumentStorage.deleteAllDocuments();
+	mindmaps.LocalDocumentStorage.deleteAllDocuments();
 
 	// store and retrieve document
 	var doc = getDefaultTestDocument();
-	LocalDocumentStorage.saveDocument(doc);
-	var documents = LocalDocumentStorage.getDocuments();
+	mindmaps.LocalDocumentStorage.saveDocument(doc);
+	var documents = mindmaps.LocalDocumentStorage.getDocuments();
 	equal(documents.length, 1, "one document must be in storage");
 
 	var restored = documents[0];
 	equal(doc.serialize(), restored.serialize());
 
 	// load document by key
-	var restored2 = LocalDocumentStorage.loadDocument(doc.id);
+	var restored2 = mindmaps.LocalDocumentStorage.loadDocument(doc.id);
 	equal(restored.serialize(), restored2.serialize());
 
 	// restored should overwrite previous copy
-	LocalDocumentStorage.saveDocument(restored);
-	equal(LocalDocumentStorage.getDocuments().length, 1,
+	mindmaps.LocalDocumentStorage.saveDocument(restored);
+	equal(mindmaps.LocalDocumentStorage.getDocuments().length, 1,
 			"one document must be in storage");
 
 	// storage should be empty
-	LocalDocumentStorage.deleteDocument(restored);
-	equal(LocalDocumentStorage.getDocuments().length, 0,
+	mindmaps.LocalDocumentStorage.deleteDocument(restored);
+	equal(mindmaps.LocalDocumentStorage.getDocuments().length, 0,
 			"storage must be empty");
 
 	// save three documents
-	LocalDocumentStorage.saveDocument(new Document());
-	LocalDocumentStorage.saveDocument(new Document());
-	LocalDocumentStorage.saveDocument(new Document());
-	equal(LocalDocumentStorage.getDocuments().length, 3);
+	mindmaps.LocalDocumentStorage.saveDocument(new mindmaps.Document());
+	mindmaps.LocalDocumentStorage.saveDocument(new mindmaps.Document());
+	mindmaps.LocalDocumentStorage.saveDocument(new mindmaps.Document());
+	equal(mindmaps.LocalDocumentStorage.getDocuments().length, 3);
 
 	// remove all documents
-	LocalDocumentStorage.deleteAllDocuments();
-	equal(LocalDocumentStorage.getDocuments().length, 0);
+	mindmaps.LocalDocumentStorage.deleteAllDocuments();
+	equal(mindmaps.LocalDocumentStorage.getDocuments().length, 0);
 
-	var shouldNotExist = LocalDocumentStorage.loadDocument(doc.id);
+	var shouldNotExist = mindmaps.LocalDocumentStorage.loadDocument(doc.id);
 	ok(shouldNotExist === null);
 
 	// check if modified date gets updated
 	var oldModified = new Date(doc.dates.modified);
-	LocalDocumentStorage.saveDocument(doc);
+	mindmaps.LocalDocumentStorage.saveDocument(doc);
 	var newModified = doc.dates.modified;
 	ok(newModified > oldModified);
 
 	// var hugeDoc = new Document();
 	// hugeDoc.mindmap = getBinaryMapWithDepth(10);
-	// raises(LocalDocumentStorage.saveDocument(hugeDoc));
+	// raises(mindmaps.LocalDocumentStorage.saveDocument(hugeDoc));
 	//	
-	// var extremDoc = new Document();
+	// var extremDoc = new mindmaps.Document();
 	// extremDoc.mindmap = getBinaryMapWithDepth(16);
-	// raises(LocalDocumentStorage.saveDocument(extremDoc));
+	// raises(mindmaps.LocalDocumentStorage.saveDocument(extremDoc));
 });
 
 function saveToExternalFile() {

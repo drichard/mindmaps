@@ -153,7 +153,7 @@ function getBinaryMapWithDepth(depth) {
  * </pre>
  */
 function getDefaultTestMap() {
-	var mm = new MindMap();
+	var mm = new mindmaps.MindMap();
 	var root = mm.root;
 
 	var n0 = mm.createNode();

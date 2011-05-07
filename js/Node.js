@@ -3,7 +3,7 @@ var mindmaps = mindmaps || {};
 /**
  * Constructor for a tree node.
  */
-mindmaps.TreeNode = function() {
+mindmaps.Node = function() {
 //	var defaults = {
 //		id : Util.getId(),
 //		parent : null,
@@ -42,15 +42,15 @@ mindmaps.TreeNode = function() {
 /**
  * Creates a node object by parsing JSON text.
  */
-mindmaps.TreeNode.fromJSON = function(json) {
-	return mindmaps.TreeNode.fromObject(JSON.parse(json));
+mindmaps.Node.fromJSON = function(json) {
+	return mindmaps.Node.fromObject(JSON.parse(json));
 };
 
 /**
  * Creates a node from an object as a result of a JSON parser.
  */
-mindmaps.TreeNode.fromObject = function(obj) {
-	var node = new mindmaps.TreeNode();
+mindmaps.Node.fromObject = function(obj) {
+	var node = new mindmaps.Node();
 	node.id = obj.id;
 	node.text = obj.text;
 	node.offset = mindmaps.Point.fromObject(obj.offset);
@@ -59,7 +59,7 @@ mindmaps.TreeNode.fromObject = function(obj) {
 
 	// extract all children from array of objects
 	_.each(obj.children, function(child) {
-		var childNode = mindmaps.TreeNode.fromObject(child);
+		var childNode = mindmaps.Node.fromObject(child);
 		node.addChild(childNode);
 	});
 
@@ -70,7 +70,7 @@ mindmaps.TreeNode.fromObject = function(obj) {
  * Returns a presentation of this node and its children ready for serialization.
  * Called by JSON.stringify().
  */
-mindmaps.TreeNode.prototype.toJSON = function() {
+mindmaps.Node.prototype.toJSON = function() {
 	// copy all children into array
 	var self = this;
 	var children = (function() {
@@ -95,29 +95,29 @@ mindmaps.TreeNode.prototype.toJSON = function() {
 	return obj;
 };
 
-mindmaps.TreeNode.prototype.serialize = function() {
+mindmaps.Node.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
-mindmaps.TreeNode.prototype.addChild = function(node) {
+mindmaps.Node.prototype.addChild = function(node) {
 	node.parent = this;
 	this.children.add(node);
 };
 
-mindmaps.TreeNode.prototype.removeChild = function(node) {
+mindmaps.Node.prototype.removeChild = function(node) {
 	node.parent = null;
 	this.children.remove(node);
 };
 
-mindmaps.TreeNode.prototype.isRoot = function() {
+mindmaps.Node.prototype.isRoot = function() {
 	return this.parent === null;
 };
 
-mindmaps.TreeNode.prototype.isLeaf = function() {
+mindmaps.Node.prototype.isLeaf = function() {
 	return this.children.size() === 0;
 };
 
-mindmaps.TreeNode.prototype.getParent = function() {
+mindmaps.Node.prototype.getParent = function() {
 	return this.parent;
 };
 
@@ -125,7 +125,7 @@ mindmaps.TreeNode.prototype.getParent = function() {
  * 
  * @returns The root of the tree structure.
  */
-mindmaps.TreeNode.prototype.getRoot = function() {
+mindmaps.Node.prototype.getRoot = function() {
 	var root = this;
 	while (root.parent) {
 		root = root.parent;
@@ -137,7 +137,7 @@ mindmaps.TreeNode.prototype.getRoot = function() {
 /**
  * Gets the position of the node relative to the root.
  */
-mindmaps.TreeNode.prototype.getPosition = function() {
+mindmaps.Node.prototype.getPosition = function() {
 	var pos = this.offset.clone();
 	var node = this.parent;
 
@@ -153,7 +153,7 @@ mindmaps.TreeNode.prototype.getPosition = function() {
  * 
  * @returns {Number}
  */
-mindmaps.TreeNode.prototype.getDepth = function() {
+mindmaps.Node.prototype.getDepth = function() {
 	var node = this.parent;
 	var depth = 0;
 
@@ -173,7 +173,7 @@ mindmaps.TreeNode.prototype.getDepth = function() {
  * @returns {Array}
  * @deprecated
  */
-mindmaps.TreeNode.prototype.getChildren = function(recursive) {
+mindmaps.Node.prototype.getChildren = function(recursive) {
 	var nodes = [];
 
 	this.children.each(function(node) {
@@ -192,24 +192,24 @@ mindmaps.TreeNode.prototype.getChildren = function(recursive) {
 /**
  * Traverses all child nodes.
  */
-mindmaps.TreeNode.prototype.forEachChild = function(func) {
+mindmaps.Node.prototype.forEachChild = function(func) {
 	this.children.each(func);
 };
 
 /**
  * Traverses all child nodes recursively.
  */
-mindmaps.TreeNode.prototype.forEachDescendant = function(func) {
+mindmaps.Node.prototype.forEachDescendant = function(func) {
 	this.children.each(function(node) {
 		func(node);
 		node.forEachDescendant(func);
 	});
 };
 
-mindmaps.TreeNode.prototype.setCaption = function(caption) {
+mindmaps.Node.prototype.setCaption = function(caption) {
 	this.text.caption = caption;
 };
 
-mindmaps.TreeNode.prototype.getCaption = function() {
+mindmaps.Node.prototype.getCaption = function() {
 	return this.text.caption;
 };

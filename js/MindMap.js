@@ -13,7 +13,7 @@ mindmaps.MindMap = function(root) {
 	 * registered in this map via createNode() or addNode(node).
 	 */
 	this.nodes = new mindmaps.NodeMap();
-	this.root = root || new mindmaps.TreeNode();
+	this.root = root || new mindmaps.Node();
 	this.addNode(this.root);
 };
 
@@ -22,7 +22,7 @@ mindmaps.MindMap.fromJSON = function(json) {
 };
 
 mindmaps.MindMap.fromObject = function(obj) {
-	var root = mindmaps.TreeNode.fromObject(obj.root);
+	var root = mindmaps.Node.fromObject(obj.root);
 	var mm = new mindmaps.MindMap(root);
 
 	// register all nodes in the map
@@ -50,7 +50,7 @@ mindmaps.MindMap.prototype.serialize = function() {
 };
 
 mindmaps.MindMap.prototype.createNode = function() {
-	var node = new mindmaps.TreeNode();
+	var node = new mindmaps.Node();
 	this.addNode(node);
 	return node;
 };
