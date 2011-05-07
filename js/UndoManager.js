@@ -50,12 +50,11 @@ function UndoManager() {
 	this.addUndo = function(undoFunc, redoFunc) {
 		if (undoContext) {
 			/**
-			 * If we are currently undoing an action, and addUndo has been
-			 * called with one argument, we store this function as the redo
-			 * action, otherwise (more arguments) we already have an appropriate
-			 * redo function.
+			 * If we are currently undoing an action and don't have a redo
+			 * function yet, store the undo function to the undo function, which
+			 * is in turn the redo function.
 			 */
-			if (arguments.length === 1 && state == State.UNDO) {
+			if (currentAction.redo == null && currentState == State.UNDO) {
 				currentAction.redo = undoFunc;
 			}
 		} else {
