@@ -707,6 +707,7 @@ mindmaps.DefaultCanvasView = function() {
 
 		this.detach = function() {
 			$wrapper.detach();
+			this.node = null;
 		};
 
 		this.isDragging = function() {

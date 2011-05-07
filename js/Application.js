@@ -1,6 +1,5 @@
 // global debug flag
 var DEBUG = true;
-
 var mindmaps = mindmaps || {};
 
 mindmaps.ApplicationModel = function(eventBus, undoManager) {
@@ -15,8 +14,8 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		undoManager.stateChanged = function() {
 			var undoState = undoManager.canUndo();
 			var redoState = undoManager.canRedo();
-			self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE, undoState,
-					redoState);
+			self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
+					undoState, redoState);
 		};
 	}
 
@@ -42,44 +41,30 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		}
 	};
 
-	this.moveNode = function(node, newOffset, undoable) {
-		var addUndo = undoable === undefined || undoable === true;
-		if (addUndo) {
-			var oldOffset = node.offset;
-			var undoFunc = function() {
-				self.moveNode(node, oldOffset, false);
-			};
-
-			var redoFunc = function() {
-				self.moveNode(node, newOffset, false);
-			};
-
-			undoManager.addAction(undoFunc, redoFunc);
-		}
+	this.moveNode = function(node, newOffset) {
+		// register undo
+		var oldOffset = node.offset;
+		var undoFunc = function() {
+			self.moveNode(node, oldOffset);
+		};
+		undoManager.addUndo(undoFunc);
 
 		node.offset = newOffset;
 		eventBus.publish(mindmaps.Event.NODE_MOVED, node);
 	};
 
-	this.setNodeCaption = function(node, newCaption, undoable) {
+	this.setNodeCaption = function(node, newCaption) {
 		// dont update if nothing has changed
 		if (node.getCaption() === newCaption) {
 			return;
 		}
 
-		var addUndo = undoable === undefined || undoable === true;
-		if (addUndo) {
-			var oldCaption = node.getCaption();
-			var undoFunc = function() {
-				self.setNodeCaption(node, oldCaption, false);
-			};
-
-			var redoFunc = function() {
-				self.setNodeCaption(node, newCaption, false);
-			};
-
-			undoManager.addAction(undoFunc, redoFunc);
-		}
+		// register undo
+		var oldCaption = node.getCaption();
+		var undoFunc = function() {
+			self.setNodeCaption(node, oldCaption);
+		};
+		undoManager.addUndo(undoFunc);
 
 		// update model
 		node.setCaption(newCaption);
@@ -95,7 +80,7 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 	/**
 	 * origin - optional argument declaring which object created the node
 	 */
-	this.createNode = function(parent, offset, edgeColor, origin, undoable) {
+	this.createNode = function(parent, offset, edgeColor, origin) {
 		var map = this.getMindMap();
 		if (!map) {
 			console.error("can't create node without a map");
@@ -108,49 +93,42 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		parent.addChild(node);
 
 		eventBus.publish(mindmaps.Event.NODE_CREATED, node, origin);
-		
-		
-		var addUndo = undoable === undefined || undoable === true;
-		if (addUndo) {
-			var undoFunc = function() {
-				self.deleteNode(node, false);
-			};
-			
-			var redoFunc = function() {
-				self.restoreNode(node, parent);
-			};
-			
-			undoManager.addAction(undoFunc, redoFunc);
-		}
+
+		// register undo
+		var undoFunc = function() {
+			self.deleteNode(node);
+		};
+
+		var redoFunc = function() {
+			self.restoreNode(node, parent);
+		};
+		undoManager.addUndo(undoFunc, redoFunc);
 	};
-	
+
 	this.restoreNode = function(node, parent) {
 		var map = this.getMindMap();
 		map.addNode(node);
 		parent.addChild(node);
-		
+
 		eventBus.publish(mindmaps.Event.NODE_CREATED, node);
 	};
-	
-	this.deleteNode = function(node, undoable) {
+
+	this.deleteNode = function(node) {
 		var map = this.getMindMap();
 		var parent = node.getParent();
 		map.removeNode(node);
-		
+
 		eventBus.publish(mindmaps.Event.NODE_DELETED, node, parent);
-		
-		var addUndo = undoable === undefined || undoable === true;
-		if (addUndo) {
-			var undoFunc = function() {
-				self.restoreNode(node, parent);
-			};
-			
-			var redoFunc = function() {
-				self.deleteNode(node, false);
-			};
-			
-			undoManager.addAction(undoFunc, redoFunc);
-		}
+
+		// register undo
+		var undoFunc = function() {
+			self.restoreNode(node, parent);
+		};
+
+		var redoFunc = function() {
+			self.deleteNode(node);
+		};
+		undoManager.addUndo(undoFunc, redoFunc);
 	};
 
 	bind();
@@ -165,14 +143,14 @@ mindmaps.AppController = function(eventBus, appModel) {
 		eventBus.subscribe(mindmaps.Event.SAVE_DOCUMENT, doSaveDocument);
 
 		eventBus.subscribe(mindmaps.Event.OPEN_DOCUMENT, function() {
-			var presenter = new mindmaps.OpenDocumentPresenter(eventBus, appModel,
-					new mindmaps.OpenDocumentView());
+			var presenter = new mindmaps.OpenDocumentPresenter(eventBus,
+					appModel, new mindmaps.OpenDocumentView());
 			presenter.go();
 		});
 
 		eventBus.subscribe(mindmaps.Event.NEW_DOCUMENT, function() {
-			var presenter = new mindmaps.NewDocumentPresenter(eventBus, appModel,
-					new mindmaps.NewDocumentView());
+			var presenter = new mindmaps.NewDocumentPresenter(eventBus,
+					appModel, new mindmaps.NewDocumentView());
 			presenter.go();
 		});
 	}
@@ -188,14 +166,15 @@ mindmaps.AppController = function(eventBus, appModel) {
 			var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
 			eventBus.publish(mindmaps.Event.DOCUMENT_SAVED);
 		} else {
-			var presenter = new mindmaps.SaveDocumentPresenter(eventBus, appModel,
-					new mindmaps.SaveDocumentView());
+			var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
+					appModel, new mindmaps.SaveDocumentView());
 			presenter.go();
 		}
 	}
 
 	this.go = function() {
-		var presenter = new mindmaps.MainPresenter(eventBus, appModel, new mindmaps.MainView());
+		var presenter = new mindmaps.MainPresenter(eventBus, appModel,
+				new mindmaps.MainView());
 		presenter.go();
 	};
 
