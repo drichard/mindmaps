@@ -1,26 +1,29 @@
+var mindmaps = mindmaps || {};
+
 /**
+
  * Creates a new mind map.
  * 
  * @param root -
  *            optional root node
  */
-var MindMap = function(root) {
+mindmaps.MindMap = function(root) {
 	/**
 	 * nodes is only used for quick lookup of a node by id. Each node must be
 	 * registered in this map via createNode() or addNode(node).
 	 */
-	this.nodes = new NodeMap();
-	this.root = root || new TreeNode();
+	this.nodes = new mindmaps.NodeMap();
+	this.root = root || new mindmaps.TreeNode();
 	this.addNode(this.root);
 };
 
-MindMap.fromJSON = function(json) {
-	return MindMap.fromObject(JSON.parse(json));
+mindmaps.MindMap.fromJSON = function(json) {
+	return mindmaps.MindMap.fromObject(JSON.parse(json));
 };
 
-MindMap.fromObject = function(obj) {
-	var root = TreeNode.fromObject(obj.root);
-	var mm = new MindMap(root);
+mindmaps.MindMap.fromObject = function(obj) {
+	var root = mindmaps.TreeNode.fromObject(obj.root);
+	var mm = new mindmaps.MindMap(root);
 
 	// register all nodes in the map
 	root.forEachDescendant(function(descendant) {
@@ -35,24 +38,24 @@ MindMap.fromObject = function(obj) {
  * 
  * Only return root.
  */
-MindMap.prototype.toJSON = function() {
+mindmaps.MindMap.prototype.toJSON = function() {
 	var obj = {
 		root : this.root
 	};
 	return obj;
 };
 
-MindMap.prototype.serialize = function() {
+mindmaps.MindMap.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
-MindMap.prototype.createNode = function() {
-	var node = new TreeNode();
+mindmaps.MindMap.prototype.createNode = function() {
+	var node = new mindmaps.TreeNode();
 	this.addNode(node);
 	return node;
 };
 
-MindMap.prototype.addNode = function(node) {
+mindmaps.MindMap.prototype.addNode = function(node) {
 	this.nodes.add(node);
 	
 	// add all children
@@ -62,7 +65,7 @@ MindMap.prototype.addNode = function(node) {
 	});
 };
 
-MindMap.prototype.removeNode = function(node) {
+mindmaps.MindMap.prototype.removeNode = function(node) {
 	// detach node from parent
 	var parent = node.parent;
 	parent.removeChild(node);
@@ -76,6 +79,6 @@ MindMap.prototype.removeNode = function(node) {
 	this.nodes.remove(node);
 };
 
-MindMap.prototype.getRoot = function() {
+mindmaps.MindMap.prototype.getRoot = function() {
 	return this.root;
 };

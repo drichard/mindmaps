@@ -1,22 +1,24 @@
-var Document = function() {
-	this.id = Util.createUUID();
+var mindmaps = mindmaps || {};
+
+mindmaps.Document = function() {
+	this.id = mindmaps.Util.createUUID();
 	this.title = null;
-	this.mindmap = new MindMap();
+	this.mindmap = new mindmaps.MindMap();
 	this.dates = {
 		created : new Date(),
 		modified : new Date()
 	};
 };
 
-Document.fromJSON = function(json) {
-	return Document.fromObject(JSON.parse(json));
+mindmaps.Document.fromJSON = function(json) {
+	return mindmaps.Document.fromObject(JSON.parse(json));
 };
 
-Document.fromObject = function(obj) {
-	var doc = new Document();
+mindmaps.Document.fromObject = function(obj) {
+	var doc = new mindmaps.Document();
 	doc.id = obj.id;
 	doc.title = obj.title;
-	doc.mindmap = MindMap.fromObject(obj.mindmap);
+	doc.mindmap = mindmaps.MindMap.fromObject(obj.mindmap);
 	doc.dates = {
 		created : new Date(obj.dates.created),
 		modified : new Date(obj.dates.modified)
@@ -28,7 +30,7 @@ Document.fromObject = function(obj) {
 /**
  * Called by JSON.stringify().
  */
-Document.prototype.toJSON = function() {
+mindmaps.Document.prototype.toJSON = function() {
 	var obj = {
 		id : this.id,
 		title: this.title,
@@ -43,14 +45,14 @@ Document.prototype.toJSON = function() {
 	return obj;
 };
 
-Document.prototype.serialize = function() {
+mindmaps.Document.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
-Document.prototype.getTitle = function() {
+mindmaps.Document.prototype.getTitle = function() {
 	return this.title;
 };
 
-Document.prototype.setTitle = function(title) {
+mindmaps.Document.prototype.setTitle = function(title) {
 	this.title = title;
 };

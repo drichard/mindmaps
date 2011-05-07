@@ -1,4 +1,6 @@
-var SaveDocumentView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.SaveDocumentView = function() {
 	var self = this;
 
 	// create dialog
@@ -48,7 +50,7 @@ var SaveDocumentView = function() {
 	};
 };
 
-var SaveDocumentPresenter = function(eventBus, appModel, view) {
+mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 
 	view.cancelButtonClicked = function() {
 		view.hideSaveDialog();
@@ -58,8 +60,8 @@ var SaveDocumentPresenter = function(eventBus, appModel, view) {
 		var doc = appModel.getDocument();
 		var title = view.getDocumentTitle();
 		doc.setTitle(title);
-		var savedDoc = LocalDocumentStorage.saveDocument(doc);
-		eventBus.publish(Event.DOCUMENT_SAVED);
+		var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
+		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED);
 		view.hideSaveDialog();
 	};
 

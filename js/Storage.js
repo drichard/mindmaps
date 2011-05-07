@@ -1,6 +1,7 @@
 // TODO save to hdd
+var mindmaps = mindmaps || {};
 
-var LocalStorage = (function() {
+mindmaps.LocalStorage = (function() {
 	return {
 		clear : function() {
 			localStorage.clear();
@@ -8,14 +9,14 @@ var LocalStorage = (function() {
 	};
 })();
 
-var LocalDocumentStorage = (function() {
+mindmaps.LocalDocumentStorage = (function() {
 	var prefix = "mindmaps.document.";
 
 	var getDocumentByKey = function(key) {
 		var json = localStorage.getItem(key);
-		return json ? Document.fromJSON(json) : null;
+		return json ? mindmaps.Document.fromJSON(json) : null;
 	};
-	
+
 	// public API
 	return {
 		/**

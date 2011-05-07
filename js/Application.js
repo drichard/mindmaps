@@ -1,8 +1,10 @@
 // global debug flag
 var DEBUG = true;
 
-var ApplicationModel = function(eventBus, undoManager) {
-	MicroEvent.mixin(ApplicationModel);
+var mindmaps = mindmaps || {};
+
+mindmaps.ApplicationModel = function(eventBus, undoManager) {
+	MicroEvent.mixin(mindmaps.ApplicationModel);
 	var self = this;
 	var document = null;
 
@@ -13,7 +15,7 @@ var ApplicationModel = function(eventBus, undoManager) {
 		undoManager.stateChanged = function() {
 			var undoState = undoManager.canUndo();
 			var redoState = undoManager.canRedo();
-			self.publish(ApplicationModel.Event.UNDO_STATE_CHANGE, undoState,
+			self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE, undoState,
 					redoState);
 		};
 	}
@@ -56,7 +58,7 @@ var ApplicationModel = function(eventBus, undoManager) {
 		}
 
 		node.offset = newOffset;
-		eventBus.publish(Event.NODE_MOVED, node);
+		eventBus.publish(mindmaps.Event.NODE_MOVED, node);
 	};
 
 	this.setNodeCaption = function(node, newCaption, undoable) {
@@ -87,7 +89,7 @@ var ApplicationModel = function(eventBus, undoManager) {
 			document.setTitle(newCaption);
 		}
 
-		eventBus.publish(Event.NODE_TEXT_CAPTION_CHANGED, node);
+		eventBus.publish(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, node);
 	};
 
 	/**
@@ -105,7 +107,7 @@ var ApplicationModel = function(eventBus, undoManager) {
 		node.edgeColor = edgeColor;
 		parent.addChild(node);
 
-		eventBus.publish(Event.NODE_CREATED, node, origin);
+		eventBus.publish(mindmaps.Event.NODE_CREATED, node, origin);
 		
 		
 		var addUndo = undoable === undefined || undoable === true;
@@ -127,7 +129,7 @@ var ApplicationModel = function(eventBus, undoManager) {
 		map.addNode(node);
 		parent.addChild(node);
 		
-		eventBus.publish(Event.NODE_CREATED, node);
+		eventBus.publish(mindmaps.Event.NODE_CREATED, node);
 	};
 	
 	this.deleteNode = function(node, undoable) {
@@ -135,7 +137,7 @@ var ApplicationModel = function(eventBus, undoManager) {
 		var parent = node.getParent();
 		map.removeNode(node);
 		
-		eventBus.publish(Event.NODE_DELETED, node, parent);
+		eventBus.publish(mindmaps.Event.NODE_DELETED, node, parent);
 		
 		var addUndo = undoable === undefined || undoable === true;
 		if (addUndo) {
@@ -154,23 +156,23 @@ var ApplicationModel = function(eventBus, undoManager) {
 	bind();
 };
 
-ApplicationModel.Event = {
+mindmaps.ApplicationModel.Event = {
 	UNDO_STATE_CHANGE : "UndoStateChangeEvent"
 };
 
-var AppController = function(eventBus, appModel) {
+mindmaps.AppController = function(eventBus, appModel) {
 	function bind() {
-		eventBus.subscribe(Event.SAVE_DOCUMENT, doSaveDocument);
+		eventBus.subscribe(mindmaps.Event.SAVE_DOCUMENT, doSaveDocument);
 
-		eventBus.subscribe(Event.OPEN_DOCUMENT, function() {
-			var presenter = new OpenDocumentPresenter(eventBus, appModel,
-					new OpenDocumentView());
+		eventBus.subscribe(mindmaps.Event.OPEN_DOCUMENT, function() {
+			var presenter = new mindmaps.OpenDocumentPresenter(eventBus, appModel,
+					new mindmaps.OpenDocumentView());
 			presenter.go();
 		});
 
-		eventBus.subscribe(Event.NEW_DOCUMENT, function() {
-			var presenter = new NewDocumentPresenter(eventBus, appModel,
-					new NewDocumentView());
+		eventBus.subscribe(mindmaps.Event.NEW_DOCUMENT, function() {
+			var presenter = new mindmaps.NewDocumentPresenter(eventBus, appModel,
+					new mindmaps.NewDocumentView());
 			presenter.go();
 		});
 	}
@@ -183,17 +185,17 @@ var AppController = function(eventBus, appModel) {
 		var doc = appModel.getDocument();
 		var title = doc.getTitle();
 		if (title !== null) {
-			var savedDoc = LocalDocumentStorage.saveDocument(doc);
-			eventBus.publish(Event.DOCUMENT_SAVED);
+			var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
+			eventBus.publish(mindmaps.Event.DOCUMENT_SAVED);
 		} else {
-			var presenter = new SaveDocumentPresenter(eventBus, appModel,
-					new SaveDocumentView());
+			var presenter = new mindmaps.SaveDocumentPresenter(eventBus, appModel,
+					new mindmaps.SaveDocumentView());
 			presenter.go();
 		}
 	}
 
 	this.go = function() {
-		var presenter = new MainPresenter(eventBus, appModel, new MainView());
+		var presenter = new mindmaps.MainPresenter(eventBus, appModel, new mindmaps.MainView());
 		presenter.go();
 	};
 
@@ -202,10 +204,10 @@ var AppController = function(eventBus, appModel) {
 
 // start up
 $(function() {
-	var eventBus = new EventBus();
+	var eventBus = new mindmaps.EventBus();
 	var undoManager = new UndoManager();
-	var appModel = new ApplicationModel(eventBus, undoManager);
-	var appController = new AppController(eventBus, appModel);
+	var appModel = new mindmaps.ApplicationModel(eventBus, undoManager);
+	var appController = new mindmaps.AppController(eventBus, appModel);
 	appController.go();
 
 	// eventBus.publish(Event.OPEN_DOCUMENT);

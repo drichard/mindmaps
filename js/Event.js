@@ -1,7 +1,9 @@
+var mindmaps = mindmaps || {};
+
 /**
  * Events that the event bus carries.
  */
-var Event = {
+mindmaps.Event = {
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",
 	SAVE_DOCUMENT : "SaveDocumentEvent",
@@ -18,13 +20,12 @@ var Event = {
 /**
  * Simple Event bus powered by MicroEvent.
  */
-var EventBus = function() {
-};
-MicroEvent.mixin(EventBus);
+mindmaps.EventBus = function() {};
+MicroEvent.mixin(mindmaps.EventBus);
 
 // log all publishes in debug mode
 if (DEBUG) {
-	EventBus.prototype.publish = function(event /* , args... */) {
+	mindmaps.EventBus.prototype.publish = function(event /* , args... */) {
 		this._events = this._events || {};
 
 		var l = this._events[event] ? this._events[event].length : 0;

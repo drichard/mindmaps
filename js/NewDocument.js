@@ -1,12 +1,14 @@
-var NewDocumentView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.NewDocumentView = function() {
 	
 };
 
-var NewDocumentPresenter = function(eventBus, appModel, view) {
+mindmaps.NewDocumentPresenter = function(eventBus, appModel, view) {
 	
 	this.go = function() {
-		var doc = new Document();
+		var doc = new mindmaps.Document();
 		appModel.setDocument(doc);
-		eventBus.publish(Event.DOCUMENT_CREATED);
+		eventBus.publish(mindmaps.Event.DOCUMENT_CREATED);
 	};
 };

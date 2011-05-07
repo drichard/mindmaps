@@ -1,4 +1,6 @@
-var CanvasView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.CanvasView = function() {
 	this.setHeight = function(height) {
 		this.$getContainer().height(height);
 	};
@@ -20,11 +22,11 @@ var CanvasView = function() {
 	};
 };
 
-CanvasView.prototype.drawMap = function(map) {
+mindmaps.CanvasView.prototype.drawMap = function(map) {
 	throw new Error("Not implemented");
 };
 
-var DefaultCanvasView = function() {
+mindmaps.DefaultCanvasView = function() {
 	var self = this;
 	var nodeDragging = false;
 	var creator = new Creator();
@@ -268,7 +270,7 @@ var DefaultCanvasView = function() {
 
 		var root = map.root;
 		// center root
-		var center = new Point($drawingArea.width() / 2,
+		var center = new mindmaps.Point($drawingArea.width() / 2,
 				$drawingArea.height() / 2);
 		root.offset = center;
 
@@ -369,7 +371,7 @@ var DefaultCanvasView = function() {
 				},
 				stop : function(e, ui) {
 					nodeDragging = false;
-					var pos = new Point(ui.position.left, ui.position.top);
+					var pos = new mindmaps.Point(ui.position.left, ui.position.top);
 
 					// fire dragged event
 					if (self.nodeDragged) {
@@ -672,7 +674,7 @@ var DefaultCanvasView = function() {
 					var $wp = $wrapper.position();
 					var nubLeft = ui.position.left;
 					var nubTop = ui.position.top;
-					var distance = Util.distance($wp.left - nubLeft, $wp.top
+					var distance = mindmaps.Util.distance($wp.left - nubLeft, $wp.top
 							- nubTop);
 					self.dragStopped(self.node, nubLeft, nubTop, distance);
 				}
@@ -714,4 +716,4 @@ var DefaultCanvasView = function() {
 };
 
 // inherit from base canvas view
-DefaultCanvasView.prototype = new CanvasView();
+mindmaps.DefaultCanvasView.prototype = new mindmaps.CanvasView();

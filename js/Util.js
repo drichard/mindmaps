@@ -1,11 +1,12 @@
-var Util = Util || {};
+var mindmaps = mindmaps || {};
+mindmaps.Util = mindmaps.Util || {};
 
 /**
  * Creates a UUID in compliance with RFC4122.
  * 
  * @returns a unique id as a String
  */
-Util.createUUID = function() {
+mindmaps.Util.createUUID = function() {
 	// http://www.ietf.org/rfc/rfc4122.txt
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -14,12 +15,12 @@ Util.createUUID = function() {
 };
 
 // TODO id management
-var id = 0;
-Util.getId = function() {
-	return id++;
+mindmaps.id = 0;
+mindmaps.Util.getId = function() {
+	return mindmaps.id++;
 };
 
-Util.randomColor = function() {
+mindmaps.Util.randomColor = function() {
 	// http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript/5365036#5365036
 	// return "#"+((1<<24)*Math.random()|0).toString(16);
 
@@ -41,43 +42,43 @@ function timeit(func, caption) {
 	console.log(caption || "", diff, "ms");
 }
 
-Util.distance = function(offsetX, offsetY) {
+mindmaps.Util.distance = function(offsetX, offsetY) {
 	return Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 };
 
 /**
  * Point class.
  */
-var Point = function(x, y) {
+mindmaps.Point = function(x, y) {
 	this.x = x;
 	this.y = y;
 };
 
-Point.fromObject = function(obj) {
-	return new Point(obj.x, obj.y);
+mindmaps.Point.fromObject = function(obj) {
+	return new mindmaps.Point(obj.x, obj.y);
 };
 
-Point.prototype.clone = function() {
-	return new Point(this.x, this.y);
+mindmaps.Point.prototype.clone = function() {
+	return new mindmaps.Point(this.x, this.y);
 };
 
-Point.prototype.add = function(point) {
+mindmaps.Point.prototype.add = function(point) {
 	this.x += point.x;
 	this.y += point.y;
 };
 
-Point.prototype.toString = function() {
+mindmaps.Point.prototype.toString = function() {
 	return "{x: " + this.x + " y: " + this.y + "}";
 };
 
-Point.ZERO = new Point(0, 0);
+mindmaps.Point.ZERO = new mindmaps.Point(0, 0);
 
 /**
  * test Default documents
  */
 
 function getBinaryMapWithDepth(depth) {
-	var mm = new MindMap();
+	var mm = new mindmaps.MindMap();
 	var root = mm.root;
 
 	function createTwoChildren(node, depth) {
@@ -104,14 +105,14 @@ function getBinaryMapWithDepth(depth) {
 
 	// generate positions for all nodes.
 	// tree grows balanced from left to right
-	root.offset = new Point(400, 400);
+	root.offset = new mindmaps.Point(400, 400);
 	// var offset = Math.pow(2, depth-1) * 10;
 	var offset = 80;
 	var c = root.children.values();
 	setOffset(c[0], 0, -offset);
 	setOffset(c[1], 0, offset);
 	function setOffset(node, depth, offsetY) {
-		node.offset = new Point((depth + 1) * 50, offsetY);
+		node.offset = new mindmaps.Point((depth + 1) * 50, offsetY);
 
 		if (node.isLeaf()) {
 			return;
@@ -126,13 +127,13 @@ function getBinaryMapWithDepth(depth) {
 	}
 
 	// color nodes
-	c[0].edgeColor = Util.randomColor();
+	c[0].edgeColor = mindmaps.Util.randomColor();
 	c[0].forEachDescendant(function(node) {
-		node.edgeColor = Util.randomColor();
+		node.edgeColor = mindmaps.Util.randomColor();
 	});
-	c[1].edgeColor = Util.randomColor();
+	c[1].edgeColor = mindmaps.Util.randomColor();
 	c[1].forEachDescendant(function(node) {
-		node.edgeColor = Util.randomColor();
+		node.edgeColor = mindmaps.Util.randomColor();
 	});
 
 	return mm;
@@ -186,7 +187,7 @@ function getDefaultTestMap() {
 }
 
 function getDefaultTestDocument() {
-	var doc = new Document();
+	var doc = new mindmaps.Document();
 	doc.title = "test document";
 	doc.mindmap = getDefaultTestMap();
 
@@ -194,7 +195,7 @@ function getDefaultTestDocument() {
 }
 
 function getSimpleMap() {
-	var mm = new MindMap();
+	var mm = new mindmaps.MindMap();
 	var root = mm.root;
 
 	var n0 = mm.createNode();

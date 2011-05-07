@@ -1,6 +1,8 @@
-var StatusBarView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.StatusBarView = function() {
 	this.$statusbar = $("#statusbar");
 };
 
-var StatusBarPresenter = function(eventBus, view) {
+mindmaps.StatusBarPresenter = function(eventBus, view) {
 };

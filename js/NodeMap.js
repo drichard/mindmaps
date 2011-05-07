@@ -1,16 +1,18 @@
+var mindmaps = mindmaps || {};
+
 /**
  * Map implementation for nodes. The key is automatically set to the node id.
  */
-var NodeMap = function() {
+mindmaps.NodeMap = function() {
 	this.nodes = {};
 	this.count = 0;
 };
 
-NodeMap.prototype.get = function(nodeId) {
+mindmaps.NodeMap.prototype.get = function(nodeId) {
 	return this.nodes[nodeId];
 };
 
-NodeMap.prototype.add = function(node) {
+mindmaps.NodeMap.prototype.add = function(node) {
 	if (!this.nodes.hasOwnProperty(node.id)) {
 		this.nodes[node.id] = node;
 		this.count++;
@@ -19,7 +21,7 @@ NodeMap.prototype.add = function(node) {
 	return false;
 };
 
-NodeMap.prototype.remove = function(node) {
+mindmaps.NodeMap.prototype.remove = function(node) {
 	if (this.nodes.hasOwnProperty(node.id)) {
 		delete this.nodes[node.id];
 		this.count--;
@@ -28,11 +30,11 @@ NodeMap.prototype.remove = function(node) {
 	return false;
 };
 
-NodeMap.prototype.size = function() {
+mindmaps.NodeMap.prototype.size = function() {
 	return this.count;
 };
 
-NodeMap.prototype.values = function() {
+mindmaps.NodeMap.prototype.values = function() {
 	return _.values(this.nodes);
 };
 
@@ -40,7 +42,7 @@ NodeMap.prototype.values = function() {
  * Iterator.
  * @param callback, first argument should be the node.
  */
-NodeMap.prototype.each = function(callback) {
+mindmaps.NodeMap.prototype.each = function(callback) {
 	_.each(this.nodes, function(node) {
 		callback(node);
 	});

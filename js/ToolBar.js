@@ -1,4 +1,6 @@
-var ToolBarView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.ToolBarView = function() {
 	var self = this;
 	var $undoButton = null;
 	var $redoButton = null;
@@ -90,10 +92,10 @@ var ToolBarView = function() {
 	};
 };
 
-var ToolBarPresenter = function(eventBus, appModel, view) {
+mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	// view callbacks
 	view.deleteButtonClicked = function() {
-		eventBus.publish(Event.DELETE_SELECTED_NODE);
+		eventBus.publish(mindmaps.Event.DELETE_SELECTED_NODE);
 	};
 
 	view.undoButtonClicked = function() {
@@ -107,42 +109,42 @@ var ToolBarPresenter = function(eventBus, appModel, view) {
 	};
 
 	view.saveButtonClicked = function() {
-		eventBus.publish(Event.SAVE_DOCUMENT);
+		eventBus.publish(mindmaps.Event.SAVE_DOCUMENT);
 	};
 
 	view.openButtonClicked = function() {
-		eventBus.publish(Event.OPEN_DOCUMENT);
+		eventBus.publish(mindmaps.Event.OPEN_DOCUMENT);
 	};
 
 	view.newButtonClicked = function() {
-		eventBus.publish(Event.NEW_DOCUMENT);
+		eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 	};
 
 	view.bigMapButtonClicked = function() {
 		var map = getBinaryMapWithDepth(8);
-		var doc = new Document();
+		var doc = new mindmaps.Document();
 		doc.mindmap = map;
 		appModel.setDocument(doc);
-		eventBus.publish(Event.DOCUMENT_OPENED, doc);
+		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
 	};
 
 	// app model events
-	appModel.subscribe(ApplicationModel.Event.UNDO_STATE_CHANGE, function(
+	appModel.subscribe(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE, function(
 			undoState, redoState) {
 		view.setUndoButtonEnabled(undoState);
 		view.setRedoButtonEnabled(redoState);
 	});
 
 	// global events
-	eventBus.subscribe(Event.DOCUMENT_SAVED, function() {
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_SAVED, function() {
 		view.showSaved();
 	});
 
-	eventBus.subscribe(Event.DOCUMENT_CREATED, function() {
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function() {
 		view.enableSaveButton();
 	});
 
-	eventBus.subscribe(Event.DOCUMENT_OPENED, function() {
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 		view.enableSaveButton();
 	});
 

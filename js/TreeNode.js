@@ -1,7 +1,9 @@
+var mindmaps = mindmaps || {};
+
 /**
  * Constructor for a tree node.
  */
-var TreeNode = function() {
+mindmaps.TreeNode = function() {
 //	var defaults = {
 //		id : Util.getId(),
 //		parent : null,
@@ -21,9 +23,9 @@ var TreeNode = function() {
 //	
 //	_.extend(this, defaults, options);
 	
-	this.id = Util.getId();
+	this.id = mindmaps.Util.getId();
 	this.parent = null;
-	this.children = new NodeMap();
+	this.children = new mindmaps.NodeMap();
 	this.text = {
 		caption : "Node " + this.id,
 		font : {
@@ -32,7 +34,7 @@ var TreeNode = function() {
 			color : "black"
 		}
 	};
-	this.offset = Point.ZERO;
+	this.offset = mindmaps.Point.ZERO;
 	this.collapseChildren = false;
 	this.edgeColor = "black";
 };
@@ -40,24 +42,24 @@ var TreeNode = function() {
 /**
  * Creates a node object by parsing JSON text.
  */
-TreeNode.fromJSON = function(json) {
-	return TreeNode.fromObject(JSON.parse(json));
+mindmaps.TreeNode.fromJSON = function(json) {
+	return mindmaps.TreeNode.fromObject(JSON.parse(json));
 };
 
 /**
  * Creates a node from an object as a result of a JSON parser.
  */
-TreeNode.fromObject = function(obj) {
-	var node = new TreeNode();
+mindmaps.TreeNode.fromObject = function(obj) {
+	var node = new mindmaps.TreeNode();
 	node.id = obj.id;
 	node.text = obj.text;
-	node.offset = Point.fromObject(obj.offset);
+	node.offset = mindmaps.Point.fromObject(obj.offset);
 	node.collapseChildren = obj.collapseChildren;
 	node.edgeColor = obj.edgeColor;
 
 	// extract all children from array of objects
 	_.each(obj.children, function(child) {
-		var childNode = TreeNode.fromObject(child);
+		var childNode = mindmaps.TreeNode.fromObject(child);
 		node.addChild(childNode);
 	});
 
@@ -68,7 +70,7 @@ TreeNode.fromObject = function(obj) {
  * Returns a presentation of this node and its children ready for serialization.
  * Called by JSON.stringify().
  */
-TreeNode.prototype.toJSON = function() {
+mindmaps.TreeNode.prototype.toJSON = function() {
 	// copy all children into array
 	var self = this;
 	var children = (function() {
@@ -93,29 +95,29 @@ TreeNode.prototype.toJSON = function() {
 	return obj;
 };
 
-TreeNode.prototype.serialize = function() {
+mindmaps.TreeNode.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
-TreeNode.prototype.addChild = function(node) {
+mindmaps.TreeNode.prototype.addChild = function(node) {
 	node.parent = this;
 	this.children.add(node);
 };
 
-TreeNode.prototype.removeChild = function(node) {
+mindmaps.TreeNode.prototype.removeChild = function(node) {
 	node.parent = null;
 	this.children.remove(node);
 };
 
-TreeNode.prototype.isRoot = function() {
+mindmaps.TreeNode.prototype.isRoot = function() {
 	return this.parent === null;
 };
 
-TreeNode.prototype.isLeaf = function() {
+mindmaps.TreeNode.prototype.isLeaf = function() {
 	return this.children.size() === 0;
 };
 
-TreeNode.prototype.getParent = function() {
+mindmaps.TreeNode.prototype.getParent = function() {
 	return this.parent;
 };
 
@@ -123,7 +125,7 @@ TreeNode.prototype.getParent = function() {
  * 
  * @returns The root of the tree structure.
  */
-TreeNode.prototype.getRoot = function() {
+mindmaps.TreeNode.prototype.getRoot = function() {
 	var root = this;
 	while (root.parent) {
 		root = root.parent;
@@ -135,7 +137,7 @@ TreeNode.prototype.getRoot = function() {
 /**
  * Gets the position of the node relative to the root.
  */
-TreeNode.prototype.getPosition = function() {
+mindmaps.TreeNode.prototype.getPosition = function() {
 	var pos = this.offset.clone();
 	var node = this.parent;
 
@@ -151,7 +153,7 @@ TreeNode.prototype.getPosition = function() {
  * 
  * @returns {Number}
  */
-TreeNode.prototype.getDepth = function() {
+mindmaps.TreeNode.prototype.getDepth = function() {
 	var node = this.parent;
 	var depth = 0;
 
@@ -171,7 +173,7 @@ TreeNode.prototype.getDepth = function() {
  * @returns {Array}
  * @deprecated
  */
-TreeNode.prototype.getChildren = function(recursive) {
+mindmaps.TreeNode.prototype.getChildren = function(recursive) {
 	var nodes = [];
 
 	this.children.each(function(node) {
@@ -190,24 +192,24 @@ TreeNode.prototype.getChildren = function(recursive) {
 /**
  * Traverses all child nodes.
  */
-TreeNode.prototype.forEachChild = function(func) {
+mindmaps.TreeNode.prototype.forEachChild = function(func) {
 	this.children.each(func);
 };
 
 /**
  * Traverses all child nodes recursively.
  */
-TreeNode.prototype.forEachDescendant = function(func) {
+mindmaps.TreeNode.prototype.forEachDescendant = function(func) {
 	this.children.each(function(node) {
 		func(node);
 		node.forEachDescendant(func);
 	});
 };
 
-TreeNode.prototype.setCaption = function(caption) {
+mindmaps.TreeNode.prototype.setCaption = function(caption) {
 	this.text.caption = caption;
 };
 
-TreeNode.prototype.getCaption = function() {
+mindmaps.TreeNode.prototype.getCaption = function() {
 	return this.text.caption;
 };

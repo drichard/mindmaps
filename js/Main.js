@@ -1,4 +1,6 @@
-var MainView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.MainView = function() {
 	var self = this;
 
 	/**
@@ -39,22 +41,22 @@ var MainView = function() {
 };
 
 
-var MainPresenter = function(eventBus, appModel, view) {
+mindmaps.MainPresenter = function(eventBus, appModel, view) {
 	this.go = function() {
-		var toolbar = new ToolBarView();
+		var toolbar = new mindmaps.ToolBarView();
 		//view.setToolBar(toolbar);
-		var toolbarPresenter = new ToolBarPresenter(eventBus, appModel, toolbar);
+		var toolbarPresenter = new mindmaps.ToolBarPresenter(eventBus, appModel, toolbar);
 		toolbarPresenter.go();
 		
-		var canvas = new DefaultCanvasView();
+		var canvas = new mindmaps.DefaultCanvasView();
 		view.setCanvas(canvas);
 		view.setCanvasSize();
-		var canvasPresenter = new CanvasPresenter(eventBus, appModel, canvas);
+		var canvasPresenter = new mindmaps.CanvasPresenter(eventBus, appModel, canvas);
 		canvasPresenter.go();
 		
-		var statusbar = new StatusBarView();
+		var statusbar = new mindmaps.StatusBarView();
 		//view.setStatusBar(statusbar);
-		var statusbarPresenter = new StatusBarPresenter(eventBus, statusbar);
+		var statusbarPresenter = new mindmaps.StatusBarPresenter(eventBus, statusbar);
 		
 	};
 };

@@ -1,4 +1,6 @@
-var OpenDocumentView = function() {
+var mindmaps = mindmaps || {};
+
+mindmaps.OpenDocumentView = function() {
 	var self = this;
 	
 	// create dialog
@@ -35,17 +37,17 @@ var OpenDocumentView = function() {
 	};
 };
 
-var OpenDocumentPresenter = function(eventBus, appModel, view) {
+mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 
 	view.documentClicked = function(doc) {
 		view.hideOpenDialog();
 		appModel.setDocument(doc);
-		eventBus.publish(Event.DOCUMENT_OPENED);
+		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED);
 	};
 	
 	
 	this.go = function(){
-		var docs = LocalDocumentStorage.getDocuments();
+		var docs = mindmaps.LocalDocumentStorage.getDocuments();
 		view.showOpenDialog(docs);
 	};
 };

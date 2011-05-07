@@ -1,4 +1,6 @@
-var CanvasPresenter = function(eventBus, appModel, view) {
+var mindmaps = mindmaps || {};
+
+mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var self = this;
 	var selectedNode = null;
 	var creator = view.getCreator();
@@ -116,7 +118,8 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 	// CREATOR TOOL
 	creator.dragStarted = function(node) {
 		// set edge color for new node. inherit from parent or random when root
-		var color = node.isRoot() ? Util.randomColor() : node.edgeColor;
+		var color = node.isRoot() ? mindmaps.Util.randomColor()
+				: node.edgeColor;
 		return color;
 	};
 
@@ -127,7 +130,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		// update the model
-		appModel.createNode(parent, new Point(offsetX, offsetY),
+		appModel.createNode(parent, new mindmaps.Point(offsetX, offsetY),
 				creator.lineColor, self);
 	};
 
@@ -154,13 +157,13 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 
 	function bind() {
 		// listen to global events
-		eventBus.subscribe(Event.DOCUMENT_OPENED, function() {
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			var map = appModel.getMindMap();
 			view.drawMap(map);
 			view.center();
 		});
 
-		eventBus.subscribe(Event.DOCUMENT_CREATED, function() {
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function() {
 			var map = appModel.getMindMap();
 			view.drawMap(map);
 			view.center();
@@ -170,15 +173,16 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			view.editNodeCaption(root);
 		});
 
-		eventBus.subscribe(Event.DELETE_SELECTED_NODE, function() {
+		eventBus.subscribe(mindmaps.Event.DELETE_SELECTED_NODE, function() {
 			deleteSelectedNode();
 		});
 
-		eventBus.subscribe(Event.NODE_MOVED, function(node) {
+		eventBus.subscribe(mindmaps.Event.NODE_MOVED, function(node) {
 			view.positionNode(node);
 		});
 
-		eventBus.subscribe(Event.NODE_TEXT_CAPTION_CHANGED, function(node) {
+		eventBus.subscribe(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, function(
+				node) {
 			view.setNodeText(node, node.getCaption());
 
 			// redraw node in case height has changed
@@ -186,7 +190,7 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			view.redrawNodeConnectors(node);
 		});
 
-		eventBus.subscribe(Event.NODE_CREATED, function(node, origin) {
+		eventBus.subscribe(mindmaps.Event.NODE_CREATED, function(node, origin) {
 			view.createNode(node);
 
 			// did we create this node inside the prenter ourselves?
@@ -206,12 +210,12 @@ var CanvasPresenter = function(eventBus, appModel, view) {
 			}
 		});
 
-		eventBus.subscribe(Event.NODE_DELETED, function(node, parent) {
+		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
 			// reset selectedNode if we are deleting this one
 			if (node === selectedNode) {
 				selectedNode = null;
 			}
-			
+
 			// update view
 			view.deleteNode(node);
 			if (parent.isLeaf()) {
