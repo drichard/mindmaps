@@ -35,6 +35,7 @@ mindmaps.DefaultCanvasView = function() {
 	var nodeDragging = false;
 	var creator = new Creator();
 	var captionEditor = new CaptionEditor();
+	var nodeMenu = new NodeMenu();
 
 	captionEditor.commit = function(text) {
 		self.nodeCaptionEditCommitted(text);
@@ -567,6 +568,10 @@ mindmaps.DefaultCanvasView = function() {
 		drawNodeCanvas(node);
 	};
 
+	this.showNodeMenu = function(node) {
+		nodeMenu.attachToNode(node);
+	};
+
 	function CaptionEditor() {
 		var self = this;
 		var attached = false;
@@ -577,7 +582,7 @@ mindmaps.DefaultCanvasView = function() {
 		// text input for node edits.
 		var $editor = $("<input/>", {
 			type : "text",
-			"class" : "caption-editor"
+			id : "caption-editor"
 		}).bind("keydown", "esc", function() {
 			self.stop(true);
 		}).bind("keydown", "return", function() {
@@ -593,6 +598,7 @@ mindmaps.DefaultCanvasView = function() {
 			if (attached) {
 				return;
 			}
+			attached = true;
 
 			// TODO put text into span and hide()
 			$text = $text_;
@@ -615,13 +621,12 @@ mindmaps.DefaultCanvasView = function() {
 				width : width + "px",
 				height : height + "px"
 			}).appendTo($text).select();
-			attached = true;
 		};
 
 		this.stop = function(cancel) {
 			if (attached) {
-				$text.removeClass("edit");
 				attached = false;
+				$text.removeClass("edit");
 				$editor.detach();
 				$cancelArea.unbind("mousedown.editNodeCaption");
 			}
@@ -721,6 +726,21 @@ mindmaps.DefaultCanvasView = function() {
 
 		this.isDragging = function() {
 			return dragging;
+		};
+	}
+
+	function NodeMenu() {
+		var $menu = $("<div/>", {
+			id : "node-menu"
+		});
+
+		this.attachToNode = function(node) {
+			var $node = $getNode(node);
+			$node.append($menu);
+		};
+
+		this.detach = function() {
+			$menu.detach();
 		};
 	}
 };

@@ -49,8 +49,6 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		// select node and save reference
 		view.highlightNode(node);
 
-		// show creator
-		creator.attachToNode(node);
 		selectedNode = node;
 	};
 
@@ -86,6 +84,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	view.nodeMouseDown = function(node) {
 		selectNode(node);
+		// show creator
+		creator.attachToNode(node);
+		view.showNodeMenu(node);
 	};
 
 	view.nodeMouseUp = function(node) {
