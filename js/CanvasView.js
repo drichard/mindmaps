@@ -269,10 +269,11 @@ mindmaps.DefaultCanvasView = function() {
 		$drawingArea.children().remove();
 
 		var root = map.root;
-		// center root
-		var center = new mindmaps.Point($drawingArea.width() / 2,
-				$drawingArea.height() / 2);
-		root.offset = center;
+		// // center root
+		// var center = new mindmaps.Point($drawingArea.width() / 2,
+		// $drawingArea
+		// .height() / 2);
+		// root.offset = center;
 
 		// 1.5. do NOT detach for now since DIV dont have widths and heights,
 		// and loading maps draws wrong canvases (or create nodes and then draw
@@ -315,25 +316,28 @@ mindmaps.DefaultCanvasView = function() {
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
 
-		var bb = "none";
-
-		if (!node.isRoot()) {
-			var bThickness = 10 - depth || 1;
-			var bColor = node.edgeColor;
-			var bb = bThickness + "px solid " + bColor;
-		}
-
 		// div node container
 		var $node = $("<div/>", {
 			id : "node-" + node.id,
 			"class" : "node-container"
-		}).css({
-			left : offsetX + "px",
-			top : offsetY + "px",
-			"border-bottom" : bb
 		}).data({
 			node : node
-		}).appendTo($parent);
+		});
+
+		if (!node.isRoot()) {
+			// draw border and position manually only non-root nodes
+			var bThickness = 10 - depth || 1;
+			var bColor = node.edgeColor;
+			var bb = bThickness + "px solid " + bColor;
+
+			$node.css({
+				left : offsetX + "px",
+				top : offsetY + "px",
+				"border-bottom" : bb
+			});
+		}
+
+		$node.appendTo($parent);
 
 		// node drag behaviour
 		/**
@@ -371,7 +375,8 @@ mindmaps.DefaultCanvasView = function() {
 				},
 				stop : function(e, ui) {
 					nodeDragging = false;
-					var pos = new mindmaps.Point(ui.position.left, ui.position.top);
+					var pos = new mindmaps.Point(ui.position.left,
+							ui.position.top);
 
 					// fire dragged event
 					if (self.nodeDragged) {
@@ -674,8 +679,8 @@ mindmaps.DefaultCanvasView = function() {
 					var $wp = $wrapper.position();
 					var nubLeft = ui.position.left;
 					var nubTop = ui.position.top;
-					var distance = mindmaps.Util.distance($wp.left - nubLeft, $wp.top
-							- nubTop);
+					var distance = mindmaps.Util.distance($wp.left - nubLeft,
+							$wp.top - nubTop);
 					self.dragStopped(self.node, nubLeft, nubTop, distance);
 				}
 			}
@@ -691,18 +696,18 @@ mindmaps.DefaultCanvasView = function() {
 			var $node = $getNode(node);
 
 			// position the nub correctly
+			$wrapper.removeClass("left right");
 			if (node.offset.x > 0) {
-				$wrapper.removeClass("left").addClass("right");
-			} else {
-				$wrapper.removeClass("right").addClass("left");
+				$wrapper.addClass("right");
+			} else if (node.offset.x < 0) {
+				$wrapper.addClass("left");
 			}
 
 			// remove any positioning that the draggable might have caused
 			$wrapper.css({
 				left : "",
 				top : ""
-			});
-			$wrapper.appendTo($node);
+			}).appendTo($node);
 		};
 
 		this.detach = function() {

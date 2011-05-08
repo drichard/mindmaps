@@ -115,6 +115,7 @@ html,body {
 }
 
 #drawing-area {
+	position: absolute;
 	width: 4000px;
 	height: 2000px;
 	background-color: white;
@@ -137,6 +138,8 @@ html,body {
 	width: 1px;
 	min-width: 0px;
 	height: 20px;
+	left: 50%;
+	top: 50%;
 }
 
 .mindmap .node-caption {
