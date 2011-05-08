@@ -157,13 +157,19 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	function bind() {
 		// listen to global events
-		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
+			// TODO DRY
+			var dimensions = doc.dimensions;
+			view.setDimensions(dimensions.x, dimensions.y);
 			var map = appModel.getMindMap();
 			view.drawMap(map);
 			view.center();
 		});
 
-		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function() {
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
+			// TODO DRY
+			var dimensions = doc.dimensions;
+			view.setDimensions(dimensions.x, dimensions.y);
 			var map = appModel.getMindMap();
 			view.drawMap(map);
 			view.center();

@@ -71,7 +71,7 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 
 		// change document title when root was renamed
 		if (node.isRoot()) {
-			document.setTitle(newCaption);
+			document.title = newCaption;
 		}
 
 		eventBus.publish(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, node);
@@ -161,7 +161,7 @@ mindmaps.AppController = function(eventBus, appModel) {
 		 * otherwise just save the document.
 		 */
 		var doc = appModel.getDocument();
-		var title = doc.getTitle();
+		var title = doc.title;
 		if (title !== null) {
 			var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
 			eventBus.publish(mindmaps.Event.DOCUMENT_SAVED);

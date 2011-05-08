@@ -8,6 +8,7 @@ mindmaps.Document = function() {
 		created : new Date(),
 		modified : new Date()
 	};
+	this.dimensions = new mindmaps.Point(4000, 2000);
 };
 
 mindmaps.Document.fromJSON = function(json) {
@@ -23,6 +24,11 @@ mindmaps.Document.fromObject = function(obj) {
 		created : new Date(obj.dates.created),
 		modified : new Date(obj.dates.modified)
 	};
+	
+	// backwards compability for now
+	if (obj.dimensions) {
+		doc.dimensions = mindmaps.Point.fromObject(obj.dimensions);
+	}
 
 	return doc;
 };
@@ -31,28 +37,19 @@ mindmaps.Document.fromObject = function(obj) {
  * Called by JSON.stringify().
  */
 mindmaps.Document.prototype.toJSON = function() {
-	var obj = {
+	return {
 		id : this.id,
-		title: this.title,
+		title : this.title,
 		mindmap : this.mindmap,
 		dates : {
 			// store dates in milliseconds since epoch
 			created : this.dates.created.getTime(),
 			modified : this.dates.modified.getTime()
-		}
+		},
+		dimensions : this.dimensions
 	};
-
-	return obj;
 };
 
 mindmaps.Document.prototype.serialize = function() {
 	return JSON.stringify(this);
-};
-
-mindmaps.Document.prototype.getTitle = function() {
-	return this.title;
-};
-
-mindmaps.Document.prototype.setTitle = function(title) {
-	this.title = title;
 };

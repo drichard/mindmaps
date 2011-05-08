@@ -116,8 +116,6 @@ html,body {
 
 #drawing-area {
 	position: absolute;
-	width: 4000px;
-	height: 2000px;
 	background-color: white;
 	background-image: url("../img/grid.gif");
 }

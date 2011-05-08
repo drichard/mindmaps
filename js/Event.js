@@ -7,20 +7,48 @@ mindmaps.Event = {
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",
 	SAVE_DOCUMENT : "SaveDocumentEvent",
+	/**
+	 * @param The document
+	 */
 	DOCUMENT_CREATED : "DocumentCreatedEvent",
+	/**
+	 * @param The document
+	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
+	/**
+	 * @param The document
+	 */
 	DOCUMENT_SAVED : "DocumentSavedEvent",
+	
 	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
+	/**
+	 * @param The node
+	 */
 	NODE_MOVED : "NodeMovedEvent",
+	
+	/**
+	 * @param The node
+	 */
 	NODE_TEXT_CAPTION_CHANGED : "NodeTextCaptionChangedEvent",
+	
+	/**
+	 * @param The node
+	 * @param The origin of creation
+	 */
 	NODE_CREATED : "NodeCreatedEvent",
+	
+	/**
+	 * @param The node
+	 * @param The parent
+	 */
 	NODE_DELETED : "NodeDeletedEvent"
 };
 
 /**
  * Simple Event bus powered by MicroEvent.
  */
-mindmaps.EventBus = function() {};
+mindmaps.EventBus = function() {
+};
 MicroEvent.mixin(mindmaps.EventBus);
 
 // log all publishes in debug mode

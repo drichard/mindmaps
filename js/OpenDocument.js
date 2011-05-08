@@ -42,7 +42,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 	view.documentClicked = function(doc) {
 		view.hideOpenDialog();
 		appModel.setDocument(doc);
-		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED);
+		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
 	};
 	
 	

@@ -59,9 +59,9 @@ mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 	view.saveButtonClicked = function() {
 		var doc = appModel.getDocument();
 		var title = view.getDocumentTitle();
-		doc.setTitle(title);
+		doc.title = title;
 		var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
-		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED);
+		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
 		view.hideSaveDialog();
 	};
 

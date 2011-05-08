@@ -20,6 +20,10 @@ mindmaps.CanvasView = function() {
 		var h = area.height() - c.height();
 		c.scrollLeft(w / 2).scrollTop(h / 2);
 	};
+
+	this.setDimensions = function(width, height) {
+		this.$getDrawingArea().width(width).height(height);
+	};
 };
 
 mindmaps.CanvasView.prototype.drawMap = function(map) {
