@@ -18,24 +18,27 @@ mindmaps.MainView = function() {
 		this.$getCanvasContainer().height(height);
 	};
 
-	
 	this.init = function() {
 		$(window).resize(function() {
 			self.setCanvasSize();
 		});
 		this.setCanvasSize();
 	};
+
+	this.getHeaderHeight = function() {
+		return $("#topbar").outerHeight(true);
+	};
 };
 
 mindmaps.MainPresenter = function(eventBus, appModel, view) {
 	this.go = function() {
+		// init all presenters
 		var toolbar = new mindmaps.ToolBarView();
 		var toolbarPresenter = new mindmaps.ToolBarPresenter(eventBus,
 				appModel, toolbar);
 		toolbarPresenter.go();
 
 		var canvas = new mindmaps.DefaultCanvasView();
-		canvas.container = view.$getCanvasContainer();
 		var canvasPresenter = new mindmaps.CanvasPresenter(eventBus, appModel,
 				canvas);
 		canvasPresenter.go();
@@ -45,13 +48,16 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 				statusbar);
 		statusbarPresenter.go();
 
-		var nodePropertiesDialog = new mindmaps.CanvasDialog("Properties");
-		statusbarPresenter.addEntry(nodePropertiesDialog);
+		var cdf = new mindmaps.CanvasDialogFactory(view.$getCanvasContainer());
+		// floating dialogs
+		
+		var nodeDialog = cdf.create("Properties");
+		statusbarPresenter.addEntry(nodeDialog);
 
-		var navigatorDialog = new mindmaps.CanvasDialog("Navigator");
+		var navigatorDialog = cdf.create("Navigator");
 		statusbarPresenter.addEntry(navigatorDialog);
 
-		var chatDialog = new mindmaps.CanvasDialog("Chat");
+		var chatDialog = cdf.create("Chat");
 		statusbarPresenter.addEntry(chatDialog);
 
 		view.init();

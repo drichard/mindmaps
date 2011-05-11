@@ -1,6 +1,44 @@
 var mindmaps = mindmaps || {};
 
-mindmaps.CanvasDialog = function(caption) {
+mindmaps.CanvasDialogFactory = function($container) {
+	var dialogs = [];
+	var padding = 5;
+
+	function setPosition(dialog) {
+		$(window).resize(function() {
+			_.each(dialogs, function(dialog) {
+				// TODO move dialogs into view port if window too small
+			});
+		});
+
+		var ccw = $container.outerWidth();
+		var hh = $container.offset().top;
+		var dw = dialog.width();
+		var dh = dialog.height();
+		var heightOffset = _.reduce(dialogs, function(memo, dialog) {
+			return memo + dialog.height() + padding;
+		}, 0);
+
+		dialog.setPosition(ccw - dw - padding, hh + padding + heightOffset);
+	}
+
+	this.create = function(caption) {
+		var dialog = new mindmaps.CanvasDialog(caption, $container);
+		setPosition(dialog);
+		dialogs.push(dialog);
+		return dialog;
+	};
+};
+
+
+/**
+ * A reusable, draggable dialog gui element. The dialog is contained within the
+ * canvas-container. When a $hideTarget is set, the hide/show animations will
+ * show a transfer effect.
+ * 
+ * @param caption
+ */
+mindmaps.CanvasDialog = function(caption, container) {
 	var self = this;
 	var animating = false;
 
@@ -36,7 +74,7 @@ mindmaps.CanvasDialog = function(caption) {
 				}).draggable({
 			containment : "parent",
 			handle : "div.ui-dialog-titlebar"
-		}).hide().append($title).appendTo($("#canvas-container"));
+		}).hide().append($title).appendTo(container);
 
 		return $dialog;
 	})();
@@ -50,7 +88,6 @@ mindmaps.CanvasDialog = function(caption) {
 			if (this.$hideTarget) {
 				this.transfer(this.$widget, this.$hideTarget);
 			}
-
 		}
 	};
 
@@ -96,4 +133,22 @@ mindmaps.CanvasDialog = function(caption) {
 		});
 	};
 
+	this.width = function() {
+		return this.$widget.outerWidth();
+	};
+
+	this.height = function() {
+		return this.$widget.outerHeight();
+	};
+
+	this.offset = function() {
+		return this.$widget.offset();
+	};
+
+	this.setPosition = function(x, y) {
+		this.$widget.offset({
+			left : x,
+			top : y
+		});
+	};
 };
