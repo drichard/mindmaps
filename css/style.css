@@ -55,12 +55,19 @@ table {
 }
 
 /*
+ jquery ui
+*/
+.ui-effects-transfer {
+	border: 2px dashed #AAA;
+}
+
+/*
 	APPLICATION
 */
 html,body {
 	height: 100%; /* needed for container min-height */
 	font-family: sans-serif;
-	font-size: 10px; /* conform with jquery-ui em settings */
+	font-size: 10px; /*conform with jquery-ui em settings */
 }
 
 #container {
@@ -90,28 +97,49 @@ html,body {
 }
 
 #toolbar {
-	background-color: #BBB;
+	background-color: #E5E5E5;
 	overflow: hidden;
 	width: 100%;
 }
 
 #toolbar .buttons {
-	margin-top: 8px;
+	margin-top: 4px;
 }
 
 #toolbar .buttonset {
 	float: left;
 }
 
-#buttons-right {
+.buttons-right {
 	float: right;
 	margin-right: 8px;
+}
+
+#bottombar {
+	position: fixed; /* absolute caused scroll bar, depending on border */
+	width: 100%;
+	bottom: 0;
+	background: #EEE;
+	border-top: 1px solid #AAA;
+}
+
+#statusbar {
+	height: 32px;
+}
+
+#statusbar .buttons {
+	margin-top: 4px;
+}
+
+.buttons-small .ui-button .ui-button-text {
+	padding: 0.2em 0.6em;
+	font-size: 12px;
 }
 
 #canvas-container {
 	position: absolute;
 	width: 100%;
-	overflow: auto;
+	overflow: hidden;
 }
 
 #drawing-area {
@@ -191,7 +219,6 @@ html,body {
 	padding: 0 4px;
 }
 
-
 .mindmap .button-collapse {
 	width: 16px;
 	height: 16px;
@@ -218,7 +245,6 @@ html,body {
 .mindmap .button-collapse.open {
 	background-position: 0px 0px;
 }
-
 
 #creator-wrapper {
 	position: absolute !important;
@@ -257,19 +283,27 @@ html,body {
 	text-align: center;
 }
 
-#node-menu {
-	position: absolute;
-	width: 80px;
-	height: 80px;
-	border: 1px dotted red;
+.canvas-dialog.ui-dialog {
+	width: 200px;
+	height: 150px;
+	position: fixed !important;
+	box-shadow: none;
+	z-index: 1000;
 }
 
+.canvas-dialog div.ui-dialog-titlebar {
+	padding: 0.4em 0.5em 0.3em;
+}
 
-#bottombar {
-	position: fixed; /* absolute caused scroll bar, depending on border */
-	width: 100%;
-	bottom: 0;
-	background: #EEE;
-	border-top: 1px solid #AAA;
-	height: 20px;
+.canvas-dialog span.ui-dialog-title {
+	margin: 0;
+}
+
+.canvas-dialog a.ui-dialog.titlebar-close {
+	right: 0.5em;
+	margin-top: -9px;
+}
+
+.canvas-dialog.ui-dialog .ui-dialog-titlebar-close span.ui-icon {
+	background: url("Aristo/images/ui-icons_222222_256x240.png") -64px -16px;
 }

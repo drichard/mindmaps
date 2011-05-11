@@ -1,10 +1,6 @@
 var mindmaps = mindmaps || {};
 
 mindmaps.CanvasView = function() {
-	this.setHeight = function(height) {
-		this.$getContainer().height(height);
-	};
-
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
 	};
@@ -35,7 +31,6 @@ mindmaps.DefaultCanvasView = function() {
 	var nodeDragging = false;
 	var creator = new Creator();
 	var captionEditor = new CaptionEditor();
-	var nodeMenu = new NodeMenu();
 
 	captionEditor.commit = function(text) {
 		self.nodeCaptionEditCommitted(text);
@@ -568,10 +563,6 @@ mindmaps.DefaultCanvasView = function() {
 		drawNodeCanvas(node);
 	};
 
-	this.showNodeMenu = function(node) {
-		nodeMenu.attachToNode(node);
-	};
-
 	function CaptionEditor() {
 		var self = this;
 		var attached = false;
@@ -726,21 +717,6 @@ mindmaps.DefaultCanvasView = function() {
 
 		this.isDragging = function() {
 			return dragging;
-		};
-	}
-
-	function NodeMenu() {
-		var $menu = $("<div/>", {
-			id : "node-menu"
-		});
-
-		this.attachToNode = function(node) {
-			var $node = $getNode(node);
-			$node.append($menu);
-		};
-
-		this.detach = function() {
-			$menu.detach();
 		};
 	}
 };

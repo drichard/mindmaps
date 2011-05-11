@@ -59,7 +59,6 @@ mindmaps.ToolBarView = function() {
 		$("#button-binaryMap").button().click(function() {
 			self.bigMapButtonClicked();
 		});
-
 	};
 
 	/**

@@ -86,7 +86,6 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		selectNode(node);
 		// show creator
 		creator.attachToNode(node);
-		view.showNodeMenu(node);
 	};
 
 	view.nodeMouseUp = function(node) {

@@ -2,11 +2,11 @@ var mindmaps = mindmaps || {};
 
 mindmaps.OpenDocumentView = function() {
 	var self = this;
-	
+
 	// create dialog
 	var $openDialog = $("<div/>", {
-		id: "#open-dialog",
-		title: "Open document"
+		id : "#open-dialog",
+		title : "Open document"
 	}).dialog({
 		autoOpen : false,
 		modal : true
@@ -44,9 +44,8 @@ mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 		appModel.setDocument(doc);
 		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
 	};
-	
-	
-	this.go = function(){
+
+	this.go = function() {
 		var docs = mindmaps.LocalDocumentStorage.getDocuments();
 		view.showOpenDialog(docs);
 	};
