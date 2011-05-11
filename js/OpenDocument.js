@@ -9,7 +9,8 @@ mindmaps.OpenDocumentView = function() {
 		title : "Open document"
 	}).dialog({
 		autoOpen : false,
-		modal : true
+		modal : true,
+		zIndex: 5000
 	});
 
 	this.showOpenDialog = function(docs) {

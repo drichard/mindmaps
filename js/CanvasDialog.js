@@ -5,9 +5,12 @@ mindmaps.CanvasDialogFactory = function($container) {
 	var padding = 5;
 
 	function setPosition(dialog) {
+		// reposition dialog on window resize
 		$(window).resize(function() {
 			_.each(dialogs, function(dialog) {
-				// TODO move dialogs into view port if window too small
+				if (dialog.visible) {
+					dialog.ensurePosition();
+				}
 			});
 		});
 
@@ -30,7 +33,6 @@ mindmaps.CanvasDialogFactory = function($container) {
 	};
 };
 
-
 /**
  * A reusable, draggable dialog gui element. The dialog is contained within the
  * canvas-container. When a $hideTarget is set, the hide/show animations will
@@ -38,7 +40,7 @@ mindmaps.CanvasDialogFactory = function($container) {
  * 
  * @param caption
  */
-mindmaps.CanvasDialog = function(caption, container) {
+mindmaps.CanvasDialog = function(caption, $container) {
 	var self = this;
 	var animating = false;
 
@@ -74,7 +76,7 @@ mindmaps.CanvasDialog = function(caption, container) {
 				}).draggable({
 			containment : "parent",
 			handle : "div.ui-dialog-titlebar"
-		}).hide().append($title).appendTo(container);
+		}).hide().append($title).appendTo($container);
 
 		return $dialog;
 	})();
@@ -95,6 +97,7 @@ mindmaps.CanvasDialog = function(caption, container) {
 		if (!animating && !this.visible) {
 			this.visible = true;
 			this.$widget.fadeIn(this.animationDuration * 1.5);
+			this.ensurePosition();
 
 			// show transfer effect is hide target is set
 			if (this.$hideTarget) {
@@ -150,5 +153,29 @@ mindmaps.CanvasDialog = function(caption, container) {
 			left : x,
 			top : y
 		});
+	};
+
+	// move dialog into view port if window too small
+	this.ensurePosition = function() {
+		var cw = $container.outerWidth();
+		var ch = $container.outerHeight();
+		var col = $container.offset().left;
+		var cot = $container.offset().top;
+		var dw = this.width();
+		var dh = this.height();
+		var dol = this.offset().left;
+		var dot = this.offset().top;
+
+		// window width is too small for current dialog position but bigger than
+		// dialog width
+		if (cw + col < dw + dol && cw >= dw) {
+			this.setPosition(cw + col - dw, dot);
+		}
+
+		// window height is too small for current dialog position but bigger
+		// than dialog height
+		if (ch + cot < dh + dot && ch >= dh) {
+			this.setPosition(dol, ch + cot - dh);
+		}
 	};
 };

@@ -10,6 +10,7 @@ mindmaps.SaveDocumentView = function() {
 	}).dialog({
 		autoOpen : false,
 		modal : true,
+		zIndex: 5000,
 		buttons : {
 			"Save" : function() {
 				if (self.saveButtonClicked) {
