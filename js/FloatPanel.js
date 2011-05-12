@@ -1,6 +1,6 @@
 var mindmaps = mindmaps || {};
 
-mindmaps.CanvasDialogFactory = function($container) {
+mindmaps.FloatPanelFactory = function($container) {
 	var dialogs = [];
 	var padding = 5;
 
@@ -25,8 +25,8 @@ mindmaps.CanvasDialogFactory = function($container) {
 		dialog.setPosition(ccw - dw - padding, hh + padding + heightOffset);
 	}
 
-	this.create = function(caption) {
-		var dialog = new mindmaps.CanvasDialog(caption, $container);
+	this.create = function(caption, $content) {
+		var dialog = new mindmaps.FloatPanel(caption, $container, $content);
 		setPosition(dialog);
 		dialogs.push(dialog);
 		return dialog;
@@ -34,13 +34,13 @@ mindmaps.CanvasDialogFactory = function($container) {
 };
 
 /**
- * A reusable, draggable dialog gui element. The dialog is contained within the
- * canvas-container. When a $hideTarget is set, the hide/show animations will
+ * A reusable, draggable dialog gui element. The panel is contained within the
+ * container. When a $hideTarget is set, the hide/show animations will
  * show a transfer effect.
  * 
  * @param caption
  */
-mindmaps.CanvasDialog = function(caption, $container) {
+mindmaps.FloatPanel = function(caption, $container, $content) {
 	var self = this;
 	var animating = false;
 
@@ -69,14 +69,25 @@ mindmaps.CanvasDialog = function(caption, $container) {
 			"class" : "ui-dialog-titlebar ui-widget-header ui-helper-clearfix"
 		}).append($titleText).append($titleButton);
 
+		var $body = $("<div/>", {
+			"class" : "ui-dialog-content ui-widget-content"
+		});
+
+		if ($content) {
+			$body.append($content);
+		}
+
+		// TODO zIndex while not dragging too small with stack option
 		var $dialog = $(
 				"<div/>",
 				{
-					"class" : "ui-widget ui-dialog ui-corner-all ui-widget-content canvas-dialog "
+					"class" : "ui-widget ui-dialog ui-corner-all ui-widget-content float-panel "
 				}).draggable({
 			containment : "parent",
-			handle : "div.ui-dialog-titlebar"
-		}).hide().append($title).appendTo($container);
+			handle : "div.ui-dialog-titlebar",
+			zIndex: 1000,
+			stack: "div.float-panel"
+		}).hide().append($title).append($body).appendTo($container);
 
 		return $dialog;
 	})();

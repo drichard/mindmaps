@@ -283,27 +283,55 @@ html,body {
 	text-align: center;
 }
 
-.canvas-dialog.ui-dialog {
-	width: 200px;
-	height: 150px;
+#panel-holder {
+	display: none;
+	visibility: hidden;
+}
+
+.float-panel.ui-dialog {
+	min-width: 200px;
+	min-height: 150px;
 	position: fixed !important;
 	box-shadow: none;
 	z-index: 1000;
+	width: auto !important;
 }
 
-.canvas-dialog div.ui-dialog-titlebar {
+.float-panel div.ui-dialog-titlebar {
 	padding: 0.4em 0.5em 0.3em;
 }
 
-.canvas-dialog span.ui-dialog-title {
+.float-panel span.ui-dialog-title {
 	margin: 0;
 }
 
-.canvas-dialog a.ui-dialog.titlebar-close {
+.float-panel a.ui-dialog.titlebar-close {
 	right: 0.5em;
 	margin-top: -9px;
 }
 
-.canvas-dialog.ui-dialog .ui-dialog-titlebar-close span.ui-icon {
+.float-panel.ui-dialog .ui-dialog-titlebar-close span.ui-icon {
 	background: url("Aristo/images/ui-icons_222222_256x240.png") -64px -16px;
+}
+
+#navigator {
+}
+
+#navi-content {
+		
+}
+
+#navi-canvas-wrapper {
+	border: 1px solid black;
+	margin: 5px 0;
+	position: relative;
+}
+
+#navi-canvas-overlay {
+	border: 2px solid red;
+	width: 50px;
+	height: 25px;
+	position: absolute;
+	top: 0;
+	left: 0;
 }

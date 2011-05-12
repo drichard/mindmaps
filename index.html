@@ -30,7 +30,7 @@
 <script src="js/NodeMap.js"></script>
 <script src="js/UndoManager.js"></script>
 
-<script src="js/CanvasDialog.js"></script>
+<script src="js/FloatPanel.js"></script>
 <script src="js/ToolBar.js"></script>
 <script src="js/StatusBar.js"></script>
 <script src="js/CanvasView.js"></script>
@@ -87,6 +87,21 @@
 		<div id="bottombar">
 			<div id="statusbar">
 				<div class="buttons buttons-right buttons-small"></div>
+			</div>
+		</div>
+		<div id="panel-holder">
+			<div id="navigator">
+				<div id="navi-content">
+					<div id="navi-canvas-wrapper">
+						<canvas id="navi-canvas"></canvas>
+						<div id="navi-canvas-overlay"></div>
+					</div>
+					<div id="navi-buttons" class="buttons-small">
+						<button id="button-navi-center">C</button>
+						<button id="button-navi-zoom-in">+</button>
+						<button id="button-navi-zoom-out">-</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
