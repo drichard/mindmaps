@@ -139,7 +139,7 @@ html,body {
 #canvas-container {
 	position: absolute;
 	width: 100%;
-	overflow: hidden;
+	overflow: auto;
 }
 
 #drawing-area {

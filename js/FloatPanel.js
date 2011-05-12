@@ -85,8 +85,7 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 				}).draggable({
 			containment : "parent",
 			handle : "div.ui-dialog-titlebar",
-			zIndex: 1000,
-			stack: "div.float-panel"
+			opacity: 0.75
 		}).hide().append($title).append($body).appendTo($container);
 
 		return $dialog;
