@@ -1,5 +1,6 @@
 var mindmaps = mindmaps || {};
 
+// TODO raise event on collapse
 mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var self = this;
 	var selectedNode = null;

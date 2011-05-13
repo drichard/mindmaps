@@ -7,6 +7,7 @@ mindmaps.NavigatorView = function() {
 	var $contentActive = $content.children(".active").hide();
 	var $contentInactive = $content.children(".inactive").hide();
 	var $dragger = $("#navi-canvas-overlay");
+	var $canvas = $("#navi-canvas");
 
 	/**
 	 * Returns a jquery object.
@@ -70,11 +71,67 @@ mindmaps.NavigatorView = function() {
 			}
 		});
 	};
+
+	this.draw = function(mindmap, scaleFactor) {
+		var root = mindmap.root;
+		var canvas = $canvas[0];
+		var width = canvas.width;
+		var height = canvas.height;
+		var ctx = canvas.getContext("2d");
+		ctx.clearRect(0, 0, width, height);
+		ctx.lineWidth = 1.8;
+
+		drawNode(root, width / 2, height / 2);
+
+		function scale(value) {
+			return value / scaleFactor;
+		}
+
+		function drawNode(node, x, y) {
+			ctx.save();
+			ctx.translate(x, y);
+
+			if (!node.collapseChildren) {
+				node.forEachChild(function(child) {
+					ctx.beginPath();
+					ctx.strokeStyle = child.edgeColor;
+					ctx.moveTo(0, 0);
+					var posX = scale(child.offset.x);
+					var posY = scale(child.offset.y);
+					// var textWidth =
+					// ctx.measureText(child.getCaption()).width;
+					textWidth = 5;
+
+					/**
+					 * draw two lines: one going up to the node, and a second
+					 * horizontal line for the node caption. if node is left of
+					 * the parent (posX < 0), we shorten the first line and draw
+					 * the rest horizontally to arrive at the node's offset
+					 * position. in the other case, we draw the line to the
+					 * node's offset and draw another for the text.
+					 */
+					if (posX < 0) {
+						var firstStop = posX + textWidth;
+						var secondStop = posX;
+					} else {
+						var firstStop = posX;
+						var secondStop = posX + textWidth;
+					}
+					ctx.lineTo(firstStop, posY);
+					ctx.lineTo(secondStop, posY);
+
+					ctx.stroke();
+					drawNode(child, secondStop, posY);
+				});
+			}
+			ctx.restore();
+		}
+	};
 };
 
 mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
-	var $container = container.getContent();
 	var CANVAS_WIDTH = 250;
+	var $container = container.getContent();
 	var viewDragging = false;
 
 	function calculateDraggerSize(canvasSize, docSize) {
@@ -89,8 +146,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 	function calculateCanvasHeight(docSize) {
 		var width = CANVAS_WIDTH;
-		var factor = docSize.x / width;
-		var height = docSize.y / factor;
+		var scale = docSize.x / width;
+		var height = docSize.y / scale;
 
 		view.setCanvasSize(width, height);
 
@@ -108,7 +165,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		view.setDraggerPosition(left, top);
 	}
 
-	function documentOpened(dimensions) {
+	function documentOpened(doc) {
+		var dimensions = doc.dimensions;
 		var canvasSize = calculateCanvasHeight(dimensions);
 
 		// scroll container when the dragger is dragged
@@ -132,11 +190,35 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 		calculateDraggerSize(canvasSize, dimensions);
 		view.showActiveContent();
+
+		// draw canvas
+		var mindmap = doc.mindmap;
+		var scale = dimensions.x / canvasSize.x;
+		view.draw(mindmap, scale);
+
+		// node events
+		eventBus.subscribe(mindmaps.Event.NODE_MOVED, function() {
+			view.draw(mindmap, scale);
+		});
+
+		eventBus.subscribe(mindmaps.Event.NODE_CREATED, function() {
+			view.draw(mindmap, scale);
+		});
+
+		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function() {
+			view.draw(mindmap, scale);
+		});
 	}
 
 	function documentClosed() {
+		// clean up
+		// remove listeners
 		container.unsubscribe(mindmaps.CanvasContainer.Event.RESIZED);
 		$container.unbind("scroll.navigator-view");
+
+		eventBus.unsubscribe(mindmaps.Event.NODE_MOVED);
+		eventBus.unsubscribe(mindmaps.Event.NODE_CREATED);
+		eventBus.unsubscribe(mindmaps.Event.NODE_DELETED);
 
 		view.showInactiveContent();
 	}
@@ -149,12 +231,13 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		viewDragging = false;
 	};
 
+	// document events
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
-		documentOpened(doc.dimensions);
+		documentOpened(doc);
 	});
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
-		documentOpened(doc.dimensions);
+		documentOpened(doc);
 	});
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {

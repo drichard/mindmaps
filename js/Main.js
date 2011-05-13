@@ -43,11 +43,6 @@ mindmaps.CanvasContainer.Event = {
 };
 
 mindmaps.MainView = function() {
-	var self = this;
-
-	this.getHeaderHeight = function() {
-		return $("#topbar").outerHeight(true);
-	};
 };
 
 mindmaps.MainPresenter = function(eventBus, appModel, view) {
@@ -87,6 +82,7 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 		naviPresenter.go();
 
 		navigatorPanel = fpf.create("Navigator", naviView.getContent());
+		navigatorPanel.show();
 		statusbarPresenter.addEntry(navigatorPanel);
 
 		var chatPanel = fpf.create("Chat");

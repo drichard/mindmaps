@@ -4,6 +4,8 @@ var mindmaps = mindmaps || {};
  * Events that the event bus carries.
  */
 mindmaps.Event = {
+	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
+	
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",
 	SAVE_DOCUMENT : "SaveDocumentEvent",
@@ -28,8 +30,6 @@ mindmaps.Event = {
 	 * @param The document
 	 */
 	DOCUMENT_CLOSED : "DocumentClosedEvent",
-	
-	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
 	
 	/**
 	 * @param The node

@@ -1,5 +1,6 @@
 var mindmaps = mindmaps || {};
 
+//TODO take container as argument,c reate drawing area dynamically. remove on clear();, recreate on init()
 mindmaps.CanvasView = function() {
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
