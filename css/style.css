@@ -139,7 +139,7 @@ html,body {
 #canvas-container {
 	position: absolute;
 	width: 100%;
-	overflow: auto;
+	overflow: hidden;
 }
 
 #drawing-area {
@@ -315,23 +315,29 @@ html,body {
 }
 
 #navigator {
+	
 }
 
 #navi-content {
-		
+	
 }
 
 #navi-canvas-wrapper {
-	border: 1px solid black;
 	margin: 5px 0;
 	position: relative;
+}
+
+#navi-canvas {
+	display: block;
+	border: 1px solid black;
+	padding: 2px;
 }
 
 #navi-canvas-overlay {
 	border: 2px solid red;
 	width: 50px;
 	height: 25px;
-	position: absolute;
+	position: absolute !important;
 	top: 0;
 	left: 0;
 }

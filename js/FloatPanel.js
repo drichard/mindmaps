@@ -1,12 +1,14 @@
 var mindmaps = mindmaps || {};
 
-mindmaps.FloatPanelFactory = function($container) {
+mindmaps.FloatPanelFactory = function(container) {
+	var $container = container.getContent();
 	var dialogs = [];
 	var padding = 5;
 
+	// TODO
 	function setPosition(dialog) {
 		// reposition dialog on window resize
-		$(window).resize(function() {
+		container.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
 			_.each(dialogs, function(dialog) {
 				if (dialog.visible) {
 					dialog.ensurePosition();
@@ -35,8 +37,8 @@ mindmaps.FloatPanelFactory = function($container) {
 
 /**
  * A reusable, draggable dialog gui element. The panel is contained within the
- * container. When a $hideTarget is set, the hide/show animations will
- * show a transfer effect.
+ * container. When a $hideTarget is set, the hide/show animations will show a
+ * transfer effect.
  * 
  * @param caption
  */
@@ -47,6 +49,15 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 	this.caption = caption;
 	this.visible = false;
 	this.animationDuration = 400;
+
+	this.setContent = function($content) {
+		this.clearContent();
+		$("div.ui-dialog-content", this.$widget).append($content);
+	};
+
+	this.clearContent = function() {
+		$("div.ui-dialog-content", this.$widget).children().detach();
+	};
 
 	this.$widget = (function() {
 		var $titleText = $("<span/>", {
@@ -78,17 +89,17 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		}
 
 		// TODO zIndex while not dragging too small with stack option
-		var $dialog = $(
+		var $panel = $(
 				"<div/>",
 				{
 					"class" : "ui-widget ui-dialog ui-corner-all ui-widget-content float-panel "
 				}).draggable({
 			containment : "parent",
 			handle : "div.ui-dialog-titlebar",
-			opacity: 0.75
+			opacity : 0.75
 		}).hide().append($title).append($body).appendTo($container);
 
-		return $dialog;
+		return $panel;
 	})();
 
 	this.hide = function() {

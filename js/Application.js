@@ -140,6 +140,8 @@ mindmaps.ApplicationModel.Event = {
 
 mindmaps.AppController = function(eventBus, appModel) {
 	function bind() {
+		eventBus.subscribe(mindmaps.Event.NEW_DOCUMENT, doNewDocument);
+		
 		eventBus.subscribe(mindmaps.Event.SAVE_DOCUMENT, doSaveDocument);
 
 		eventBus.subscribe(mindmaps.Event.OPEN_DOCUMENT, function() {
@@ -148,11 +150,28 @@ mindmaps.AppController = function(eventBus, appModel) {
 			presenter.go();
 		});
 
-		eventBus.subscribe(mindmaps.Event.NEW_DOCUMENT, function() {
-			var presenter = new mindmaps.NewDocumentPresenter(eventBus,
-					appModel, new mindmaps.NewDocumentView());
-			presenter.go();
+		eventBus.subscribe(mindmaps.Event.CLOSE_DOCUMENT, function() {
+			var doc = appModel.getDocument();
+			if (doc) {
+				appModel.setDocument(null);
+				eventBus.publish(mindmaps.Event.DOCUMENT_CLOSED, doc);
+				
+			}
 		});
+	}
+	
+	function doNewDocument() {
+		// close old document first
+		var doc = appModel.getDocument();
+		if (doc) {
+			// TODO for now simply publish events, should be intercepted by someone
+			eventBus.publish(mindmaps.Event.CLOSE_DOCUMENT);
+			eventBus.publish(mindmaps.Event.DOCUMENT_CLOSED, doc);
+		}
+		
+		var presenter = new mindmaps.NewDocumentPresenter(eventBus,
+				appModel, new mindmaps.NewDocumentView());
+		presenter.go();
 	}
 
 	function doSaveDocument() {

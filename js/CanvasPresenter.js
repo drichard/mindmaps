@@ -178,6 +178,10 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			selectNode(root);
 			view.editNodeCaption(root);
 		});
+		
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
+			view.clear();
+		});
 
 		eventBus.subscribe(mindmaps.Event.DELETE_SELECTED_NODE, function() {
 			deleteSelectedNode();

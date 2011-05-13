@@ -7,20 +7,30 @@ mindmaps.Event = {
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",
 	SAVE_DOCUMENT : "SaveDocumentEvent",
+	CLOSE_DOCUMENT : "CloseDocumentEvent",
+	
 	/**
 	 * @param The document
 	 */
 	DOCUMENT_CREATED : "DocumentCreatedEvent",
+	
 	/**
 	 * @param The document
 	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
+	
 	/**
 	 * @param The document
 	 */
 	DOCUMENT_SAVED : "DocumentSavedEvent",
 	
+	/**
+	 * @param The document
+	 */
+	DOCUMENT_CLOSED : "DocumentClosedEvent",
+	
 	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
+	
 	/**
 	 * @param The node
 	 */

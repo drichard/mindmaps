@@ -259,13 +259,18 @@ mindmaps.DefaultCanvasView = function() {
 			return false;
 		});
 	};
+	
+	this.clear = function() {
+		var $drawingArea = this.$getDrawingArea();
+		$drawingArea.children().remove();
+		this.setDimensions(0, 0);
+	};
 
 	this.drawMap = function(map) {
 		var now = new Date().getTime();
 		var $drawingArea = this.$getDrawingArea();
 
 		// clear map first
-		creator.detach();
 		$drawingArea.children().remove();
 
 		var root = map.root;
@@ -291,7 +296,7 @@ mindmaps.DefaultCanvasView = function() {
 			self.createNode(root, $drawingArea);
 		}
 
-		console.log("draw map ms: ", new Date().getTime() - now);
+		console.debug("draw map ms: ", new Date().getTime() - now);
 	};
 
 	/**
@@ -432,7 +437,7 @@ mindmaps.DefaultCanvasView = function() {
 
 	this.deleteNode = function(node) {
 		// detach creator first, we need still him
-		creator.detach();
+		// creator.detach();
 
 		// delete all DOM below
 		var $node = $getNode(node);
@@ -637,6 +642,14 @@ mindmaps.DefaultCanvasView = function() {
 
 		$wrapper = $("<div/>", {
 			id : "creator-wrapper"
+		}).bind("remove", function(e) {
+			// detach the creator when some removed the node or opened a new map
+			self.detach();
+			// and avoid removing from DOM
+			e.stopImmediatePropagation();
+			
+			console.debug("creator detached.");
+			return false;
 		});
 
 		// red dot creator element

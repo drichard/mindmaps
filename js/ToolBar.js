@@ -53,6 +53,10 @@ mindmaps.ToolBarView = function() {
 
 		$("#button-close").button("option", "icons", {
 			primary : "ui-icon-circle-close"
+		}).click(function() {
+			if (self.closeButtonClicked) {
+				self.closeButtonClicked();
+			}
 		});
 
 		$("#button-draw").button();
@@ -118,6 +122,10 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	view.newButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 	};
+	
+	view.closeButtonClicked = function() {
+		eventBus.publish(mindmaps.Event.CLOSE_DOCUMENT);
+	};
 
 	view.bigMapButtonClicked = function() {
 		var map = getBinaryMapWithDepth(8);
@@ -128,11 +136,11 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	};
 
 	// app model events
-	appModel.subscribe(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE, function(
-			undoState, redoState) {
-		view.setUndoButtonEnabled(undoState);
-		view.setRedoButtonEnabled(redoState);
-	});
+	appModel.subscribe(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
+			function(undoState, redoState) {
+				view.setUndoButtonEnabled(undoState);
+				view.setRedoButtonEnabled(redoState);
+			});
 
 	// global events
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_SAVED, function() {
