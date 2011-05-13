@@ -49,6 +49,18 @@ mindmaps.NavigatorView = function() {
 
 	this.init = function(canvasSize) {
 		$("#navi-buttons").children().button();
+		
+		$("#button-navi-zoom-in").click(function() {
+			if (self.buttonZoomInClicked) {
+				self.buttonZoomInClicked();
+			}
+		});
+		
+		$("#button-navi-zoom-out").click(function() {
+			if (self.buttonZoomOutClicked) {
+				self.buttonZoomOutClicked();
+			}
+		});
 
 		$dragger.draggable({
 			containment : "parent",
@@ -216,6 +228,14 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 	view.dragStop = function() {
 		viewDragging = false;
+	};
+	
+	view.buttonZoomInClicked = function() {
+		appModel.zoomIn();
+	};
+	
+	view.buttonZoomOutClicked = function() {
+		appModel.zoomOut();
 	};
 
 	// document events

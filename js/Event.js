@@ -74,7 +74,12 @@ mindmaps.Event = {
 	 * @param The
 	 *            node
 	 */
-	NODE_CLOSED : "NodeClosed"
+	NODE_CLOSED : "NodeClosed",
+	
+	/**
+	 * @param the new zoom factor
+	 */
+	ZOOM_CHANGED: "ZoomChanged"
 };
 
 /**

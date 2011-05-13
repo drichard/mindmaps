@@ -1,6 +1,7 @@
 var mindmaps = mindmaps || {};
 
-//TODO take container as argument,c reate drawing area dynamically. remove on clear();, recreate on init()
+// TODO take container as argument,c reate drawing area dynamically. remove on
+// clear();, recreate on init()
 mindmaps.CanvasView = function() {
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
@@ -18,8 +19,30 @@ mindmaps.CanvasView = function() {
 		c.scrollLeft(w / 2).scrollTop(h / 2);
 	};
 
+	this.scroll = function(x, y) {
+		var c = this.$getContainer();
+		c.scrollLeft(x).scrollTop(y);
+	};
+
 	this.setDimensions = function(width, height) {
-		this.$getDrawingArea().width(width).height(height);
+		width = width * this.zoomFactor;
+		height = height * this.zoomFactor;
+
+		var drawingArea = this.$getDrawingArea();
+		drawingArea.width(width).height(height);
+
+		// TODO change bg size
+		// if (zoomFactor) {
+		// var size = drawingArea.css("background-size");
+		// var sizes = size.replace(/px/g, "").split(" ");
+		// var val = parseInt(sizes[0], 10);
+		// val *= zoomFactor;
+		// drawingArea.css("background-size", val + "px");
+		// }
+	};
+
+	this.setZoomFactor = function(zoomFactor) {
+		this.zoomFactor = zoomFactor;
 	};
 };
 
@@ -30,7 +53,7 @@ mindmaps.CanvasView.prototype.drawMap = function(map) {
 mindmaps.DefaultCanvasView = function() {
 	var self = this;
 	var nodeDragging = false;
-	var creator = new Creator();
+	var creator = new Creator(this);
 	var captionEditor = new CaptionEditor();
 
 	captionEditor.commit = function(text) {
@@ -60,6 +83,9 @@ mindmaps.DefaultCanvasView = function() {
 	function drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
 			color) {
 		var left, top, width, height;
+		var zoomFactor = self.zoomFactor;
+		offsetX = offsetX * zoomFactor;
+		offsetY = offsetY * zoomFactor;
 
 		if (offsetX < 0) {
 			left = $node.width();
@@ -96,7 +122,7 @@ mindmaps.DefaultCanvasView = function() {
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext("2d");
 
-		var lineWidth = 10 - depth || 1;
+		var lineWidth = zoomFactor * (10 - depth) || 1;
 		ctx.lineWidth = lineWidth;
 
 		ctx.strokeStyle = color;
@@ -144,71 +170,6 @@ mindmaps.DefaultCanvasView = function() {
 			ctx.fill();
 		}
 
-	}
-
-	function drawLineCanvas($canvas, depth, offsetX, offsetY, color) {
-		/**
-		 * Positions the canvas correctly.
-		 */
-		function setPosition($canvas, offsetX, offsetY) {
-			var width = Math.abs(offsetX);
-			var height = Math.abs(offsetY);
-
-			var left = offsetX < 0 ? 0 : -width;
-			var top = offsetY < 0 ? 0 : -height;
-
-			$canvas.attr({
-				width : width,
-				height : height
-			}).css({
-				left : left + "px",
-				top : top + "px"
-			});
-		}
-
-		// 1. set position of canvas
-		setPosition($canvas, offsetX, offsetY);
-
-		// 2. draw the thing
-		var canvas = $canvas[0];
-		var ctx = canvas.getContext("2d");
-
-		var lineWidth = 10 - depth || 1;
-		ctx.lineWidth = lineWidth;
-
-		ctx.strokeStyle = color;
-		ctx.fillStyle = color;
-
-		var startX = offsetX > 0 ? 0 : -offsetX;
-		var startY = offsetY > 0 ? 0 : -offsetY;
-
-		var endX = startX + offsetX;
-		var endY = startY + offsetY;
-
-		ctx.beginPath();
-		ctx.moveTo(startX, startY);
-
-		var cp1x = startX + (offsetX / 5);
-		var cp1y = startY;
-		var cp2x = startX + (offsetX / 2);
-		var cp2y = endY;
-
-		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-		// ctx.lineTo(startX + offsetX, startY + offsetY);
-		ctx.stroke();
-
-		var drawControlPoints = false;
-		if (drawControlPoints) {
-			// control points
-			ctx.beginPath();
-			ctx.fillStyle = "red";
-			ctx.arc(cp1x, cp1y, 4, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.beginPath();
-			ctx.fillStyle = "green";
-			ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
-			ctx.fill();
-		}
 	}
 
 	this.init = function() {
@@ -260,7 +221,7 @@ mindmaps.DefaultCanvasView = function() {
 			return false;
 		});
 	};
-	
+
 	this.clear = function() {
 		this.$getDrawingArea().children().remove();
 		this.setDimensions(0, 0);
@@ -331,13 +292,13 @@ mindmaps.DefaultCanvasView = function() {
 
 		if (!node.isRoot()) {
 			// draw border and position manually only non-root nodes
-			var bThickness = 10 - depth || 1;
+			var bThickness = this.zoomFactor * (10 - depth) || 1;
 			var bColor = node.edgeColor;
 			var bb = bThickness + "px solid " + bColor;
 
 			$node.css({
-				left : offsetX + "px",
-				top : offsetY + "px",
+				left : this.zoomFactor * offsetX + "px",
+				top : this.zoomFactor * offsetY + "px",
 				"border-bottom" : bb
 			});
 		}
@@ -365,8 +326,9 @@ mindmaps.DefaultCanvasView = function() {
 				},
 				drag : function(e, ui) {
 					// reposition and draw canvas while dragging
-					var offsetX = ui.position.left;
-					var offsetY = ui.position.top;
+					var offsetX = ui.position.left / self.zoomFactor;
+					var offsetY = ui.position.top / self.zoomFactor;
+					;
 					var color = node.edgeColor;
 					var $canvas = $getNodeCanvas(node);
 
@@ -380,8 +342,9 @@ mindmaps.DefaultCanvasView = function() {
 				},
 				stop : function(e, ui) {
 					nodeDragging = false;
-					var pos = new mindmaps.Point(ui.position.left,
-							ui.position.top);
+					var pos = new mindmaps.Point(ui.position.left
+							/ self.zoomFactor, ui.position.top
+							/ self.zoomFactor);
 
 					// fire dragged event
 					if (self.nodeDragged) {
@@ -396,6 +359,8 @@ mindmaps.DefaultCanvasView = function() {
 			id : "node-caption-" + node.id,
 			"class" : "node-caption",
 			text : node.text.caption
+		}).css({
+			"font-size" : this.zoomFactor * 100 + "%"
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -560,12 +525,58 @@ mindmaps.DefaultCanvasView = function() {
 		// TODO try animate
 		// position
 		$node.css({
-			left : node.offset.x + "px",
-			top : node.offset.y + "px"
+			left : this.zoomFactor * node.offset.x + "px",
+			top : this.zoomFactor * node.offset.y + "px"
 		});
 
 		// redraw canvas to parent
 		drawNodeCanvas(node);
+	};
+
+	this.scale = function() {
+		var zoomFactor = this.zoomFactor;
+		var $root = this.$getDrawingArea().children().first();
+		var root = $root.data("node");
+		scale(root, 0);
+
+		function scale(node, depth) {
+
+			if (!node.isRoot()) {
+				var $node = $getNode(node);
+				
+				// position
+				$node.css({
+					left : zoomFactor * node.offset.x + "px",
+					top : zoomFactor * node.offset.y + "px"
+				});
+				
+				// draw border and position manually only non-root nodes
+				var bWidth = zoomFactor * (10 - depth) || 1;
+
+				$node.css({
+					"border-bottom-width" : bWidth
+				});
+			}
+			
+
+			var $text = $getNodeCaption(node);
+			$text.css({
+				"font-size" : zoomFactor * 100 + "%"
+			});
+
+			// redraw canvas to parent
+			if (!node.isRoot()) {
+				drawNodeCanvas(node);
+			}
+
+			// redraw all child canvases
+			if (!node.isLeaf()) {
+				node.forEachChild(function(child) {
+					scale(child, depth + 1);
+				});
+			}
+		}
+
 	};
 
 	function CaptionEditor() {
@@ -633,7 +644,7 @@ mindmaps.DefaultCanvasView = function() {
 		};
 	}
 
-	function Creator() {
+	function Creator(view) {
 		var self = this;
 		var dragging = false;
 
@@ -647,7 +658,7 @@ mindmaps.DefaultCanvasView = function() {
 			self.detach();
 			// and avoid removing from DOM
 			e.stopImmediatePropagation();
-			
+
 			console.debug("creator detached.");
 			return false;
 		});
@@ -676,8 +687,8 @@ mindmaps.DefaultCanvasView = function() {
 			},
 			drag : function(e, ui) {
 				// update creator canvas
-				var offsetX = ui.position.left;
-				var offsetY = ui.position.top;
+				var offsetX = ui.position.left / view.zoomFactor;
+				var offsetY = ui.position.top / view.zoomFactor;
 
 				// set depth+1 because we are drawing the canvas for the child
 				var $node = $getNode(self.node);
@@ -690,8 +701,8 @@ mindmaps.DefaultCanvasView = function() {
 				$canvas.hide();
 				if (self.dragStopped) {
 					var $wp = $wrapper.position();
-					var nubLeft = ui.position.left;
-					var nubTop = ui.position.top;
+					var nubLeft = ui.position.left / view.zoomFactor;
+					var nubTop = ui.position.top / view.zoomFactor;
 					var distance = mindmaps.Util.distance($wp.left - nubLeft,
 							$wp.top - nubTop);
 					self.dragStopped(self.node, nubLeft, nubTop, distance);

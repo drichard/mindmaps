@@ -140,6 +140,34 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		node.collapseChildren = true;
 		eventBus.publish(mindmaps.Event.NODE_CLOSED, node);
 	};
+	
+	
+	// TODO move out
+	var zoomStep = 0.25;
+	var maxZoom = 3;
+	var minZoom = 0.2;
+	
+	this.zoomIn = function() {
+		var factor = document.zoomFactor;
+		factor += zoomStep;
+		if (factor > maxZoom) {
+			factor -= zoomStep;
+		} else {
+			document.zoomFactor = factor;
+			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
+		}
+	};
+	
+	this.zoomOut = function() {
+		var factor = document.zoomFactor;
+		factor -= zoomStep;
+		if (factor < minZoom) {
+			factor += zoomStep;
+		} else {
+			document.zoomFactor = factor;
+			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
+		}
+	};
 
 	bind();
 };

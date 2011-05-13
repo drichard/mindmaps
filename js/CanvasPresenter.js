@@ -158,6 +158,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		// listen to global events
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
 			// TODO DRY
+			var zoomFactor = doc.zoomFactor;
+			view.setZoomFactor(zoomFactor);
 			var dimensions = doc.dimensions;
 			view.setDimensions(dimensions.x, dimensions.y);
 			var map = appModel.getMindMap();
@@ -167,6 +169,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
 			// TODO DRY
+			var zoomFactor = doc.zoomFactor;
+			view.setZoomFactor(zoomFactor);
+			
 			var dimensions = doc.dimensions;
 			view.setDimensions(dimensions.x, dimensions.y);
 			var map = appModel.getMindMap();
@@ -236,6 +241,18 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 		eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
 			view.closeNode(node);
+		});
+		
+		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
+			view.setZoomFactor(zoomFactor);
+			var doc = appModel.getDocument();
+			var dimX = doc.dimensions.x;
+			var dimY = doc.dimensions.y;
+			view.setDimensions(dimX, dimY);
+			
+			// TODO remove this and scroll to right position
+			view.center();
+			view.scale();
 		});
 	}
 

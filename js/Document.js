@@ -9,6 +9,7 @@ mindmaps.Document = function() {
 		modified : new Date()
 	};
 	this.dimensions = new mindmaps.Point(4000, 2000);
+	this.zoomFactor = 1;
 };
 
 mindmaps.Document.fromJSON = function(json) {
