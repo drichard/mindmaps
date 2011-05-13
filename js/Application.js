@@ -130,6 +130,16 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		};
 		undoManager.addUndo(undoFunc, redoFunc);
 	};
+	
+	this.openNode = function(node) {
+		node.collapseChildren = false;
+		eventBus.publish(mindmaps.Event.NODE_OPENED, node);
+	};
+	
+	this.closeNode = function(node) {
+		node.collapseChildren = true;
+		eventBus.publish(mindmaps.Event.NODE_CLOSED, node);
+	};
 
 	bind();
 };

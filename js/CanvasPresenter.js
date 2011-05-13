@@ -22,11 +22,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var toggleCollapse = function(node) {
 		// toggle node visibility
 		if (node.collapseChildren) {
-			node.collapseChildren = false;
-			view.openNode(node);
+			appModel.openNode(node);
 		} else {
-			node.collapseChildren = true;
-			view.closeNode(node);
+			appModel.closeNode(node);
 		}
 	};
 
@@ -179,7 +177,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			selectNode(root);
 			view.editNodeCaption(root);
 		});
-		
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
 			view.clear();
 		});
@@ -210,9 +208,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 				// children are hidden
 				var parent = node.getParent();
 				if (parent.collapseChildren) {
-					// TODO not visible for nagivator
-					parent.collapseChildren = false;
-					view.openNode(parent);
+					appModel.openNode(parent);
 				}
 
 				// select and go into edit mode on new node
@@ -232,6 +228,14 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			if (parent.isLeaf()) {
 				view.removeCollapseButton(parent);
 			}
+		});
+
+		eventBus.subscribe(mindmaps.Event.NODE_OPENED, function(node) {
+			view.openNode(node);
+		});
+
+		eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
+			view.closeNode(node);
 		});
 	}
 

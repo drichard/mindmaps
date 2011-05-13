@@ -262,8 +262,7 @@ mindmaps.DefaultCanvasView = function() {
 	};
 	
 	this.clear = function() {
-		var $drawingArea = this.$getDrawingArea();
-		$drawingArea.children().remove();
+		this.$getDrawingArea().children().remove();
 		this.setDimensions(0, 0);
 	};
 

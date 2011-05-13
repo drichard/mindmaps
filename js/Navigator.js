@@ -191,23 +191,14 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		calculateDraggerSize(canvasSize, dimensions);
 		view.showActiveContent();
 
-		// draw canvas
-		var mindmap = doc.mindmap;
-		var scale = dimensions.x / canvasSize.x;
-		view.draw(mindmap, scale);
-
-		// node events
-		eventBus.subscribe(mindmaps.Event.NODE_MOVED, function() {
+		this.renderView = function() {
+			// draw canvas
+			var mindmap = doc.mindmap;
+			var scale = dimensions.x / canvasSize.x;
 			view.draw(mindmap, scale);
-		});
-
-		eventBus.subscribe(mindmaps.Event.NODE_CREATED, function() {
-			view.draw(mindmap, scale);
-		});
-
-		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function() {
-			view.draw(mindmap, scale);
-		});
+		};
+		
+		this.renderView();
 	}
 
 	function documentClosed() {
@@ -215,10 +206,6 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		// remove listeners
 		container.unsubscribe(mindmaps.CanvasContainer.Event.RESIZED);
 		$container.unbind("scroll.navigator-view");
-
-		eventBus.unsubscribe(mindmaps.Event.NODE_MOVED);
-		eventBus.unsubscribe(mindmaps.Event.NODE_CREATED);
-		eventBus.unsubscribe(mindmaps.Event.NODE_DELETED);
 
 		view.showInactiveContent();
 	}
@@ -242,6 +229,28 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
 		documentClosed();
+	});
+	
+	
+	// node events
+	eventBus.subscribe(mindmaps.Event.NODE_MOVED, function() {
+		self.renderView();
+	});
+
+	eventBus.subscribe(mindmaps.Event.NODE_CREATED, function() {
+		self.renderView();
+	});
+
+	eventBus.subscribe(mindmaps.Event.NODE_DELETED, function() {
+		self.renderView();
+	});
+	
+	eventBus.subscribe(mindmaps.Event.NODE_OPENED, function() {
+		self.renderView();
+	});
+
+	eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function() {
+		self.renderView();
 	});
 
 	this.go = function() {
