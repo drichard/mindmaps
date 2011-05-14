@@ -3,6 +3,8 @@ var mindmaps = mindmaps || {};
 // TODO take container as argument,c reate drawing area dynamically. remove on
 // clear();, recreate on init()
 mindmaps.CanvasView = function() {
+	var BACKGROUND_SIZE = 24;
+	
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
 	};
@@ -24,21 +26,46 @@ mindmaps.CanvasView = function() {
 		c.scrollLeft(x).scrollTop(y);
 	};
 
-	this.setDimensions = function(width, height) {
+	this.scrollBy = function(x, y) {
+		var c = this.$getContainer();
+		c.scrollLeft(c.scrollLeft() + x).scrollTop(c.scrollTop() + y);
+	};
+
+	this.setDimensions = function(width, height, scroll) {
 		width = width * this.zoomFactor;
 		height = height * this.zoomFactor;
 
 		var drawingArea = this.$getDrawingArea();
+
+		// TODO fix this
+		if (scroll) {
+			var oldWidth = drawingArea.width();
+			var oldHeight = drawingArea.height();
+			var scrollW = (width - oldWidth) / 2;
+			var scrollH = (height - oldHeight) / 2;
+			// var c = this.$getContainer();
+			// var sl = c.scrollLeft();
+			// var st = c.scrollTop();
+			//			
+			// var cw = c.width();
+			// var ch = c.height();
+			//			
+			// var cx = cw / 2 + sl;
+			// var cy = ch / 2 + st;
+			//			
+			// var dw = oldWidth / 2 - cx;
+			// var dh = oldHeight / 2 - cy;
+			var dw = 0;
+			var dh = 0;
+
+			this.scrollBy(scrollW - dw, scrollH - dh);
+		}
+
 		drawingArea.width(width).height(height);
 
-		// TODO change bg size
-		// if (zoomFactor) {
-		// var size = drawingArea.css("background-size");
-		// var sizes = size.replace(/px/g, "").split(" ");
-		// var val = parseInt(sizes[0], 10);
-		// val *= zoomFactor;
-		// drawingArea.css("background-size", val + "px");
-		// }
+		
+		// change background image size
+		drawingArea.css("background-size", BACKGROUND_SIZE * this.zoomFactor);
 	};
 
 	this.setZoomFactor = function(zoomFactor) {
@@ -220,7 +247,7 @@ mindmaps.DefaultCanvasView = function() {
 			}
 			return false;
 		});
-		
+
 		this.$getContainer().bind("mousewheel", function(e, delta) {
 			if (self.mouseWheeled) {
 				self.mouseWheeled(delta);
@@ -549,13 +576,13 @@ mindmaps.DefaultCanvasView = function() {
 
 			if (!node.isRoot()) {
 				var $node = $getNode(node);
-				
+
 				// position
 				$node.css({
 					left : zoomFactor * node.offset.x + "px",
 					top : zoomFactor * node.offset.y + "px"
 				});
-				
+
 				// draw border and position manually only non-root nodes
 				var bWidth = zoomFactor * (10 - depth) || 1;
 
@@ -563,7 +590,6 @@ mindmaps.DefaultCanvasView = function() {
 					"border-bottom-width" : bWidth
 				});
 			}
-			
 
 			var $text = $getNodeCaption(node);
 			$text.css({

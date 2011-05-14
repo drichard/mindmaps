@@ -256,7 +256,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			var doc = appModel.getDocument();
 			var dimX = doc.dimensions.x;
 			var dimY = doc.dimensions.y;
-			view.setDimensions(dimX, dimY);
+			view.setDimensions(dimX, dimY, true);
 
 			// TODO remove this and scroll to right position
 			// view.center();

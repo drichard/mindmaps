@@ -147,6 +147,10 @@ html,body {
 	background-color: white;
 	background-image: url("../img/grid.gif");
 	background-size: 24px 24px;
+	
+	/* need this for webkit as well. */
+	image-rendering: -moz-crisp-edges; 
+	-ms-interpolation-mode: nearest-neighbor;
 }
 
 .mindmap .line-canvas {
@@ -157,7 +161,6 @@ html,body {
 	position: absolute;
 	min-width: 80px;
 	padding-bottom: 2px;
-	display: inline-block;
 	font-size: 15px;
 }
 
