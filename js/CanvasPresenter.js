@@ -59,6 +59,14 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		}
 	};
 
+	view.mouseWheeled = function(delta) {
+		if (delta > 0) {
+			appModel.zoomIn();
+		} else {
+			appModel.zoomOut();
+		}
+	};
+
 	// listen to events from view
 	view.nodeMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
@@ -171,7 +179,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			// TODO DRY
 			var zoomFactor = doc.zoomFactor;
 			view.setZoomFactor(zoomFactor);
-			
+
 			var dimensions = doc.dimensions;
 			view.setDimensions(dimensions.x, dimensions.y);
 			var map = appModel.getMindMap();
@@ -242,16 +250,16 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
 			view.closeNode(node);
 		});
-		
+
 		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
 			view.setZoomFactor(zoomFactor);
 			var doc = appModel.getDocument();
 			var dimX = doc.dimensions.x;
 			var dimY = doc.dimensions.y;
 			view.setDimensions(dimX, dimY);
-			
+
 			// TODO remove this and scroll to right position
-			view.center();
+			// view.center();
 			view.scale();
 		});
 	}

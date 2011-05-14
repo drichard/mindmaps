@@ -220,6 +220,12 @@ mindmaps.DefaultCanvasView = function() {
 			}
 			return false;
 		});
+		
+		this.$getContainer().bind("mousewheel", function(e, delta) {
+			if (self.mouseWheeled) {
+				self.mouseWheeled(delta);
+			}
+		});
 	};
 
 	this.clear = function() {
