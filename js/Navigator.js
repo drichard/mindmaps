@@ -39,9 +39,8 @@ mindmaps.NavigatorView = function() {
 		});
 	};
 
-	this.setCanvasSize = function(width, height) {
+	this.setCanvasHeight = function(height) {
 		$("#navi-canvas").attr({
-			width : width,
 			height : height
 		});
 	};
@@ -153,13 +152,13 @@ mindmaps.NavigatorView = function() {
 };
 
 mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
-	var self = this;
 	var CANVAS_WIDTH = 250;
+
+	var self = this;
 	var $container = container.getContent();
 	var viewDragging = false;
-
 	var zoomFactor = null;
-	var canvasSize = null;
+	var canvasSize = new mindmaps.Point(CANVAS_WIDTH, 0);
 	var docSize = null;
 	var mindmap = null;
 
@@ -183,12 +182,11 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	}
 
 	function calculateCanvasHeight() {
-		var width = CANVAS_WIDTH;
-		var scale = docSize.x / width;
+		var scale = docSize.x / canvasSize.x;
 		var height = docSize.y / scale;
-
-		canvasSize = new mindmaps.Point(width, height);
-		view.setCanvasSize(width, height);
+		
+		canvasSize.y = height;
+		view.setCanvasHeight(height);
 	}
 
 	function calculateDraggerPosition() {
@@ -209,9 +207,9 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 		calculateCanvasHeight();
 		calculateDraggerSize();
-		view.showActiveContent();
-
 		renderView();
+		
+		view.showActiveContent();
 
 		// move dragger when container was scrolled
 		$container.bind("scroll.navigator-view", function() {
@@ -230,6 +228,7 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	function documentClosed() {
 		docSize = null;
 		mindmap = null;
+		zoomFactor = null;
 		// clean up
 		// remove listeners
 		$container.unbind("scroll.navigator-view");

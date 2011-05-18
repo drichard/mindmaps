@@ -8,8 +8,8 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		// eventBus.subscribe(Event.REDO_ACTION, doRedo);
 
 		undoManager.stateChanged = function() {
-			var undoState = undoManager.canUndo();
-			var redoState = undoManager.canRedo();
+			var undoState = this.canUndo();
+			var redoState = this.canRedo();
 			self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
 					undoState, redoState);
 		};
@@ -234,19 +234,3 @@ mindmaps.AppController = function(eventBus, appModel) {
 
 	bind();
 };
-
-// start up
-$(function() {
-	var eventBus = new mindmaps.EventBus();
-	var undoManager = new UndoManager();
-	var appModel = new mindmaps.ApplicationModel(eventBus, undoManager);
-	var appController = new mindmaps.AppController(eventBus, appModel);
-	appController.go();
-
-	// eventBus.publish(Event.OPEN_DOCUMENT);
-
-	// var map = getBinaryMapWithDepth(5);
-	// var doc = new Document();
-	// doc.mindmap = map;
-	// eventBus.publish("documentOpened", doc);
-});

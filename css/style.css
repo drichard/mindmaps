@@ -159,7 +159,6 @@ html,body {
 
 .mindmap .node-container {
 	position: absolute;
-	min-width: 80px;
 	padding-bottom: 2px;
 	font-size: 15px;
 }
@@ -167,7 +166,6 @@ html,body {
 .mindmap .root.node-container {
 	border-bottom: 10px;
 	width: 1px;
-	min-width: 0px;
 	height: 20px;
 	left: 50%;
 	top: 50%;
@@ -199,7 +197,7 @@ html,body {
 
 .mindmap .node-caption.edit {
 	border: 2px solid blue;
-	padding: 0px;
+	padding: 0 2px;
 }
 
 .mindmap .node-caption.root {
@@ -208,7 +206,7 @@ html,body {
 	border: 3px solid orange;
 	border-radius: 10px 10px 10px 10px;
 	font-weight: bold;
-	width: 100px;
+	min-width: 100px;
 	left: -50px;
 	position: absolute;
 	padding: 4px;

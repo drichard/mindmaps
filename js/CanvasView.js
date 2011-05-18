@@ -1,9 +1,8 @@
-
 // TODO take container as argument,c reate drawing area dynamically. remove on
 // clear();, recreate on init()
 mindmaps.CanvasView = function() {
 	var BACKGROUND_SIZE = 24;
-	
+
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
 	};
@@ -62,7 +61,6 @@ mindmaps.CanvasView = function() {
 
 		drawingArea.width(width).height(height);
 
-		
 		// change background image size
 		drawingArea.css("background-size", BACKGROUND_SIZE * this.zoomFactor);
 	};
@@ -77,6 +75,9 @@ mindmaps.CanvasView.prototype.drawMap = function(map) {
 };
 
 mindmaps.DefaultCanvasView = function() {
+	var NODE_CAPTION_WIDTH = 50;
+	var ROOT_NODE_CAPTION_WIDTH = 100;
+
 	var self = this;
 	var nodeDragging = false;
 	var creator = new Creator(this);
@@ -140,8 +141,8 @@ mindmaps.DefaultCanvasView = function() {
 			height : height
 		}).css({
 			// "border" : "1px solid green",
-			left : left + "px",
-			top : top + "px"
+			left : left,
+			top : top
 		});
 
 		// 2. draw the thing
@@ -321,6 +322,7 @@ mindmaps.DefaultCanvasView = function() {
 		}).data({
 			node : node
 		});
+		$node.appendTo($parent);
 
 		if (!node.isRoot()) {
 			// draw border and position manually only non-root nodes
@@ -329,70 +331,65 @@ mindmaps.DefaultCanvasView = function() {
 			var bb = bThickness + "px solid " + bColor;
 
 			$node.css({
-				left : this.zoomFactor * offsetX + "px",
-				top : this.zoomFactor * offsetY + "px",
+				left : this.zoomFactor * offsetX,
+				top : this.zoomFactor * offsetY,
 				"border-bottom" : bb
+			});
+
+			// node drag behaviour
+			/**
+			 * Only attach the drag handler once we mouse over it. this speeds
+			 * up loading of big maps.
+			 */
+			$node.one("mouseenter", function() {
+				$node.draggable({
+					// could be set
+					// revert: true,
+					// revertDuration: 0,
+					handle : "div.node-caption:first",
+					start : function() {
+						nodeDragging = true;
+					},
+					drag : function(e, ui) {
+						// reposition and draw canvas while dragging
+						var offsetX = ui.position.left / self.zoomFactor;
+						var offsetY = ui.position.top / self.zoomFactor;
+						var color = node.edgeColor;
+						var $canvas = $getNodeCanvas(node);
+
+						drawLineCanvas2($canvas, depth, offsetX, offsetY,
+								$node, $parent, color);
+
+						// fire dragging event
+						if (self.nodeDragging) {
+							self.nodeDragging();
+						}
+					},
+					stop : function(e, ui) {
+						nodeDragging = false;
+						var pos = new mindmaps.Point(ui.position.left
+								/ self.zoomFactor, ui.position.top
+								/ self.zoomFactor);
+
+						// fire dragged event
+						if (self.nodeDragged) {
+							self.nodeDragged(node, pos);
+						}
+					}
+				});
 			});
 		}
 
-		$node.appendTo($parent);
-
-		// node drag behaviour
-		/**
-		 * Only attach the drag handler once we mouse over it. this speeds up
-		 * loading of big maps.
-		 */
-		$node.one("mouseenter", function() {
-			$node.draggable({
-				// could be set
-				// revert: true,
-				// revertDuration: 0,
-				handle : "div.node-caption:first",
-				start : function() {
-					// cant drag root
-					if (node.isRoot()) {
-						return false;
-					}
-
-					nodeDragging = true;
-				},
-				drag : function(e, ui) {
-					// reposition and draw canvas while dragging
-					var offsetX = ui.position.left / self.zoomFactor;
-					var offsetY = ui.position.top / self.zoomFactor;
-					;
-					var color = node.edgeColor;
-					var $canvas = $getNodeCanvas(node);
-
-					drawLineCanvas2($canvas, depth, offsetX, offsetY, $node,
-							$parent, color);
-
-					// fire dragging event
-					if (self.nodeDragging) {
-						self.nodeDragging();
-					}
-				},
-				stop : function(e, ui) {
-					nodeDragging = false;
-					var pos = new mindmaps.Point(ui.position.left
-							/ self.zoomFactor, ui.position.top
-							/ self.zoomFactor);
-
-					// fire dragged event
-					if (self.nodeDragged) {
-						self.nodeDragged(node, pos);
-					}
-				}
-			});
-		});
-
 		// text caption
+		var minWidth = node.isRoot() ? ROOT_NODE_CAPTION_WIDTH
+				: NODE_CAPTION_WIDTH;
 		var $text = $("<div/>", {
 			id : "node-caption-" + node.id,
 			"class" : "node-caption",
 			text : node.text.caption
 		}).css({
-			"font-size" : this.zoomFactor * 100 + "%"
+			"font-size" : this.zoomFactor * 100 + "%",
+			"min-width" : this.zoomFactor * minWidth
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -557,8 +554,8 @@ mindmaps.DefaultCanvasView = function() {
 		// TODO try animate
 		// position
 		$node.css({
-			left : this.zoomFactor * node.offset.x + "px",
-			top : this.zoomFactor * node.offset.y + "px"
+			left : this.zoomFactor * node.offset.x,
+			top : this.zoomFactor * node.offset.y
 		});
 
 		// redraw canvas to parent
@@ -569,36 +566,43 @@ mindmaps.DefaultCanvasView = function() {
 		var zoomFactor = this.zoomFactor;
 		var $root = this.$getDrawingArea().children().first();
 		var root = $root.data("node");
-		scale(root, 0);
+
+		// handle root differently
+		var $text = $getNodeCaption(root);
+		$text.css({
+			"font-size" : zoomFactor * 100 + "%",
+			"min-width" : zoomFactor * ROOT_NODE_CAPTION_WIDTH,
+			"left" : zoomFactor * -ROOT_NODE_CAPTION_WIDTH / 2
+		});
+
+		root.forEachChild(function(child) {
+			scale(child, 1);
+		});
 
 		function scale(node, depth) {
+			var $node = $getNode(node);
 
-			if (!node.isRoot()) {
-				var $node = $getNode(node);
+			// position
+			$node.css({
+				left : zoomFactor * node.offset.x,
+				top : zoomFactor * node.offset.y
+			});
 
-				// position
-				$node.css({
-					left : zoomFactor * node.offset.x + "px",
-					top : zoomFactor * node.offset.y + "px"
-				});
+			// draw border and position manually only non-root nodes
+			var bWidth = zoomFactor * (10 - depth) || 1;
 
-				// draw border and position manually only non-root nodes
-				var bWidth = zoomFactor * (10 - depth) || 1;
-
-				$node.css({
-					"border-bottom-width" : bWidth
-				});
-			}
+			$node.css({
+				"border-bottom-width" : bWidth
+			});
 
 			var $text = $getNodeCaption(node);
 			$text.css({
-				"font-size" : zoomFactor * 100 + "%"
+				"font-size" : zoomFactor * 100 + "%",
+				"min-width" : zoomFactor * NODE_CAPTION_WIDTH
 			});
 
 			// redraw canvas to parent
-			if (!node.isRoot()) {
-				drawNodeCanvas(node);
-			}
+			drawNodeCanvas(node);
 
 			// redraw all child canvases
 			if (!node.isLeaf()) {
@@ -656,8 +660,8 @@ mindmaps.DefaultCanvasView = function() {
 			$editor.attr({
 				value : oldText
 			}).css({
-				width : width + "px",
-				height : height + "px"
+				width : width,
+				height : height
 			}).appendTo($text).select();
 		};
 
