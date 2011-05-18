@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.Document = function() {
 	this.id = mindmaps.Util.createUUID();

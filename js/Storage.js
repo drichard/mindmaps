@@ -1,5 +1,4 @@
 // TODO save to hdd
-var mindmaps = mindmaps || {};
 
 mindmaps.LocalStorage = (function() {
 	return {

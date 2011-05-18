@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.NewDocumentView = function() {
 

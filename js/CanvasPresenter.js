@@ -1,5 +1,3 @@
-var mindmaps = mindmaps || {};
-
 // TODO raise event on collapse
 mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var self = this;
@@ -11,7 +9,12 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		deleteSelectedNode();
 	});
 
-	// TODO restrict keys on canvas area?
+	$(document).bind("keydown", "F2", function() {
+		if (selectedNode) {
+			view.editNodeCaption(selectedNode);
+		}
+	});
+
 	$(document).bind("keydown", "space", function(e) {
 		e.preventDefault();
 		if (selectedNode) {

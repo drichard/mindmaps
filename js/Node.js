@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 /**
  * Constructor for a tree node.

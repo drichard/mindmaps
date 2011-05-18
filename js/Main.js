@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.CanvasContainer = function() {
 	MicroEvent.mixin(mindmaps.CanvasContainer);

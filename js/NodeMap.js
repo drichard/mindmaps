@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 /**
  * Map implementation for nodes. The key is automatically set to the node id.

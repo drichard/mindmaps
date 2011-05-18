@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.FloatPanelFactory = function(container) {
 	var $container = container.getContent();

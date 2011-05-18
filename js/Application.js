@@ -1,7 +1,3 @@
-// global debug flag
-var DEBUG = true;
-var mindmaps = mindmaps || {};
-
 mindmaps.ApplicationModel = function(eventBus, undoManager) {
 	MicroEvent.mixin(mindmaps.ApplicationModel);
 	var self = this;

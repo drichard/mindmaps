@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.SaveDocumentView = function() {
 	var self = this;

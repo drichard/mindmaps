@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 // TODO maybe bundle events: DocumentEvent, NodeEvent (Type.MOVED, Type.CREATED)
 /**

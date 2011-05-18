@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.ToolBarView = function() {
 	var self = this;

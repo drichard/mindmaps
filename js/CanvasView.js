@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 // TODO take container as argument,c reate drawing area dynamically. remove on
 // clear();, recreate on init()
@@ -683,7 +682,7 @@ mindmaps.DefaultCanvasView = function() {
 		this.node = null;
 		this.lineColor = null;
 
-		$wrapper = $("<div/>", {
+		var $wrapper = $("<div/>", {
 			id : "creator-wrapper"
 		}).bind("remove", function(e) {
 			// detach the creator when some removed the node or opened a new map

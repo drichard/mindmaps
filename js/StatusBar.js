@@ -1,5 +1,3 @@
-var mindmaps = mindmaps || {};
-
 mindmaps.StatusBarView = function() {
 	var self = this;
 
@@ -7,7 +5,7 @@ mindmaps.StatusBarView = function() {
 	};
 
 	this.createButton = function(id, text) {
-		return $button = $("<button/>", {
+		return $("<button/>", {
 			id : "statusbar-button-" + id
 		}).button({
 			label : text
@@ -21,20 +19,20 @@ mindmaps.StatusBarView = function() {
 
 mindmaps.StatusBarPresenter = function(eventBus, view) {
 	var buttonCounter = 0;
-	var buttonIdDialogMap = {};
+	var buttonIdPanelMap = {};
 
 	view.buttonClicked = function(id) {
-		buttonIdDialogMap[id].toggle();
+		buttonIdPanelMap[id].toggle();
 	};
 
 	this.go = function() {
 		view.init();
 	};
 
-	this.addEntry = function(dialog) {
+	this.addEntry = function(panel) {
 		var id = buttonCounter++;
-		var $button = view.createButton(id, dialog.caption);
-		dialog.$hideTarget = $button;
-		buttonIdDialogMap[id] = dialog;
+		var $button = view.createButton(id, panel.caption);
+		panel.$hideTarget = $button;
+		buttonIdPanelMap[id] = panel;
 	};
 };

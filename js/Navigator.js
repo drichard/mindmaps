@@ -1,4 +1,3 @@
-var mindmaps = mindmaps || {};
 
 mindmaps.NavigatorView = function() {
 	var self = this;
@@ -48,15 +47,24 @@ mindmaps.NavigatorView = function() {
 	};
 
 	this.init = function(canvasSize) {
-		$("#navi-buttons").children().button();
 
-		$("#button-navi-zoom-in").click(function() {
+		$("#button-navi-zoom-in").button({
+			text: false,
+			icons: {
+				primary: "ui-icon-zoomin"
+			}
+		}).click(function() {
 			if (self.buttonZoomInClicked) {
 				self.buttonZoomInClicked();
 			}
 		});
 
-		$("#button-navi-zoom-out").click(function() {
+		$("#button-navi-zoom-out").button({
+			text: false,
+			icons: {
+				primary: "ui-icon-zoomout"
+			}
+		}).click(function() {
 			if (self.buttonZoomOutClicked) {
 				self.buttonZoomOutClicked();
 			}
