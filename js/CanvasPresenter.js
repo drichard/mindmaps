@@ -4,7 +4,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var selectedNode = null;
 	var creator = view.getCreator();
 
-	// TODO restrict keys on canvas area?
+	// TODO restrict keys on canvas area?, move out
 	$(document).bind("keydown", "del", function() {
 		deleteSelectedNode();
 	});
@@ -146,9 +146,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		var node = new mindmaps.Node();
 		node.edgeColor = creator.lineColor;
 		node.offset = new mindmaps.Point(offsetX, offsetY);
-		parent.addChild(node);
-		
-		appModel.createNode(parent, node, self);
+
+		appModel.createNode(node, parent, self);
 	};
 
 	view.nodeCaptionEditCommitted = function(str) {

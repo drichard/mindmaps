@@ -7,6 +7,9 @@ mindmaps.Event = {
 	COPY_NODE : "CopyNodeEvent",
 	CUT_NODE : "CutNodeEvent",
 	PASTE_NODE : "PasteNodeEvent",
+	
+	UNDO_ACTION : "UndoActionEvent",
+	REDO_ACTION : "RedoActionEvent",
 
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",

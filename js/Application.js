@@ -4,8 +4,12 @@ mindmaps.ApplicationModel = function(eventBus) {
 	var document = null;
 
 	function bind() {
-		// eventBus.subscribe(Event.UNDO_ACTION, doUndo);
-		// eventBus.subscribe(Event.REDO_ACTION, doRedo);
+		eventBus.subscribe(mindmaps.Event.UNDO_ACTION, function() {
+			self.undoManager.undo();
+		});
+		eventBus.subscribe(mindmaps.Event.REDO_ACTION, function() {
+			self.undoManager.redo();
+		});
 	}
 
 	this.setUndoManager = function(undoManager) {
@@ -19,14 +23,6 @@ mindmaps.ApplicationModel = function(eventBus) {
 						undoState, redoState);
 			};
 		}
-	};
-
-	this.doUndo = function() {
-		this.undoManager.undo();
-	};
-
-	this.doRedo = function() {
-		this.undoManager.redo();
 	};
 
 	this.setDocument = function(doc) {
@@ -82,30 +78,18 @@ mindmaps.ApplicationModel = function(eventBus) {
 	/**
 	 * origin - optional argument declaring which object created the node
 	 */
-	this.createNode = function(parent, node, origin) {
+	this.createNode = function(node, parent, origin) {
 		var map = this.getMindMap();
 		map.addNode(node);
 		parent.addChild(node);
-		
+
 		eventBus.publish(mindmaps.Event.NODE_CREATED, node, origin);
 
 		// register undo
 		var undoFunc = function() {
 			self.deleteNode(node);
 		};
-
-		var redoFunc = function() {
-			self.restoreNode(node, parent);
-		};
-		this.undoManager.addUndo(undoFunc, redoFunc);
-	};
-
-	this.restoreNode = function(node, parent) {
-		var map = this.getMindMap();
-		map.addNode(node);
-		parent.addChild(node);
-
-		eventBus.publish(mindmaps.Event.NODE_CREATED, node);
+		this.undoManager.addUndo(undoFunc);
 	};
 
 	this.deleteNode = function(node) {
@@ -117,13 +101,10 @@ mindmaps.ApplicationModel = function(eventBus) {
 
 		// register undo
 		var undoFunc = function() {
-			self.restoreNode(node, parent);
+			self.createNode(node, parent);
 		};
 
-		var redoFunc = function() {
-			self.deleteNode(node);
-		};
-		this.undoManager.addUndo(undoFunc, redoFunc);
+		this.undoManager.addUndo(undoFunc);
 	};
 
 	this.openNode = function(node) {
@@ -162,6 +143,8 @@ mindmaps.ApplicationModel = function(eventBus) {
 			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
 		}
 	};
+
+	bind();
 };
 
 mindmaps.ApplicationModel.Event = {

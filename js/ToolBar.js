@@ -1,10 +1,9 @@
-
 mindmaps.ToolBarView = function() {
 	var self = this;
 	var $copyButton = null;
 	var $cutButton = null;
 	var $pasteButton = null;
-	
+
 	var $undoButton = null;
 	var $redoButton = null;
 	var $saveButton = null;
@@ -18,19 +17,19 @@ mindmaps.ToolBarView = function() {
 				self.deleteButtonClicked();
 			}
 		});
-		
+
 		$copyButton = $("#button-copy").click(function() {
 			if (self.copyButtonClicked) {
 				self.copyButtonClicked();
 			}
 		});
-		
+
 		$cutButton = $("#button-cut").click(function() {
 			if (self.cutButtonClicked) {
 				self.cutButtonClicked();
 			}
 		});
-		
+
 		$pasteButton = $("#button-paste").click(function() {
 			if (self.pasteButtonClicked) {
 				self.pasteButtonClicked();
@@ -121,27 +120,25 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	view.deleteButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.DELETE_SELECTED_NODE);
 	};
-	
+
 	view.copyButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.COPY_NODE);
 	};
-	
+
 	view.cutButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.CUT_NODE);
 	};
-	
+
 	view.pasteButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.PASTE_NODE);
 	};
 
 	view.undoButtonClicked = function() {
-		// eventBus.publish(Event.UNDO_ACTION);
-		appModel.doUndo();
+		eventBus.publish(mindmaps.Event.UNDO_ACTION);
 	};
 
 	view.redoButtonClicked = function() {
-		// eventBus.publish(Event.REDO_ACTION);
-		appModel.doRedo();
+		eventBus.publish(mindmaps.Event.REDO_ACTION);
 	};
 
 	view.saveButtonClicked = function() {
@@ -155,7 +152,7 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	view.newButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 	};
-	
+
 	view.closeButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.CLOSE_DOCUMENT);
 	};
@@ -187,7 +184,7 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 		view.enableSaveButton();
 	});
-	
+
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 		view.setUndoButtonEnabled(false);
 		view.setRedoButtonEnabled(false);

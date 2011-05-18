@@ -17,18 +17,24 @@ mindmaps.CopyCutPasteController = function(eventBus, appModel) {
 		this.selectedNode = null;
 	});
 	
-	
-	eventBus.subscribe(mindmaps.Event.COPY_NODE, function() {
+	function doCopy() {
 		this.node = this.selectedNode.clone();
-		this.mode = "COPY";
-	});
+	}
 	
-	eventBus.subscribe(mindmaps.Event.CUT_NODE, function() {
+	function doCut() {
 		this.node = this.selectedNode.clone();
-		this.mode = "CUT";
-	});
+		appModel.deleteNode(this.selectedNode);
+	}
 	
-	eventBus.subscribe(mindmaps.Event.PASTE_NODE, function() {
-	});
+	function doPaste() {
+		// send a cloned copy of our node, so we can paste multiple times
+		appModel.createNode(this.node.clone(), this.selectedNode);
+	}
+	
+	eventBus.subscribe(mindmaps.Event.COPY_NODE, doCopy);
+	
+	eventBus.subscribe(mindmaps.Event.CUT_NODE, doCut);
+	
+	eventBus.subscribe(mindmaps.Event.PASTE_NODE, doPaste);
 	
 };
