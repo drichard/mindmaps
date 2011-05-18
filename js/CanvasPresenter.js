@@ -52,12 +52,15 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		view.highlightNode(node);
 
 		selectedNode = node;
+		
+		// publish event
+		eventBus.publish(mindmaps.Event.NODE_SELECTED, node);
 	};
-
-	var deselectCurrentNode = function(node) {
+	var deselectCurrentNode = function() {
 		// deselect old node
 		if (selectedNode) {
 			view.unhighlightNode(selectedNode);
+			eventBus.publish(mindmaps.Event.NODE_DESELECTED, selectedNode);
 			selectedNode = null;
 		}
 	};
@@ -140,8 +143,12 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		// update the model
-		appModel.createNode(parent, new mindmaps.Point(offsetX, offsetY),
-				creator.lineColor, self);
+		var node = new mindmaps.Node();
+		node.edgeColor = creator.lineColor;
+		node.offset = new mindmaps.Point(offsetX, offsetY);
+		parent.addChild(node);
+		
+		appModel.createNode(parent, node, self);
 	};
 
 	view.nodeCaptionEditCommitted = function(str) {
@@ -236,7 +243,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
 			// reset selectedNode if we are deleting this one
 			if (node === selectedNode) {
-				selectedNode = null;
+				deselectCurrentNode();
 			}
 
 			// update view

@@ -1,4 +1,4 @@
-mindmaps.ApplicationModel = function(eventBus, undoManager) {
+mindmaps.ApplicationModel = function(eventBus) {
 	MicroEvent.mixin(mindmaps.ApplicationModel);
 	var self = this;
 	var document = null;
@@ -6,21 +6,27 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 	function bind() {
 		// eventBus.subscribe(Event.UNDO_ACTION, doUndo);
 		// eventBus.subscribe(Event.REDO_ACTION, doRedo);
-
-		undoManager.stateChanged = function() {
-			var undoState = this.canUndo();
-			var redoState = this.canRedo();
-			self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
-					undoState, redoState);
-		};
 	}
 
+	this.setUndoManager = function(undoManager) {
+		this.undoManager = undoManager;
+
+		if (this.undoManager) {
+			this.undoManager.stateChanged = function() {
+				var undoState = this.canUndo();
+				var redoState = this.canRedo();
+				self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
+						undoState, redoState);
+			};
+		}
+	};
+
 	this.doUndo = function() {
-		undoManager.undo();
+		this.undoManager.undo();
 	};
 
 	this.doRedo = function() {
-		undoManager.redo();
+		this.undoManager.redo();
 	};
 
 	this.setDocument = function(doc) {
@@ -43,7 +49,7 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		var undoFunc = function() {
 			self.moveNode(node, oldOffset);
 		};
-		undoManager.addUndo(undoFunc);
+		this.undoManager.addUndo(undoFunc);
 
 		node.offset = newOffset;
 		eventBus.publish(mindmaps.Event.NODE_MOVED, node);
@@ -60,7 +66,7 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		var undoFunc = function() {
 			self.setNodeCaption(node, oldCaption);
 		};
-		undoManager.addUndo(undoFunc);
+		this.undoManager.addUndo(undoFunc);
 
 		// update model
 		node.setCaption(newCaption);
@@ -76,18 +82,11 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 	/**
 	 * origin - optional argument declaring which object created the node
 	 */
-	this.createNode = function(parent, offset, edgeColor, origin) {
+	this.createNode = function(parent, node, origin) {
 		var map = this.getMindMap();
-		if (!map) {
-			console.error("can't create node without a map");
-			return;
-		}
-
-		var node = map.createNode();
-		node.offset = offset;
-		node.edgeColor = edgeColor;
+		map.addNode(node);
 		parent.addChild(node);
-
+		
 		eventBus.publish(mindmaps.Event.NODE_CREATED, node, origin);
 
 		// register undo
@@ -98,7 +97,7 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		var redoFunc = function() {
 			self.restoreNode(node, parent);
 		};
-		undoManager.addUndo(undoFunc, redoFunc);
+		this.undoManager.addUndo(undoFunc, redoFunc);
 	};
 
 	this.restoreNode = function(node, parent) {
@@ -124,25 +123,24 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 		var redoFunc = function() {
 			self.deleteNode(node);
 		};
-		undoManager.addUndo(undoFunc, redoFunc);
+		this.undoManager.addUndo(undoFunc, redoFunc);
 	};
-	
+
 	this.openNode = function(node) {
 		node.collapseChildren = false;
 		eventBus.publish(mindmaps.Event.NODE_OPENED, node);
 	};
-	
+
 	this.closeNode = function(node) {
 		node.collapseChildren = true;
 		eventBus.publish(mindmaps.Event.NODE_CLOSED, node);
 	};
-	
-	
+
 	// TODO move out
 	var zoomStep = 0.25;
 	var maxZoom = 3;
 	var minZoom = 0.2;
-	
+
 	this.zoomIn = function() {
 		var factor = document.zoomFactor;
 		factor += zoomStep;
@@ -153,7 +151,7 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
 		}
 	};
-	
+
 	this.zoomOut = function() {
 		var factor = document.zoomFactor;
 		factor -= zoomStep;
@@ -164,8 +162,6 @@ mindmaps.ApplicationModel = function(eventBus, undoManager) {
 			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
 		}
 	};
-
-	bind();
 };
 
 mindmaps.ApplicationModel.Event = {
@@ -187,9 +183,9 @@ mindmaps.AppController = function(eventBus, appModel) {
 		eventBus.subscribe(mindmaps.Event.CLOSE_DOCUMENT, function() {
 			var doc = appModel.getDocument();
 			if (doc) {
+				// TODO close document presenter
 				appModel.setDocument(null);
 				eventBus.publish(mindmaps.Event.DOCUMENT_CLOSED, doc);
-
 			}
 		});
 	}

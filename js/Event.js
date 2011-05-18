@@ -1,10 +1,12 @@
-
 // TODO maybe bundle events: DocumentEvent, NodeEvent (Type.MOVED, Type.CREATED)
 /**
  * Events that the event bus carries.
  */
 mindmaps.Event = {
 	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
+	COPY_NODE : "CopyNodeEvent",
+	CUT_NODE : "CutNodeEvent",
+	PASTE_NODE : "PasteNodeEvent",
 
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",
@@ -34,6 +36,18 @@ mindmaps.Event = {
 	 *            document
 	 */
 	DOCUMENT_CLOSED : "DocumentClosedEvent",
+
+	/**
+	 * @param The
+	 *            node
+	 */
+	NODE_SELECTED : "NodeSelectedEvent",
+
+	/**
+	 * @param The
+	 *            node
+	 */
+	NODE_DESELECTED : "NodeDeselectedEvent",
 
 	/**
 	 * @param The
@@ -74,11 +88,12 @@ mindmaps.Event = {
 	 *            node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
-	
+
 	/**
-	 * @param the new zoom factor
+	 * @param the
+	 *            new zoom factor
 	 */
-	ZOOM_CHANGED: "ZoomChangedEvent"
+	ZOOM_CHANGED : "ZoomChangedEvent"
 };
 
 /**

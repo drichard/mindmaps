@@ -1,6 +1,5 @@
-
 /**
-
+ * 
  * Creates a new mind map.
  * 
  * @param root -
@@ -56,7 +55,7 @@ mindmaps.MindMap.prototype.createNode = function() {
 
 mindmaps.MindMap.prototype.addNode = function(node) {
 	this.nodes.add(node);
-	
+
 	// add all children
 	var self = this;
 	node.forEachDescendant(function(descendant) {

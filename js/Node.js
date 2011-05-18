@@ -1,27 +1,26 @@
-
 /**
  * Constructor for a tree node.
  */
 mindmaps.Node = function() {
-//	var defaults = {
-//		id : Util.getId(),
-//		parent : null,
-//		children : new NodeMap(),
-//		text : {
-//			caption : "Node " + id,
-//			font : {
-//				weight : "normal",
-//				size : "inherit",
-//				color : "black"
-//			}
-//		},
-//		offset : Point.ZERO,
-//		collapeChildren : false,
-//		edgeColor : "black"
-//	};
-//	
-//	_.extend(this, defaults, options);
-	
+	// var defaults = {
+	// id : Util.getId(),
+	// parent : null,
+	// children : new NodeMap(),
+	// text : {
+	// caption : "Node " + id,
+	// font : {
+	// weight : "normal",
+	// size : "inherit",
+	// color : "black"
+	// }
+	// },
+	// offset : Point.ZERO,
+	// collapeChildren : false,
+	// edgeColor : "black"
+	// };
+	//	
+	// _.extend(this, defaults, options);
+
 	this.id = mindmaps.Util.getId();
 	this.parent = null;
 	this.children = new mindmaps.NodeMap();
@@ -36,6 +35,36 @@ mindmaps.Node = function() {
 	this.offset = mindmaps.Point.ZERO;
 	this.collapseChildren = false;
 	this.edgeColor = "black";
+};
+
+// TODO test case
+/**
+ * Create a deep copy of this node, where all nodes have a new IDs.
+ * 
+ * @returns {mindmaps.Node} the cloned node
+ */
+mindmaps.Node.prototype.clone = function() {
+	var clone = new mindmaps.Node();
+	var text = {
+		caption : this.text.caption
+	};
+	var font = {
+		weight : this.weight,
+		size : this.size,
+		color : this.color
+	};
+	text.font = font;
+	clone.text = text;
+	clone.offset = this.offset.clone();
+	clone.collapseChildren = this.collapseChildren;
+	clone.edgeColor = this.edgeColor;
+
+	this.forEachChild(function(child) {
+		var childClone = child.clone();
+		clone.addChild(childClone);
+	});
+
+	return clone;
 };
 
 /**

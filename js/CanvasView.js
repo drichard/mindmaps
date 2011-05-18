@@ -75,6 +75,7 @@ mindmaps.CanvasView.prototype.drawMap = function(map) {
 };
 
 mindmaps.DefaultCanvasView = function() {
+	// TODO solve this mess?
 	var NODE_CAPTION_WIDTH = 50;
 	var ROOT_NODE_CAPTION_WIDTH = 100;
 
