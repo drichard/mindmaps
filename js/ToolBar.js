@@ -134,11 +134,11 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	};
 
 	view.undoButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.UNDO_ACTION);
+		eventBus.publish(mindmaps.Event.DO_UNDO);
 	};
 
 	view.redoButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.REDO_ACTION);
+		eventBus.publish(mindmaps.Event.DO_REDO);
 	};
 
 	view.saveButtonClicked = function() {
@@ -166,11 +166,11 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	};
 
 	// app model events
-	appModel.subscribe(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
-			function(undoState, redoState) {
-				view.setUndoButtonEnabled(undoState);
-				view.setRedoButtonEnabled(redoState);
-			});
+	eventBus.subscribe(mindmaps.Event.UNDO_STATE_CHANGE, function(undoState,
+			redoState) {
+		view.setUndoButtonEnabled(undoState);
+		view.setRedoButtonEnabled(redoState);
+	});
 
 	// global events
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_SAVED, function() {
@@ -186,8 +186,6 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	});
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
-		view.setUndoButtonEnabled(false);
-		view.setRedoButtonEnabled(false);
 	});
 
 	this.go = function() {

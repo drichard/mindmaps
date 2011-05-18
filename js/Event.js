@@ -7,9 +7,32 @@ mindmaps.Event = {
 	COPY_NODE : "CopyNodeEvent",
 	CUT_NODE : "CutNodeEvent",
 	PASTE_NODE : "PasteNodeEvent",
-	
+
+	/**
+	 * Request undo operation.
+	 */
+	DO_UNDO : "DoUndoEvent",
+
+	/**
+	 * Request redo operation.
+	 */
+	DO_REDO : "DoRedoEvent",
+
+	/**
+	 * Record a new undo action.
+	 * 
+	 * @param undoFunc
+	 * @param redoFunc
+	 */
 	UNDO_ACTION : "UndoActionEvent",
-	REDO_ACTION : "RedoActionEvent",
+
+	/**
+	 * @param {boolean}
+	 *            undoState
+	 * @param {boolean}
+	 *            redoState
+	 */
+	UNDO_STATE_CHANGE : "UndoStateChangeEvent",
 
 	NEW_DOCUMENT : "NewDocumentEvent",
 	OPEN_DOCUMENT : "OpenDocumentEvent",

@@ -6,7 +6,7 @@ var mindmaps = mindmaps || {};
 $(function() {
 	var eventBus = new mindmaps.EventBus();
 	var appModel = new mindmaps.ApplicationModel(eventBus);
-	var undoController = new mindmaps.UndoController(eventBus, appModel);
+	var undoController = new mindmaps.UndoController(eventBus);
 	var copyPasteController = new mindmaps.CopyCutPasteController(eventBus,
 			appModel);
 	var appController = new mindmaps.AppController(eventBus, appModel);
@@ -35,18 +35,18 @@ $(function() {
 			eventBus.publish(mindmaps.Event.PASTE_NODE);
 		}
 	});
-	
+
 	shortcuts.register({
 		keys : "ctrl+z",
 		handler : function() {
-			eventBus.publish(mindmaps.Event.UNDO_ACTION);
+			eventBus.publish(mindmaps.Event.DO_UNDO);
 		}
 	});
-	
+
 	shortcuts.register({
 		keys : "ctrl+y",
 		handler : function() {
-			eventBus.publish(mindmaps.Event.REDO_ACTION);
+			eventBus.publish(mindmaps.Event.DO_REDO);
 		}
 	});
 

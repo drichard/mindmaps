@@ -1,29 +1,6 @@
 mindmaps.ApplicationModel = function(eventBus) {
-	MicroEvent.mixin(mindmaps.ApplicationModel);
 	var self = this;
 	var document = null;
-
-	function bind() {
-		eventBus.subscribe(mindmaps.Event.UNDO_ACTION, function() {
-			self.undoManager.undo();
-		});
-		eventBus.subscribe(mindmaps.Event.REDO_ACTION, function() {
-			self.undoManager.redo();
-		});
-	}
-
-	this.setUndoManager = function(undoManager) {
-		this.undoManager = undoManager;
-
-		if (this.undoManager) {
-			this.undoManager.stateChanged = function() {
-				var undoState = this.canUndo();
-				var redoState = this.canRedo();
-				self.publish(mindmaps.ApplicationModel.Event.UNDO_STATE_CHANGE,
-						undoState, redoState);
-			};
-		}
-	};
 
 	this.setDocument = function(doc) {
 		document = doc;
@@ -45,7 +22,7 @@ mindmaps.ApplicationModel = function(eventBus) {
 		var undoFunc = function() {
 			self.moveNode(node, oldOffset);
 		};
-		this.undoManager.addUndo(undoFunc);
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
 
 		node.offset = newOffset;
 		eventBus.publish(mindmaps.Event.NODE_MOVED, node);
@@ -62,7 +39,7 @@ mindmaps.ApplicationModel = function(eventBus) {
 		var undoFunc = function() {
 			self.setNodeCaption(node, oldCaption);
 		};
-		this.undoManager.addUndo(undoFunc);
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
 
 		// update model
 		node.setCaption(newCaption);
@@ -89,7 +66,7 @@ mindmaps.ApplicationModel = function(eventBus) {
 		var undoFunc = function() {
 			self.deleteNode(node);
 		};
-		this.undoManager.addUndo(undoFunc);
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
 	};
 
 	this.deleteNode = function(node) {
@@ -104,7 +81,7 @@ mindmaps.ApplicationModel = function(eventBus) {
 			self.createNode(node, parent);
 		};
 
-		this.undoManager.addUndo(undoFunc);
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
 	};
 
 	this.openNode = function(node) {
@@ -143,12 +120,6 @@ mindmaps.ApplicationModel = function(eventBus) {
 			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
 		}
 	};
-
-	bind();
-};
-
-mindmaps.ApplicationModel.Event = {
-	UNDO_STATE_CHANGE : "UndoStateChangeEvent"
 };
 
 mindmaps.AppController = function(eventBus, appModel) {

@@ -52,7 +52,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		view.highlightNode(node);
 
 		selectedNode = node;
-		
+
 		// publish event
 		eventBus.publish(mindmaps.Event.NODE_SELECTED, node);
 	};

@@ -1,4 +1,8 @@
 mindmaps.CopyCutPasteController = function(eventBus, appModel) {
+	var selectedNode = null;
+	var node = null;
+	
+	/// TODO see if we keep when documents change or not
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
 	});
 
@@ -8,33 +12,40 @@ mindmaps.CopyCutPasteController = function(eventBus, appModel) {
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
 	});
+
 	
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
-		this.selectedNode = node;
+		selectedNode = node;
 	});
-	
+
 	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
-		this.selectedNode = null;
+		selectedNode = null;
 	});
-	
+
 	function doCopy() {
-		this.node = this.selectedNode.clone();
+		if (selectedNode) {
+			node = selectedNode.clone();
+		}
 	}
-	
+
 	function doCut() {
-		this.node = this.selectedNode.clone();
-		appModel.deleteNode(this.selectedNode);
+		if (selectedNode) {
+			node = selectedNode.clone();
+			appModel.deleteNode(selectedNode);
+		}
 	}
-	
+
 	function doPaste() {
-		// send a cloned copy of our node, so we can paste multiple times
-		appModel.createNode(this.node.clone(), this.selectedNode);
+		if (selectedNode) {
+			// send a cloned copy of our node, so we can paste multiple times
+			appModel.createNode(node.clone(), selectedNode);
+		}
 	}
-	
+
 	eventBus.subscribe(mindmaps.Event.COPY_NODE, doCopy);
-	
+
 	eventBus.subscribe(mindmaps.Event.CUT_NODE, doCut);
-	
+
 	eventBus.subscribe(mindmaps.Event.PASTE_NODE, doPaste);
-	
+
 };
