@@ -356,3 +356,7 @@ html,body {
 
 #inspector {
 }
+
+#inspector-table td {
+	padding: 2px 5px;
+}

@@ -52,11 +52,11 @@ mindmaps.Node.prototype.clone = function() {
 		caption : this.text.caption
 	};
 	var font = {
-		weight : this.weight,
-		style: this.style,
-		decoration: this.decoration,
-		size : this.size,
-		color : this.color
+		weight : this.text.font.weight,
+		style: this.text.font.style,
+		decoration: this.text.font.decoration,
+		size : this.text.font.size,
+		color : this.text.font.color
 	};
 	text.font = font;
 	clone.text = text;

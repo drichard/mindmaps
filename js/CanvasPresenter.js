@@ -239,6 +239,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			}
 		});
 
+		// TODO select previous node
 		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
 			// reset selectedNode if we are deleting this one
 			if (node === selectedNode) {
