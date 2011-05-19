@@ -94,6 +94,81 @@ mindmaps.ApplicationModel = function(eventBus) {
 		eventBus.publish(mindmaps.Event.NODE_CLOSED, node);
 	};
 
+	// TODO summarize, move out
+	var fontStep = 4;
+	this.increaseNodeFontSize = function(node) {
+		var currentSize = node.text.font.size;
+		var newSize = currentSize + fontStep;
+
+		node.text.font.size = newSize;
+
+		eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node, newSize);
+
+		// register undo
+		var undoFunc = function() {
+			self.decreaseNodeFontSize(node);
+		};
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
+	};
+
+	this.decreaseNodeFontSize = function(node) {
+		var currentSize = node.text.font.size;
+		var newSize = currentSize - fontStep;
+
+		// min size
+		if (newSize < 4) {
+			return;
+		}
+
+		node.text.font.size = newSize;
+
+		eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
+
+		// register undo
+		var undoFunc = function() {
+			self.increaseNodeFontSize(node);
+		};
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
+	};
+
+	this.setNodeFontWeight = function(node, bold) {
+		var weight = bold ? "bold" : "normal";
+		node.text.font.weight = weight;
+
+		eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
+
+		// register undo
+		var undoFunc = function() {
+			self.setNodeFontWeight(node, !bold);
+		};
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
+	};
+
+	this.setNodeFontStyle = function(node, italic) {
+		var style = italic ? "italic" : "normal";
+		node.text.font.style = style;
+		eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
+
+		// register undo
+		var undoFunc = function() {
+			self.setNodeFontStyle(node, !italic);
+		};
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
+	};
+
+	this.setNodeFontDecoration = function(node, underline) {
+		var decoration = underline ? "underline" : "none";
+		node.text.font.decoration = decoration;
+
+		eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
+
+		// register undo
+		var undoFunc = function() {
+			self.setNodeFontDecoration(node, !underline);
+		};
+		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
+	};
+
 	// TODO move out
 	var zoomStep = 0.25;
 	var maxZoom = 3;

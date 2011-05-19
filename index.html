@@ -33,6 +33,7 @@
 
 <script src="js/FloatPanel.js"></script>
 <script src="js/Navigator.js"></script>
+<script src="js/Inspector.js"></script>
 <script src="js/ToolBar.js"></script>
 <script src="js/StatusBar.js"></script>
 <script src="js/CanvasView.js"></script>
@@ -87,7 +88,7 @@
 		</div>
 		<div id="bottombar">
 			<div id="statusbar">
-				<div class="buttons buttons-right buttons-small"></div>
+				<div class="buttons buttons-right buttons-small buttons-less-padding"></div>
 			</div>
 		</div>
 		<div id="panel-holder">
@@ -99,14 +100,47 @@
 							<div id="navi-canvas-overlay"></div>
 						</div>
 						<div id="navi-buttons" style="float: right">
-<!-- 							<button id="button-navi-center"> </button> -->
-							<button id="button-navi-zoom-in" style="width: 24px; height: 24px;"></button>
-							<button id="button-navi-zoom-out" style="width: 24px; height: 24px; margin-left: 4px;"> </button>
+							<!-- 							<button id="button-navi-center"> </button> -->
+							<button id="button-navi-zoom-in"
+								style="width: 24px; height: 24px;"></button>
+							<button id="button-navi-zoom-out"
+								style="width: 24px; height: 24px; margin-left: 4px;"></button>
 						</div>
 					</div>
 				</div>
 				<div class="inactive">
 					<p>no document</p>
+				</div>
+			</div>
+			<div id="inspector">
+				<div id="inspector-content">
+					<table id="inspector-table">
+						<tr>
+							<td>Font size:</td>
+							<td><div class="buttonset buttons-very-small buttons-less-padding">
+									<button id="inspector-button-font-size-decrease">A-</button>
+									<button id="inspector-button-font-size-increase">A+</button>
+								</div></td>
+						</tr>
+						<tr>
+							<td>Font style:</td>
+							<td><div class="buttonset buttons-very-small buttons-less-padding">
+								<input type="checkbox" id="inspector-checkbox-font-bold" /> <label for="inspector-checkbox-font-bold">B</label>
+								<input type="checkbox" id="inspector-checkbox-font-italic" /> <label for="inspector-checkbox-font-italic">I</label>
+								<input type="checkbox" id="inspector-checkbox-font-underline" /> <label for="inspector-checkbox-font-underline">U</label>
+							</div>
+							</td>
+						</tr>
+						<tr>
+							<td>Font color:</td>
+							<td>color picker</td>
+						</tr>
+						<tr>
+							<td>Branch color:</td>
+							<td>color picker</td>
+						</tr>
+					</table>
+					<button id="inspector-button-apply-all" class="buttons-small">Apply styles to children...</button>
 				</div>
 			</div>
 		</div>

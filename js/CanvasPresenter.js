@@ -260,6 +260,10 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			view.closeNode(node);
 		});
 
+		eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
+			view.updateNode(node);
+		});
+
 		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
 			view.setZoomFactor(zoomFactor);
 			var doc = appModel.getDocument();

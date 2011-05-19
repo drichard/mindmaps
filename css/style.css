@@ -131,9 +131,17 @@ html,body {
 	margin-top: 4px;
 }
 
-.buttons-small .ui-button .ui-button-text {
-	padding: 0.2em 0.6em;
+/* apply styles to button and wrapper div */
+.buttons-small .ui-button .ui-button-text, .buttons-small.ui-button .ui-button-text {
 	font-size: 12px;
+}
+
+.buttons-very-small .ui-button .ui-button-text, .buttons-very-small.ui-button .ui-button-text {
+	font-size: 10px;
+}
+
+.buttons-less-padding .ui-button .ui-button-text, .buttons-less-padding.ui-button .ui-button-text {
+	padding: 0.2em 0.6em;
 }
 
 #canvas-container {
@@ -343,4 +351,8 @@ html,body {
 	position: absolute !important;
 	top: 0;
 	left: 0;
+}
+
+
+#inspector {
 }

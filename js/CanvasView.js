@@ -334,7 +334,8 @@ mindmaps.DefaultCanvasView = function() {
 			$node.css({
 				left : this.zoomFactor * offsetX,
 				top : this.zoomFactor * offsetY,
-				"border-bottom" : bb
+				"border-bottom" : bb,
+				"font-size" : node.text.font.size
 			});
 
 			// node drag behaviour
@@ -384,13 +385,17 @@ mindmaps.DefaultCanvasView = function() {
 		// text caption
 		var minWidth = node.isRoot() ? ROOT_NODE_CAPTION_WIDTH
 				: NODE_CAPTION_WIDTH;
+		var font = node.text.font;
 		var $text = $("<div/>", {
 			id : "node-caption-" + node.id,
 			"class" : "node-caption",
 			text : node.text.caption
 		}).css({
 			"font-size" : this.zoomFactor * 100 + "%",
-			"min-width" : this.zoomFactor * minWidth
+			"min-width" : this.zoomFactor * minWidth,
+			"font-weight" : font.weight,
+			"font-style" : font.style,
+			"text-decoration" : font.decoration
 		}).appendTo($node);
 
 		// create collapse button for parent if he hasn't one already
@@ -549,8 +554,24 @@ mindmaps.DefaultCanvasView = function() {
 		}
 	};
 
+	this.updateNode = function(node) {
+		var $node = $getNode(node);
+		var $text = $getNodeCaption(node);
+		var font = node.text.font;
+		$node.css({
+			"font-size" : font.size
+		});
+
+		$text.css({
+			"font-weight" : font.weight,
+			"font-style" : font.style,
+			"text-decoration" : font.decoration
+		});
+
+		this.redrawNodeConnectors(node);
+	};
+
 	this.positionNode = function(node) {
-		console.log("positioning node");
 		var $node = $getNode(node);
 		// TODO try animate
 		// position

@@ -72,8 +72,14 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 		var fpf = new mindmaps.FloatPanelFactory(canvasContainer);
 
 		// floating Panels
-		var nodePanel = fpf.create("Properties");
-		statusbarPresenter.addEntry(nodePanel);
+		var inspectorView = new mindmaps.InspectorView();
+		var inspectorPresenter = new mindmaps.InspectorPresenter(eventBus, appModel,
+				inspectorView);
+		inspectorPresenter.go();
+		
+		var inspectorPanel = fpf.create("Inspector", inspectorView.getContent());
+		inspectorPanel.show();
+		statusbarPresenter.addEntry(inspectorPanel);
 
 		var naviView = new mindmaps.NavigatorView();
 		var naviPresenter = new mindmaps.NavigatorPresenter(eventBus, appModel,

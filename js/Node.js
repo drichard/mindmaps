@@ -27,8 +27,11 @@ mindmaps.Node = function() {
 	this.text = {
 		caption : "Node " + this.id,
 		font : {
+			style: "normal",
 			weight : "normal",
-			size : "inherit",
+			decoration: "none",
+			/** unit: pixel */
+			size : 15,
 			color : "black"
 		}
 	};
@@ -50,6 +53,8 @@ mindmaps.Node.prototype.clone = function() {
 	};
 	var font = {
 		weight : this.weight,
+		style: this.style,
+		decoration: this.decoration,
 		size : this.size,
 		color : this.color
 	};
