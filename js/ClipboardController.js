@@ -1,4 +1,4 @@
-mindmaps.CopyCutPasteController = function(eventBus, appModel) {
+mindmaps.ClipboardController = function(eventBus, appModel) {
 	var selectedNode = null;
 	var node = null;
 	

@@ -44,6 +44,10 @@ mindmaps.NavigatorView = function() {
 			height : height
 		});
 	};
+	
+	this.getCanvasWidth = function() {
+		return $("#navi-canvas").width();
+	};
 
 	this.init = function(canvasSize) {
 
@@ -152,13 +156,11 @@ mindmaps.NavigatorView = function() {
 };
 
 mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
-	var CANVAS_WIDTH = 250;
-
 	var self = this;
 	var $container = container.getContent();
 	var viewDragging = false;
 	var zoomFactor = null;
-	var canvasSize = new mindmaps.Point(CANVAS_WIDTH, 0);
+	var canvasSize = mindmaps.Point.ZERO;
 	var docSize = null;
 	var mindmap = null;
 
@@ -181,12 +183,15 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		view.setDraggerSize(width, height);
 	}
 
-	function calculateCanvasHeight() {
-		var scale = docSize.x / canvasSize.x;
+	function calculateCanvasSize() {
+		var width = view.getCanvasWidth();
+		var scale = docSize.x / width;
 		var height = docSize.y / scale;
 		
-		canvasSize.y = height;
 		view.setCanvasHeight(height);
+		
+		canvasSize.x = width;
+		canvasSize.y = height;
 	}
 
 	function calculateDraggerPosition() {
@@ -205,7 +210,7 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		mindmap = doc.mindmap;
 		zoomFactor = doc.zoomFactor;
 
-		calculateCanvasHeight();
+		calculateCanvasSize();
 		calculateDraggerSize();
 		renderView();
 		

@@ -330,6 +330,7 @@ html,body {
 }
 
 #navi-canvas {
+	width: 250px;
 	display: block;
 	border: 1px solid black;
 	padding: 2px;
