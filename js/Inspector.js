@@ -49,7 +49,7 @@ mindmaps.InspectorView = function() {
 
 	this.init = function() {
 		$(".buttonset", $content).buttonset();
-		$("#inspector-button-apply-all").button();
+		$applyToAllButton.button();
 
 		$sizeDecreaseButton.click(function() {
 			if (self.fontSizeDecreaseButtonClicked) {

@@ -40,7 +40,7 @@ mindmaps.NavigatorView = function() {
 	};
 
 	this.setCanvasHeight = function(height) {
-		$("#navi-canvas").attr({
+		$("#navi-canvas").css({
 			height : height
 		});
 	};
@@ -247,8 +247,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 	// scroll container when the dragger is dragged
 	view.dragging = function(x, y) {
-		var scrollLeft = docSize.x * x / canvasSize.x;
-		var scrollTop = docSize.y * y / canvasSize.y;
+		var scrollLeft = zoomFactor * docSize.x * x / canvasSize.x;
+		var scrollTop = zoomFactor * docSize.y * y / canvasSize.y;
 		$container.scrollLeft(scrollLeft).scrollTop(scrollTop);
 	};
 
