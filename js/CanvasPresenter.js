@@ -24,18 +24,16 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	var toggleCollapse = function(node) {
 		// toggle node visibility
-		if (node.collapseChildren) {
-			appModel.openNode(node);
-		} else {
-			appModel.closeNode(node);
-		}
+		var action = mindmaps.action.node.toggleCollapse(node);
+		appModel.executeAction(action);
 	};
 
 	var deleteSelectedNode = function() {
 		var node = selectedNode;
 		if (node) {
 			// remove from model
-			appModel.deleteNode(node);
+			var action = mindmaps.action.node.remove(node);
+			appModel.executeAction(action);
 		}
 	};
 
@@ -115,7 +113,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		// view has updated itself
 
 		// update model
-		appModel.moveNode(node, offset);
+		var action = mindmaps.action.node.move(node, offset);
+		appModel.executeAction(action);
 	};
 
 	// clicked the void
@@ -147,7 +146,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		node.edgeColor = creator.lineColor;
 		node.offset = new mindmaps.Point(offsetX, offsetY);
 
-		appModel.createNode(node, parent, self);
+		// appModel.createNode(node, parent, self);
+		var action = mindmaps.action.node.create(node, parent, self);
+		appModel.executeAction(action);
 	};
 
 	view.nodeCaptionEditCommitted = function(str) {
@@ -164,7 +165,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		view.stopEditNodeCaption(true);
-		appModel.setNodeCaption(node, str);
+		var action = mindmaps.action.node.changeCaption(node, str);
+		appModel.executeAction(action);
 	};
 
 	this.go = function() {
@@ -230,7 +232,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 				// children are hidden
 				var parent = node.getParent();
 				if (parent.collapseChildren) {
-					appModel.openNode(parent);
+					var action = mindmaps.action.node.open(parent);
+					appModel.executeAction(action);
 				}
 
 				// select and go into edit mode on new node

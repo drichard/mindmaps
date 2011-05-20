@@ -73,10 +73,10 @@ mindmaps.InspectorView = function() {
 				self.fontUnderlineCheckboxClicked(checked);
 			}
 		});
-		
+
 		$("input.colorpicker", $content).miniColors({
-			change: function(hex, rgb) {
-				
+			change : function(hex, rgb) {
+
 			}
 		});
 
@@ -90,34 +90,38 @@ mindmaps.InspectorView = function() {
 
 mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 	var self = this;
-	// TODO save selected node in central place, probably appmodel
-	var selectedNode = null;
 
 	view.fontSizeDecreaseButtonClicked = function() {
 		// TODO split change functions into seperate actions. register those
 		// into the app model
-		appModel.decreaseNodeFontSize(selectedNode);
+		// appModel.decreaseNodeFontSize(selectedNode);
+		var action = mindmaps.action.node.decreaseFontSize(appModel.selectedNode);
+		appModel.executeAction(action);
 	};
 
 	view.fontSizeIncreaseButtonClicked = function() {
-		appModel.increaseNodeFontSize(selectedNode);
+		var action = mindmaps.action.node.increaseFontSize(appModel.selectedNode);
+		appModel.executeAction(action);
 	};
 
 	view.fontBoldCheckboxClicked = function(checked) {
-		appModel.setNodeFontWeight(selectedNode, checked);
+		var action = mindmaps.action.node.setFontWeight(appModel.selectedNode, checked);
+		appModel.executeAction(action);
 	};
 
 	view.fontItalicCheckboxClicked = function(checked) {
-		appModel.setNodeFontStyle(selectedNode, checked);
+		var action = mindmaps.action.node.setFontStyle(appModel.selectedNode, checked);
+		appModel.executeAction(action);
 	};
 
 	view.fontUnderlineCheckboxClicked = function(checked) {
-		appModel.setNodeFontDecoration(selectedNode, checked);
+		var action = mindmaps.action.node.setFontDecoration(appModel.selectedNode, checked);
+		appModel.executeAction(action);
 	};
 
 	eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
-		if (selectedNode && selectedNode === node) {
-			updateView();
+		if (appModel.selectedNode === node) {
+			updateView(node);
 		}
 	});
 
@@ -126,17 +130,15 @@ mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
 		view.setControlsEnabled(true);
-		selectedNode = node;
-		updateView();
+		updateView(node);
 	});
 
 	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
 		view.setControlsEnabled(false);
-		selectedNode = null;
 	});
 
-	function updateView() {
-		var font = selectedNode.text.font;
+	function updateView(node) {
+		var font =node.text.font;
 		view.setBoldCheckboxState(font.weight === "bold");
 		view.setItalicCheckboxState(font.style === "italic");
 		view.setUnderlineCheckboxState(font.decoration === "underline");

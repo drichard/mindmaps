@@ -1,5 +1,4 @@
 mindmaps.ClipboardController = function(eventBus, appModel) {
-	var selectedNode = null;
 	var node = null;
 	
 	/// TODO see if we keep when documents change or not
@@ -13,32 +12,28 @@ mindmaps.ClipboardController = function(eventBus, appModel) {
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
 	});
 
-	
-	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
-		selectedNode = node;
-	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
-		selectedNode = null;
-	});
-
 	function doCopy() {
-		if (selectedNode) {
-			node = selectedNode.clone();
+		var selected = appModel.selectedNode;
+		if (selected) {
+			node = selected.clone();
 		}
 	}
 
 	function doCut() {
-		if (selectedNode) {
-			node = selectedNode.clone();
-			appModel.deleteNode(selectedNode);
+		var selected = appModel.selectedNode;
+		if (selected) {
+			node = selected.clone();
+			var action = mindmaps.action.node.remove(selected);
+			appModel.executeAction(action);
 		}
 	}
 
 	function doPaste() {
-		if (selectedNode) {
+		var selected = appModel.selectedNode;
+		if (selected) {
 			// send a cloned copy of our node, so we can paste multiple times
-			appModel.createNode(node.clone(), selectedNode);
+			var action = mindmaps.action.node.create(node.clone(), selected);
+			appModel.executeAction(action);
 		}
 	}
 
