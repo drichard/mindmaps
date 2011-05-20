@@ -80,10 +80,6 @@ mindmaps.ApplicationModel = function(eventBus) {
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
 		self.selectedNode = node;
 	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
-		self.selectedNode = null;
-	});
 };
 
 mindmaps.AppController = function(eventBus, appModel) {

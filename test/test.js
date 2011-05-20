@@ -22,20 +22,20 @@ test("node - basic operations", function() {
 	equal(x.getChildren(true).length, 5, "x should have 5 children");
 
 	x.forEachChild(function(node) {
-		node.edgeColor = "yellow";
+		node.branchColor = "yellow";
 	});
-	equal(y0.edgeColor, "yellow");
-	equal(y1.edgeColor, "yellow");
-	notEqual(z0.edgeColor, "yellow");
+	equal(y0.branchColor, "yellow");
+	equal(y1.branchColor, "yellow");
+	notEqual(z0.branchColor, "yellow");
 
 	x.forEachDescendant(function(node) {
-		node.edgeColor = "green";
+		node.branchColor = "green";
 	});
-	equal(y0.edgeColor, "green");
-	equal(y1.edgeColor, "green");
-	equal(z0.edgeColor, "green");
-	equal(z1.edgeColor, "green");
-	equal(z2.edgeColor, "green");
+	equal(y0.branchColor, "green");
+	equal(y1.branchColor, "green");
+	equal(z0.branchColor, "green");
+	equal(z1.branchColor, "green");
+	equal(z2.branchColor, "green");
 
 	// test root
 	equal(z2.getRoot().id, x.id);
@@ -140,7 +140,7 @@ test("node serialization", function() {
 	// test equality
 	equal(root.id, restored.id);
 	equal(root.parent, restored.parent);
-	equal(root.edgeColor, restored.edgeColor);
+	equal(root.branchColor, restored.branchColor);
 	equal(root.children.count, restored.children.count);
 	deepEqual(root.offset, restored.offset);
 	equal(root.collapseChildren, restored.collapseChildren);

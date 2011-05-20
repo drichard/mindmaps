@@ -125,13 +125,13 @@ function getBinaryMapWithDepth(depth) {
 	}
 
 	// color nodes
-	c[0].edgeColor = mindmaps.Util.randomColor();
+	c[0].branchColor = mindmaps.Util.randomColor();
 	c[0].forEachDescendant(function(node) {
-		node.edgeColor = mindmaps.Util.randomColor();
+		node.branchColor = mindmaps.Util.randomColor();
 	});
-	c[1].edgeColor = mindmaps.Util.randomColor();
+	c[1].branchColor = mindmaps.Util.randomColor();
 	c[1].forEachDescendant(function(node) {
-		node.edgeColor = mindmaps.Util.randomColor();
+		node.branchColor = mindmaps.Util.randomColor();
 	});
 
 	return mm;

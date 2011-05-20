@@ -175,9 +175,9 @@ mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 		updateView(node);
 	});
 
-	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
-		view.setControlsEnabled(false);
-	});
+//	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
+//		view.setControlsEnabled(false);
+//	});
 
 	function updateView(node) {
 		var font = node.text.font;
@@ -185,7 +185,7 @@ mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 		view.setItalicCheckboxState(font.style === "italic");
 		view.setUnderlineCheckboxState(font.decoration === "underline");
 		view.setFontColorPickerColor(font.color);
-		view.setBranchColorPickerColor(node.edgeColor);
+		view.setBranchColorPickerColor(node.branchColor);
 	}
 
 	this.go = function() {

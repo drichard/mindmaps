@@ -16,7 +16,7 @@ mindmaps.Node = function() {
 	// },
 	// offset : Point.ZERO,
 	// collapeChildren : false,
-	// edgeColor : "black"
+	// branchColor : "black"
 	// };
 	//	
 	// _.extend(this, defaults, options);
@@ -27,9 +27,9 @@ mindmaps.Node = function() {
 	this.text = {
 		caption : "Node " + this.id,
 		font : {
-			style: "normal",
+			style : "normal",
 			weight : "normal",
-			decoration: "none",
+			decoration : "none",
 			/** unit: pixel */
 			size : 15,
 			color : "#000000"
@@ -37,7 +37,7 @@ mindmaps.Node = function() {
 	};
 	this.offset = mindmaps.Point.ZERO;
 	this.collapseChildren = false;
-	this.edgeColor = "#000000";
+	this.branchColor = "#000000";
 };
 
 // TODO test case
@@ -53,8 +53,8 @@ mindmaps.Node.prototype.clone = function() {
 	};
 	var font = {
 		weight : this.text.font.weight,
-		style: this.text.font.style,
-		decoration: this.text.font.decoration,
+		style : this.text.font.style,
+		decoration : this.text.font.decoration,
 		size : this.text.font.size,
 		color : this.text.font.color
 	};
@@ -62,7 +62,7 @@ mindmaps.Node.prototype.clone = function() {
 	clone.text = text;
 	clone.offset = this.offset.clone();
 	clone.collapseChildren = this.collapseChildren;
-	clone.edgeColor = this.edgeColor;
+	clone.branchColor = this.branchColor;
 
 	this.forEachChild(function(child) {
 		var childClone = child.clone();
@@ -88,7 +88,7 @@ mindmaps.Node.fromObject = function(obj) {
 	node.text = obj.text;
 	node.offset = mindmaps.Point.fromObject(obj.offset);
 	node.collapseChildren = obj.collapseChildren;
-	node.edgeColor = obj.edgeColor;
+	node.branchColor = obj.branchColor;
 
 	// extract all children from array of objects
 	_.each(obj.children, function(child) {
@@ -121,7 +121,7 @@ mindmaps.Node.prototype.toJSON = function() {
 		text : this.text,
 		offset : this.offset,
 		collapseChildren : this.collapseChildren,
-		edgeColor : this.edgeColor,
+		branchColor : this.branchColor,
 		children : children
 	};
 
@@ -245,4 +245,29 @@ mindmaps.Node.prototype.setCaption = function(caption) {
 
 mindmaps.Node.prototype.getCaption = function() {
 	return this.text.caption;
+};
+
+/**
+ * Tests (depth-first) whether the other node is a descendant of this node.
+ * 
+ * @param other
+ * @returns true if descendant
+ */
+mindmaps.Node.prototype.isDescendant = function(other) {
+	function test(node) {
+		var children = node.children.values();
+		for ( var i = 0, len = children.length; i < len; i++) {
+			var child = children[i];
+			if (test(child)) {
+				return true;
+			}
+
+			if (child === other) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	return test(this);
 };

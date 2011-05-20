@@ -209,9 +209,9 @@ mindmaps.action.SetFontColorAction.prototype = new mindmaps.action.Action();
 
 
 mindmaps.action.SetBranchColorAction = function(node, branchColor) {
-	var oldColor = node.edgeColor;
+	var oldColor = node.branchColor;
 	this.execute = function(context) {
-		node.edgeColor = branchColor;
+		node.branchColor = branchColor;
 	};
 
 	this.event = [ mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, node ];

@@ -120,7 +120,7 @@ mindmaps.NavigatorView = function() {
 			if (!node.collapseChildren) {
 				node.forEachChild(function(child) {
 					ctx.beginPath();
-					ctx.strokeStyle = child.edgeColor;
+					ctx.strokeStyle = child.branchColor;
 					ctx.moveTo(0, 0);
 					var posX = scale(child.offset.x);
 					var posY = scale(child.offset.y);

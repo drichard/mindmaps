@@ -1,4 +1,3 @@
-// TODO raise event on collapse
 mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var self = this;
 	var selectedNode = null;
@@ -10,31 +9,24 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	});
 
 	$(document).bind("keydown", "F2", function() {
-		if (selectedNode) {
-			view.editNodeCaption(selectedNode);
-		}
+		view.editNodeCaption(selectedNode);
 	});
 
 	$(document).bind("keydown", "space", function(e) {
 		e.preventDefault();
-		if (selectedNode) {
-			toggleCollapse(selectedNode);
-		}
+		toggleCollapse(selectedNode);
 	});
 
 	var toggleCollapse = function(node) {
 		// toggle node visibility
-		var action =  new mindmaps.action.ToggleNodeCollapseAction(node);
+		var action = new mindmaps.action.ToggleNodeCollapseAction(node);
 		appModel.executeAction(action);
 	};
 
 	var deleteSelectedNode = function() {
-		var node = selectedNode;
-		if (node) {
-			// remove from model
-			var action =  new mindmaps.action.DeleteNodeAction(node);
-			appModel.executeAction(action);
-		}
+		// remove from model
+		var action = new mindmaps.action.DeleteNodeAction(selectedNode);
+		appModel.executeAction(action);
 	};
 
 	var selectNode = function(node) {
@@ -44,23 +36,14 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		// deselect old node
-		deselectCurrentNode();
-
-		// select node and save reference
-		view.highlightNode(node);
-
-		selectedNode = node;
-
-		// publish event
-		eventBus.publish(mindmaps.Event.NODE_SELECTED, node);
-	};
-	var deselectCurrentNode = function() {
-		// deselect old node
 		if (selectedNode) {
 			view.unhighlightNode(selectedNode);
-			eventBus.publish(mindmaps.Event.NODE_DESELECTED, selectedNode);
-			selectedNode = null;
 		}
+		view.highlightNode(node);
+		selectedNode = node;
+		
+		// publish event
+		eventBus.publish(mindmaps.Event.NODE_SELECTED, node);
 	};
 
 	view.mouseWheeled = function(delta) {
@@ -113,14 +96,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		// view has updated itself
 
 		// update model
-		var action =  new mindmaps.action.MoveNodeAction(node, offset);
+		var action = new mindmaps.action.MoveNodeAction(node, offset);
 		appModel.executeAction(action);
-	};
-
-	// clicked the void
-	view.mapClicked = function(node) {
-		// deselect any node
-		deselectCurrentNode();
 	};
 
 	view.collapseButtonClicked = function(node) {
@@ -131,7 +108,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	creator.dragStarted = function(node) {
 		// set edge color for new node. inherit from parent or random when root
 		var color = node.isRoot() ? mindmaps.Util.randomColor()
-				: node.edgeColor;
+				: node.branchColor;
 		return color;
 	};
 
@@ -143,11 +120,11 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 		// update the model
 		var node = new mindmaps.Node();
-		node.edgeColor = creator.lineColor;
+		node.branchColor = creator.lineColor;
 		node.offset = new mindmaps.Point(offsetX, offsetY);
 
 		// appModel.createNode(node, parent, self);
-		var action =  new mindmaps.action.CreateNodeAction(node, parent, self);
+		var action = new mindmaps.action.CreateNodeAction(node, parent, self);
 		appModel.executeAction(action);
 	};
 
@@ -159,13 +136,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		var node = selectedNode;
-		if (!node) {
-			console.error("edit for unselected node!");
-			return;
-		}
 
 		view.stopEditNodeCaption(true);
-		var action =  new mindmaps.action.ChangeNodeCaptionAction(node, str);
+		var action = new mindmaps.action.ChangeNodeCaptionAction(node, str);
 		appModel.executeAction(action);
 	};
 
@@ -184,6 +157,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			var map = appModel.getMindMap();
 			view.drawMap(map);
 			view.center();
+
+			var root = map.root;
+			selectNode(root);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
@@ -228,7 +204,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 				// children are hidden
 				var parent = node.getParent();
 				if (parent.collapseChildren) {
-					var action =  new mindmaps.action.OpenNodeAction(parent);
+					var action = new mindmaps.action.OpenNodeAction(parent);
 					appModel.executeAction(action);
 				}
 
@@ -240,9 +216,10 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 		// TODO select previous node
 		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
-			// reset selectedNode if we are deleting this one
-			if (node === selectedNode) {
-				deselectCurrentNode();
+			// select parent if we are deleting a selected node or a descendant
+			if (node === selectedNode || node.isDescendant(selectedNode)) {
+				// deselectCurrentNode();
+				selectNode(parent);
 			}
 
 			// update view
@@ -263,8 +240,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
 			view.updateNode(node);
 		});
-		
-		eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(node) {
+
+		eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(
+				node) {
 			view.updateNode(node);
 		});
 

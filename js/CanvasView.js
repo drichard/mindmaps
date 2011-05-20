@@ -328,7 +328,7 @@ mindmaps.DefaultCanvasView = function() {
 		if (!node.isRoot()) {
 			// draw border and position manually only non-root nodes
 			var bThickness = this.zoomFactor * (10 - depth) || 1;
-			var bColor = node.edgeColor;
+			var bColor = node.branchColor;
 			var bb = bThickness + "px solid " + bColor;
 
 			$node.css({
@@ -356,7 +356,7 @@ mindmaps.DefaultCanvasView = function() {
 						// reposition and draw canvas while dragging
 						var offsetX = ui.position.left / self.zoomFactor;
 						var offsetY = ui.position.top / self.zoomFactor;
-						var color = node.edgeColor;
+						var color = node.branchColor;
 						var $canvas = $getNodeCanvas(node);
 
 						drawLineCanvas2($canvas, depth, offsetX, offsetY,
@@ -422,7 +422,7 @@ mindmaps.DefaultCanvasView = function() {
 
 			// position and draw connection
 			drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
-					node.edgeColor);
+					node.branchColor);
 			$canvas.appendTo($node);
 		}
 
@@ -531,7 +531,7 @@ mindmaps.DefaultCanvasView = function() {
 		var depth = node.getDepth();
 		var offsetX = node.offset.x;
 		var offsetY = node.offset.y;
-		var color = node.edgeColor;
+		var color = node.branchColor;
 
 		var $node = $getNode(node);
 		var $parent = $getNode(parent);
@@ -561,7 +561,7 @@ mindmaps.DefaultCanvasView = function() {
 		var font = node.text.font;
 		$node.css({
 			"font-size" : font.size,
-			"border-bottom-color" : node.edgeColor
+			"border-bottom-color" : node.branchColor
 		});
 
 		$text.css({
