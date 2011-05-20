@@ -23,7 +23,7 @@ mindmaps.ClipboardController = function(eventBus, appModel) {
 		var selected = appModel.selectedNode;
 		if (selected) {
 			node = selected.clone();
-			var action = mindmaps.action.node.remove(selected);
+			var action =  new mindmaps.action.DeleteNodeAction(selected);
 			appModel.executeAction(action);
 		}
 	}
@@ -32,7 +32,7 @@ mindmaps.ClipboardController = function(eventBus, appModel) {
 		var selected = appModel.selectedNode;
 		if (selected) {
 			// send a cloned copy of our node, so we can paste multiple times
-			var action = mindmaps.action.node.create(node.clone(), selected);
+			var action = new mindmaps.action.CreateNodeAction(node.clone(), selected);
 			appModel.executeAction(action);
 		}
 	}

@@ -118,7 +118,11 @@ mindmaps.ToolBarView = function() {
 mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	// view callbacks
 	view.deleteButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.DELETE_SELECTED_NODE);
+		var selectedNode = appModel.selectedNode;
+		if (selectedNode) {
+			var action = new mindmaps.action.DeleteNodeAction(selectedNode);
+			appModel.executeAction(action);
+		}
 	};
 
 	view.copyButtonClicked = function() {

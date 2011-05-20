@@ -24,7 +24,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	var toggleCollapse = function(node) {
 		// toggle node visibility
-		var action = mindmaps.action.node.toggleCollapse(node);
+		var action =  new mindmaps.action.ToggleNodeCollapseAction(node);
 		appModel.executeAction(action);
 	};
 
@@ -32,7 +32,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		var node = selectedNode;
 		if (node) {
 			// remove from model
-			var action = mindmaps.action.node.remove(node);
+			var action =  new mindmaps.action.DeleteNodeAction(node);
 			appModel.executeAction(action);
 		}
 	};
@@ -113,7 +113,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		// view has updated itself
 
 		// update model
-		var action = mindmaps.action.node.move(node, offset);
+		var action =  new mindmaps.action.MoveNodeAction(node, offset);
 		appModel.executeAction(action);
 	};
 
@@ -147,7 +147,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		node.offset = new mindmaps.Point(offsetX, offsetY);
 
 		// appModel.createNode(node, parent, self);
-		var action = mindmaps.action.node.create(node, parent, self);
+		var action =  new mindmaps.action.CreateNodeAction(node, parent, self);
 		appModel.executeAction(action);
 	};
 
@@ -165,7 +165,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		}
 
 		view.stopEditNodeCaption(true);
-		var action = mindmaps.action.node.changeCaption(node, str);
+		var action =  new mindmaps.action.ChangeNodeCaptionAction(node, str);
 		appModel.executeAction(action);
 	};
 
@@ -206,10 +206,6 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			view.clear();
 		});
 
-		eventBus.subscribe(mindmaps.Event.DELETE_SELECTED_NODE, function() {
-			deleteSelectedNode();
-		});
-
 		eventBus.subscribe(mindmaps.Event.NODE_MOVED, function(node) {
 			view.positionNode(node);
 		});
@@ -232,7 +228,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 				// children are hidden
 				var parent = node.getParent();
 				if (parent.collapseChildren) {
-					var action = mindmaps.action.node.open(parent);
+					var action =  new mindmaps.action.OpenNodeAction(parent);
 					appModel.executeAction(action);
 				}
 
@@ -265,6 +261,10 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		});
 
 		eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
+			view.updateNode(node);
+		});
+		
+		eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(node) {
 			view.updateNode(node);
 		});
 

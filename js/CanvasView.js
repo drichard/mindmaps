@@ -92,7 +92,7 @@ mindmaps.DefaultCanvasView = function() {
 		self.$getContainer().dragscrollable({
 			dragSelector : "#drawing-area, canvas.line-canvas",
 			acceptPropagatedEvent : false,
-			delegateMode : true
+			delegateMode : true,
 		});
 	}
 
@@ -391,6 +391,7 @@ mindmaps.DefaultCanvasView = function() {
 			"class" : "node-caption",
 			text : node.text.caption
 		}).css({
+			"color" : font.color,
 			"font-size" : this.zoomFactor * 100 + "%",
 			"min-width" : this.zoomFactor * minWidth,
 			"font-weight" : font.weight,
@@ -559,10 +560,12 @@ mindmaps.DefaultCanvasView = function() {
 		var $text = $getNodeCaption(node);
 		var font = node.text.font;
 		$node.css({
-			"font-size" : font.size
+			"font-size" : font.size,
+			"border-bottom-color" : node.edgeColor
 		});
 
 		$text.css({
+			"color" : font.color,
 			"font-weight" : font.weight,
 			"font-style" : font.style,
 			"text-decoration" : font.decoration

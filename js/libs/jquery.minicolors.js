@@ -73,6 +73,14 @@
  *
  *
 */
+
+
+/*
+ * Changes by David (20/05/2011):
+ * - added hide callback
+ * - center colorpicker beneath trigger element (hardcoded) 
+ * - add invisible overlay
+ */
 if(jQuery) (function($) {
 	
 	$.extend($.fn, {
@@ -102,6 +110,8 @@ if(jQuery) (function($) {
 				input.data('trigger', trigger);
 				input.data('hsb', hsb);
 				if( o.change ) input.data('change', o.change);
+				
+				if (o.hide) input.data('hide', o.hide);
 				
 				// Handle options
 				if( o.readonly ) input.attr('readonly', true);
@@ -175,8 +185,6 @@ if(jQuery) (function($) {
 				input.unbind('keyup.miniColors');
 				input.unbind('keydown.miniColors');
 				input.unbind('paste.miniColors');
-				$(document).unbind('mousedown.miniColors');
-				$(document).unbind('mousemove.miniColors');
 				
 			};
 			
@@ -223,7 +231,7 @@ if(jQuery) (function($) {
 				selector.append('<div class="miniColors-hues"><div class="miniColors-huePicker"></div></div>');
 				selector.css({
 					top: input.is(':visible') ? input.offset().top + input.outerHeight() : input.data('trigger').offset().top + input.data('trigger').outerHeight(),
-					left: input.is(':visible') ? input.offset().left : input.data('trigger').offset().left,
+					left: input.is(':visible') ? input.offset().left : input.data('trigger').offset().left - /** david: hack! - align middle*/ 87,
 					display: 'none'
 				}).addClass( input.attr('class') );
 				
@@ -248,43 +256,51 @@ if(jQuery) (function($) {
 				input.data('colorPicker', selector.find('.miniColors-colorPicker'));
 				input.data('mousebutton', 0);
 				
+				// invisible overlay accept clicks outside the color picker area
+				var $overlay = $("<div/>").css({
+					position: "absolute",
+					left: 0,
+					top: 0,
+					width: "100%",
+					height: "100%",
+					"z-index": 10000
+				}).appendTo("BODY").mousedown(function(){
+					hide(input);
+					$overlay.remove();
+				});
+				
 				$('BODY').append(selector);
+				
+				
+				
 				selector.fadeIn(100);
 				
 				// Prevent text selection in IE
 				selector.bind('selectstart', function() { return false; });
 				
-				$(document).bind('mousedown.miniColors', function(event) {
+				selector.bind('mousedown.miniColors', function(event) {
 					input.data('mousebutton', 1);
 					
-					if( $(event.target).parents().andSelf().hasClass('miniColors-colors') ) {
+					if( $(event.target).hasClass('miniColors-colors') ) {
 						event.preventDefault();
 						input.data('moving', 'colors');
 						moveColor(input, event);
+						return;
 					}
 					
-					if( $(event.target).parents().andSelf().hasClass('miniColors-hues') ) {
+					if( $(event.target).hasClass('miniColors-hues') ) {
 						event.preventDefault();
 						input.data('moving', 'hues');
 						moveHue(input, event);
 					}
-					
-					if( $(event.target).parents().andSelf().hasClass('miniColors-selector') ) {
-						event.preventDefault();
-						return;
-					}
-					
-					if( $(event.target).parents().andSelf().hasClass('miniColors') ) return;
-					
-					hide(input);
 				});
 				
-				$(document).bind('mouseup.miniColors', function(event) {
+				selector.bind('mouseup.miniColors', function(event) {
 					input.data('mousebutton', 0);
 					input.removeData('moving');
 				});
 				
-				$(document).bind('mousemove.miniColors', function(event) {
+				selector.bind('mousemove.miniColors', function(event) {
 					if( input.data('mousebutton') === 1 ) {
 						if( input.data('moving') === 'colors' ) moveColor(input, event);
 						if( input.data('moving') === 'hues' ) moveHue(input, event);
@@ -296,6 +312,12 @@ if(jQuery) (function($) {
 			
 			var hide = function(input) {
 				
+				// call hide callback
+				if (input) {
+					if( input.data('hide') ) {
+						input.data('hide').call(input, input.val());
+					}
+				}
 				//
 				// Hides one or more miniColors selectors
 				//
@@ -310,10 +332,6 @@ if(jQuery) (function($) {
 						$(this).remove();
 					});
 				});
-				
-				$(document).unbind('mousedown.miniColors');
-				$(document).unbind('mousemove.miniColors');
-				
 			};
 			
 			

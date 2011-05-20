@@ -288,6 +288,10 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	eventBus.subscribe(mindmaps.Event.NODE_MOVED, function() {
 		renderView();
 	});
+	
+	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function() {
+		renderView();
+	});
 
 	eventBus.subscribe(mindmaps.Event.NODE_CREATED, function() {
 		renderView();

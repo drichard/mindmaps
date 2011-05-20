@@ -18,185 +18,37 @@ mindmaps.ApplicationModel = function(eventBus) {
 
 	this.executeAction = function(action) {
 		// do the action and give it context
-		action.execute(this);
-
-		// publish event
-		if (!_.isArray(action.event)) {
-			action.event = [ action.event ];
-		}
-		eventBus.publish.apply(eventBus, action.event);
-
-		// register undo function
-		var undoFunc = null;
-		if (action.undo) {
-			undoFunc = function() {
-				self.executeAction(action.undo());
-			};
+		var executed = action.execute(this);
+		
+		// cancel action if false was returned
+		if (executed !== undefined && !executed) {
+			return false;
 		}
 		
-		// register redo function
-		var redoFunc = null;
-		if (action.redo) {
-			redoFunc = function() {
-				self.executeAction(action.redo());
-			};
+		// publish event
+		if (action.event) {
+			if (!_.isArray(action.event)) {
+				action.event = [ action.event ];
+			}
+			eventBus.publish.apply(eventBus, action.event);
 		}
 
-		eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc, redoFunc);
+		// register undo function if available
+		if (action.undo) {
+			var undoFunc = function() {
+				self.executeAction(action.undo());
+			};
+			
+			// register redo function
+			var redoFunc = null;
+			if (action.redo) {
+				redoFunc = function() {
+					self.executeAction(action.redo());
+				};
+			}
+			eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc, redoFunc);
+		}
 	};
-
-	// this.moveNode = function(node, newOffset) {
-	// // register undo
-	// var oldOffset = node.offset;
-	// var undoFunc = function() {
-	// self.moveNode(node, oldOffset);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	//
-	// node.offset = newOffset;
-	// eventBus.publish(mindmaps.Event.NODE_MOVED, node);
-	// };
-	//
-	// this.setNodeCaption = function(node, newCaption) {
-	// // dont update if nothing has changed
-	// if (node.getCaption() === newCaption) {
-	// return;
-	// }
-	//
-	// // register undo
-	// var oldCaption = node.getCaption();
-	// var undoFunc = function() {
-	// self.setNodeCaption(node, oldCaption);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	//
-	// // update model
-	// node.setCaption(newCaption);
-	//
-	// // change document title when root was renamed
-	// if (node.isRoot()) {
-	// document.title = newCaption;
-	// }
-	//
-	// eventBus.publish(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, node);
-	// };
-	//
-	// /**
-	// * origin - optional argument declaring which object created the node
-	// */
-	// this.createNode = function(node, parent, origin) {
-	// var map = this.getMindMap();
-	// map.addNode(node);
-	// parent.addChild(node);
-	//
-	// eventBus.publish(mindmaps.Event.NODE_CREATED, node, origin);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.deleteNode(node);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
-	//
-	// this.deleteNode = function(node) {
-	// var map = this.getMindMap();
-	// var parent = node.getParent();
-	// map.removeNode(node);
-	//
-	// eventBus.publish(mindmaps.Event.NODE_DELETED, node, parent);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.createNode(node, parent);
-	// };
-	//
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
-	//
-	// this.openNode = function(node) {
-	// node.collapseChildren = false;
-	// eventBus.publish(mindmaps.Event.NODE_OPENED, node);
-	// };
-	//
-	// this.closeNode = function(node) {
-	// node.collapseChildren = true;
-	// eventBus.publish(mindmaps.Event.NODE_CLOSED, node);
-	// };
-	//
-	// // TODO summarize, move out
-	// var fontStep = 4;
-	// this.increaseNodeFontSize = function(node) {
-	// var currentSize = node.text.font.size;
-	// var newSize = currentSize + fontStep;
-	//
-	// node.text.font.size = newSize;
-	//
-	// eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node, newSize);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.decreaseNodeFontSize(node);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
-	//
-	// this.decreaseNodeFontSize = function(node) {
-	// var currentSize = node.text.font.size;
-	// var newSize = currentSize - fontStep;
-	//
-	// // min size
-	// if (newSize < 4) {
-	// return;
-	// }
-	//
-	// node.text.font.size = newSize;
-	//
-	// eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.increaseNodeFontSize(node);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
-	//
-	// this.setNodeFontWeight = function(node, bold) {
-	// var weight = bold ? "bold" : "normal";
-	// node.text.font.weight = weight;
-	//
-	// eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.setNodeFontWeight(node, !bold);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
-	//
-	// this.setNodeFontStyle = function(node, italic) {
-	// var style = italic ? "italic" : "normal";
-	// node.text.font.style = style;
-	// eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.setNodeFontStyle(node, !italic);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
-	//
-	// this.setNodeFontDecoration = function(node, underline) {
-	// var decoration = underline ? "underline" : "none";
-	// node.text.font.decoration = decoration;
-	//
-	// eventBus.publish(mindmaps.Event.NODE_FONT_CHANGED, node);
-	//
-	// // register undo
-	// var undoFunc = function() {
-	// self.setNodeFontDecoration(node, !underline);
-	// };
-	// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc);
-	// };
 
 	// TODO move out
 	var zoomStep = 0.25;

@@ -10,7 +10,6 @@ mindmaps.UndoController = function(eventBus) {
 					redoState);
 		};
 	}
-	;
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
 		createUndoManager();

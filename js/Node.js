@@ -32,12 +32,12 @@ mindmaps.Node = function() {
 			decoration: "none",
 			/** unit: pixel */
 			size : 15,
-			color : "black"
+			color : "#000000"
 		}
 	};
 	this.offset = mindmaps.Point.ZERO;
 	this.collapseChildren = false;
-	this.edgeColor = "black";
+	this.edgeColor = "#000000";
 };
 
 // TODO test case

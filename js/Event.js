@@ -3,7 +3,6 @@
  * Events that the event bus carries.
  */
 mindmaps.Event = {
-	DELETE_SELECTED_NODE : "DeleteSelectedNodeEvent",
 	COPY_NODE : "CopyNodeEvent",
 	CUT_NODE : "CutNodeEvent",
 	PASTE_NODE : "PasteNodeEvent",
@@ -94,6 +93,12 @@ mindmaps.Event = {
 	 *            node
 	 */
 	NODE_FONT_CHANGED : "NodeFontChangedEvent",
+
+	/**
+	 * @param The
+	 *            node
+	 */
+	NODE_BRANCH_COLOR_CHANGED : "NodeBranchColorChangedEvent",
 
 	/**
 	 * @param The
