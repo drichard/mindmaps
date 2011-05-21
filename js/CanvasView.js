@@ -92,7 +92,8 @@ mindmaps.DefaultCanvasView = function() {
 		self.$getContainer().dragscrollable({
 			dragSelector : "#drawing-area, canvas.line-canvas",
 			acceptPropagatedEvent : false,
-			delegateMode : true
+			delegateMode : true,
+			preventDefault : true
 		});
 	}
 
@@ -122,7 +123,7 @@ mindmaps.DefaultCanvasView = function() {
 			left = $parent.width() - offsetX;
 			width = -left;
 		}
-		
+
 		// is the node's border bottom bar above the parent's?
 		var nodeBelowParent = offsetY + $node.innerHeight() < $parent
 				.innerHeight();
@@ -182,7 +183,7 @@ mindmaps.DefaultCanvasView = function() {
 		var cp2x = Math.abs(startX - endX) / 2;
 		var cp2y = endY;
 		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-		//ctx.lineTo(endX, endY);
+		// ctx.lineTo(endX, endY);
 		ctx.stroke();
 
 		var drawControlPoints = false;
@@ -509,8 +510,8 @@ mindmaps.DefaultCanvasView = function() {
 		captionEditor.edit($text, $cancelArea);
 	};
 
-	this.stopEditNodeCaption = function(cancel) {
-		captionEditor.stop(cancel);
+	this.stopEditNodeCaption = function() {
+		captionEditor.stop();
 	};
 
 	this.setNodeText = function(node, value) {
@@ -652,7 +653,7 @@ mindmaps.DefaultCanvasView = function() {
 			type : "text",
 			id : "caption-editor"
 		}).bind("keydown", "esc", function() {
-			self.stop(true);
+			self.stop();
 		}).bind("keydown", "return", function() {
 			if (self.commit) {
 				self.commit($editor.val());
@@ -660,6 +661,8 @@ mindmaps.DefaultCanvasView = function() {
 		}).mousedown(function(e) {
 			// avoid premature canceling
 			e.stopPropagation();
+		}).blur(function() {
+			self.stop();
 		});
 
 		this.edit = function($text_, $cancelArea_) {
@@ -677,7 +680,7 @@ mindmaps.DefaultCanvasView = function() {
 			$text.empty();
 
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
-				self.stop(true);
+				self.stop();
 			});
 
 			$text.addClass("edit");
@@ -691,17 +694,15 @@ mindmaps.DefaultCanvasView = function() {
 			}).appendTo($text).select();
 		};
 
-		this.stop = function(cancel) {
+		this.stop = function() {
 			if (attached) {
 				attached = false;
 				$text.removeClass("edit");
 				$editor.detach();
 				$cancelArea.unbind("mousedown.editNodeCaption");
-			}
-
-			if (cancel) {
 				$text.text(oldText);
 			}
+
 		};
 	}
 

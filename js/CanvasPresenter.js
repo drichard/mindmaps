@@ -139,7 +139,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 		var node = selectedNode;
 
-		view.stopEditNodeCaption(true);
+		view.stopEditNodeCaption();
 		var action = new mindmaps.action.ChangeNodeCaptionAction(node, str);
 		appModel.executeAction(action);
 	};
