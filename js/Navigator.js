@@ -159,14 +159,14 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	var self = this;
 	var $container = container.getContent();
 	var viewDragging = false;
-	var zoomFactor = 1;
+	var scale = 1;
 	var canvasSize = mindmaps.Point.ZERO;
 	var docSize = null;
 	var mindmap = null;
 
 	function calculateDraggerSize() {
-		var cw = $container.width() / zoomFactor;
-		var ch = $container.height() / zoomFactor;
+		var cw = $container.width() / scale;
+		var ch = $container.height() / scale;
 		// doc.x / container.x = canvas.x / dragger.x
 		var width = (cw * canvasSize.x) / docSize.x;
 		var height = (ch * canvasSize.y) / docSize.y;
@@ -185,8 +185,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 	function calculateCanvasSize() {
 		var width = view.getCanvasWidth();
-		var scale = docSize.x / width;
-		var height = docSize.y / scale;
+		var _scale = docSize.x / width;
+		var height = docSize.y / _scale;
 		
 		view.setCanvasHeight(height);
 		
@@ -195,8 +195,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	}
 
 	function calculateDraggerPosition() {
-		var sl = $container.scrollLeft() / zoomFactor;
-		var st = $container.scrollTop() / zoomFactor;
+		var sl = $container.scrollLeft() / scale;
+		var st = $container.scrollTop() / scale;
 
 		// sl / dox = dl / cw
 		// dl = sl * cw / dox
@@ -233,6 +233,7 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	function documentClosed() {
 		docSize = null;
 		mindmap = null;
+		scale = 1;
 		// clean up
 		// remove listeners
 		$container.unbind("scroll.navigator-view");
@@ -246,8 +247,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 
 	// scroll container when the dragger is dragged
 	view.dragging = function(x, y) {
-		var scrollLeft = zoomFactor * docSize.x * x / canvasSize.x;
-		var scrollTop = zoomFactor * docSize.y * y / canvasSize.y;
+		var scrollLeft = scale * docSize.x * x / canvasSize.x;
+		var scrollTop = scale * docSize.y * y / canvasSize.y;
 		$container.scrollLeft(scrollLeft).scrollTop(scrollTop);
 	};
 
@@ -308,8 +309,8 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		renderView();
 	});
 
-	eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(newZoomFactor) {
-		zoomFactor = newZoomFactor;
+	eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
+		scale = zoomFactor;
 		calculateDraggerPosition();
 		calculateDraggerSize();
 	});

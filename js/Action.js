@@ -54,6 +54,9 @@ mindmaps.action.DeleteNodeAction = function(node) {
 	var parent = node.getParent();
 
 	this.execute = function(context) {
+		if (node.isRoot()) {
+			return false;
+		}
 		var map = context.getMindMap();
 		map.removeNode(node);
 	};
@@ -161,7 +164,7 @@ mindmaps.action.SetFontWeightAction = function(node, bold) {
 
 	this.event = [ mindmaps.Event.NODE_FONT_CHANGED, node ];
 	this.undo = function() {
-		return new mindmaps.action.SetFontWeightAction(node, !step);
+		return new mindmaps.action.SetFontWeightAction(node, !bold);
 	};
 };
 mindmaps.action.SetFontWeightAction.prototype = new mindmaps.action.Action();

@@ -12,6 +12,8 @@ mindmaps.MindMap = function(root) {
 	 */
 	this.nodes = new mindmaps.NodeMap();
 	this.root = root || new mindmaps.Node();
+	this.root.text.font.size = 20;
+	this.root.text.font.weight = "bold";
 	this.addNode(this.root);
 };
 

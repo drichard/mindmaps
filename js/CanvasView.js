@@ -322,6 +322,8 @@ mindmaps.DefaultCanvasView = function() {
 			"class" : "node-container"
 		}).data({
 			node : node
+		}).css({
+			"font-size" : node.text.font.size
 		});
 		$node.appendTo($parent);
 
@@ -334,8 +336,7 @@ mindmaps.DefaultCanvasView = function() {
 			$node.css({
 				left : this.zoomFactor * offsetX,
 				top : this.zoomFactor * offsetY,
-				"border-bottom" : bb,
-				"font-size" : node.text.font.size
+				"border-bottom" : bb
 			});
 
 			// node drag behaviour

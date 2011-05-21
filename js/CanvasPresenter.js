@@ -147,8 +147,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	function showMindMap(doc) {
-		// TODO DRY
-		view.setZoomFactor(zoomControl.DEFAULT_ZOOM);
+		view.setZoomFactor(1);
 		var dimensions = doc.dimensions;
 		view.setDimensions(dimensions.x, dimensions.y);
 		var map = doc.mindmap;
@@ -256,6 +255,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	bind();
 	
+	// TODO how to set default zoom on seperate objects
 	/**
 	 * Object that controls the zoom.
 	 * @param eventBus
