@@ -19,12 +19,12 @@ mindmaps.ApplicationModel = function(eventBus) {
 	this.executeAction = function(action) {
 		// do the action and give it context
 		var executed = action.execute(this);
-		
+
 		// cancel action if false was returned
 		if (executed !== undefined && !executed) {
 			return false;
 		}
-		
+
 		// publish event
 		if (action.event) {
 			if (!_.isArray(action.event)) {
@@ -38,7 +38,7 @@ mindmaps.ApplicationModel = function(eventBus) {
 			var undoFunc = function() {
 				self.executeAction(action.undo());
 			};
-			
+
 			// register redo function
 			var redoFunc = null;
 			if (action.redo) {
@@ -97,16 +97,10 @@ mindmaps.AppController = function(eventBus, appModel) {
 		 * If the document doesn't have a title yet show the save as presenter,
 		 * otherwise just save the document.
 		 */
-		var doc = appModel.getDocument();
-		var title = doc.title;
-		if (title !== null) {
-			var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
-			eventBus.publish(mindmaps.Event.DOCUMENT_SAVED);
-		} else {
-			var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
-					appModel, new mindmaps.SaveDocumentView());
-			presenter.go();
-		}
+
+		var presenter = new mindmaps.SaveDocumentPresenter(eventBus, appModel,
+				new mindmaps.SaveDocumentView());
+		presenter.go();
 	}
 
 	this.go = function() {

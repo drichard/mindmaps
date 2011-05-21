@@ -116,6 +116,31 @@ mindmaps.DefaultCanvasView = function() {
 		offsetX = offsetX * zoomFactor;
 		offsetY = offsetY * zoomFactor;
 
+		// TODO find good solution for edge cases
+//		if (offsetX <= 0) {
+//			if ( offsetX + $node.width() < 0) {
+//				// normal left
+//				left = $node.width();
+//				width = Math.abs(offsetX) - left;
+//			} else {
+//				left = -offsetX;
+//				width = $node.width() + offsetX;
+//			}
+//			
+//		} else if (offsetX > 0){
+//			if (offsetX > $parent.width()) {
+//				// normal right
+//				left = $parent.width() - offsetX;
+//				width = -left;
+//			} else if (offsetX > $parent.width() / 2) {
+//				left = 0;
+//				width = $parent.width() - offsetX;
+//			} else {
+//				left = -offsetX;
+//				width = offsetX + $node.width();
+//			}
+//		}
+		
 		if (offsetX < 0) {
 			left = $node.width();
 			width = Math.abs(offsetX) - left;
@@ -124,6 +149,10 @@ mindmaps.DefaultCanvasView = function() {
 			width = -left;
 		}
 
+		if (width < 0) {
+			width = 1;
+		}
+		
 		// is the node's border bottom bar above the parent's?
 		var nodeBelowParent = offsetY + $node.innerHeight() < $parent
 				.innerHeight();
@@ -150,7 +179,7 @@ mindmaps.DefaultCanvasView = function() {
 		// 2. draw the thing
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext("2d");
-
+		
 		var lineWidth = zoomFactor * (10 - depth) || 1;
 		ctx.lineWidth = lineWidth;
 

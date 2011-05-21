@@ -1,4 +1,3 @@
-
 mindmaps.OpenDocumentView = function() {
 	var self = this;
 
@@ -9,7 +8,7 @@ mindmaps.OpenDocumentView = function() {
 	}).dialog({
 		autoOpen : false,
 		modal : true,
-		zIndex: 5000
+		zIndex : 5000
 	});
 
 	this.showOpenDialog = function(docs) {
@@ -29,6 +28,16 @@ mindmaps.OpenDocumentView = function() {
 		});
 		$openDialog.html($list);
 
+		var $openExternal = $("<input/>", {
+			type : "file"
+		}).button().bind("change", function(e) {
+			if (self.externalFileSelected) {
+				self.externalFileSelected(e);
+			}
+		});
+
+		$openDialog.append($openExternal);
+
 		$openDialog.dialog("open");
 	};
 
@@ -38,6 +47,24 @@ mindmaps.OpenDocumentView = function() {
 };
 
 mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
+
+	// TODO experimental
+	//http://www.w3.org/TR/FileAPI/#dfn-filereader
+	view.externalFileSelected = function(e) {
+		var files = e.target.files;
+		var file = files[0];
+
+		var reader = new FileReader();
+		reader.onload = function() {
+			var doc = mindmaps.Document.fromJSON(reader.result);
+			view.hideOpenDialog();
+			appModel.setDocument(doc);
+			eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
+
+		};
+		
+		reader.readAsText(file);
+	};
 
 	view.documentClicked = function(doc) {
 		view.hideOpenDialog();

@@ -74,10 +74,10 @@ mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
 
 		// calculate position
 		// magic formula
-		var leftRight = Math.random() > 0.5 ? 1 : -1;
-		var topBottom = Math.random() > 0.5 ? 1 : -1;
+		var leftRight = Math.random() > 0.49 ? 1 : -1;
+		var topBottom = Math.random() > 0.49 ? 1 : -1;
 		var x = leftRight * (100 + Math.random() * 250);
-		var y = topBottom * (Math.random() * 200);
+		var y = topBottom * (Math.random() * 250);
 	} else {
 		var branchColor = parent.branchColor;
 		
@@ -86,9 +86,13 @@ mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
 		var x = leftRight * (150 + Math.random() * 10);
 
 		// put into random height when child nodes are there
-		var max = 150, min = -150;
+		if (parent.isLeaf()) {
+			var max = 5, min = -5;
+		} else {
+			var max = 150, min = -150;
+		}
+		
 		var y = Math.floor(Math.random() * (max - min + 1) + min);
-
 	}
 	var node = new mindmaps.Node();
 	node.branchColor = branchColor;

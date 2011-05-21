@@ -1,4 +1,3 @@
-
 mindmaps.SaveDocumentView = function() {
 	var self = this;
 
@@ -9,7 +8,7 @@ mindmaps.SaveDocumentView = function() {
 	}).dialog({
 		autoOpen : false,
 		modal : true,
-		zIndex: 5000,
+		zIndex : 5000,
 		buttons : {
 			"Save" : function() {
 				if (self.saveButtonClicked) {
@@ -28,11 +27,43 @@ mindmaps.SaveDocumentView = function() {
 		type : "text"
 	});
 
-	// TODO optional save as button somewhere
 	var $content = $("<div/>").append($("<span>Save as: <span>")).append(
 			$titleInput);
 	$saveDialog.html($content);
 
+	// TODO optional save as button somewhere
+	var $externalSave = $("<div/>", {
+		id : "button-save-external"
+	}).button({
+		label : "Save"
+	}).appendTo($content);
+
+	$externalSave
+			.downloadify({
+				filename : function() {
+					if (self.fileNameRequested) {
+						return self.fileNameRequested();
+					}
+				},
+				data : function() {
+					if (self.fileContentsRequested) {
+						return self.fileContentsRequested();
+					}
+				},
+				onComplete : function() {
+					self.hideSaveDialog();
+				},
+				onError : function() {
+					alert('You must put something in the File Contents or there will be nothing to save!');
+				},
+				swf : '/media/downloadify.swf',
+				downloadImage : '/img/transparent.png',
+				width : 65,
+				height : 29,
+				append : true
+			}).children().first().css("position", "absolute").next().css("position", "relative");
+
+	
 	this.showSaveDialog = function(title) {
 		$saveDialog.dialog("open");
 	};
@@ -63,6 +94,18 @@ mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 		var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
 		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
 		view.hideSaveDialog();
+	};
+	
+	view.fileNameRequested = function() {
+		var doc = appModel.getDocument();
+		var title = view.getDocumentTitle();
+		return title + ".mms";
+	};
+	
+	view.fileContentsRequested = function() {
+		var doc = appModel.getDocument();
+		doc.dates.modified = new Date();
+		return doc.serialize();
 	};
 
 	this.go = function() {
