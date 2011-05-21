@@ -12,6 +12,12 @@ mindmaps.ToolBarView = function() {
 		$("#toolbar button").button();
 		$("#toolbar .buttonset").buttonset();
 
+		$("#button-add").click(function() {
+			if (self.addButtonClicked) {
+				self.addButtonClicked();
+			}
+		});
+
 		$("#button-delete").click(function() {
 			if (self.deleteButtonClicked) {
 				self.deleteButtonClicked();
@@ -117,12 +123,18 @@ mindmaps.ToolBarView = function() {
 
 mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	// view callbacks
+
+	view.addButtonClicked = function() {
+		var selectedNode = appModel.selectedNode;
+		
+		var action = new mindmaps.action.CreateAutoPositionedNodeAction(selectedNode);
+		appModel.executeAction(action);
+	};
+
 	view.deleteButtonClicked = function() {
 		var selectedNode = appModel.selectedNode;
-		if (selectedNode) {
-			var action = new mindmaps.action.DeleteNodeAction(selectedNode);
-			appModel.executeAction(action);
-		}
+		var action = new mindmaps.action.DeleteNodeAction(selectedNode);
+		appModel.executeAction(action);
 	};
 
 	view.copyButtonClicked = function() {

@@ -68,6 +68,35 @@ mindmaps.action.DeleteNodeAction = function(node) {
 };
 mindmaps.action.DeleteNodeAction.prototype = new mindmaps.action.Action();
 
+mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
+	if (parent.isRoot()) {
+		var branchColor = mindmaps.Util.randomColor();
+
+		// calculate position
+		// magic formula
+		var leftRight = Math.random() > 0.5 ? 1 : -1;
+		var topBottom = Math.random() > 0.5 ? 1 : -1;
+		var x = leftRight * (100 + Math.random() * 250);
+		var y = topBottom * (Math.random() * 200);
+	} else {
+		var branchColor = parent.branchColor;
+		
+		// calculate position
+		var leftRight = parent.offset.x > 0 ? 1 : -1;
+		var x = leftRight * (150 + Math.random() * 10);
+
+		// put into random height when child nodes are there
+		var max = 150, min = -150;
+		var y = Math.floor(Math.random() * (max - min + 1) + min);
+
+	}
+	var node = new mindmaps.Node();
+	node.branchColor = branchColor;
+	node.shouldEditCaption = true;
+	node.offset = new mindmaps.Point(x, y);
+
+	return new mindmaps.action.CreateNodeAction(node, parent);
+};
 
 mindmaps.action.CreateNodeAction = function(node, parent) {
 	this.execute = function(context) {
@@ -169,7 +198,6 @@ mindmaps.action.SetFontWeightAction = function(node, bold) {
 };
 mindmaps.action.SetFontWeightAction.prototype = new mindmaps.action.Action();
 
-
 mindmaps.action.SetFontStyleAction = function(node, italic) {
 	this.execute = function(context) {
 		var style = italic ? "italic" : "normal";
@@ -182,7 +210,6 @@ mindmaps.action.SetFontStyleAction = function(node, italic) {
 	};
 };
 mindmaps.action.SetFontStyleAction.prototype = new mindmaps.action.Action();
-
 
 mindmaps.action.SetFontDecorationAction = function(node, underline) {
 	this.execute = function(context) {
@@ -209,7 +236,6 @@ mindmaps.action.SetFontColorAction = function(node, fontColor) {
 	};
 };
 mindmaps.action.SetFontColorAction.prototype = new mindmaps.action.Action();
-
 
 mindmaps.action.SetBranchColorAction = function(node, branchColor) {
 	var oldColor = node.branchColor;
