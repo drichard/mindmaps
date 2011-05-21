@@ -1,4 +1,3 @@
-
 mindmaps.Document = function() {
 	this.id = mindmaps.Util.createUUID();
 	this.title = null;
@@ -8,7 +7,6 @@ mindmaps.Document = function() {
 		modified : new Date()
 	};
 	this.dimensions = new mindmaps.Point(4000, 2000);
-	this.zoomFactor = 1;
 };
 
 mindmaps.Document.fromJSON = function(json) {
@@ -24,11 +22,8 @@ mindmaps.Document.fromObject = function(obj) {
 		created : new Date(obj.dates.created),
 		modified : new Date(obj.dates.modified)
 	};
-	
-	// backwards compability for now
-	if (obj.dimensions) {
-		doc.dimensions = mindmaps.Point.fromObject(obj.dimensions);
-	}
+
+	doc.dimensions = mindmaps.Point.fromObject(obj.dimensions);
 
 	return doc;
 };

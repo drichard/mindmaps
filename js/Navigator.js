@@ -159,7 +159,7 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	var self = this;
 	var $container = container.getContent();
 	var viewDragging = false;
-	var zoomFactor = null;
+	var zoomFactor = 1;
 	var canvasSize = mindmaps.Point.ZERO;
 	var docSize = null;
 	var mindmap = null;
@@ -208,9 +208,9 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	function documentOpened(doc) {
 		docSize = doc.dimensions;
 		mindmap = doc.mindmap;
-		zoomFactor = doc.zoomFactor;
 
 		calculateCanvasSize();
+		calculateDraggerPosition();
 		calculateDraggerSize();
 		renderView();
 		
@@ -233,7 +233,6 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	function documentClosed() {
 		docSize = null;
 		mindmap = null;
-		zoomFactor = null;
 		// clean up
 		// remove listeners
 		$container.unbind("scroll.navigator-view");
@@ -257,11 +256,11 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	};
 
 	view.buttonZoomInClicked = function() {
-		appModel.zoomIn();
+		eventBus.publish(mindmaps.Event.ZOOM_IN);
 	};
 
 	view.buttonZoomOutClicked = function() {
-		appModel.zoomOut();
+		eventBus.publish(mindmaps.Event.ZOOM_OUT);
 	};
 
 	// set dragger size when container was resized

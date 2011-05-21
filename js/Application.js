@@ -50,33 +50,6 @@ mindmaps.ApplicationModel = function(eventBus) {
 		}
 	};
 
-	// TODO move out
-	var zoomStep = 0.25;
-	var maxZoom = 3;
-	var minZoom = 0.2;
-
-	this.zoomIn = function() {
-		var factor = document.zoomFactor;
-		factor += zoomStep;
-		if (factor > maxZoom) {
-			factor -= zoomStep;
-		} else {
-			document.zoomFactor = factor;
-			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
-		}
-	};
-
-	this.zoomOut = function() {
-		var factor = document.zoomFactor;
-		factor -= zoomStep;
-		if (factor < minZoom) {
-			factor += zoomStep;
-		} else {
-			document.zoomFactor = factor;
-			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
-		}
-	};
-
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
 		self.selectedNode = node;
 	});

@@ -92,7 +92,7 @@ mindmaps.DefaultCanvasView = function() {
 		self.$getContainer().dragscrollable({
 			dragSelector : "#drawing-area, canvas.line-canvas",
 			acceptPropagatedEvent : false,
-			delegateMode : true,
+			delegateMode : true
 		});
 	}
 

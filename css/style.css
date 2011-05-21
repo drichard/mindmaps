@@ -328,6 +328,10 @@ html,body {
 	
 }
 
+#navigator .inactive {
+	width: 256px;
+}
+
 #navi-content {
 	
 }

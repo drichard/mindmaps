@@ -2,6 +2,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var self = this;
 	var selectedNode = null;
 	var creator = view.getCreator();
+	var zoomControl = new ZoomControl(eventBus);
 
 	// TODO restrict keys on canvas area?, move out
 	$(document).bind("keydown", "del", function() {
@@ -48,9 +49,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	view.mouseWheeled = function(delta) {
 		if (delta > 0) {
-			appModel.zoomIn();
+			eventBus.publish(mindmaps.Event.ZOOM_IN);
 		} else {
-			appModel.zoomOut();
+			eventBus.publish(mindmaps.Event.ZOOM_OUT);
 		}
 	};
 
@@ -123,7 +124,6 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		node.branchColor = creator.lineColor;
 		node.offset = new mindmaps.Point(offsetX, offsetY);
 
-		// appModel.createNode(node, parent, self);
 		var action = new mindmaps.action.CreateNodeAction(node, parent, self);
 		appModel.executeAction(action);
 	};
@@ -146,35 +146,30 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		view.init();
 	};
 
+	function showMindMap(doc) {
+		// TODO DRY
+		view.setZoomFactor(zoomControl.DEFAULT_ZOOM);
+		var dimensions = doc.dimensions;
+		view.setDimensions(dimensions.x, dimensions.y);
+		var map = doc.mindmap;
+		view.drawMap(map);
+		view.center();
+
+		var root = map.root;
+		selectNode(root);
+	}
+	
 	function bind() {
 		// listen to global events
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
-			// TODO DRY
-			var zoomFactor = doc.zoomFactor;
-			view.setZoomFactor(zoomFactor);
-			var dimensions = doc.dimensions;
-			view.setDimensions(dimensions.x, dimensions.y);
-			var map = appModel.getMindMap();
-			view.drawMap(map);
-			view.center();
-
-			var root = map.root;
-			selectNode(root);
+			showMindMap(doc);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
-			// TODO DRY
-			var zoomFactor = doc.zoomFactor;
-			view.setZoomFactor(zoomFactor);
-
-			var dimensions = doc.dimensions;
-			view.setDimensions(dimensions.x, dimensions.y);
-			var map = appModel.getMindMap();
-			view.drawMap(map);
-			view.center();
-
-			var root = map.root;
-			selectNode(root);
+			showMindMap(doc);
+			
+			// edit root node on start
+			var root = doc.mindmap.root;
 			view.editNodeCaption(root);
 		});
 
@@ -260,4 +255,49 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	}
 
 	bind();
+	
+	/**
+	 * Object that controls the zoom.
+	 * @param eventBus
+	 * @returns {ZoomControl}
+	 */
+	function ZoomControl(eventBus) {
+		var self = this;
+		var ZOOM_STEP = 0.25;
+		var MAX_ZOOM = 3;
+		var MIN_ZOOM = 0.2;
+		
+		this.DEFAULT_ZOOM = 1;
+		this.zoomFactor = this.DEFAULT_ZOOM;
+
+		this.zoomIn = function() {
+			this.zoomFactor += ZOOM_STEP;
+			if (this.zoomFactor > MAX_ZOOM) {
+				this.zoomFactor -= ZOOM_STEP;
+			} else {
+				eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor);
+			}
+			
+			return this.zoomFactor;
+		};
+
+		this.zoomOut = function() {
+			this.zoomFactor -= ZOOM_STEP;
+			if (this.zoomFactor < MIN_ZOOM) {
+				this.zoomFactor += ZOOM_STEP;
+			} else {
+				eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor);
+			}
+			
+			return this.zoomFactor;
+		};
+		
+		eventBus.subscribe(mindmaps.Event.ZOOM_IN, function() {
+			self.zoomIn();
+		});
+		
+		eventBus.subscribe(mindmaps.Event.ZOOM_OUT, function() {
+			self.zoomOut();
+		});
+	}
 };

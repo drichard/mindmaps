@@ -127,7 +127,11 @@ mindmaps.Event = {
 	 *            node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
-
+	
+	ZOOM_IN : "ZoomInEvent",
+	
+	ZOOM_OUT : "ZoomOutEvent",
+	
 	/**
 	 * @param the
 	 *            new zoom factor
