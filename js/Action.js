@@ -69,14 +69,14 @@ mindmaps.action.DeleteNodeAction = function(node) {
 mindmaps.action.DeleteNodeAction.prototype = new mindmaps.action.Action();
 
 
-mindmaps.action.CreateNodeAction = function(node, parent, origin) {
+mindmaps.action.CreateNodeAction = function(node, parent) {
 	this.execute = function(context) {
 		var map = context.getMindMap();
 		map.addNode(node);
 		parent.addChild(node);
 	};
 
-	this.event = [ mindmaps.Event.NODE_CREATED, node, origin ];
+	this.event = [ mindmaps.Event.NODE_CREATED, node ];
 	this.undo = function() {
 		return new mindmaps.action.DeleteNodeAction(node);
 	};

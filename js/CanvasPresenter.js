@@ -123,8 +123,10 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 		var node = new mindmaps.Node();
 		node.branchColor = creator.lineColor;
 		node.offset = new mindmaps.Point(offsetX, offsetY);
+		// indicate that we want to set this nodes caption after creation
+		node.shouldEditCaption = true;
 
-		var action = new mindmaps.action.CreateNodeAction(node, parent, self);
+		var action = new mindmaps.action.CreateNodeAction(node, parent);
 		appModel.executeAction(action);
 	};
 
@@ -189,11 +191,12 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 			view.redrawNodeConnectors(node);
 		});
 
-		eventBus.subscribe(mindmaps.Event.NODE_CREATED, function(node, origin) {
+		eventBus.subscribe(mindmaps.Event.NODE_CREATED, function(node) {
 			view.createNode(node);
 
-			// did we create this node inside the prenter ourselves?
-			if (origin === self) {
+			// edit node caption immediately if requested
+			if (node.shouldEditCaption) {
+				delete node.shouldEditCaption;
 				// open parent node when creating a new child and the other
 				// children are hidden
 				var parent = node.getParent();

@@ -122,7 +122,7 @@ mindmaps.DefaultCanvasView = function() {
 			left = $parent.width() - offsetX;
 			width = -left;
 		}
-
+		
 		// is the node's border bottom bar above the parent's?
 		var nodeBelowParent = offsetY + $node.innerHeight() < $parent
 				.innerHeight();
@@ -182,7 +182,7 @@ mindmaps.DefaultCanvasView = function() {
 		var cp2x = Math.abs(startX - endX) / 2;
 		var cp2y = endY;
 		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-		// ctx.lineTo(endX, endY);
+		//ctx.lineTo(endX, endY);
 		ctx.stroke();
 
 		var drawControlPoints = false;
