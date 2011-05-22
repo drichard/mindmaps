@@ -2,54 +2,49 @@ mindmaps.OpenDocumentView = function() {
 	var self = this;
 
 	// create dialog
-	var $openDialog = $("<div/>", {
-		id : "#open-dialog",
-		title : "Open document"
-	}).dialog({
+	var $dialog = $("#template-open").tmpl().dialog({
 		autoOpen : false,
 		modal : true,
 		zIndex : 5000
+	}).delegate("a.title", "click", function() {
+		var t = $(this).tmplItem();
+		if (self.documentClicked) {
+			self.documentClicked(t.data);
+		}
 	});
 
+	$dialog.find("input").bind("change", function(e) {
+		if (self.externalFileSelected) {
+			self.externalFileSelected(e);
+		}
+	});
+
+
 	this.showOpenDialog = function(docs) {
-		// construct list of documents in local storage
-		var $list = $("<ul/>");
-		_.each(docs, function(doc) {
-			var $listItem = $("<li/>");
-			var $openLink = $("<a/>", {
-				text : doc.title,
-				href : "#"
-			}).click(function() {
-				if (self.documentClicked) {
-					self.documentClicked(doc);
-				}
-			}).appendTo($listItem);
-			$list.append($listItem);
-		});
-		$openDialog.html($list);
+		// empty list and insert list of documents
+		var $list = $(".document-list", $dialog).empty();
 
-		var $openExternal = $("<input/>", {
-			type : "file"
-		}).button().bind("change", function(e) {
-			if (self.externalFileSelected) {
-				self.externalFileSelected(e);
+		$("#template-open-table-item").tmpl(docs, {
+			format : function(date) {
+				var day = date.getDate();
+				var month = date.getMonth() + 1;
+				var year = date.getFullYear();
+				return day + "/" + month + "/" + year;
 			}
-		});
+		}).appendTo($list);
 
-		$openDialog.append($openExternal);
-
-		$openDialog.dialog("open");
+		$dialog.dialog("open");
 	};
 
 	this.hideOpenDialog = function() {
-		$openDialog.dialog("close");
+		$dialog.dialog("close");
 	};
 };
 
 mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 
 	// TODO experimental
-	//http://www.w3.org/TR/FileAPI/#dfn-filereader
+	// http://www.w3.org/TR/FileAPI/#dfn-filereader
 	view.externalFileSelected = function(e) {
 		var files = e.target.files;
 		var file = files[0];
@@ -62,7 +57,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 			eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
 
 		};
-		
+
 		reader.readAsText(file);
 	};
 

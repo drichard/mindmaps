@@ -17,6 +17,7 @@
 <script src="js/libs/jquery.hotkeys.js"></script>
 <script src="js/libs/jquery.mousewheel.js"></script>
 <script src="js/libs/jquery.minicolors.js"></script>
+<script src="js/libs/jquery.tmpl.js"></script>
 
 <script src="js/libs/swfobject.js"></script>
 <script src="js/libs/downloadify.min.js"></script>
@@ -51,6 +52,36 @@
 <script src="js/Main.js"></script>
 <script src="js/Storage.js"></script>
 <script src="js/Event.js"></script>
+
+<script id="template-open-table-item" type="text/x-jquery-tmpl">
+<tr>
+	<td><a class="title" href="#">${title}</a></td>
+	<td>${$item.format(dates.modified)}</td>
+	<td></td>
+</tr>
+</script>
+
+<script id="template-open" type="text/x-jquery-tmpl">
+<div id="open-dialog" title="Open mind map">
+	<h1>Local Storage</h1>
+	<p>This is a list of all mind maps that are saved in your browser's local storage. Click on the title of a map to open it.</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Last Modified</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody class="document-list"></tbody>
+	</table>
+	<h1>From file</h1>
+	<p>Choose a mind map from your computer's hard drive.</p>
+	<input type="file" />
+</div>
+</script>
+
+
 
 </head>
 <body>
@@ -95,7 +126,8 @@
 		</div>
 		<div id="bottombar">
 			<div id="statusbar">
-				<div class="buttons buttons-right buttons-small buttons-less-padding"></div>
+				<div
+					class="buttons buttons-right buttons-small buttons-less-padding"></div>
 			</div>
 		</div>
 		<div id="panel-holder">
@@ -124,30 +156,38 @@
 					<table id="inspector-table">
 						<tr>
 							<td>Font size:</td>
-							<td><div class="buttonset buttons-very-small buttons-less-padding">
+							<td><div
+									class="buttonset buttons-very-small buttons-less-padding">
 									<button id="inspector-button-font-size-decrease">A-</button>
 									<button id="inspector-button-font-size-increase">A+</button>
 								</div></td>
 						</tr>
 						<tr>
 							<td>Font style:</td>
-							<td><div class="buttonset buttons-very-small buttons-less-padding">
-								<input type="checkbox" id="inspector-checkbox-font-bold" /> <label for="inspector-checkbox-font-bold">B</label>
-								<input type="checkbox" id="inspector-checkbox-font-italic" /> <label for="inspector-checkbox-font-italic">I</label>
-								<input type="checkbox" id="inspector-checkbox-font-underline" /> <label for="inspector-checkbox-font-underline">U</label>
-							</div>
+							<td><div
+									class="buttonset buttons-very-small buttons-less-padding">
+									<input type="checkbox" id="inspector-checkbox-font-bold" /> <label
+										for="inspector-checkbox-font-bold">B</label> <input
+										type="checkbox" id="inspector-checkbox-font-italic" /> <label
+										for="inspector-checkbox-font-italic">I</label> <input
+										type="checkbox" id="inspector-checkbox-font-underline" /> <label
+										for="inspector-checkbox-font-underline">U</label>
+								</div>
 							</td>
 						</tr>
 						<tr>
 							<td>Font color:</td>
-							<td><input type="hidden" id="inspector-font-color-picker" class="colorpicker"/></td>
+							<td><input type="hidden" id="inspector-font-color-picker"
+								class="colorpicker" /></td>
 						</tr>
 						<tr>
 							<td>Branch color:</td>
-							<td><input type="hidden" id="inspector-branch-color-picker" class="colorpicker"/></td>
+							<td><input type="hidden" id="inspector-branch-color-picker"
+								class="colorpicker" /></td>
 						</tr>
 					</table>
-					<button id="inspector-button-apply-all" class="buttons-small">Apply styles to children...</button>
+					<button id="inspector-button-apply-all" class="buttons-small">Apply
+						styles to children...</button>
 				</div>
 			</div>
 		</div>
