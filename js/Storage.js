@@ -57,6 +57,24 @@ mindmaps.LocalDocumentStorage = (function() {
 			}
 			return documents;
 		},
+		
+		/**
+		 * Gets all document ids found in the local storage object.
+		 * 
+		 * @returns an Array of document ids
+		 */
+		getDocumentIds : function() {
+			var ids = [];
+			// search localstorage for saved documents
+			for ( var i = 0, max = localStorage.length; i < max; i++) {
+				var key = localStorage.key(i);
+				// value is a document if key confirms to prefix
+				if (key.indexOf(prefix) == 0) {
+					ids.push(key.substring(prefix.length));
+				}
+			}
+			return ids;
+		},
 
 		/**
 		 * Deletes a document from the local storage.
