@@ -6,7 +6,11 @@ mindmaps.OpenDocumentView = function() {
 		autoOpen : false,
 		modal : true,
 		zIndex : 5000,
-		width : 550
+		width : 550,
+		close : function() {
+			$(this).dialog("destroy");
+			$(this).remove();
+		}
 	});
 
 	$dialog.find("input").bind("change", function(e) {
@@ -27,7 +31,6 @@ mindmaps.OpenDocumentView = function() {
 			self.deleteDocumentClicked(t.data);
 		}
 	});
-
 
 	this.render = function(docs) {
 		// empty list and insert list of documents
