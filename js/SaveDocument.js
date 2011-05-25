@@ -20,8 +20,9 @@ mindmaps.SaveDocumentView = function() {
 				}
 			});
 
-	var $hddSaveButton = $("#button-save-hdd")
-			.button()
+	var $hddSaveButton = $("#button-save-hdd").button();
+
+	$hddSaveButton
 			.downloadify(
 					{
 						filename : function() {
