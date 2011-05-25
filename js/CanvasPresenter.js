@@ -5,10 +5,6 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	var zoomControl = new ZoomControl(eventBus);
 
 	// TODO restrict keys on canvas area?, move out
-	$(document).bind("keydown", "del", function() {
-		deleteSelectedNode();
-	});
-
 	$(document).bind("keydown", "F2", function() {
 		view.editNodeCaption(selectedNode);
 	});

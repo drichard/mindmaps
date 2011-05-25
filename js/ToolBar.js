@@ -125,16 +125,11 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 	// view callbacks
 
 	view.addButtonClicked = function() {
-		var selectedNode = appModel.selectedNode;
-		
-		var action = new mindmaps.action.CreateAutoPositionedNodeAction(selectedNode);
-		appModel.executeAction(action);
+		eventBus.publish(mindmaps.Event.NEW_NODE);
 	};
 
 	view.deleteButtonClicked = function() {
-		var selectedNode = appModel.selectedNode;
-		var action = new mindmaps.action.DeleteNodeAction(selectedNode);
-		appModel.executeAction(action);
+		eventBus.publish(mindmaps.Event.DELETE_NODE);
 	};
 
 	view.copyButtonClicked = function() {

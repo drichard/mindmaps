@@ -2,11 +2,11 @@
 mindmaps.NavigatorView = function() {
 	var self = this;
 
-	var $content = $("#navigator");
+	var $content = $("#template-navigator").tmpl();
 	var $contentActive = $content.children(".active").hide();
 	var $contentInactive = $content.children(".inactive").hide();
-	var $dragger = $("#navi-canvas-overlay");
-	var $canvas = $("#navi-canvas");
+	var $dragger = $("#navi-canvas-overlay", $content);
+	var $canvas = $("#navi-canvas", $content);
 
 	/**
 	 * Returns a jquery object.
@@ -40,18 +40,18 @@ mindmaps.NavigatorView = function() {
 	};
 
 	this.setCanvasHeight = function(height) {
-		$("#navi-canvas").css({
+		$("#navi-canvas", $content).css({
 			height : height
 		});
 	};
 	
 	this.getCanvasWidth = function() {
-		return $("#navi-canvas").width();
+		return $("#navi-canvas", $content).width();
 	};
 
 	this.init = function(canvasSize) {
 
-		$("#button-navi-zoom-in").button({
+		$("#button-navi-zoom-in", $content).button({
 			text: false,
 			icons: {
 				primary: "ui-icon-zoomin"
@@ -62,7 +62,7 @@ mindmaps.NavigatorView = function() {
 			}
 		});
 
-		$("#button-navi-zoom-out").button({
+		$("#button-navi-zoom-out", $content).button({
 			text: false,
 			icons: {
 				primary: "ui-icon-zoomout"

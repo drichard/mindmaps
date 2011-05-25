@@ -36,18 +36,19 @@ mindmaps.SaveDocumentView = function() {
 							}
 						},
 						onComplete : function() {
-							self.hideSaveDialog();
+							if (self.saveToHddComplete) {
+								self.saveToHddComplete();
+							}
 						},
 						onError : function() {
-							alert('You must put something in the File Contents or there will be nothing to save!');
+							console.log("error while saving to hdd");
 						},
 						swf : '/media/downloadify.swf',
 						downloadImage : '/img/transparent.png',
 						width : 65,
 						height : 29,
 						append : true
-					}).children().first().css("position", "absolute").next()
-			.css("position", "relative");
+					});
 
 	this.showSaveDialog = function() {
 		$dialog.dialog("open");
@@ -60,10 +61,6 @@ mindmaps.SaveDocumentView = function() {
 
 mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 
-	view.cancelButtonClicked = function() {
-		view.hideSaveDialog();
-	};
-
 	view.localStorageButtonClicked = function() {
 		var doc = appModel.getDocument();
 		var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
@@ -72,15 +69,19 @@ mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 	};
 
 	view.fileNameRequested = function() {
-		var doc = appModel.getDocument();
-		var title = doc.title;
-		return title + ".mms";
+		return appModel.getDocument().title + ".mms";
 	};
 
 	view.fileContentsRequested = function() {
 		var doc = appModel.getDocument();
 		doc.dates.modified = new Date();
 		return doc.serialize();
+	};
+	
+	view.saveToHddComplete = function() {
+		var doc = appModel.getDocument();
+		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
+		view.hideSaveDialog();
 	};
 
 	this.go = function() {

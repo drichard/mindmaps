@@ -1,6 +1,6 @@
 mindmaps.Document = function() {
 	this.id = mindmaps.Util.createUUID();
-	this.title = null;
+	this.title = "New Document";
 	this.mindmap = new mindmaps.MindMap();
 	this.dates = {
 		created : new Date(),
@@ -49,6 +49,9 @@ mindmaps.Document.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
+/**
+ * Sort function for Array.sort().
+ */
 mindmaps.Document.sortByModifiedDateDescending = function(doc1, doc2) {
 	if (doc1.dates.modified > doc2.dates.modified) {
 		return -1;

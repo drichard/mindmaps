@@ -13,10 +13,8 @@ mindmaps.Util.createUUID = function() {
 	});
 };
 
-// TODO id management
-mindmaps.id = 0;
 mindmaps.Util.getId = function() {
-	return mindmaps.id++;
+	return mindmaps.Util.createUUID();
 };
 
 mindmaps.Util.randomColor = function() {

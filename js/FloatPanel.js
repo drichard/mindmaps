@@ -58,6 +58,7 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		$("div.ui-dialog-content", this.$widget).children().detach();
 	};
 
+	// TODO template
 	this.$widget = (function() {
 		var $titleText = $("<span/>", {
 			"class" : "ui-dialog-title"

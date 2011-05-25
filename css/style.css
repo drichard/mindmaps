@@ -108,6 +108,7 @@ html,body {
 
 #toolbar .buttonset {
 	float: left;
+	margin-right: 14px;
 }
 
 .buttons-right {
@@ -294,11 +295,6 @@ html,body {
 	text-align: center;
 }
 
-#panel-holder {
-	display: none;
-	visibility: hidden;
-}
-
 .float-panel.ui-dialog {
 	min-width: 200px;
 	min-height: 150px;
@@ -432,4 +428,12 @@ html,body {
 
 .file-dialog .file-chooser {
 	margin: 10px 0;
+}
+
+#button-save-hdd .ui-button-text {
+	position: absolute;
+}
+
+#button-save-hdd object {
+	position: relative;
 }

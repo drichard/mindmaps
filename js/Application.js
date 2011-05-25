@@ -53,6 +53,27 @@ mindmaps.ApplicationModel = function(eventBus) {
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
 		self.selectedNode = node;
 	});
+
+	eventBus.subscribe(mindmaps.Event.NEW_NODE, function() {
+		var action = new mindmaps.action.CreateAutoPositionedNodeAction(
+				self.selectedNode);
+		self.executeAction(action);
+	});
+
+	eventBus.subscribe(mindmaps.Event.DELETE_NODE, function() {
+		var action = new mindmaps.action.DeleteNodeAction(self.selectedNode);
+		self.executeAction(action);
+	});
+
+	// TODO put somewhere else?
+	eventBus.subscribe(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED,
+			function(node) {
+				// change document title when root was renamed
+				if (node.isRoot()) {
+					document.title = node.getCaption();
+				}
+			});
+
 };
 
 mindmaps.AppController = function(eventBus, appModel) {
@@ -93,11 +114,6 @@ mindmaps.AppController = function(eventBus, appModel) {
 	}
 
 	function doSaveDocument() {
-		/**
-		 * If the document doesn't have a title yet show the save as presenter,
-		 * otherwise just save the document.
-		 */
-
 		var presenter = new mindmaps.SaveDocumentPresenter(eventBus, appModel,
 				new mindmaps.SaveDocumentView());
 		presenter.go();

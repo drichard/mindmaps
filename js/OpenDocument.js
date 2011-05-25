@@ -58,7 +58,7 @@ mindmaps.OpenDocumentView = function() {
 
 mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 
-	// TODO experimental
+	// TODO experimental, catch errrs
 	// http://www.w3.org/TR/FileAPI/#dfn-filereader
 	view.openExernalFileClicked = function(e) {
 		var files = e.target.files;
@@ -70,7 +70,6 @@ mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 			view.hideOpenDialog();
 			appModel.setDocument(doc);
 			eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
-
 		};
 
 		reader.readAsText(file);

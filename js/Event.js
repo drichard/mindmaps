@@ -3,6 +3,9 @@
  * Events that the event bus carries.
  */
 mindmaps.Event = {
+	DELETE_NODE : "DeleteSelectedNodeEvent",
+	NEW_NODE : "NewNodeEvent",
+
 	COPY_NODE : "CopyNodeEvent",
 	CUT_NODE : "CutNodeEvent",
 	PASTE_NODE : "PasteNodeEvent",
@@ -127,11 +130,11 @@ mindmaps.Event = {
 	 *            node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
-	
+
 	ZOOM_IN : "ZoomInEvent",
-	
+
 	ZOOM_OUT : "ZoomOutEvent",
-	
+
 	/**
 	 * @param the
 	 *            new zoom factor

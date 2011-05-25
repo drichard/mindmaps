@@ -11,9 +11,16 @@ mindmaps.MindMap = function(root) {
 	 * registered in this map via createNode() or addNode(node).
 	 */
 	this.nodes = new mindmaps.NodeMap();
-	this.root = root || new mindmaps.Node();
-	this.root.text.font.size = 20;
-	this.root.text.font.weight = "bold";
+
+	if (root) {
+		this.root = root;
+	} else {
+		this.root = new mindmaps.Node();
+		this.root.text.font.size = 20;
+		this.root.text.font.weight = "bold";
+		this.root.text.caption = "Central Topic";
+	}
+	
 	this.addNode(this.root);
 };
 

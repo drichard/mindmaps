@@ -14,6 +14,10 @@ mindmaps.ClipboardController = function(eventBus, appModel) {
 	}
 
 	function doPaste() {
+		if (!node) {
+			return;
+		}
+		
 		var selected = appModel.selectedNode;
 		// send a cloned copy of our node, so we can paste multiple times
 		var action = new mindmaps.action.CreateNodeAction(node.clone(),

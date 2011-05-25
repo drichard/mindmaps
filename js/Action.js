@@ -80,7 +80,7 @@ mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
 		var y = topBottom * (Math.random() * 250);
 	} else {
 		var branchColor = parent.branchColor;
-		
+
 		// calculate position
 		var leftRight = parent.offset.x > 0 ? 1 : -1;
 		var x = leftRight * (150 + Math.random() * 10);
@@ -91,7 +91,7 @@ mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
 		} else {
 			var max = 150, min = -150;
 		}
-		
+
 		var y = Math.floor(Math.random() * (max - min + 1) + min);
 	}
 	var node = new mindmaps.Node();
@@ -149,12 +149,6 @@ mindmaps.action.ChangeNodeCaptionAction = function(node, caption) {
 	var oldCaption = node.getCaption();
 
 	this.execute = function(context) {
-		// TODO put somewhere
-		/*
-		 * // change document title when root was renamed if (node.isRoot()) {
-		 * document.title = newCaption; }
-		 */
-
 		// dont update if nothing has changed
 		if (oldCaption === caption) {
 			return false;

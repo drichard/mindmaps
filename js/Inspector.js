@@ -1,14 +1,16 @@
 mindmaps.InspectorView = function() {
 	var self = this;
-	var $content = $("#inspector");
-	var $sizeDecreaseButton = $("#inspector-button-font-size-decrease");
-	var $sizeIncreaseButton = $("#inspector-button-font-size-increase");
-	var $boldCheckbox = $("#inspector-checkbox-font-bold");
-	var $italicCheckbox = $("#inspector-checkbox-font-italic");
-	var $underlineCheckbox = $("#inspector-checkbox-font-underline");
-	var $applyToAllButton = $("#inspector-button-apply-all");
-	var branchColorPicker = $("#inspector-branch-color-picker");
-	var fontColorPicker = $("#inspector-font-color-picker");
+	var $content = $("#template-inspector").tmpl();
+	var $sizeDecreaseButton = $("#inspector-button-font-size-decrease",
+			$content);
+	var $sizeIncreaseButton = $("#inspector-button-font-size-increase",
+			$content);
+	var $boldCheckbox = $("#inspector-checkbox-font-bold", $content);
+	var $italicCheckbox = $("#inspector-checkbox-font-italic", $content);
+	var $underlineCheckbox = $("#inspector-checkbox-font-underline", $content);
+	var $applyToAllButton = $("#inspector-button-apply-all", $content);
+	var branchColorPicker = $("#inspector-branch-color-picker", $content);
+	var fontColorPicker = $("#inspector-font-color-picker", $content);
 	var $allControls = [ $sizeDecreaseButton, $sizeIncreaseButton,
 			$boldCheckbox, $italicCheckbox, $underlineCheckbox,
 			$applyToAllButton ];
@@ -160,12 +162,13 @@ mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 			updateView(node);
 		}
 	});
-	
-	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(node) {
-		if (appModel.selectedNode === node) {
-			updateView(node);
-		}
-	});
+
+	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED,
+			function(node) {
+				if (appModel.selectedNode === node) {
+					updateView(node);
+				}
+			});
 
 	eventBus.subscribe(mindmaps.Event.NODE_DELETED, function() {
 	});
@@ -175,9 +178,9 @@ mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 		updateView(node);
 	});
 
-//	eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
-//		view.setControlsEnabled(false);
-//	});
+	// eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
+	// view.setControlsEnabled(false);
+	// });
 
 	function updateView(node) {
 		var font = node.text.font;
