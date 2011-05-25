@@ -48,3 +48,13 @@ mindmaps.Document.prototype.toJSON = function() {
 mindmaps.Document.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
+
+mindmaps.Document.sortByModifiedDateDescending = function(doc1, doc2) {
+	if (doc1.dates.modified > doc2.dates.modified) {
+		return -1;
+	}
+	if (doc1.dates.modified < doc2.dates.modified) {
+		return 1;
+	}
+	return 0;
+};

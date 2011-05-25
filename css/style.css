@@ -132,15 +132,18 @@ html,body {
 }
 
 /* apply styles to button and wrapper div */
-.buttons-small .ui-button .ui-button-text, .buttons-small.ui-button .ui-button-text {
+.buttons-small .ui-button .ui-button-text,.buttons-small.ui-button .ui-button-text
+	{
 	font-size: 12px;
 }
 
-.buttons-very-small .ui-button .ui-button-text, .buttons-very-small.ui-button .ui-button-text {
+.buttons-very-small .ui-button .ui-button-text,.buttons-very-small.ui-button .ui-button-text
+	{
 	font-size: 10px;
 }
 
-.buttons-less-padding .ui-button .ui-button-text, .buttons-less-padding.ui-button .ui-button-text {
+.buttons-less-padding .ui-button .ui-button-text,.buttons-less-padding.ui-button .ui-button-text
+	{
 	padding: 0.2em 0.6em;
 }
 
@@ -155,9 +158,8 @@ html,body {
 	background-color: white;
 	background-image: url("/img/grid.gif");
 	background-size: 24px 24px;
-	
 	/* need this for webkit as well. */
-	image-rendering: -moz-crisp-edges; 
+	image-rendering: -moz-crisp-edges;
 	-ms-interpolation-mode: nearest-neighbor;
 }
 
@@ -357,10 +359,77 @@ html,body {
 	cursor: move;
 }
 
-
 #inspector {
+	
 }
 
 #inspector-table td {
 	padding: 2px 5px;
+}
+
+.file-dialog h1 {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+
+.file-dialog p {
+	margin: 8px 0;
+	font-size: 13px;
+}
+
+.file-dialog .localstorage-filelist {
+	width: 100%;
+	margin: 12px 0;
+	font-size: 14px;
+}
+
+.file-dialog .localstorage-filelist thead {
+	font-weight: bold;
+	text-align: left;
+}
+
+.file-dialog .localstorage-filelist th {
+	padding-bottom: 4px;
+}
+
+.file-dialog .localstorage-filelist th.title {
+	width: 50%;
+}
+
+.file-dialog .localstorage-filelist th.modified{
+	width: 40%;
+}
+
+.file-dialog .localstorage-filelist tbody td {
+	padding: 4px;
+}
+
+.file-dialog .localstorage-filelist tbody tr:nth-child(odd) {
+	background-color: #E8E8E8;
+}
+
+
+.file-dialog .localstorage-filelist tbody tr:hover, .file-dialog .localstorage-filelist tbody tr:nth-child(odd):hover {
+	background-color: #B9E0F5;
+}
+
+.file-dialog .localstorage-filelist a.delete {
+	display: none;
+}
+
+.file-dialog .localstorage-filelist tr:hover a.delete {
+	display: inline;
+}	
+	
+.file-dialog .seperator {
+	display: block;
+	clear: both;
+	border-top: 1px dotted grey;
+	margin: 10px 0;
+	width: 100%;
+}
+
+.file-dialog .file-chooser {
+	margin: 10px 0;
 }

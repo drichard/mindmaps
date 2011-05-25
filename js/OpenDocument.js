@@ -5,22 +5,31 @@ mindmaps.OpenDocumentView = function() {
 	var $dialog = $("#template-open").tmpl().dialog({
 		autoOpen : false,
 		modal : true,
-		zIndex : 5000
-	}).delegate("a.title", "click", function() {
-		var t = $(this).tmplItem();
-		if (self.documentClicked) {
-			self.documentClicked(t.data);
-		}
+		zIndex : 5000,
+		width : 550
 	});
 
 	$dialog.find("input").bind("change", function(e) {
-		if (self.externalFileSelected) {
-			self.externalFileSelected(e);
+		if (self.openExernalFileClicked) {
+			self.openExernalFileClicked(e);
+		}
+	});
+
+	var $table = $dialog.find(".localstorage-filelist");
+	$table.delegate("a.title", "click", function() {
+		if (self.documentClicked) {
+			var t = $(this).tmplItem();
+			self.documentClicked(t.data);
+		}
+	}).delegate("a.delete", "click", function() {
+		if (self.deleteDocumentClicked) {
+			var t = $(this).tmplItem();
+			self.deleteDocumentClicked(t.data);
 		}
 	});
 
 
-	this.showOpenDialog = function(docs) {
+	this.render = function(docs) {
 		// empty list and insert list of documents
 		var $list = $(".document-list", $dialog).empty();
 
@@ -32,7 +41,10 @@ mindmaps.OpenDocumentView = function() {
 				return day + "/" + month + "/" + year;
 			}
 		}).appendTo($list);
+	};
 
+	this.showOpenDialog = function(docs) {
+		this.render(docs);
 		$dialog.dialog("open");
 	};
 
@@ -45,7 +57,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 
 	// TODO experimental
 	// http://www.w3.org/TR/FileAPI/#dfn-filereader
-	view.externalFileSelected = function(e) {
+	view.openExernalFileClicked = function(e) {
 		var files = e.target.files;
 		var file = files[0];
 
@@ -67,8 +79,16 @@ mindmaps.OpenDocumentPresenter = function(eventBus, appModel, view) {
 		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
 	};
 
+	view.deleteDocumentClicked = function(doc) {
+		// TODO event
+		mindmaps.LocalDocumentStorage.deleteDocument(doc);
+		var docs = mindmaps.LocalDocumentStorage.getDocuments();
+		view.render(docs);
+	};
+
 	this.go = function() {
 		var docs = mindmaps.LocalDocumentStorage.getDocuments();
+		docs.sort(mindmaps.Document.sortByModifiedDateDescending);
 		view.showOpenDialog(docs);
 	};
 };

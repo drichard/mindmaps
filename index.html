@@ -57,27 +57,30 @@
 <tr>
 	<td><a class="title" href="#">${title}</a></td>
 	<td>${$item.format(dates.modified)}</td>
-	<td></td>
+	<td><a class="delete" href="#">delete</a></td>
 </tr>
 </script>
 
 <script id="template-open" type="text/x-jquery-tmpl">
-<div id="open-dialog" title="Open mind map">
+<div id="open-dialog" class="file-dialog" title="Open mind map">
 	<h1>Local Storage</h1>
 	<p>This is a list of all mind maps that are saved in your browser's local storage. Click on the title of a map to open it.</p>
-	<table>
+	<table class="localstorage-filelist">
 		<thead>
 			<tr>
-				<th>Title</th>
-				<th>Last Modified</th>
-				<th>Delete</th>
+				<th class="title">Title</th>
+				<th class="modified">Last Modified</th>
+				<th class="delete"></th>
 			</tr>
 		</thead>
 		<tbody class="document-list"></tbody>
 	</table>
+	<div class="seperator"></div>
 	<h1>From file</h1>
 	<p>Choose a mind map from your computer's hard drive.</p>
-	<input type="file" />
+	<div class="file-chooser">
+		<input type="file" />
+	</div>
 </div>
 </script>
 
