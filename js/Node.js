@@ -104,6 +104,7 @@ mindmaps.Node.fromObject = function(obj) {
  * Called by JSON.stringify().
  */
 mindmaps.Node.prototype.toJSON = function() {
+	// TODO see if we cant improve this http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 	// copy all children into array
 	var self = this;
 	var children = (function() {

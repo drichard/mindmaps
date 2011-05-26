@@ -20,35 +20,31 @@ mindmaps.SaveDocumentView = function() {
 				}
 			});
 
-	var $hddSaveButton = $("#button-save-hdd").button();
-
-	$hddSaveButton
-			.downloadify(
-					{
-						filename : function() {
-							if (self.fileNameRequested) {
-								return self.fileNameRequested();
-							}
-						},
-						data : function() {
-							if (self.fileContentsRequested) {
-								return self.fileContentsRequested();
-							}
-						},
-						onComplete : function() {
-							if (self.saveToHddComplete) {
-								self.saveToHddComplete();
-							}
-						},
-						onError : function() {
-							console.log("error while saving to hdd");
-						},
-						swf : '/media/downloadify.swf',
-						downloadImage : '/img/transparent.png',
-						width : 65,
-						height : 29,
-						append : true
-					});
+	var $hddSaveButton = $("#button-save-hdd").button().downloadify({
+		filename : function() {
+			if (self.fileNameRequested) {
+				return self.fileNameRequested();
+			}
+		},
+		data : function() {
+			if (self.fileContentsRequested) {
+				return self.fileContentsRequested();
+			}
+		},
+		onComplete : function() {
+			if (self.saveToHddComplete) {
+				self.saveToHddComplete();
+			}
+		},
+		onError : function() {
+			console.log("error while saving to hdd");
+		},
+		swf : '/media/downloadify.swf',
+		downloadImage : '/img/transparent.png',
+		width : 65,
+		height : 29,
+		append : true
+	});
 
 	this.showSaveDialog = function() {
 		$dialog.dialog("open");
@@ -62,14 +58,20 @@ mindmaps.SaveDocumentView = function() {
 mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 
 	view.localStorageButtonClicked = function() {
+		// update modified date
 		var doc = appModel.getDocument();
-		var savedDoc = mindmaps.LocalDocumentStorage.saveDocument(doc);
-		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
-		view.hideSaveDialog();
+		doc.dates.modified = new Date();
+		var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
+		if (success) {
+			eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
+			view.hideSaveDialog();
+		} else {
+			// TODO display error hint
+		}
 	};
 
 	view.fileNameRequested = function() {
-		return appModel.getDocument().title + ".mms";
+		return appModel.getDocument().title + ".json";
 	};
 
 	view.fileContentsRequested = function() {
@@ -77,7 +79,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 		doc.dates.modified = new Date();
 		return doc.serialize();
 	};
-	
+
 	view.saveToHddComplete = function() {
 		var doc = appModel.getDocument();
 		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);

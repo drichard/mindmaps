@@ -1,5 +1,3 @@
-// TODO save to hdd
-
 mindmaps.LocalStorage = (function() {
 	return {
 		clear : function() {
@@ -13,7 +11,17 @@ mindmaps.LocalDocumentStorage = (function() {
 
 	var getDocumentByKey = function(key) {
 		var json = localStorage.getItem(key);
-		return json ? mindmaps.Document.fromJSON(json) : null;
+
+		/**
+		 * Catch any SytaxErrors when document can't be parsed.
+		 */
+		try {
+			return mindmaps.Document.fromJSON(json);
+		} catch (error) {
+			console.error("Error while loading document from local storage",
+					error);
+			return null;
+		}
 	};
 
 	// public API
@@ -22,17 +30,22 @@ mindmaps.LocalDocumentStorage = (function() {
 		 * Saves a document to the localstorage. Overwrites the old document if
 		 * one with the same id exists.
 		 * 
-		 * TODO catch errors (quota exceeded..)
+		 * @returns true if save was successful, false otherwise.
 		 */
 		saveDocument : function(doc) {
-			// update modified date
-			doc.dates.modified = new Date();
-			localStorage.setItem(prefix + doc.id, doc.serialize());
-			return doc;
+			try {
+				localStorage.setItem(prefix + doc.id, doc.serialize());
+				return true;
+			} catch (error) {
+				// QUOTA_EXCEEDED
+				console.error("Error while saving document to local storage",
+						error);
+				return false;
+			}
 		},
 
 		/**
-		 * Loads a documents from the localstorage.
+		 * Loads a document from the local storage.
 		 * 
 		 * @returns the document or null if not found.
 		 */
@@ -41,7 +54,7 @@ mindmaps.LocalDocumentStorage = (function() {
 		},
 
 		/**
-		 * Gets all documents found in the local storage object.
+		 * Finds all documents in the local storage object.
 		 * 
 		 * @returns an Array of documents
 		 */
@@ -52,12 +65,15 @@ mindmaps.LocalDocumentStorage = (function() {
 				var key = localStorage.key(i);
 				// value is a document if key confirms to prefix
 				if (key.indexOf(prefix) == 0) {
-					documents.push(getDocumentByKey(key));
+					var doc = getDocumentByKey(key);
+					if (doc) {
+						documents.push(doc);
+					}
 				}
 			}
 			return documents;
 		},
-		
+
 		/**
 		 * Gets all document ids found in the local storage object.
 		 * 
