@@ -157,7 +157,7 @@ html,body {
 #drawing-area {
 	position: absolute;
 	background-color: white;
-	background-image: url("/img/grid.gif");
+	background-image: url("../img/grid.gif");
 	background-size: 24px 24px;
 	/* need this for webkit as well. */
 	image-rendering: -moz-crisp-edges;
@@ -235,7 +235,7 @@ html,body {
 	width: 16px;
 	height: 16px;
 	bottom: -12px;
-	background-image: url("/img/plus-minus.png");
+	background-image: url("../img/plus-minus.png");
 	background-repeat: no-repeat;
 	position: absolute;
 	z-index: 1000;
@@ -274,14 +274,14 @@ html,body {
 #creator-nub {
 	width: 24px;
 	height: 24px;
-	background-image: url("/img/creator-nub.png");
+	background-image: url("../img/creator-nub.png");
 	background-size: 24px 24px;
 	position: relative;
 	z-index: 1000;
 }
 
 #creator-nub:hover {
-	background-image: url("/img/creator-nub-selected.png")
+	background-image: url("../img/creator-nub-selected.png")
 }
 
 #caption-editor {

@@ -6,7 +6,7 @@ var indexFileName = "index.html";
 var baseDir = "../";
 var publishDir = baseDir + "bin/";
 var scriptFilename = "script.js";
-var scriptDir = "js";
+var scriptDir = "js/";
 var regexScriptSection = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
 var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
 		".project", "README.md", "canvas.html", "*psd", "*.psd" ];
@@ -23,8 +23,9 @@ task("clean-dir", function() {
 
 desc("Create new directory");
 task("create-dir", [ "clean-dir" ], function() {
-	console.log("Creating new bin directory");
+	console.log("Creating new directory structure");
 	fs.mkdirSync(publishDir, 0755);
+	fs.mkdirSync(publishDir + scriptDir, 0755);
 });
 
 desc("Minify scripts");
@@ -73,7 +74,7 @@ task("minify-js", [ "create-dir" ], function() {
 				console.log("> Skipping: " + script + " is already minified.");
 			}
 
-			buffer.push(scriptFile);
+			buffer.push(scriptFile + ";");
 		});
 
 		var combined = buffer.join("\n");
@@ -83,44 +84,59 @@ task("minify-js", [ "create-dir" ], function() {
 });
 
 desc("Use minified scripts");
-task("use-min-js", [ "minify-js" ], function() {
+task("use-min-js", [ "create-dir", "minify-js" ], function() {
 	console.log("Replacing script files with minified version in index.html");
 	indexFile = indexFile.replace(regexScriptSection, "<script src=\"js/"
 			+ scriptFilename + "\"></script>");
+	
+	// TODO check this
+	var regexReplace = /^<!-- REPLACE -->[\s\S]*<!-- WITH.=."([\s\S]*)" -->/gmi;
+	indexFile = indexFile.replace(regexReplace, "$1");
+	
 	fs.writeFileSync(publishDir + indexFileName, indexFile);
 });
 
 desc("Copy all other files");
-task("copy-files", function() {
+task("copy-files", [ "create-dir", "minify-js" ], function() {
 	console.log("Copying all other files into /bin");
-	excludeFiles.push(indexFileName);
-	excludeFiles.push.apply(excludeFiles, scriptNames);
-	excludeFiles = excludeFiles.map(function(file) {
-		file = file.replace(/\./g, "\\.").replace("*", ".*", "g");
-		file = "^" + file + "$";
-		console.log(file);
-		return file;
-	});
-	var regexIgnore = new RegExp(excludeFiles.join("|"));
 
+	function createExludeRegex() {
+		// exclude files that get optimization treatment
+		excludeFiles.push(indexFileName);
+		excludeFiles.push.apply(excludeFiles, scriptNames);
+
+		// convert wildcard notation to proper regex
+		// *foo.jpg becomes ^.*foo\.jpg$
+		excludeFiles = excludeFiles.map(function(file) {
+			file = file.replace(/\./g, "\\.").replace("*", ".*", "g");
+			file = "^" + file + "$";
+			return file;
+		});
+
+		return new RegExp(excludeFiles.join("|"));
+	}
+
+	var regexExcludeFiles = createExludeRegex();
 	copyFiles("");
 
 	/**
-	 * Recursively copies all files from the base directory to the publish
-	 * directory
+	 * Recursively copies all files that dont match the exclude filter from the
+	 * base directory to the publish directory.
 	 */
 	function copyFiles(dir) {
 		var files = fs.readdirSync(baseDir + dir);
 		files.forEach(function(file) {
-			var path = dir + file;
-			if (!regexIgnore.test(path)) {
-				var stats = fs.statSync(baseDir + path);
+			var currentDir = dir + file;
+			if (!regexExcludeFiles.test(currentDir)) {
+				var stats = fs.statSync(baseDir + currentDir);
 				if (stats.isDirectory()) {
-					fs.mkdirSync(publishDir + path, 0755);
-					copyFiles(path + "/");
+					if (!path.existsSync(publishDir + currentDir)) {
+						fs.mkdirSync(publishDir + currentDir, 0755);
+					}
+					copyFiles(currentDir + "/");
 				} else if (stats.isFile()) {
-					var contents = fs.readFileSync(baseDir + path);
-					fs.writeFileSync(publishDir + path, contents);
+					var contents = fs.readFileSync(baseDir + currentDir);
+					fs.writeFileSync(publishDir + currentDir, contents);
 				}
 			}
 		});

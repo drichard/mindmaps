@@ -1,7 +1,7 @@
 .miniColors-trigger {
 	height: 22px;
 	width: 22px;
-	background: url("/img/minicolors/trigger.png") center no-repeat;
+	background: url("images/trigger.png") center no-repeat;
 	vertical-align: middle;
 	margin: 0 .25em;
 	display: inline-block;
@@ -35,7 +35,7 @@
 	left: 5px;
 	width: 150px;
 	height: 150px;
-	background: url("/img/minicolors/gradient.png") center no-repeat;
+	background: url("images/gradient.png") center no-repeat;
 	cursor: crosshair;
 }
 
@@ -45,7 +45,7 @@
 	left: 160px;
 	width: 20px;
 	height: 150px;
-	background: url("/img/minicolors/rainbow.png") center no-repeat;
+	background: url("images/rainbow.png") center no-repeat;
 	cursor: crosshair;
 }
 
@@ -53,7 +53,7 @@
 	position: absolute;
 	width: 11px;
 	height: 11px;
-	background: url("/img/minicolors/circle.gif") center no-repeat;
+	background: url("images/circle.gif") center no-repeat;
 }
 
 .miniColors-huePicker {
@@ -61,5 +61,5 @@
 	left: -3px;
 	width: 26px;
 	height: 3px;
-	background: url("/img/minicolors/line.gif") center no-repeat;
+	background: url("images/line.gif") center no-repeat;
 }
