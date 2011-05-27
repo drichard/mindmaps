@@ -1,4 +1,4 @@
-/**
+/*!
  * MIT License
  * 
  * Copyright (c) 2011 Jerome Etienne, http://jetienne.com

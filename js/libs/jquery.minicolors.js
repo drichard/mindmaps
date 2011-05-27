@@ -1,11 +1,12 @@
-/*
+/*!
  * jQuery miniColors: A small color selector
  *
  * Copyright 2011 Cory LaViska for A Beautiful Site, LLC. (http://abeautifulsite.net/)
  *
  * Dual licensed under the MIT or GPL Version 2 licenses
  *
- *
+ */
+/*
  * Usage:
  *
  *	1. Link to jQuery: <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>

@@ -1,3 +1,4 @@
+/*!
 //     Underscore.js 1.1.5
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
@@ -5,6 +6,7 @@
 //     Oliver Steele's Functional, and John Resig's Micro-Templating.
 //     For all details and documentation:
 //     http://documentcloud.github.com/underscore
+*/
 
 (function() {
 

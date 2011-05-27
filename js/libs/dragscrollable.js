@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery dragscrollable Plugin
  * version: 1.0 (25-Jun-2009)
  * Copyright (c) 2009 Miquel Herrera
