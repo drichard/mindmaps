@@ -13,6 +13,7 @@ var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
 var indexFile = fs.readFileSync(baseDir + indexFileName, "utf8");
 var scriptNames = [];
 
+
 desc("read");
 task("read", function() {
 	var pref = require("./pref.js");
@@ -86,6 +87,7 @@ task("minify-js", [ "create-dir" ], function() {
 
 		var combined = buffer.join("\n");
 		fs.writeFileSync(publishDir + scriptDir + scriptFilename, combined);
+		fs.chmodSync(publishDir + scriptDir + scriptFilename, 0755);
 		console.log("Combined all scripts into " + scriptFilename);
 	}
 });
@@ -111,6 +113,7 @@ task("copy-index", [ "create-dir", "use-min-js", "remove-debug" ], function() {
 	console.log("Copying index.html to /bin");
 
 	fs.writeFileSync(publishDir + indexFileName, indexFile);
+	fs.chmodSync(publishDir + indexFileName, 0755);
 });
 
 desc("Copy all other files");
@@ -154,6 +157,7 @@ task("copy-files", [ "create-dir", "minify-js" ], function() {
 				} else if (stats.isFile()) {
 					var contents = fs.readFileSync(baseDir + currentDir);
 					fs.writeFileSync(publishDir + currentDir, contents);
+					fs.chmodSync(publishDir + currentDir, 0755);
 				}
 			}
 		});
@@ -190,6 +194,8 @@ task(
 							console.log('exec error: ' + error);
 						} else {
 							console.log("Copied all files successfully");
+							console.log("Setting file permissions to 0755");
+							exec("ssh s0522592@remserv.rz.htw-berlin.de 'chmod -R 0755 ~/public_html/mindmaps/*'");
 						}
 					});
 		});
