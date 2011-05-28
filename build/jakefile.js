@@ -162,3 +162,27 @@ desc("default");
 task("default", [ "build" ], function() {
 	// build on default
 });
+
+desc("Deploy project to server");
+task(
+		"deploy",
+		[ "build" ],
+		function() {
+			console.log("Deploying project to remote server");
+			var exec = require('child_process').exec;
+			console.log("Cleaning remote directory");
+			exec("ssh s0522592@remserv.rz.htw-berlin.de 'rm -rf ~/public_html/mindmaps/*'");
+			
+			console.log("Copying all files to remote");
+			exec(
+					"scp -r . s0522592@remserv.rz.htw-berlin.de:~/public_html/mindmaps/",
+					{
+						cwd : "../bin"
+					}, function(error, stdout, stderr) {
+						if (error !== null) {
+							console.log('exec error: ' + error);
+						} else {
+							console.log("Copied all files successfully");
+						}
+					});
+		});
