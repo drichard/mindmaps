@@ -82,18 +82,54 @@ html,body {
 	width: 100%;
 }
 
+.logo-css3-bg {
+	-webkit-transition: all 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+	background: #75a8c4; /* Old browsers */
+	background: -moz-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(7%, #75a8c4),
+		color-stop(100%, #e5e5e5) ); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
+	/* Opera11.10+ */
+	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
+	/* IE10+ */
+	filter: progid : DXImageTransform.Microsoft.gradient (   startColorstr =
+		'#75A8C4', endColorstr = '#E5E5E5', GradientType = 1 ); /* IE6-9 */
+	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
+}
+
+.logo-css3-bg:hover {
+	-webkit-transition: all 1s ease-out;
+	-moz-transition: all 1s ease-out;
+	transition: all 1s ease-out;
+	-moz-transform: scale(1) rotate(180deg) translate(0px, 0px)
+		skew(0deg, 0deg);
+	-webkit-transform: scale(1) rotate(180deg) translate(0px, 0px)
+		skew(0deg, 0deg);
+	-o-transform: scale(1) rotate(180deg) translate(0px, 0px)
+		skew(0deg, 0deg);
+	-ms-transform: scale(1) rotate(180deg) translate(0px, 0px)
+		skew(0deg, 0deg);
+	transform: scale(1) rotate(180deg) translate(0px, 0px) skew(0deg, 0deg);
+}
+
 #logo {
 	float: left;
-	width: 120px;
+	width: 170px;
 	height: 40px;
 	background-color: #AFC8F0;
 	margin-right: 10px;
 	color: white;
-	font-size: 3.3em;
+	font-size: 3em;
 	font-weight: bold;
 	text-align: center;
 	overflow: hidden;
 	padding-top: 3px;
+	text-shadow: 2px 1px 5px #1C4257;
 }
 
 #toolbar {
@@ -203,6 +239,10 @@ html,body {
 	border: 2px solid red;
 	padding: 2px;
 	z-index: 1000;
+	
+	webkit-box-shadow: 3px 3px 7px #828282;
+	-moz-box-shadow: 3px 3px 7px #828282;
+	box-shadow: 3px 3px 7px #828282;
 }
 
 .mindmap .node-caption.edit {
@@ -261,6 +301,11 @@ html,body {
 #creator-wrapper {
 	position: absolute !important;
 	bottom: -16px;
+	cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
+}
+
+#creator-wrapper.ui-draggable-dragging {
+	 cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default !important;
 }
 
 #creator-wrapper.left {
@@ -270,6 +315,7 @@ html,body {
 #creator-wrapper.right {
 	right: -18px;
 }
+
 
 #creator-nub {
 	width: 24px;
@@ -393,7 +439,7 @@ html,body {
 	width: 50%;
 }
 
-.file-dialog .localstorage-filelist th.modified{
+.file-dialog .localstorage-filelist th.modified {
 	width: 40%;
 }
 
@@ -405,8 +451,8 @@ html,body {
 	background-color: #E8E8E8;
 }
 
-
-.file-dialog .localstorage-filelist tbody tr:hover, .file-dialog .localstorage-filelist tbody tr:nth-child(odd):hover {
+.file-dialog .localstorage-filelist tbody tr:hover,.file-dialog .localstorage-filelist tbody tr:nth-child(odd):hover
+	{
 	background-color: #B9E0F5;
 }
 
@@ -416,8 +462,8 @@ html,body {
 
 .file-dialog .localstorage-filelist tr:hover a.delete {
 	display: inline;
-}	
-	
+}
+
 .file-dialog .seperator {
 	display: block;
 	clear: both;

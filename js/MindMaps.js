@@ -18,7 +18,7 @@ $(function() {
 	// setup shortcuts
 	var shortcuts = new mindmaps.KeyboardShortcuts(eventBus);
 	shortcuts.registerAll();
-	
 
-	// eventBus.publish(Event.OPEN_DOCUMENT);
+	
+	eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 });
