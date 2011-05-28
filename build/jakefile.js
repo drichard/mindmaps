@@ -13,11 +13,18 @@ var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
 var indexFile = fs.readFileSync(baseDir + indexFileName, "utf8");
 var scriptNames = [];
 
+desc("read");
+task("read", function() {
+	var pref = require("./pref.js");
+	console.log(pref);
+});
+
 desc("Clean old build directory");
 task("clean-dir", function() {
 	if (path.existsSync(publishDir)) {
 		console.log("Deleting old bin directory");
-		wrench.rmdirSyncRecursive(publishDir, 0755);
+		
+		wrench.rmdirSyncRecursive(publishDir);
 	}
 });
 
