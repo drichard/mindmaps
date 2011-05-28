@@ -185,6 +185,12 @@ mindmaps.DefaultCanvasView = function() {
 
 		ctx.strokeStyle = color;
 		ctx.fillStyle = color;
+		
+		// shadow
+//		ctx.shadowOffsetX = 3;
+//		ctx.shadowOffsetY = 3;
+//		ctx.shadowBlur    = 5;
+//		ctx.shadowColor   = "#828282";
 
 		var startX, startY, endX, endY;
 

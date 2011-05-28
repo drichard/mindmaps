@@ -89,10 +89,6 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 		navigatorPanel = fpf.create("Navigator", naviView.getContent());
 		navigatorPanel.show();
 		statusbarPresenter.addEntry(navigatorPanel);
-
-		var chatPanel = fpf.create("Chat");
-		statusbarPresenter.addEntry(chatPanel);
-
 	};
 
 	bind();

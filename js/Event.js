@@ -29,10 +29,8 @@ mindmaps.Event = {
 	UNDO_ACTION : "UndoActionEvent",
 
 	/**
-	 * @param {boolean}
-	 *            undoState
-	 * @param {boolean}
-	 *            redoState
+	 * @param {boolean} undoState
+	 * @param {boolean} redoState
 	 */
 	UNDO_STATE_CHANGE : "UndoStateChangeEvent",
 
@@ -42,92 +40,76 @@ mindmaps.Event = {
 	CLOSE_DOCUMENT : "CloseDocumentEvent",
 
 	/**
-	 * @param The
-	 *            document
+	 * @param The document
 	 */
 	DOCUMENT_CREATED : "DocumentCreatedEvent",
 
 	/**
-	 * @param The
-	 *            document
+	 * @param The document
 	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
 
 	/**
-	 * @param The
-	 *            document
+	 * @param The document
 	 */
 	DOCUMENT_SAVED : "DocumentSavedEvent",
 
 	/**
-	 * @param The
-	 *            document
+	 * @param The document
 	 */
 	DOCUMENT_CLOSED : "DocumentClosedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_SELECTED : "NodeSelectedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_DESELECTED : "NodeDeselectedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_MOVED : "NodeMovedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_TEXT_CAPTION_CHANGED : "NodeTextCaptionChangedEvent",
 
 	/**
 	 * Some parameter of the node font attribute has changed.
 	 * 
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_FONT_CHANGED : "NodeFontChangedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_BRANCH_COLOR_CHANGED : "NodeBranchColorChangedEvent",
 
 	/**
-	 * @param The
-	 *            node
-	 * @param The
-	 *            origin of creation
+	 * @param The node
+	 * @param The origin of creation
 	 */
 	NODE_CREATED : "NodeCreatedEvent",
 
 	/**
-	 * @param The
-	 *            node
-	 * @param The
-	 *            parent
+	 * @param The node
+	 * @param The parent
 	 */
 	NODE_DELETED : "NodeDeletedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_OPENED : "NodeOpenedEvent",
 
 	/**
-	 * @param The
-	 *            node
+	 * @param The node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
 
@@ -136,8 +118,7 @@ mindmaps.Event = {
 	ZOOM_OUT : "ZoomOutEvent",
 
 	/**
-	 * @param the
-	 *            new zoom factor
+	 * @param the new zoom factor
 	 */
 	ZOOM_CHANGED : "ZoomChangedEvent"
 };

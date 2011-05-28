@@ -95,7 +95,7 @@ desc("Remove debug statements from HTML");
 task("remove-debug", function() {
 	console.log("Removing IF DEBUG statements in index.html");
 
-	var regexDebug = /^<!-- IF DEBUG -->[\s\S]*?<!-- END IF -->/gmi;
+	var regexDebug = /<!-- DEBUG -->[\s\S]*?<!-- \/DEBUG -->/gmi;
 	indexFile = indexFile.replace(regexDebug, "");
 });
 
