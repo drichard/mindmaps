@@ -39,8 +39,8 @@ mindmaps.SaveDocumentView = function() {
 		onError : function() {
 			console.log("error while saving to hdd");
 		},
-		swf : '/media/downloadify.swf',
-		downloadImage : '/img/transparent.png',
+		swf : 'media/downloadify.swf',
+		downloadImage : 'img/transparent.png',
 		width : 65,
 		height : 29,
 		append : true

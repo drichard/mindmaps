@@ -2,7 +2,6 @@
 "use strict";
 
 // first file to load
-var DEBUG = true;
 var mindmaps = mindmaps || {};
 
 // start up

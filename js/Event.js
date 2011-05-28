@@ -150,7 +150,7 @@ mindmaps.EventBus = function() {
 MicroEvent.mixin(mindmaps.EventBus);
 
 // log all publishes in debug mode
-if (DEBUG) {
+if (mindmaps.DEBUG) {
 	mindmaps.EventBus.prototype.publish = function(event /* , args... */) {
 		this._events = this._events || {};
 

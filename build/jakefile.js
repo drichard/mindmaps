@@ -13,7 +13,6 @@ var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
 var indexFile = fs.readFileSync(baseDir + indexFileName, "utf8");
 var scriptNames = [];
 
-
 desc("Clean old build directory");
 task("clean-dir", function() {
 	if (path.existsSync(publishDir)) {
@@ -84,16 +83,26 @@ task("minify-js", [ "create-dir" ], function() {
 	}
 });
 
-desc("Use minified scripts");
+desc("Use minified scripts in HTML");
 task("use-min-js", [ "create-dir", "minify-js" ], function() {
 	console.log("Replacing script files with minified version in index.html");
 	indexFile = indexFile.replace(regexScriptSection, "<script src=\"js/"
 			+ scriptFilename + "\"></script>");
-	
-//	// TODO check this
-//	var regexReplace = /^<!-- REPLACE -->[\s\S]*<!-- WITH.=."([\s\S]*)" -->/gmi;
-//	indexFile = indexFile.replace(regexReplace, "$1");
-	
+
+});
+
+desc("Remove debug statements from HTML");
+task("remove-debug", function() {
+	console.log("Removing IF DEBUG statements in index.html");
+
+	var regexDebug = /^<!-- IF DEBUG -->[\s\S]*?<!-- END IF -->/gmi;
+	indexFile = indexFile.replace(regexDebug, "");
+});
+
+desc("Copy index.html");
+task("copy-index", [ "create-dir", "use-min-js", "remove-debug" ], function() {
+	console.log("Copying index.html to /bin");
+
 	fs.writeFileSync(publishDir + indexFileName, indexFile);
 });
 
@@ -145,7 +154,7 @@ task("copy-files", [ "create-dir", "minify-js" ], function() {
 });
 
 desc("Build project");
-task("build", [ "use-min-js", "copy-files" ], function() {
+task("build", [ "copy-index", "copy-files" ], function() {
 	console.log("Project built.");
 });
 
