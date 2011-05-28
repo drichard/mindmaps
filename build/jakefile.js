@@ -13,6 +13,7 @@ var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
 var indexFile = fs.readFileSync(baseDir + indexFileName, "utf8");
 var scriptNames = [];
 
+
 desc("Clean old build directory");
 task("clean-dir", function() {
 	if (path.existsSync(publishDir)) {
@@ -89,9 +90,9 @@ task("use-min-js", [ "create-dir", "minify-js" ], function() {
 	indexFile = indexFile.replace(regexScriptSection, "<script src=\"js/"
 			+ scriptFilename + "\"></script>");
 	
-	// TODO check this
-	var regexReplace = /^<!-- REPLACE -->[\s\S]*<!-- WITH.=."([\s\S]*)" -->/gmi;
-	indexFile = indexFile.replace(regexReplace, "$1");
+//	// TODO check this
+//	var regexReplace = /^<!-- REPLACE -->[\s\S]*<!-- WITH.=."([\s\S]*)" -->/gmi;
+//	indexFile = indexFile.replace(regexReplace, "$1");
 	
 	fs.writeFileSync(publishDir + indexFileName, indexFile);
 });
