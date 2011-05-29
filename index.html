@@ -58,6 +58,9 @@
 				<canvas id="navi-canvas"></canvas>
 				<div id="navi-canvas-overlay"></div>
 			</div>
+			<div id="navi-zoom">
+				<span id="navi-zoom-level"></span>
+			</div>
 			<div id="navi-buttons" style="float: right">
 				<!-- 							<button id="button-navi-center"> </button> -->
 				<button id="button-navi-zoom-in"
@@ -172,8 +175,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.1.min.js">\x3C/script>');</script>
 
-<script src="js/libs/jquery-ui-1.8.11.custom.min.js"></script>
-
 <!-- DEBUG -->
 <!-- set debug flag for all scripts. Will be removed in production -->
 <script type="text/javascript">
@@ -183,6 +184,7 @@ mindmaps.DEBUG = true;
 <!-- /DEBUG -->
 
 <!-- JS:LIB:BEGIN -->
+<script src="js/libs/jquery-ui-1.8.11.custom.min.js"></script>
 <script src="js/libs/dragscrollable.js"></script>
 <script src="js/libs/jquery.hotkeys.js"></script>
 <script src="js/libs/jquery.mousewheel.js"></script>
@@ -204,6 +206,7 @@ mindmaps.DEBUG = true;
 <script src="js/UndoManager.js"></script>
 <script src="js/UndoController.js"></script>
 <script src="js/ClipboardController.js"></script>
+<script src="js/ZoomController.js"></script>
 <script src="js/KeyboardShortcuts.js"></script>
 <script src="js/FloatPanel.js"></script>
 <script src="js/Navigator.js"></script>

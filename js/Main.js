@@ -1,6 +1,5 @@
 
 mindmaps.CanvasContainer = function() {
-	MicroEvent.mixin(mindmaps.CanvasContainer);
 	var self = this;
 	var $content = $("#canvas-container");
 
@@ -31,6 +30,7 @@ mindmaps.CanvasContainer = function() {
 	};
 
 };
+MicroEvent.mixin(mindmaps.CanvasContainer);
 
 mindmaps.CanvasContainer.Event = {
 	/**
@@ -50,6 +50,8 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 	}
 
 	this.go = function() {
+		var zoomController = new mindmaps.ZoomController(eventBus);
+		
 		var canvasContainer = new mindmaps.CanvasContainer();
 		canvasContainer.init();
 
@@ -61,17 +63,19 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 
 		var canvas = new mindmaps.DefaultCanvasView();
 		var canvasPresenter = new mindmaps.CanvasPresenter(eventBus, appModel,
-				canvas);
+				canvas, zoomController);
 		canvasPresenter.go();
 
 		var statusbar = new mindmaps.StatusBarView();
 		var statusbarPresenter = new mindmaps.StatusBarPresenter(eventBus,
 				statusbar);
 		statusbarPresenter.go();
-
-		var fpf = new mindmaps.FloatPanelFactory(canvasContainer);
+		
+		
 
 		// floating Panels
+		var fpf = new mindmaps.FloatPanelFactory(canvasContainer);
+
 		var inspectorView = new mindmaps.InspectorView();
 		var inspectorPresenter = new mindmaps.InspectorPresenter(eventBus, appModel,
 				inspectorView);
@@ -83,7 +87,7 @@ mindmaps.MainPresenter = function(eventBus, appModel, view) {
 
 		var naviView = new mindmaps.NavigatorView();
 		var naviPresenter = new mindmaps.NavigatorPresenter(eventBus, appModel,
-				naviView, canvasContainer);
+				naviView, canvasContainer, zoomController);
 		naviPresenter.go();
 
 		navigatorPanel = fpf.create("Navigator", naviView.getContent());

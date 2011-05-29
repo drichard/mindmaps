@@ -1,4 +1,3 @@
-
 mindmaps.NavigatorView = function() {
 	var self = this;
 
@@ -44,7 +43,7 @@ mindmaps.NavigatorView = function() {
 			height : height
 		});
 	};
-	
+
 	this.getCanvasWidth = function() {
 		return $("#navi-canvas", $content).width();
 	};
@@ -52,9 +51,9 @@ mindmaps.NavigatorView = function() {
 	this.init = function(canvasSize) {
 
 		$("#button-navi-zoom-in", $content).button({
-			text: false,
-			icons: {
-				primary: "ui-icon-zoomin"
+			text : false,
+			icons : {
+				primary : "ui-icon-zoomin"
 			}
 		}).click(function() {
 			if (self.buttonZoomInClicked) {
@@ -63,9 +62,9 @@ mindmaps.NavigatorView = function() {
 		});
 
 		$("#button-navi-zoom-out", $content).button({
-			text: false,
-			icons: {
-				primary: "ui-icon-zoomout"
+			text : false,
+			icons : {
+				primary : "ui-icon-zoomout"
 			}
 		}).click(function() {
 			if (self.buttonZoomOutClicked) {
@@ -153,13 +152,18 @@ mindmaps.NavigatorView = function() {
 			ctx.restore();
 		}
 	};
+
+	this.showZoomLevel = function(zoom) {
+		$("#navi-zoom-level").text(zoom);
+	};
 };
 
-mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
+mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container,
+		zoomController) {
 	var self = this;
 	var $container = container.getContent();
 	var viewDragging = false;
-	var scale = 1;
+	var scale = zoomController.DEFAULT_ZOOM;
 	var canvasSize = mindmaps.Point.ZERO;
 	var docSize = null;
 	var mindmap = null;
@@ -187,9 +191,9 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		var width = view.getCanvasWidth();
 		var _scale = docSize.x / width;
 		var height = docSize.y / _scale;
-		
+
 		view.setCanvasHeight(height);
-		
+
 		canvasSize.x = width;
 		canvasSize.y = height;
 	}
@@ -204,6 +208,11 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		var top = st * canvasSize.y / docSize.y;
 		view.setDraggerPosition(left, top);
 	}
+	
+	function calculateZoomLevel() {
+		var zoomlevel = scale * 100 + "%";
+		view.showZoomLevel(zoomlevel);
+	}
 
 	function documentOpened(doc) {
 		docSize = doc.dimensions;
@@ -212,8 +221,9 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		calculateCanvasSize();
 		calculateDraggerPosition();
 		calculateDraggerSize();
+		calculateZoomLevel();
 		renderView();
-		
+
 		view.showActiveContent();
 
 		// move dragger when container was scrolled
@@ -288,7 +298,7 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 	eventBus.subscribe(mindmaps.Event.NODE_MOVED, function() {
 		renderView();
 	});
-	
+
 	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function() {
 		renderView();
 	});
@@ -313,6 +323,7 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container) {
 		scale = zoomFactor;
 		calculateDraggerPosition();
 		calculateDraggerSize();
+		calculateZoomLevel();
 	});
 
 	this.go = function() {

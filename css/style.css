@@ -401,6 +401,11 @@ html,body {
 	cursor: move;
 }
 
+#navi-zoom {
+	font-size: 14px;
+	float: left;
+}
+
 #inspector {
 	
 }

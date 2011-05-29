@@ -1,8 +1,7 @@
-mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
+mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 	var self = this;
 	var selectedNode = null;
 	var creator = view.getCreator();
-	var zoomControl = new ZoomControl(eventBus);
 
 	// TODO restrict keys on canvas area?, move out
 	$(document).bind("keydown", "F2", function() {
@@ -45,9 +44,11 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 
 	view.mouseWheeled = function(delta) {
 		if (delta > 0) {
-			eventBus.publish(mindmaps.Event.ZOOM_IN);
+			zoomController.zoomIn();
+			//eventBus.publish(mindmaps.Event.ZOOM_IN);
 		} else {
-			eventBus.publish(mindmaps.Event.ZOOM_OUT);
+			zoomController.zoomOut();
+			//eventBus.publish(mindmaps.Event.ZOOM_OUT);
 		}
 	};
 
@@ -145,7 +146,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	};
 
 	function showMindMap(doc) {
-		view.setZoomFactor(1);
+		view.setZoomFactor(zoomController.DEFAULT_ZOOM);
 		var dimensions = doc.dimensions;
 		view.setDimensions(dimensions.x, dimensions.y);
 		var map = doc.mindmap;
@@ -253,50 +254,4 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view) {
 	}
 
 	bind();
-	
-	// TODO how to set default zoom on seperate objects
-	/**
-	 * Object that controls the zoom.
-	 * @param eventBus
-	 * @returns {ZoomControl}
-	 */
-	function ZoomControl(eventBus) {
-		var self = this;
-		var ZOOM_STEP = 0.25;
-		var MAX_ZOOM = 3;
-		var MIN_ZOOM = 0.2;
-		
-		this.DEFAULT_ZOOM = 1;
-		this.zoomFactor = this.DEFAULT_ZOOM;
-
-		this.zoomIn = function() {
-			this.zoomFactor += ZOOM_STEP;
-			if (this.zoomFactor > MAX_ZOOM) {
-				this.zoomFactor -= ZOOM_STEP;
-			} else {
-				eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor);
-			}
-			
-			return this.zoomFactor;
-		};
-
-		this.zoomOut = function() {
-			this.zoomFactor -= ZOOM_STEP;
-			if (this.zoomFactor < MIN_ZOOM) {
-				this.zoomFactor += ZOOM_STEP;
-			} else {
-				eventBus.publish(mindmaps.Event.ZOOM_CHANGED, this.zoomFactor);
-			}
-			
-			return this.zoomFactor;
-		};
-		
-		eventBus.subscribe(mindmaps.Event.ZOOM_IN, function() {
-			self.zoomIn();
-		});
-		
-		eventBus.subscribe(mindmaps.Event.ZOOM_OUT, function() {
-			self.zoomOut();
-		});
-	}
 };
