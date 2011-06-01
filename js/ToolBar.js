@@ -162,6 +162,7 @@ mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
 
 	view.newButtonClicked = function() {
 		eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
+		
 	};
 
 	view.closeButtonClicked = function() {
