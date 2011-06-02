@@ -1,50 +1,41 @@
 mindmaps.ShortcutController = function() {
+	// set to save shortcuts in
 	this.shortcuts = {};
 
-	this.register = function(shortcut, handler, type) {
+	/**
+	 * Set the event type and add namespace for later removal.
+	 * 
+	 * @param shortcut the key combination
+	 * @param type defaults to "keydown"
+	 * @returns {String}
+	 */
+	function getType(shortcut, type) {
 		type = type || "keydown";
-		type = type + "." + shortcut;
+		return type + "." + shortcut;
+	}
+
+	this.register = function(shortcut, handler, type) {
+		type = getType(shortcut, type);
 		$(document).bind(type, shortcut, function(e) {
+			// try best to cancel default actions on shortcuts like ctrl+n
+			e.stopImmediatePropagation();
+			e.stopPropagation();
 			e.preventDefault();
 			handler();
+			return false;
 		});
-		this.shortcuts.type = null;
+		this.shortcuts[type] = true;
 	};
 
 	this.unregister = function(shortcut, type) {
-		type = type || "keydown";
-		type = type + "." + shortcut;
+		type = getType(shortcut, type);
 		$(document).unbind(type);
-		delete this.shortcuts.type;
+		delete this.shortcuts[type];
 	};
 
 	this.unregisterAll = function() {
 		_.keys(this.shortcuts, function(type) {
 			$(document).unbind(type);
 		});
-	};
-
-	this.registerAll = function() {
-		this.register({
-			keys : "ctrl+c",
-			handler : function() {
-				eventBus.publish(mindmaps.Event.COPY_NODE);
-			}
-		});
-
-		this.register({
-			keys : "ctrl+x",
-			handler : function() {
-				eventBus.publish(mindmaps.Event.CUT_NODE);
-			}
-		});
-
-		this.register({
-			keys : "ctrl+v",
-			handler : function() {
-				eventBus.publish(mindmaps.Event.PASTE_NODE);
-			}
-		});
-
 	};
 };

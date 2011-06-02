@@ -35,13 +35,4 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
 
 		return this.zoomFactor;
 	};
-
-	// listen to outside event
-	eventBus.subscribe(mindmaps.Event.ZOOM_IN, function() {
-		self.zoomIn();
-	});
-
-	eventBus.subscribe(mindmaps.Event.ZOOM_OUT, function() {
-		self.zoomOut();
-	});
 };

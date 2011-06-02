@@ -1,5 +1,5 @@
 mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
-		mindmapController, view, zoomController) {
+		mindmapModel, view, zoomController) {
 	var self = this;
 	var selectedNode = null;
 	var creator = view.getCreator();
@@ -16,19 +16,19 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 
 	this.editNodeCaption = function(node) {
 		if (!node) {
-			node = mindmapController.selectedNode;
+			node = mindmapModel.selectedNode;
 		}
 		view.editNodeCaption(node);
 	};
 
 	var toggleFold = function(node) {
 		if (!node) {
-			node = mindmapController.selectedNode;
+			node = mindmapModel.selectedNode;
 		}
 
 		// toggle node visibility
 		var action = new mindmaps.action.ToggleNodeFoldAction(node);
-		mindmapController.executeAction(action);
+		mindmapModel.executeAction(action);
 	};
 
 	var selectNode = function(node) {
@@ -44,16 +44,14 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		view.highlightNode(node);
 		selectedNode = node;
 
-		mindmapController.selectNode(node);
+		mindmapModel.selectNode(node);
 	};
 
 	view.mouseWheeled = function(delta) {
 		if (delta > 0) {
 			zoomController.zoomIn();
-			// eventBus.publish(mindmaps.Event.ZOOM_IN);
 		} else {
 			zoomController.zoomOut();
-			// eventBus.publish(mindmaps.Event.ZOOM_OUT);
 		}
 	};
 
@@ -85,22 +83,22 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		creator.attachToNode(node);
 	};
 
-	view.nodeMouseUp = function(node) {
-	};
+//	view.nodeMouseUp = function(node) {
+//	};
 
 	view.nodeDoubleClicked = function(node) {
 		view.editNodeCaption(node);
 	};
 
-	view.nodeDragging = function() {
-	};
+//	view.nodeDragging = function() {
+//	};
 
 	view.nodeDragged = function(node, offset) {
 		// view has updated itself
 
 		// update model
 		var action = new mindmaps.action.MoveNodeAction(node, offset);
-		mindmapController.executeAction(action);
+		mindmapModel.executeAction(action);
 	};
 
 	view.foldButtonClicked = function(node) {
@@ -128,7 +126,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		// indicate that we want to set this nodes caption after creation
 		node.shouldEditCaption = true;
 
-		mindmapController.createNode(node, parent);
+		mindmapModel.createNode(node, parent);
 	};
 
 	view.nodeCaptionEditCommitted = function(str) {
@@ -139,8 +137,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		}
 
 		view.stopEditNodeCaption();
-		var action = new mindmaps.action.ChangeNodeCaptionAction(selectedNode, str);
-		mindmapController.executeAction(action);
+		var action = new mindmaps.action.ChangeNodeCaptionAction(selectedNode,
+				str);
+		mindmapModel.executeAction(action);
 	};
 
 	this.go = function() {
@@ -200,7 +199,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 				var parent = node.getParent();
 				if (parent.foldChildren) {
 					var action = new mindmaps.action.OpenNodeAction(parent);
-					mindmapController.executeAction(action);
+					mindmapModel.executeAction(action);
 				}
 
 				// select and go into edit mode on new node
@@ -241,7 +240,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		});
 
 		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
-			var doc = mindmapController.getDocument();
+			var doc = mindmapModel.getDocument();
 			view.setZoomFactor(zoomFactor);
 			var dimX = doc.dimensions.x;
 			var dimY = doc.dimensions.y;

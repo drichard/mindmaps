@@ -1,5 +1,5 @@
 mindmaps.ClipboardController = function(eventBus, commandRegistry,
-		mindmapController) {
+		mindmapModel) {
 	var node = null;
 
 	this.init = function() {
@@ -20,15 +20,16 @@ mindmaps.ClipboardController = function(eventBus, commandRegistry,
 	};
 
 	function doCopy() {
-		var selected = mindmapController.selectedNode;
+		var selected = mindmapModel.selectedNode;
 		node = selected.clone();
 		this.pasteCommand.setEnabled(true);
 	}
 
 	function doCut() {
-		var selected = mindmapController.selectedNode;
+		var selected = mindmapModel.selectedNode;
 		node = selected.clone();
-		mindmapController.deleteNode(selected);
+		mindmapModel.deleteNode(selected);
+		this.pasteCommand.setEnabled(true);
 	}
 
 	function doPaste() {
@@ -36,9 +37,9 @@ mindmaps.ClipboardController = function(eventBus, commandRegistry,
 			return;
 		}
 
-		var selected = mindmapController.selectedNode;
+		var selected = mindmapModel.selectedNode;
 		// send a cloned copy of our node, so we can paste multiple times
-		mindmapController.createNode(node.clone(), selected);
+		mindmapModel.createNode(node.clone(), selected);
 	}
 
 	this.init();

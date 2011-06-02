@@ -1,9 +1,7 @@
-mindmaps.MindMapController = function(eventBus, commandRegistry) {
+mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 	var self = this;
 	this.document = null;
 	this.selectedNode = null;
-
-	var undoController = new mindmaps.UndoController(eventBus, commandRegistry);
 
 	this.getDocument = function() {
 		return this.document;
@@ -32,7 +30,6 @@ mindmaps.MindMapController = function(eventBus, commandRegistry) {
 		var deleteCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
 		deleteCommand.setHandler(this.deleteNode.bind(this));
 	};
-
 
 	this.deleteNode = function(node) {
 		if (!node) {
@@ -90,8 +87,11 @@ mindmaps.MindMapController = function(eventBus, commandRegistry) {
 					self.executeAction(action.redo());
 				};
 			}
-			// eventBus.publish(mindmaps.Event.UNDO_ACTION, undoFunc, redoFunc);
-			undoController.addUndo(undoFunc, redoFunc);
+
+			// emit undo event
+			if (this.undoEvent) {
+				this.undoEvent(undoFunc, redoFunc);
+			}
 		}
 	};
 

@@ -16,6 +16,10 @@ mindmaps.UndoController = function(eventBus, commandRegistry) {
 	this.undoStateChanged = function() {
 		this.undoCommand.setEnabled(this.undoManager.canUndo());
 		this.redoCommand.setEnabled(this.undoManager.canRedo());
+		
+		// TODO remove
+		eventBus.publish(mindmaps.Event.UNDO_STATE_CHANGE, this.undoManager
+				.canUndo(), this.undoManager.canRedo());
 	};
 
 	this.addUndo = function(undoFunc, redoFunc) {

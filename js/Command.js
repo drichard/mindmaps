@@ -131,6 +131,7 @@ mindmaps.PasteNodeCommand.prototype = new mindmaps.Command();
 mindmaps.NewDocumentCommand = function() {
 	this.id = "NEW_DOCUMENT_COMMAND";
 	this.label = "New";
+	this.shortcut = "ctrl+n";
 	this.description = "Start working on a new mind map";
 };
 mindmaps.NewDocumentCommand.prototype = new mindmaps.Command();
@@ -138,6 +139,7 @@ mindmaps.NewDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.OpenDocumentCommand = function() {
 	this.id = "OPEN_DOCUMENT_COMMAND";
 	this.label = "Open";
+	this.shortcut = "ctrl+o";
 	this.description = "Open an existing mind map";
 };
 mindmaps.OpenDocumentCommand.prototype = new mindmaps.Command();
@@ -145,6 +147,7 @@ mindmaps.OpenDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.SaveDocumentCommand = function() {
 	this.id = "SAVE_DOCUMENT_COMMAND";
 	this.label = "Save";
+	this.shortcut = "ctrl+s";
 	this.description = "Save the mind map";
 };
 mindmaps.SaveDocumentCommand.prototype = new mindmaps.Command();
@@ -152,6 +155,7 @@ mindmaps.SaveDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.CloseDocumentCommand = function() {
 	this.id = "CLOSE_DOCUMENT_COMMAND";
 	this.label = "Close";
+	this.shortcut = "ctrl+w";
 	this.description = "Close the mind map";
 };
 mindmaps.CloseDocumentCommand.prototype = new mindmaps.Command();

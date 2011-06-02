@@ -43,8 +43,8 @@ mindmaps.CanvasContainer.Event = {
 mindmaps.MainView = function() {
 };
 
-mindmaps.MainViewController = function(eventBus, mindmapController,
-		commandRegistry, view) {
+mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry,
+		view) {
 	var zoomController = new mindmaps.ZoomController(eventBus, commandRegistry);
 
 	this.go = function() {
@@ -59,7 +59,7 @@ mindmaps.MainViewController = function(eventBus, mindmapController,
 
 		var canvas = new mindmaps.DefaultCanvasView();
 		var canvasPresenter = new mindmaps.CanvasPresenter(eventBus,
-				commandRegistry, mindmapController, canvas, zoomController);
+				commandRegistry, mindmapModel, canvas, zoomController);
 		canvasPresenter.go();
 
 		var statusbar = new mindmaps.StatusBarView();
@@ -72,7 +72,7 @@ mindmaps.MainViewController = function(eventBus, mindmapController,
 
 		var inspectorView = new mindmaps.InspectorView();
 		var inspectorPresenter = new mindmaps.InspectorPresenter(eventBus,
-				commandRegistry, inspectorView);
+				mindmapModel, inspectorView);
 		inspectorPresenter.go();
 
 		var inspectorPanel = fpf
@@ -81,11 +81,11 @@ mindmaps.MainViewController = function(eventBus, mindmapController,
 		statusbarPresenter.addEntry(inspectorPanel);
 
 		var naviView = new mindmaps.NavigatorView();
-		var naviPresenter = new mindmaps.NavigatorPresenter(eventBus, commandRegistry,
-				naviView, canvasContainer, zoomController);
+		var naviPresenter = new mindmaps.NavigatorPresenter(eventBus, naviView,
+				canvasContainer, zoomController);
 		naviPresenter.go();
 
-		navigatorPanel = fpf.create("Navigator", naviView.getContent());
+		var navigatorPanel = fpf.create("Navigator", naviView.getContent());
 		navigatorPanel.show();
 		statusbarPresenter.addEntry(navigatorPanel);
 	};

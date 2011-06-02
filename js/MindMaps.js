@@ -7,6 +7,5 @@ var mindmaps = mindmaps || {};
 // start up
 $(function() {
 	var appController = new mindmaps.ApplicationController();
-	appController.init();
 	appController.go();
 });

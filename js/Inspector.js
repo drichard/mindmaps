@@ -112,60 +112,60 @@ mindmaps.InspectorView = function() {
 	};
 };
 
-mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
+mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
 	var self = this;
 
 	view.fontSizeDecreaseButtonClicked = function() {
 		var action = new mindmaps.action.DecreaseNodeFontSizeAction(
-				appModel.selectedNode);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode);
+		mindmapModel.executeAction(action);
 	};
 
 	view.fontSizeIncreaseButtonClicked = function() {
 		var action = new mindmaps.action.IncreaseNodeFontSizeAction(
-				appModel.selectedNode);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode);
+		mindmapModel.executeAction(action);
 	};
 
 	view.fontBoldCheckboxClicked = function(checked) {
 		var action = new mindmaps.action.SetFontWeightAction(
-				appModel.selectedNode, checked);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode, checked);
+		mindmapModel.executeAction(action);
 	};
 
 	view.fontItalicCheckboxClicked = function(checked) {
 		var action = new mindmaps.action.SetFontStyleAction(
-				appModel.selectedNode, checked);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode, checked);
+		mindmapModel.executeAction(action);
 	};
 
 	view.fontUnderlineCheckboxClicked = function(checked) {
 		var action = new mindmaps.action.SetFontDecorationAction(
-				appModel.selectedNode, checked);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode, checked);
+		mindmapModel.executeAction(action);
 	};
 
 	view.branchColorPicked = function(color) {
 		var action = new mindmaps.action.SetBranchColorAction(
-				appModel.selectedNode, color);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode, color);
+		mindmapModel.executeAction(action);
 	};
 
 	view.fontColorPicked = function(color) {
 		var action = new mindmaps.action.SetFontColorAction(
-				appModel.selectedNode, color);
-		appModel.executeAction(action);
+				mindmapModel.selectedNode, color);
+		mindmapModel.executeAction(action);
 	};
 
 	eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
-		if (appModel.selectedNode === node) {
+		if (mindmapModel.selectedNode === node) {
 			updateView(node);
 		}
 	});
 
 	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED,
 			function(node) {
-				if (appModel.selectedNode === node) {
+				if (mindmapModel.selectedNode === node) {
 					updateView(node);
 				}
 			});
@@ -174,7 +174,7 @@ mindmaps.InspectorPresenter = function(eventBus, appModel, view) {
 	});
 
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
-		view.setControlsEnabled(true);
+		//view.setControlsEnabled(true);
 		updateView(node);
 	});
 

@@ -56,7 +56,7 @@ mindmaps.OpenDocumentView = function() {
 	};
 };
 
-mindmaps.OpenDocumentPresenter = function(eventBus, mindmapController, view) {
+mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 
 	// TODO experimental, catch errrs
 	// http://www.w3.org/TR/FileAPI/#dfn-filereader
@@ -68,7 +68,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapController, view) {
 		reader.onload = function() {
 			var doc = mindmaps.Document.fromJSON(reader.result);
 			view.hideOpenDialog();
-			mindmapController.setDocument(doc);
+			mindmapModel.setDocument(doc);
 		};
 
 		reader.readAsText(file);
@@ -76,7 +76,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapController, view) {
 
 	view.documentClicked = function(doc) {
 		view.hideOpenDialog();
-		mindmapController.setDocument(doc);
+		mindmapModel.setDocument(doc);
 	};
 
 	view.deleteDocumentClicked = function(doc) {

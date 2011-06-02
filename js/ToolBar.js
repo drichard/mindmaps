@@ -130,6 +130,8 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
 		$("#button-paste").button(enabled ? "enable" : "disable");
 	});
 
+	// TODO add view buttons by command definitions
+	
 	view.addButtonClicked = function() {
 		var createNodeCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
 		createNodeCommand.execute();
@@ -178,11 +180,11 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
 	view.newButtonClicked = function() {
 		var ndc = commandRegistry.get(mindmaps.NewDocumentCommand);
 		ndc.execute();
-		// eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 	};
 
 	view.closeButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.CLOSE_DOCUMENT);
+		var ndc = commandRegistry.get(mindmaps.CloseDocumentCommand);
+		ndc.execute();
 	};
 
 	view.bigMapButtonClicked = function() {

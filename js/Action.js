@@ -56,8 +56,6 @@ mindmaps.action.DeleteNodeAction = function(node, mindmap) {
 	var parent = node.getParent();
 
 	this.execute = function() {
-		this.parent = node.getParent();
-
 		if (node.isRoot()) {
 			return false;
 		}

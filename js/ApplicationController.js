@@ -2,40 +2,40 @@ mindmaps.ApplicationController = function() {
 	var eventBus = new mindmaps.EventBus();
 	var shortcutController = new mindmaps.ShortcutController();
 	var commandRegistry = new mindmaps.CommandRegistry(shortcutController);
-	var mindmapController = new mindmaps.MindMapController(eventBus,
-			commandRegistry);
+	var undoController = new mindmaps.UndoController(eventBus, commandRegistry);
+	var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry);
 	var clipboardController = new mindmaps.ClipboardController(eventBus,
-			commandRegistry, mindmapController);
+			commandRegistry, mindmapModel);
 
 	function doNewDocument() {
 		// close old document first
-		var doc = mindmapController.getDocument();
+		var doc = mindmapModel.getDocument();
 		// TODO for now simply publish events, should be intercepted by
 		// someone
 		doCloseDocument();
 
 		var presenter = new mindmaps.NewDocumentPresenter(eventBus,
-				mindmapController, new mindmaps.NewDocumentView());
+				mindmapModel, new mindmaps.NewDocumentView());
 		presenter.go();
 	}
 
 	function doSaveDocument() {
 		var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
-				mindmapController, new mindmaps.SaveDocumentView());
+				mindmapModel, new mindmaps.SaveDocumentView());
 		presenter.go();
 	}
 
 	function doCloseDocument() {
-		var doc = mindmapController.getDocument();
+		var doc = mindmapModel.getDocument();
 		if (doc) {
 			// TODO close document presenter
-			mindmapController.setDocument(null);
+			mindmapModel.setDocument(null);
 		}
 	}
 
 	function doOpenDocument() {
 		var presenter = new mindmaps.OpenDocumentPresenter(eventBus,
-				mindmapController, new mindmaps.OpenDocumentView());
+				mindmapModel, new mindmaps.OpenDocumentView());
 		presenter.go();
 	}
 
@@ -55,13 +55,18 @@ mindmaps.ApplicationController = function() {
 		var closeDocumentCommand = commandRegistry
 				.get(mindmaps.CloseDocumentCommand);
 		closeDocumentCommand.setHandler(doCloseDocument);
+
+		// connect undo events emitted from mindmap model with undo controller
+		mindmapModel.undoEvent = undoController.addUndo.bind(undoController);
 	};
 
 	this.go = function() {
 		var viewController = new mindmaps.MainViewController(eventBus,
-				mindmapController, commandRegistry, new mindmaps.MainView());
+				mindmapModel, commandRegistry, new mindmaps.MainView());
 		viewController.go();
 
 		commandRegistry.get(mindmaps.NewDocumentCommand).execute();
 	};
+	
+	this.init();
 };

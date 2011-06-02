@@ -158,7 +158,7 @@ mindmaps.NavigatorView = function() {
 	};
 };
 
-mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container,
+mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		zoomController) {
 	var self = this;
 	var $container = container.getContent();
@@ -282,10 +282,6 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container,
 	});
 
 	// document events
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
-		documentOpened(doc);
-	});
-
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
 		documentOpened(doc);
 	});
