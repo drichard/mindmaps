@@ -119,16 +119,16 @@ mindmaps.ToolBarView = function() {
 	this.setRedoButtonEnabled = function(enabled) {
 		$redoButton.button(enabled ? "enable" : "disable");
 	};
+
 };
 
 mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
 	// view callbacks
 	var pasteNodeCommand = commandRegistry.get(mindmaps.PasteNodeCommand);
-	pasteNodeCommand.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED,
-			function(enabled) {
-				$("#button-paste").button(enabled ? "enable" : "disable");
-			});
-	
+	pasteNodeCommand.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED, function(
+			enabled) {
+		$("#button-paste").button(enabled ? "enable" : "disable");
+	});
 
 	view.addButtonClicked = function() {
 		var createNodeCommand = commandRegistry.get(mindmaps.CreateNodeCommand);

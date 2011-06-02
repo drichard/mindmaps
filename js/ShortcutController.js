@@ -4,23 +4,26 @@ mindmaps.ShortcutController = function() {
 	this.register = function(shortcut, handler, type) {
 		type = type || "keydown";
 		type = type + "." + shortcut;
-		$(document).bind(type, shortcut, handler);
+		$(document).bind(type, shortcut, function(e) {
+			e.preventDefault();
+			handler();
+		});
 		this.shortcuts.type = null;
 	};
-	
+
 	this.unregister = function(shortcut, type) {
 		type = type || "keydown";
 		type = type + "." + shortcut;
 		$(document).unbind(type);
 		delete this.shortcuts.type;
 	};
-	
+
 	this.unregisterAll = function() {
 		_.keys(this.shortcuts, function(type) {
 			$(document).unbind(type);
 		});
 	};
-	
+
 	this.registerAll = function() {
 		this.register({
 			keys : "ctrl+c",

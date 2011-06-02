@@ -27,32 +27,33 @@ mindmaps.MindMapController = function(eventBus, commandRegistry) {
 
 	this.init = function() {
 		var createCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
-		createCommand.setHandler(this.createNode);
+		createCommand.setHandler(this.createNode.bind(this));
 
 		var deleteCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
-		deleteCommand.setHandler(this.deleteNode);
+		deleteCommand.setHandler(this.deleteNode.bind(this));
 	};
+
 
 	this.deleteNode = function(node) {
 		if (!node) {
-			node = self.selectedNode;
+			node = this.selectedNode;
 		}
-		var map = self.getMindMap();
+		var map = this.getMindMap();
 		var action = new mindmaps.action.DeleteNodeAction(node, map);
-		self.executeAction(action);
+		this.executeAction(action);
 	};
 
 	this.createNode = function(node, parent) {
-		var map = self.getMindMap();
+		var map = this.getMindMap();
 		if (!(node && parent)) {
-			parent = self.selectedNode;
+			parent = this.selectedNode;
 			var action = new mindmaps.action.CreateAutoPositionedNodeAction(
 					parent, map);
 		} else {
 			var action = new mindmaps.action.CreateNodeAction(node, parent, map);
 		}
 
-		self.executeAction(action);
+		this.executeAction(action);
 	};
 
 	this.selectNode = function(node) {

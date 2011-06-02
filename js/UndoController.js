@@ -9,14 +9,13 @@ mindmaps.UndoController = function(eventBus, commandRegistry) {
 
 	this.createUndoManager = function() {
 		this.undoManager = new UndoManager();
-		this.undoManager.stateChanged = function() {
-			var undoState = this.canUndo();
-			var redoState = this.canRedo();
-			eventBus.publish(mindmaps.Event.UNDO_STATE_CHANGE, undoState,
-					redoState);
-		};
-
+		this.undoManager.stateChanged = this.undoStateChanged.bind(this);
 		this.init();
+	};
+
+	this.undoStateChanged = function() {
+		this.undoCommand.setEnabled(this.undoManager.canUndo());
+		this.redoCommand.setEnabled(this.undoManager.canRedo());
 	};
 
 	this.addUndo = function(undoFunc, redoFunc) {
@@ -41,8 +40,8 @@ mindmaps.UndoController = function(eventBus, commandRegistry) {
 		this.undoCommand.removeHandler();
 		this.redoCommand.removeHandler();
 	};
-	
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, this.createUndoManager
+
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, this.documentOpened
 			.bind(this));
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, this.documentClosed

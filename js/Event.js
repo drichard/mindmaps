@@ -3,43 +3,6 @@
  * Events that the event bus carries.
  */
 mindmaps.Event = {
-	DELETE_NODE : "DeleteSelectedNodeEvent",
-	NEW_NODE : "NewNodeEvent",
-
-	COPY_NODE : "CopyNodeEvent",
-	CUT_NODE : "CutNodeEvent",
-	PASTE_NODE : "PasteNodeEvent",
-
-	/**
-	 * Request undo operation.
-	 */
-	DO_UNDO : "DoUndoEvent",
-
-	/**
-	 * Request redo operation.
-	 */
-	DO_REDO : "DoRedoEvent",
-
-	/**
-	 * Record a new undo action.
-	 * 
-	 * @param undoFunc
-	 * @param redoFunc
-	 */
-	UNDO_ACTION : "UndoActionEvent",
-
-	/**
-	 * @param {boolean} undoState
-	 * @param {boolean} redoState
-	 */
-	UNDO_STATE_CHANGE : "UndoStateChangeEvent",
-
-	NEW_DOCUMENT : "NewDocumentEvent",
-	OPEN_DOCUMENT : "OpenDocumentEvent",
-	SAVE_DOCUMENT : "SaveDocumentEvent",
-	CLOSE_DOCUMENT : "CloseDocumentEvent",
-
-
 	/**
 	 * @param The document
 	 * @param {boolean} newDocument
@@ -109,10 +72,6 @@ mindmaps.Event = {
 	 * @param The node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
-
-	ZOOM_IN : "ZoomInEvent",
-
-	ZOOM_OUT : "ZoomOutEvent",
 
 	/**
 	 * @param the new zoom factor

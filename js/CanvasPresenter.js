@@ -4,17 +4,28 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 	var selectedNode = null;
 	var creator = view.getCreator();
 
-	// TODO restrict keys on canvas area?, move out
-	$(document).bind("keydown", "F2", function() {
-		view.editNodeCaption(selectedNode);
-	});
+	this.init = function() {
+		var editCaptionCommand = commandRegistry
+				.get(mindmaps.EditNodeCaptionCommand);
+		editCaptionCommand.setHandler(this.editNodeCaption.bind(this));
 
-	$(document).bind("keydown", "space", function(e) {
-		e.preventDefault();
-		toggleFold(selectedNode);
-	});
+		var toggleNodeFoldedCommand = commandRegistry
+				.get(mindmaps.ToggleNodeFoldedCommand);
+		toggleNodeFoldedCommand.setHandler(toggleFold);
+	};
+
+	this.editNodeCaption = function(node) {
+		if (!node) {
+			node = mindmapController.selectedNode;
+		}
+		view.editNodeCaption(node);
+	};
 
 	var toggleFold = function(node) {
+		if (!node) {
+			node = mindmapController.selectedNode;
+		}
+
 		// toggle node visibility
 		var action = new mindmaps.action.ToggleNodeFoldAction(node);
 		mindmapController.executeAction(action);
@@ -127,10 +138,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 			return;
 		}
 
-		var node = selectedNode;
-
 		view.stopEditNodeCaption();
-		var action = new mindmaps.action.ChangeNodeCaptionAction(node, str);
+		var action = new mindmaps.action.ChangeNodeCaptionAction(selectedNode, str);
 		mindmapController.executeAction(action);
 	};
 
@@ -164,7 +173,6 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
-			this.document = null;
 			view.clear();
 		});
 
@@ -201,7 +209,6 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 			}
 		});
 
-		// TODO select previous node
 		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
 			// select parent if we are deleting a selected node or a descendant
 			if (node === selectedNode || node.isDescendant(selectedNode)) {
@@ -247,4 +254,5 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 	}
 
 	bind();
+	this.init();
 };
