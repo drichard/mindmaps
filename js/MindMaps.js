@@ -6,18 +6,7 @@ var mindmaps = mindmaps || {};
 
 // start up
 $(function() {
-	var eventBus = new mindmaps.EventBus();
-	var appModel = new mindmaps.ApplicationModel(eventBus);
-	var undoController = new mindmaps.UndoController(eventBus);
-	var clipboardController = new mindmaps.ClipboardController(eventBus,
-			appModel);
-	var appController = new mindmaps.AppController(eventBus, appModel);
+	var appController = new mindmaps.ApplicationController();
+	appController.init();
 	appController.go();
-
-	// setup shortcuts
-	var shortcuts = new mindmaps.KeyboardShortcuts(eventBus);
-	shortcuts.registerAll();
-
-	
-	eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 });

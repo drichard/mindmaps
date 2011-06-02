@@ -1,4 +1,5 @@
-mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
+mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
+		mindmapController, view, zoomController) {
 	var self = this;
 	var selectedNode = null;
 	var creator = view.getCreator();
@@ -10,19 +11,13 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 
 	$(document).bind("keydown", "space", function(e) {
 		e.preventDefault();
-		toggleCollapse(selectedNode);
+		toggleFold(selectedNode);
 	});
 
-	var toggleCollapse = function(node) {
+	var toggleFold = function(node) {
 		// toggle node visibility
-		var action = new mindmaps.action.ToggleNodeCollapseAction(node);
-		appModel.executeAction(action);
-	};
-
-	var deleteSelectedNode = function() {
-		// remove from model
-		var action = new mindmaps.action.DeleteNodeAction(selectedNode);
-		appModel.executeAction(action);
+		var action = new mindmaps.action.ToggleNodeFoldAction(node);
+		mindmapController.executeAction(action);
 	};
 
 	var selectNode = function(node) {
@@ -37,18 +32,17 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 		}
 		view.highlightNode(node);
 		selectedNode = node;
-		
-		// publish event
-		eventBus.publish(mindmaps.Event.NODE_SELECTED, node);
+
+		mindmapController.selectNode(node);
 	};
 
 	view.mouseWheeled = function(delta) {
 		if (delta > 0) {
 			zoomController.zoomIn();
-			//eventBus.publish(mindmaps.Event.ZOOM_IN);
+			// eventBus.publish(mindmaps.Event.ZOOM_IN);
 		} else {
 			zoomController.zoomOut();
-			//eventBus.publish(mindmaps.Event.ZOOM_OUT);
+			// eventBus.publish(mindmaps.Event.ZOOM_OUT);
 		}
 	};
 
@@ -95,11 +89,11 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 
 		// update model
 		var action = new mindmaps.action.MoveNodeAction(node, offset);
-		appModel.executeAction(action);
+		mindmapController.executeAction(action);
 	};
 
-	view.collapseButtonClicked = function(node) {
-		toggleCollapse(node);
+	view.foldButtonClicked = function(node) {
+		toggleFold(node);
 	};
 
 	// CREATOR TOOL
@@ -123,8 +117,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 		// indicate that we want to set this nodes caption after creation
 		node.shouldEditCaption = true;
 
-		var action = new mindmaps.action.CreateNodeAction(node, parent);
-		appModel.executeAction(action);
+		mindmapController.createNode(node, parent);
 	};
 
 	view.nodeCaptionEditCommitted = function(str) {
@@ -138,7 +131,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 
 		view.stopEditNodeCaption();
 		var action = new mindmaps.action.ChangeNodeCaptionAction(node, str);
-		appModel.executeAction(action);
+		mindmapController.executeAction(action);
 	};
 
 	this.go = function() {
@@ -156,22 +149,22 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 		var root = map.root;
 		selectNode(root);
 	}
-	
+
 	function bind() {
 		// listen to global events
-		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc,
+				newDocument) {
 			showMindMap(doc);
-		});
 
-		eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
-			showMindMap(doc);
-			
-			// edit root node on start
-			var root = doc.mindmap.root;
-			view.editNodeCaption(root);
+			if (newDocument) {
+				// edit root node on start
+				var root = doc.mindmap.root;
+				view.editNodeCaption(root);
+			}
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
+			this.document = null;
 			view.clear();
 		});
 
@@ -197,9 +190,9 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 				// open parent node when creating a new child and the other
 				// children are hidden
 				var parent = node.getParent();
-				if (parent.collapseChildren) {
+				if (parent.foldChildren) {
 					var action = new mindmaps.action.OpenNodeAction(parent);
-					appModel.executeAction(action);
+					mindmapController.executeAction(action);
 				}
 
 				// select and go into edit mode on new node
@@ -219,7 +212,7 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 			// update view
 			view.deleteNode(node);
 			if (parent.isLeaf()) {
-				view.removeCollapseButton(parent);
+				view.removeFoldButton(parent);
 			}
 		});
 
@@ -241,8 +234,8 @@ mindmaps.CanvasPresenter = function(eventBus, appModel, view, zoomController) {
 		});
 
 		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
+			var doc = mindmapController.getDocument();
 			view.setZoomFactor(zoomFactor);
-			var doc = appModel.getDocument();
 			var dimX = doc.dimensions.x;
 			var dimY = doc.dimensions.y;
 			view.setDimensions(dimX, dimY, true);

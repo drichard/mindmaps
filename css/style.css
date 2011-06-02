@@ -271,7 +271,7 @@ html,body {
 	padding: 0 4px;
 }
 
-.mindmap .button-collapse {
+.mindmap .button-fold {
 	width: 16px;
 	height: 16px;
 	bottom: -12px;
@@ -282,19 +282,19 @@ html,body {
 	cursor: pointer;
 }
 
-.mindmap .button-collapse.left {
+.mindmap .button-fold {
 	left: 4px;
 }
 
-.mindmap .button-collapse.right {
+.mindmap .button-fold.right {
 	right: 4px;
 }
 
-.mindmap .button-collapse.closed {
+.mindmap .button-fold.closed {
 	background-position: 0 0;
 }
 
-.mindmap .button-collapse.open {
+.mindmap .button-fold.open {
 	background-position: 0 -16px;
 }
 

@@ -1,21 +1,5 @@
 mindmaps.ApplicationModel = function(eventBus) {
-	var self = this;
-	var document = null;
-
-	this.setDocument = function(doc) {
-		document = doc;
-	};
-
-	this.getDocument = function() {
-		return document;
-	};
-
-	this.getMindMap = function() {
-		if (document) {
-			return document.mindmap;
-		}
-	};
-
+	
 	this.executeAction = function(action) {
 		// do the action and give it context
 		var executed = action.execute(this);
@@ -89,12 +73,7 @@ mindmaps.AppController = function(eventBus, appModel) {
 		});
 
 		eventBus.subscribe(mindmaps.Event.CLOSE_DOCUMENT, function() {
-			var doc = appModel.getDocument();
-			if (doc) {
-				// TODO close document presenter
-				appModel.setDocument(null);
-				eventBus.publish(mindmaps.Event.DOCUMENT_CLOSED, doc);
-			}
+		
 		});
 	}
 

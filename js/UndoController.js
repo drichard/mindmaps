@@ -1,41 +1,50 @@
-mindmaps.UndoController = function(eventBus) {
-	var undoManager = null;
+mindmaps.UndoController = function(eventBus, commandRegistry) {
+	this.init = function() {
+		this.undoCommand = commandRegistry.get(mindmaps.UndoCommand);
+		this.undoCommand.setHandler(this.doUndo.bind(this));
 
-	function createUndoManager() {
-		undoManager = new UndoManager();
-		undoManager.stateChanged = function() {
+		this.redoCommand = commandRegistry.get(mindmaps.RedoCommand);
+		this.redoCommand.setHandler(this.doRedo.bind(this));
+	};
+
+	this.createUndoManager = function() {
+		this.undoManager = new UndoManager();
+		this.undoManager.stateChanged = function() {
 			var undoState = this.canUndo();
 			var redoState = this.canRedo();
 			eventBus.publish(mindmaps.Event.UNDO_STATE_CHANGE, undoState,
 					redoState);
 		};
-	}
 
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
-		createUndoManager();
-	});
+		this.init();
+	};
 
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_CREATED, function(doc) {
-		createUndoManager();
-	});
+	this.addUndo = function(undoFunc, redoFunc) {
+		this.undoManager.addUndo(undoFunc, redoFunc);
+	};
 
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
-		// send explicit undo state event that no more undo or redo is possible
-		// after document closing.
+	this.doUndo = function() {
+		this.undoManager.undo();
+	};
+
+	this.doRedo = function() {
+		this.undoManager.redo();
+	};
+
+	this.documentOpened = function() {
+		this.createUndoManager();
+	};
+
+	this.documentClosed = function() {
 		eventBus.publish(mindmaps.Event.UNDO_STATE_CHANGE, false, false);
-		undoManager = null;
-	});
+		this.undoManager = null;
+		this.undoCommand.removeHandler();
+		this.redoCommand.removeHandler();
+	};
+	
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, this.createUndoManager
+			.bind(this));
 
-	eventBus.subscribe(mindmaps.Event.DO_UNDO, function() {
-		undoManager.undo();
-	});
-
-	eventBus.subscribe(mindmaps.Event.DO_REDO, function() {
-		undoManager.redo();
-	});
-
-	eventBus.subscribe(mindmaps.Event.UNDO_ACTION,
-			function(undoFunc, redoFunc) {
-				undoManager.addUndo(undoFunc, redoFunc);
-			});
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, this.documentClosed
+			.bind(this));
 };

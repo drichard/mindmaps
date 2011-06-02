@@ -36,19 +36,19 @@ mindmaps.ToolBarView = function() {
 			}
 		});
 
-		$pasteButton = $("#button-paste").click(function() {
+		$pasteButton = $("#button-paste").button("disable").click(function() {
 			if (self.pasteButtonClicked) {
 				self.pasteButtonClicked();
 			}
 		});
 
-		$undoButton = $("#button-undo").button("disable").click(function() {
+		$undoButton = $("#button-undo").click(function() {
 			if (self.undoButtonClicked) {
 				self.undoButtonClicked();
 			}
 		});
 
-		$redoButton = $("#button-redo").button("disable").click(function() {
+		$redoButton = $("#button-redo").click(function() {
 			if (self.redoButtonClicked) {
 				self.redoButtonClicked();
 			}
@@ -121,47 +121,64 @@ mindmaps.ToolBarView = function() {
 	};
 };
 
-mindmaps.ToolBarPresenter = function(eventBus, appModel, view) {
+mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
 	// view callbacks
+	var pasteNodeCommand = commandRegistry.get(mindmaps.PasteNodeCommand);
+	pasteNodeCommand.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED,
+			function(enabled) {
+				$("#button-paste").button(enabled ? "enable" : "disable");
+			});
+	
 
 	view.addButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.NEW_NODE);
+		var createNodeCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
+		createNodeCommand.execute();
+		// eventBus.publish(mindmaps.Event.NEW_NODE);
 	};
 
 	view.deleteButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.DELETE_NODE);
+		var deleteNodeCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
+		deleteNodeCommand.execute();
 	};
 
 	view.copyButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.COPY_NODE);
+		var copyNodeCommand = commandRegistry.get(mindmaps.CopyNodeCommand);
+		copyNodeCommand.execute();
 	};
 
 	view.cutButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.CUT_NODE);
+		var cutNodeCommand = commandRegistry.get(mindmaps.CutNodeCommand);
+		cutNodeCommand.execute();
 	};
 
 	view.pasteButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.PASTE_NODE);
+		pasteNodeCommand.execute();
 	};
 
 	view.undoButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.DO_UNDO);
+		var undoCommand = commandRegistry.get(mindmaps.UndoCommand);
+		undoCommand.execute();
 	};
 
 	view.redoButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.DO_REDO);
+		var redoCommand = commandRegistry.get(mindmaps.RedoCommand);
+		redoCommand.execute();
 	};
 
 	view.saveButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.SAVE_DOCUMENT);
+		var ndc = commandRegistry.get(mindmaps.SaveDocumentCommand);
+		ndc.execute();
 	};
 
 	view.openButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.OPEN_DOCUMENT);
+		var ndc = commandRegistry.get(mindmaps.OpenDocumentCommand);
+		ndc.execute();
 	};
 
 	view.newButtonClicked = function() {
-		eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
+		var ndc = commandRegistry.get(mindmaps.NewDocumentCommand);
+		ndc.execute();
+		// eventBus.publish(mindmaps.Event.NEW_DOCUMENT);
 	};
 
 	view.closeButtonClicked = function() {

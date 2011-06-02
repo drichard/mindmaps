@@ -55,11 +55,11 @@ mindmaps.SaveDocumentView = function() {
 	};
 };
 
-mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
+mindmaps.SaveDocumentPresenter = function(eventBus, mindmapController, view) {
 
 	view.localStorageButtonClicked = function() {
 		// update modified date
-		var doc = appModel.getDocument();
+		var doc = mindmapController.getDocument();
 		doc.dates.modified = new Date();
 		var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
 		if (success) {
@@ -71,17 +71,17 @@ mindmaps.SaveDocumentPresenter = function(eventBus, appModel, view) {
 	};
 
 	view.fileNameRequested = function() {
-		return appModel.getDocument().title + ".json";
+		return mindmapController.getDocument().title + ".json";
 	};
 
 	view.fileContentsRequested = function() {
-		var doc = appModel.getDocument();
+		var doc = mindmapController.getDocument();
 		doc.dates.modified = new Date();
 		return doc.serialize();
 	};
 
 	view.saveToHddComplete = function() {
-		var doc = appModel.getDocument();
+		var doc = mindmapController.getDocument();
 		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
 		view.hideSaveDialog();
 	};

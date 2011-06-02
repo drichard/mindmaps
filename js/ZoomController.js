@@ -4,7 +4,7 @@
  * @param eventBus
  * @returns {ZoomController}
  */
-mindmaps.ZoomController = function(eventBus) {
+mindmaps.ZoomController = function(eventBus, commandRegistry) {
 	var self = this;
 
 	this.ZOOM_STEP = 0.25;

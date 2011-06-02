@@ -36,7 +36,7 @@ mindmaps.Node = function() {
 		}
 	};
 	this.offset = mindmaps.Point.ZERO;
-	this.collapseChildren = false;
+	this.foldChildren = false;
 	this.branchColor = "#000000";
 };
 
@@ -61,7 +61,7 @@ mindmaps.Node.prototype.clone = function() {
 	text.font = font;
 	clone.text = text;
 	clone.offset = this.offset.clone();
-	clone.collapseChildren = this.collapseChildren;
+	clone.foldChildren = this.foldChildren;
 	clone.branchColor = this.branchColor;
 
 	this.forEachChild(function(child) {
@@ -87,7 +87,7 @@ mindmaps.Node.fromObject = function(obj) {
 	node.id = obj.id;
 	node.text = obj.text;
 	node.offset = mindmaps.Point.fromObject(obj.offset);
-	node.collapseChildren = obj.collapseChildren;
+	node.foldChildren = obj.foldChildren;
 	node.branchColor = obj.branchColor;
 
 	// extract all children from array of objects
@@ -121,7 +121,7 @@ mindmaps.Node.prototype.toJSON = function() {
 		parentId : this.parent ? this.parent.id : null,
 		text : this.text,
 		offset : this.offset,
-		collapseChildren : this.collapseChildren,
+		foldChildren : this.foldChildren,
 		branchColor : this.branchColor,
 		children : children
 	};

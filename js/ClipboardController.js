@@ -1,34 +1,45 @@
-mindmaps.ClipboardController = function(eventBus, appModel) {
+mindmaps.ClipboardController = function(eventBus, commandRegistry,
+		mindmapController) {
 	var node = null;
 
+	this.init = function() {
+		this.copyCommand = commandRegistry.get(mindmaps.CopyNodeCommand);
+		this.copyCommand.setHandler(doCopy.bind(this));
+
+		this.cutCommand = commandRegistry.get(mindmaps.CutNodeCommand);
+		this.cutCommand.setHandler(doCut.bind(this));
+
+		this.pasteCommand = commandRegistry.get(mindmaps.PasteNodeCommand);
+		this.pasteCommand.setHandler(doPaste.bind(this));
+		this.pasteCommand.setEnabled(false);
+
+		eventBus.subscribe(mindmaps.Event.NODE_SELECTED, (function() {
+			this.copyCommand.setEnabled(true);
+			this.cutCommand.setEnabled(true);
+		}).bind(this));
+	};
+
 	function doCopy() {
-		var selected = appModel.selectedNode;
+		var selected = mindmapController.selectedNode;
 		node = selected.clone();
+		this.pasteCommand.setEnabled(true);
 	}
 
 	function doCut() {
-		var selected = appModel.selectedNode;
+		var selected = mindmapController.selectedNode;
 		node = selected.clone();
-		var action = new mindmaps.action.DeleteNodeAction(selected);
-		appModel.executeAction(action);
+		mindmapController.deleteNode(selected);
 	}
 
 	function doPaste() {
 		if (!node) {
 			return;
 		}
-		
-		var selected = appModel.selectedNode;
+
+		var selected = mindmapController.selectedNode;
 		// send a cloned copy of our node, so we can paste multiple times
-		var action = new mindmaps.action.CreateNodeAction(node.clone(),
-				selected);
-		appModel.executeAction(action);
+		mindmapController.createNode(node.clone(), selected);
 	}
 
-	eventBus.subscribe(mindmaps.Event.COPY_NODE, doCopy);
-
-	eventBus.subscribe(mindmaps.Event.CUT_NODE, doCut);
-
-	eventBus.subscribe(mindmaps.Event.PASTE_NODE, doPaste);
-
+	this.init();
 };

@@ -16,7 +16,7 @@ mindmaps.action.Action.prototype = {
 	},
 
 	/**
-	 * Dont emit an event after execution.
+	 * Don't emit an event after execution.
 	 * 
 	 * @returns {mindmaps.action.Action}
 	 */
@@ -29,10 +29,12 @@ mindmaps.action.Action.prototype = {
 	 * Executes this action. Explicitly returning false will cancel this action
 	 * and not raise an event or undoable action.
 	 * 
-	 * @param the
-	 *            execution context, the application model
 	 */
-	execute : function(context) {
+	execute : function() {
+	},
+
+	cancel : function() {
+		this.cancelled = true;
 	}
 };
 
@@ -50,25 +52,26 @@ mindmaps.action.MoveNodeAction = function(node, offset) {
 };
 mindmaps.action.MoveNodeAction.prototype = new mindmaps.action.Action();
 
-mindmaps.action.DeleteNodeAction = function(node) {
+mindmaps.action.DeleteNodeAction = function(node, mindmap) {
 	var parent = node.getParent();
 
-	this.execute = function(context) {
+	this.execute = function() {
+		this.parent = node.getParent();
+
 		if (node.isRoot()) {
 			return false;
 		}
-		var map = context.getMindMap();
-		map.removeNode(node);
+		mindmap.removeNode(node);
 	};
 
 	this.event = [ mindmaps.Event.NODE_DELETED, node, parent ];
 	this.undo = function() {
-		return new mindmaps.action.CreateNodeAction(node, parent);
+		return new mindmaps.action.CreateNodeAction(node, parent, mindmap);
 	};
 };
 mindmaps.action.DeleteNodeAction.prototype = new mindmaps.action.Action();
 
-mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
+mindmaps.action.CreateAutoPositionedNodeAction = function(parent, mindmap) {
 	if (parent.isRoot()) {
 		var branchColor = mindmaps.Util.randomColor();
 
@@ -99,35 +102,34 @@ mindmaps.action.CreateAutoPositionedNodeAction = function(parent) {
 	node.shouldEditCaption = true;
 	node.offset = new mindmaps.Point(x, y);
 
-	return new mindmaps.action.CreateNodeAction(node, parent);
+	return new mindmaps.action.CreateNodeAction(node, parent, mindmap);
 };
 
-mindmaps.action.CreateNodeAction = function(node, parent) {
-	this.execute = function(context) {
-		var map = context.getMindMap();
-		map.addNode(node);
+mindmaps.action.CreateNodeAction = function(node, parent, mindmap) {
+	this.execute = function() {
+		mindmap.addNode(node);
 		parent.addChild(node);
 	};
 
 	this.event = [ mindmaps.Event.NODE_CREATED, node ];
 	this.undo = function() {
-		return new mindmaps.action.DeleteNodeAction(node);
+		return new mindmaps.action.DeleteNodeAction(node, mindmap);
 	};
 };
 mindmaps.action.CreateNodeAction.prototype = new mindmaps.action.Action();
 
-mindmaps.action.ToggleNodeCollapseAction = function(node) {
-	if (node.collapseChildren) {
+mindmaps.action.ToggleNodeFoldAction = function(node) {
+	if (node.foldChildren) {
 		return new mindmaps.action.OpenNodeAction(node);
 	} else {
 		return new mindmaps.action.CloseNodeAction(node);
 	}
 };
-mindmaps.action.ToggleNodeCollapseAction.prototype = new mindmaps.action.Action();
+mindmaps.action.ToggleNodeFoldAction.prototype = new mindmaps.action.Action();
 
 mindmaps.action.OpenNodeAction = function(node) {
-	this.execute = function(context) {
-		node.collapseChildren = false;
+	this.execute = function() {
+		node.foldChildren = false;
 	};
 
 	this.event = [ mindmaps.Event.NODE_OPENED, node ];
@@ -136,8 +138,8 @@ mindmaps.action.OpenNodeAction = function(node) {
 mindmaps.action.OpenNodeAction.prototype = new mindmaps.action.Action();
 
 mindmaps.action.CloseNodeAction = function(node) {
-	this.execute = function(context) {
-		node.collapseChildren = true;
+	this.execute = function() {
+		node.foldChildren = true;
 	};
 
 	this.event = [ mindmaps.Event.NODE_CLOSED, node ];
@@ -148,7 +150,7 @@ mindmaps.action.CloseNodeAction.prototype = new mindmaps.action.Action();
 mindmaps.action.ChangeNodeCaptionAction = function(node, caption) {
 	var oldCaption = node.getCaption();
 
-	this.execute = function(context) {
+	this.execute = function() {
 		// dont update if nothing has changed
 		if (oldCaption === caption) {
 			return false;
@@ -164,7 +166,7 @@ mindmaps.action.ChangeNodeCaptionAction = function(node, caption) {
 mindmaps.action.ChangeNodeCaptionAction.prototype = new mindmaps.action.Action();
 
 mindmaps.action.ChangeNodeFontSizeAction = function(node, step) {
-	this.execute = function(context) {
+	this.execute = function() {
 		node.text.font.size += step;
 	};
 
@@ -184,7 +186,7 @@ mindmaps.action.IncreaseNodeFontSizeAction = function(node) {
 };
 
 mindmaps.action.SetFontWeightAction = function(node, bold) {
-	this.execute = function(context) {
+	this.execute = function() {
 		var weight = bold ? "bold" : "normal";
 		node.text.font.weight = weight;
 	};
@@ -197,7 +199,7 @@ mindmaps.action.SetFontWeightAction = function(node, bold) {
 mindmaps.action.SetFontWeightAction.prototype = new mindmaps.action.Action();
 
 mindmaps.action.SetFontStyleAction = function(node, italic) {
-	this.execute = function(context) {
+	this.execute = function() {
 		var style = italic ? "italic" : "normal";
 		node.text.font.style = style;
 	};
@@ -210,7 +212,7 @@ mindmaps.action.SetFontStyleAction = function(node, italic) {
 mindmaps.action.SetFontStyleAction.prototype = new mindmaps.action.Action();
 
 mindmaps.action.SetFontDecorationAction = function(node, underline) {
-	this.execute = function(context) {
+	this.execute = function() {
 		var decoration = underline ? "underline" : "none";
 		node.text.font.decoration = decoration;
 	};
@@ -224,7 +226,7 @@ mindmaps.action.SetFontDecorationAction.prototype = new mindmaps.action.Action()
 
 mindmaps.action.SetFontColorAction = function(node, fontColor) {
 	var oldColor = node.text.font.color;
-	this.execute = function(context) {
+	this.execute = function() {
 		node.text.font.color = fontColor;
 	};
 
@@ -237,7 +239,7 @@ mindmaps.action.SetFontColorAction.prototype = new mindmaps.action.Action();
 
 mindmaps.action.SetBranchColorAction = function(node, branchColor) {
 	var oldColor = node.branchColor;
-	this.execute = function(context) {
+	this.execute = function() {
 		node.branchColor = branchColor;
 	};
 

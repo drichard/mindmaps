@@ -39,13 +39,10 @@ mindmaps.Event = {
 	SAVE_DOCUMENT : "SaveDocumentEvent",
 	CLOSE_DOCUMENT : "CloseDocumentEvent",
 
-	/**
-	 * @param The document
-	 */
-	DOCUMENT_CREATED : "DocumentCreatedEvent",
 
 	/**
 	 * @param The document
+	 * @param {boolean} newDocument
 	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
 

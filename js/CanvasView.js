@@ -436,16 +436,16 @@ mindmaps.DefaultCanvasView = function() {
 			"text-decoration" : font.decoration
 		}).appendTo($node);
 
-		// create collapse button for parent if he hasn't one already
-		var parentAlreadyHasCollapseButton = $parent.data("collapseButton");
+		// create fold button for parent if he hasn't one already
+		var parentAlreadyHasFoldButton = $parent.data("foldButton");
 		var nodeOrParentIsRoot = node.isRoot() || parent.isRoot();
-		if (!parentAlreadyHasCollapseButton && !nodeOrParentIsRoot) {
-			this.createCollapseButton(parent);
+		if (!parentAlreadyHasFoldButton && !nodeOrParentIsRoot) {
+			this.createFoldButton(parent);
 		}
 
 		if (!node.isRoot()) {
 			// toggle visibility
-			if (parent.collapseChildren) {
+			if (parent.foldChildren) {
 				$node.hide();
 			} else {
 				$node.show();
@@ -497,8 +497,8 @@ mindmaps.DefaultCanvasView = function() {
 		var $node = $getNode(node);
 		$node.children(".node-container").hide();
 
-		var $collapseButton = $node.children(".button-collapse").first();
-		$collapseButton.removeClass("open").addClass("closed");
+		var $foldButton = $node.children(".button-fold").first();
+		$foldButton.removeClass("open").addClass("closed");
 	};
 
 	this.openNode = function(node) {
@@ -506,37 +506,37 @@ mindmaps.DefaultCanvasView = function() {
 		var $node = $getNode(node);
 		$node.children(".node-container").show();
 
-		var $collapseButton = $node.children(".button-collapse").first();
-		$collapseButton.removeClass("closed").addClass("open");
+		var $foldButton = $node.children(".button-fold").first();
+		$foldButton.removeClass("closed").addClass("open");
 	};
 
-	this.createCollapseButton = function(node) {
+	this.createFoldButton = function(node) {
 		var position = node.offset.x > 0 ? " right" : " left";
-		var openClosed = node.collapseChildren ? " closed" : " open";
-		var $collapseButton = $("<div/>", {
-			"class" : "button-collapse no-select" + openClosed + position
+		var openClosed = node.foldChildren ? " closed" : " open";
+		var $foldButton = $("<div/>", {
+			"class" : "button-fold no-select" + openClosed + position
 		}).click(function(e) {
 			// fire event
-			if (self.collapseButtonClicked) {
-				self.collapseButtonClicked(node);
+			if (self.foldButtonClicked) {
+				self.foldButtonClicked(node);
 			}
 
 			e.preventDefault();
 			return false;
 		});
 
-		// remember that collapseButton was set and attach to node
+		// remember that foldButton was set and attach to node
 		var $node = $getNode(node);
 		$node.data({
-			collapseButton : true
-		}).append($collapseButton);
+			foldButton : true
+		}).append($foldButton);
 	};
 
-	this.removeCollapseButton = function(node) {
+	this.removeFoldButton = function(node) {
 		var $node = $getNode(node);
 		$node.data({
-			collapseButton : false
-		}).children(".button-collapse").remove();
+			foldButton : false
+		}).children(".button-fold").remove();
 	};
 
 	this.editNodeCaption = function(node) {

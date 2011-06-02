@@ -267,11 +267,11 @@ mindmaps.NavigatorPresenter = function(eventBus, appModel, view, container,
 	};
 
 	view.buttonZoomInClicked = function() {
-		eventBus.publish(mindmaps.Event.ZOOM_IN);
+		zoomController.zoomIn();
 	};
 
 	view.buttonZoomOutClicked = function() {
-		eventBus.publish(mindmaps.Event.ZOOM_OUT);
+		zoomController.zoomOut();
 	};
 
 	// set dragger size when container was resized
