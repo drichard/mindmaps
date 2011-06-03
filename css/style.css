@@ -142,8 +142,7 @@ html,body {
 	margin-top: 4px;
 }
 
-#toolbar .buttonset {
-	display : inline;
+#toolbar .ui-buttonset {
 	margin-right: 14px;
 }
 
