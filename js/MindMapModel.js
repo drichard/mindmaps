@@ -54,8 +54,22 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 	};
 
 	this.selectNode = function(node) {
+		if (node === this.selectedNode) {
+			return;
+		}
+
+		var oldSelected = this.selectedNode;
 		this.selectedNode = node;
-		eventBus.publish(mindmaps.Event.NODE_SELECTED, node);
+		eventBus.publish(mindmaps.Event.NODE_SELECTED, node, oldSelected);
+	};
+
+	this.changeNodeCaption = function(node, caption) {
+		if (!node) {
+			node = this.selectedNode;
+		}
+
+		var action = new mindmaps.action.ChangeNodeCaptionAction(node, caption);
+		this.executeAction(action);
 	};
 
 	this.executeAction = function(action) {

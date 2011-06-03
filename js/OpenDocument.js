@@ -67,21 +67,23 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 		var reader = new FileReader();
 		reader.onload = function() {
 			var doc = mindmaps.Document.fromJSON(reader.result);
-			view.hideOpenDialog();
 			mindmapModel.setDocument(doc);
+			view.hideOpenDialog();
 		};
 
 		reader.readAsText(file);
 	};
 
 	view.documentClicked = function(doc) {
-		view.hideOpenDialog();
 		mindmapModel.setDocument(doc);
+		view.hideOpenDialog();
 	};
 
 	view.deleteDocumentClicked = function(doc) {
 		// TODO event
 		mindmaps.LocalDocumentStorage.deleteDocument(doc);
+
+		// re-render view
 		var docs = mindmaps.LocalDocumentStorage.getDocuments();
 		view.render(docs);
 	};

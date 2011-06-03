@@ -5,7 +5,6 @@
 mindmaps.Event = {
 	/**
 	 * @param The document
-	 * @param {boolean} newDocument
 	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
 
@@ -20,7 +19,8 @@ mindmaps.Event = {
 	DOCUMENT_CLOSED : "DocumentClosedEvent",
 
 	/**
-	 * @param The node
+	 * @param The new selected node
+	 * @param The old selected node (can be null)
 	 */
 	NODE_SELECTED : "NodeSelectedEvent",
 

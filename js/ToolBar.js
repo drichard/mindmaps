@@ -120,9 +120,54 @@ mindmaps.ToolBarView = function() {
 		$redoButton.button(enabled ? "enable" : "disable");
 	};
 
+	this.createButton = function(button) {
+		var $button = $("<button/>", {
+			id : button.getId(),
+			title : button.getToolTip()
+		}).click(function() {
+			button.click();
+		}).button({
+			label:  button.getTitle()
+		});
+		
+		return $button;
+	};
+
+
+	this.addButtonSet = function(buttons) {
+
+	};
+	
+	this.addToLeft = function($button) {
+		$button.appendTo("#toolbar .buttons-left");
+	};
+	
+	this.addToRight = function($button) {
+		$button.appendTo("#toolbar .buttons-right");
+	};
 };
 
 mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
+	function Button(command) {
+		this.command = command;
+	}
+
+	Button.prototype.click = function() {
+		this.command.execute();
+	};
+
+	Button.prototype.getTitle = function() {
+		return this.command.label;
+	};
+
+	Button.prototype.getToolTip = function() {
+		return this.command.description;
+	};
+
+	Button.prototype.getId = function() {
+		return "button-" + this.command.id;
+	};
+
 	// view callbacks
 	var pasteNodeCommand = commandRegistry.get(mindmaps.PasteNodeCommand);
 	pasteNodeCommand.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED, function(
@@ -130,8 +175,15 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
 		$("#button-paste").button(enabled ? "enable" : "disable");
 	});
 
-	// TODO add view buttons by command definitions
-	
+//	// TODO add view buttons by command definitions
+//	var nodeCommands = [ mindmaps.CreateNodeCommand, mindmaps.DeleteNodeCommand ];
+//	nodeCommands.forEach(function(commandType) {
+//		var command = commandRegistry.get(commandType);
+//		view.createButton(new Button(command));
+//	});
+	var command = commandRegistry.get(mindmaps.CreateNodeCommand);
+	view.addToLeft(view.createButton(new Button(command)));
+
 	view.addButtonClicked = function() {
 		var createNodeCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
 		createNodeCommand.execute();

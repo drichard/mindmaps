@@ -1,7 +1,6 @@
-mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
-		mindmapModel, view, zoomController) {
+mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
+		view, zoomController) {
 	var self = this;
-	var selectedNode = null;
 	var creator = view.getCreator();
 
 	this.init = function() {
@@ -31,20 +30,13 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		mindmapModel.executeAction(action);
 	};
 
-	var selectNode = function(node) {
-		// dont select the same node twice
-		if (selectedNode === node) {
-			return;
-		}
+	var selectNode = function(selectedNode, oldSelectedNode) {
 
 		// deselect old node
-		if (selectedNode) {
-			view.unhighlightNode(selectedNode);
+		if (oldSelectedNode) {
+			view.unhighlightNode(oldSelectedNode);
 		}
-		view.highlightNode(node);
-		selectedNode = node;
-
-		mindmapModel.selectNode(node);
+		view.highlightNode(selectedNode);
 	};
 
 	view.mouseWheeled = function(delta) {
@@ -59,39 +51,34 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 	view.nodeMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
-			// console.log("draggin: over node: ", node.id);
 		} else {
-			// console.log("over node: ", node.id);
 			creator.attachToNode(node);
 		}
 	};
 
-	// listen to events from view
 	view.nodeCaptionMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
-			// console.log("draggin: over node: ", node.id);
 		} else {
-			// console.log("over node: ", node.id);
 			creator.attachToNode(node);
 		}
 	};
 
 	view.nodeMouseDown = function(node) {
-		selectNode(node);
+		mindmapModel.selectNode(node);
 		// show creator
 		creator.attachToNode(node);
 	};
 
-//	view.nodeMouseUp = function(node) {
-//	};
+	// view.nodeMouseUp = function(node) {
+	// };
 
 	view.nodeDoubleClicked = function(node) {
 		view.editNodeCaption(node);
 	};
 
-//	view.nodeDragging = function() {
-//	};
+	// view.nodeDragging = function() {
+	// };
 
 	view.nodeDragged = function(node, offset) {
 		// view has updated itself
@@ -137,9 +124,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		}
 
 		view.stopEditNodeCaption();
-		var action = new mindmaps.action.ChangeNodeCaptionAction(selectedNode,
-				str);
-		mindmapModel.executeAction(action);
+		mindmapModel.changeNodeCaption(null, str);
 	};
 
 	this.go = function() {
@@ -154,8 +139,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		view.drawMap(map);
 		view.center();
 
-		var root = map.root;
-		selectNode(root);
+		mindmapModel.selectNode(map.root);
 	}
 
 	function bind() {
@@ -164,7 +148,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 				newDocument) {
 			showMindMap(doc);
 
-			if (newDocument) {
+			if (doc.isNew()) {
 				// edit root node on start
 				var root = doc.mindmap.root;
 				view.editNodeCaption(root);
@@ -203,16 +187,17 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 				}
 
 				// select and go into edit mode on new node
-				selectNode(node);
+				mindmapModel.selectNode(node);
 				view.editNodeCaption(node);
 			}
 		});
 
 		eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
 			// select parent if we are deleting a selected node or a descendant
-			if (node === selectedNode || node.isDescendant(selectedNode)) {
+			var selected = mindmapModel.selectedNode;
+			if (node === selected || node.isDescendant(selected)) {
 				// deselectCurrentNode();
-				selectNode(parent);
+				mindmapModel.selectNode(parent);
 			}
 
 			// update view
@@ -229,6 +214,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry,
 		eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
 			view.closeNode(node);
 		});
+
+		eventBus.subscribe(mindmaps.Event.NODE_SELECTED, selectNode);
 
 		eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
 			view.updateNode(node);

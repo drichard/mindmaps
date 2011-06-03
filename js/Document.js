@@ -4,7 +4,7 @@ mindmaps.Document = function() {
 	this.mindmap = new mindmaps.MindMap();
 	this.dates = {
 		created : new Date(),
-		modified : new Date()
+		modified : null
 	};
 	this.dimensions = new mindmaps.Point(4000, 2000);
 };
@@ -60,4 +60,8 @@ mindmaps.Document.sortByModifiedDateDescending = function(doc1, doc2) {
 		return 1;
 	}
 	return 0;
+};
+
+mindmaps.Document.prototype.isNew = function() {
+	return this.dates.modified === null;
 };
