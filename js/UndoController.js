@@ -1,6 +1,6 @@
 mindmaps.UndoController = function(eventBus, commandRegistry) {
 	this.init = function() {
-		this.undoManager = new UndoManager();
+		this.undoManager = new UndoManager(64);
 		this.undoManager.stateChanged = this.undoStateChanged.bind(this);
 
 		this.undoCommand = commandRegistry.get(mindmaps.UndoCommand);

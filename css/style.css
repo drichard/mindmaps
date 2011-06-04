@@ -281,7 +281,7 @@ html,body {
 	cursor: pointer;
 }
 
-.mindmap .button-fold {
+.mindmap .button-fold.left {
 	left: 4px;
 }
 

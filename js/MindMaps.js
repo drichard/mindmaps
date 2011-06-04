@@ -17,7 +17,7 @@ function setupConsole() {
 	};
 
 	// provide console object and dummy functions if not built-in
-	console = console || {};
+	var console = window.console || {};
 	console.log = console.log || noOp;
 	console.info = console.info || noOp;
 	console.debug = console.debug || noOp;

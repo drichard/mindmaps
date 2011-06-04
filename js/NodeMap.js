@@ -35,7 +35,7 @@ mindmaps.NodeMap.prototype.size = function() {
 mindmaps.NodeMap.prototype.values = function() {
 	return Object.keys(this.nodes).map(function(key) {
 		return this.nodes[key];
-	});
+	}, this);
 };
 
 /**

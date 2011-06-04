@@ -1,13 +1,15 @@
-// TODO limit max stack size?
-function UndoManager() {
+// TODO limit max stack size: use circulare buffer or shift array
+function UndoManager(maxStackSize) {
+	this.maxStackSize = maxStackSize || 64;
+
 	var State = {
 		UNDO : "undo",
 		REDO : "redo"
 	};
 
 	var self = this;
-	var undoStack = [];
-	var redoStack = [];
+	var undoStack = new UndoManager.CircularStack(this.maxStackSize);
+	var redoStack = new UndoManager.CircularStack(this.maxStackSize);
 	var undoContext = false;
 	var currentAction = null;
 	var currentState = null;
@@ -42,10 +44,9 @@ function UndoManager() {
 	 * redo() will have no effect.
 	 * 
 	 * 
-	 * @param undoFunc -
-	 *            The function that should undo the changes.
-	 * @param redoFunc
-	 *            (optional) - The function that should redo the undone changes.
+	 * @param undoFunc - The function that should undo the changes.
+	 * @param redoFunc (optional) - The function that should redo the undone
+	 *            changes.
 	 */
 	this.addUndo = function(undoFunc, redoFunc) {
 		if (undoContext) {
@@ -67,7 +68,7 @@ function UndoManager() {
 			};
 			undoStack.push(action);
 			// clear redo stack
-			redoStack.length = 0;
+			redoStack.clear();
 			onStateChange();
 		}
 	};
@@ -95,18 +96,80 @@ function UndoManager() {
 	};
 
 	this.canUndo = function() {
-		return undoStack.length > 0;
+		return !undoStack.isEmpty();
 	};
 
 	this.canRedo = function() {
-		return redoStack.length > 0;
+		return !redoStack.isEmpty();
 	};
 
 	this.reset = function() {
-		undoStack.length = 0;
-		redoStack.length = 0;
+		undoStack.clear();
+		redoStack.clear();
 		undoContext = false;
 		currentAction = null;
 		currentState = null;
 	};
 }
+
+// TODO unit tests
+UndoManager.CircularStack = function(maxSize) {
+	this.maxSize = maxSize || 32;
+	this.buffer = [];
+	this.nextPointer = 0;
+};
+
+UndoManager.CircularStack.prototype.push = function(item) {
+	this.buffer[this.nextPointer] = item;
+	this.nextPointer = (this.nextPointer + 1) % this.maxSize;
+};
+
+UndoManager.CircularStack.prototype.isEmpty = function() {
+	if (this.buffer.length === 0) {
+		return true;
+	}
+
+	var prevPointer = this.getPreviousPointer();
+	if (prevPointer === null) {
+		return true;
+	} else {
+		return this.buffer[prevPointer] === null;
+	}
+};
+
+UndoManager.CircularStack.prototype.getPreviousPointer = function() {
+	if (this.nextPointer > 0) {
+		return this.nextPointer - 1;
+	} else {
+		if (this.buffer.length < this.maxSize) {
+			return null;
+		} else {
+			return this.maxSize - 1;
+		}
+	}
+};
+
+UndoManager.CircularStack.prototype.clear = function() {
+	this.buffer.length = 0;
+	this.nextPointer = 0;
+};
+
+UndoManager.CircularStack.prototype.pop = function() {
+	if (this.isEmpty()) {
+		return null;
+	}
+
+	var previousPointer = this.getPreviousPointer();
+	var item = this.buffer[previousPointer];
+	this.buffer[previousPointer] = null;
+	this.nextPointer = previousPointer;
+
+	return item;
+};
+
+UndoManager.CircularStack.prototype.peek = function() {
+	if (this.isEmpty()) {
+		return null;
+	}
+	return this.buffer[this.getPreviousPointer()];
+};
