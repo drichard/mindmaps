@@ -1,8 +1,6 @@
 // TODO take container as argument,c reate drawing area dynamically. remove on
 // clear();, recreate on init()
 mindmaps.CanvasView = function() {
-	var BACKGROUND_SIZE = 24;
-
 	this.$getDrawingArea = function() {
 		return $("#drawing-area");
 	};
@@ -16,7 +14,7 @@ mindmaps.CanvasView = function() {
 		var area = this.$getDrawingArea();
 		var w = area.width() - c.width();
 		var h = area.height() - c.height();
-		c.scrollLeft(w / 2).scrollTop(h / 2);
+		this.scroll(w / 2, h / 2);
 	};
 
 	this.scroll = function(x, y) {
@@ -24,48 +22,53 @@ mindmaps.CanvasView = function() {
 		c.scrollLeft(x).scrollTop(y);
 	};
 
-	this.scrollBy = function(x, y) {
+	this.applyViewZoom = function() {
+		var delta = this.zoomFactorDelta;
+		// console.log(delta);
+
 		var c = this.$getContainer();
-		c.scrollLeft(c.scrollLeft() + x).scrollTop(c.scrollTop() + y);
+		var sl = c.scrollLeft();
+		var st = c.scrollTop();
+
+		var cw = c.width();
+		var ch = c.height();
+		var cx = cw / 2 + sl;
+		var cy = ch / 2 + st;
+
+		cx *= this.zoomFactorDelta;
+		cy *= this.zoomFactorDelta;
+
+		sl = cx - cw / 2;
+		st = cy - ch / 2;
+		// console.log(sl, st);
+
+		var drawingArea = this.$getDrawingArea();
+		var width = drawingArea.width();
+		var height = drawingArea.height();
+		drawingArea.width(width * delta).height(height * delta);
+
+		// scroll only after drawing area's width was set.
+		this.scroll(sl, st);
+
+		// adjust background size
+		var backgroundSize = parseFloat(drawingArea.css("background-size"));
+		if (isNaN(backgroundSize)) {
+			// parsing could possibly fail in the future.
+			console.error("Could not set background-size!");
+		}
+		drawingArea.css("background-size", backgroundSize * delta);
 	};
 
-	this.setDimensions = function(width, height, scroll) {
+	this.setDimensions = function(width, height) {
 		width = width * this.zoomFactor;
 		height = height * this.zoomFactor;
 
 		var drawingArea = this.$getDrawingArea();
-
-		// TODO fix this
-		if (scroll) {
-			var oldWidth = drawingArea.width();
-			var oldHeight = drawingArea.height();
-			var scrollW = (width - oldWidth) / 2;
-			var scrollH = (height - oldHeight) / 2;
-			// var c = this.$getContainer();
-			// var sl = c.scrollLeft();
-			// var st = c.scrollTop();
-			//			
-			// var cw = c.width();
-			// var ch = c.height();
-			//			
-			// var cx = cw / 2 + sl;
-			// var cy = ch / 2 + st;
-			//			
-			// var dw = oldWidth / 2 - cx;
-			// var dh = oldHeight / 2 - cy;
-			var dw = 0;
-			var dh = 0;
-
-			this.scrollBy(scrollW - dw, scrollH - dh);
-		}
-
 		drawingArea.width(width).height(height);
-
-		// change background image size
-		drawingArea.css("background-size", BACKGROUND_SIZE * this.zoomFactor);
 	};
 
 	this.setZoomFactor = function(zoomFactor) {
+		this.zoomFactorDelta = zoomFactor / (this.zoomFactor || 1);
 		this.zoomFactor = zoomFactor;
 	};
 };
@@ -117,30 +120,30 @@ mindmaps.DefaultCanvasView = function() {
 		offsetY = offsetY * zoomFactor;
 
 		// TODO find good solution for edge cases
-//		if (offsetX <= 0) {
-//			if ( offsetX + $node.width() < 0) {
-//				// normal left
-//				left = $node.width();
-//				width = Math.abs(offsetX) - left;
-//			} else {
-//				left = -offsetX;
-//				width = $node.width() + offsetX;
-//			}
-//			
-//		} else if (offsetX > 0){
-//			if (offsetX > $parent.width()) {
-//				// normal right
-//				left = $parent.width() - offsetX;
-//				width = -left;
-//			} else if (offsetX > $parent.width() / 2) {
-//				left = 0;
-//				width = $parent.width() - offsetX;
-//			} else {
-//				left = -offsetX;
-//				width = offsetX + $node.width();
-//			}
-//		}
-		
+		// if (offsetX <= 0) {
+		// if ( offsetX + $node.width() < 0) {
+		// // normal left
+		// left = $node.width();
+		// width = Math.abs(offsetX) - left;
+		// } else {
+		// left = -offsetX;
+		// width = $node.width() + offsetX;
+		// }
+		//			
+		// } else if (offsetX > 0){
+		// if (offsetX > $parent.width()) {
+		// // normal right
+		// left = $parent.width() - offsetX;
+		// width = -left;
+		// } else if (offsetX > $parent.width() / 2) {
+		// left = 0;
+		// width = $parent.width() - offsetX;
+		// } else {
+		// left = -offsetX;
+		// width = offsetX + $node.width();
+		// }
+		// }
+
 		if (offsetX < 0) {
 			left = $node.width();
 			width = Math.abs(offsetX) - left;
@@ -152,7 +155,7 @@ mindmaps.DefaultCanvasView = function() {
 		if (width < 0) {
 			width = 1;
 		}
-		
+
 		// is the node's border bottom bar above the parent's?
 		var nodeBelowParent = offsetY + $node.innerHeight() < $parent
 				.innerHeight();
@@ -179,18 +182,18 @@ mindmaps.DefaultCanvasView = function() {
 		// 2. draw the thing
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext("2d");
-		
+
 		var lineWidth = zoomFactor * (10 - depth) || 1;
 		ctx.lineWidth = lineWidth;
 
 		ctx.strokeStyle = color;
 		ctx.fillStyle = color;
-		
+
 		// shadow
-//		ctx.shadowOffsetX = 3;
-//		ctx.shadowOffsetY = 3;
-//		ctx.shadowBlur    = 5;
-//		ctx.shadowColor   = "#828282";
+		// ctx.shadowOffsetX = 3;
+		// ctx.shadowOffsetY = 3;
+		// ctx.shadowBlur = 5;
+		// ctx.shadowColor = "#828282";
 
 		var startX, startY, endX, endY;
 
@@ -293,8 +296,9 @@ mindmaps.DefaultCanvasView = function() {
 	};
 
 	this.clear = function() {
-		this.$getDrawingArea().children().remove();
-		this.setDimensions(0, 0);
+		var drawingArea = this.$getDrawingArea();
+		drawingArea.children().remove();
+		drawingArea.width(0).height(0);
 	};
 
 	this.drawMap = function(map) {
@@ -333,15 +337,12 @@ mindmaps.DefaultCanvasView = function() {
 	/**
 	 * Inserts a new node including all of its children into the DOM.
 	 * 
-	 * @param node -
-	 *            The model of the node.
-	 * @param $parent -
-	 *            optional jquery parent object the new node is appended to.
-	 *            Usually the parent node. If argument is omitted, the
+	 * @param node - The model of the node.
+	 * @param $parent - optional jquery parent object the new node is appended
+	 *            to. Usually the parent node. If argument is omitted, the
 	 *            getParent() method of the node is called to resolve the
 	 *            parent.
-	 * @param depth -
-	 *            Optional. The depth of the tree relative to the root. If
+	 * @param depth - Optional. The depth of the tree relative to the root. If
 	 *            argument is omitted the getDepth() method of the node is
 	 *            called to resolve the depth.
 	 */
@@ -624,7 +625,7 @@ mindmaps.DefaultCanvasView = function() {
 		drawNodeCanvas(node);
 	};
 
-	this.scale = function() {
+	this.scaleMap = function() {
 		var zoomFactor = this.zoomFactor;
 		var $root = this.$getDrawingArea().children().first();
 		var root = $root.data("node");

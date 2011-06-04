@@ -227,15 +227,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		});
 
 		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
-			var doc = mindmapModel.getDocument();
 			view.setZoomFactor(zoomFactor);
-			var dimX = doc.dimensions.x;
-			var dimY = doc.dimensions.y;
-			view.setDimensions(dimX, dimY, true);
-
-			// TODO remove this and scroll to right position
-			// view.center();
-			view.scale();
+			view.applyViewZoom();
+			view.scaleMap();
 		});
 	}
 

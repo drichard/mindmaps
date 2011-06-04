@@ -24,14 +24,15 @@ function setupConsole() {
 	console.warn = console.warn || noOp;
 	console.error = console.error || noOp;
 
-	// turn all console.xx calls into no-ops when in production mode
+	// turn all console.xx calls into no-ops when in production mode except
+	// for errors, do an alert.
 	if (!mindmaps.DEBUG) {
-		console = {
-			log : noOp,
-			debug : noOp,
-			warn : noOp,
-			error : noOp,
-			info : noOp
+		console.debug = noOp;
+		console.info = noOp;
+		console.log = noOp;
+		console.warn = noOp;
+		console.error = function(s) {
+			window.alert("Error: " + s);
 		};
 	}
 }
