@@ -1,4 +1,3 @@
-
 /**
  * Map implementation for nodes. The key is automatically set to the node id.
  */
@@ -34,15 +33,18 @@ mindmaps.NodeMap.prototype.size = function() {
 };
 
 mindmaps.NodeMap.prototype.values = function() {
-	return _.values(this.nodes);
+	return Object.keys(this.nodes).map(function(key) {
+		return this.nodes[key];
+	});
 };
 
 /**
  * Iterator.
+ * 
  * @param callback, first argument should be the node.
  */
 mindmaps.NodeMap.prototype.each = function(callback) {
-	_.each(this.nodes, function(node) {
-		callback(node);
-	});
+	for ( var id in this.nodes) {
+		callback(this.nodes[id]);
+	}
 };

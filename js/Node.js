@@ -91,7 +91,7 @@ mindmaps.Node.fromObject = function(obj) {
 	node.branchColor = obj.branchColor;
 
 	// extract all children from array of objects
-	_.each(obj.children, function(child) {
+	obj.children.forEach(function(child) {
 		var childNode = mindmaps.Node.fromObject(child);
 		node.addChild(childNode);
 	});
@@ -213,7 +213,7 @@ mindmaps.Node.prototype.getChildren = function(recursive) {
 	this.children.each(function(node) {
 		if (recursive) {
 			var childNodes = node.getChildren(true);
-			_.each(childNodes, function(child) {
+			childNodes.forEach(function(child) {
 				nodes.push(child);
 			});
 		}

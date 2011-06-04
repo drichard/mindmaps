@@ -43,10 +43,12 @@ mindmaps.ApplicationController = function() {
 		var newDocumentCommand = commandRegistry
 				.get(mindmaps.NewDocumentCommand);
 		newDocumentCommand.setHandler(doNewDocument);
+		newDocumentCommand.setEnabled(true);
 
 		var openDocumentCommand = commandRegistry
 				.get(mindmaps.OpenDocumentCommand);
 		openDocumentCommand.setHandler(doOpenDocument);
+		openDocumentCommand.setEnabled(true);
 
 		var saveDocumentCommand = commandRegistry
 				.get(mindmaps.SaveDocumentCommand);
@@ -55,6 +57,16 @@ mindmaps.ApplicationController = function() {
 		var closeDocumentCommand = commandRegistry
 				.get(mindmaps.CloseDocumentCommand);
 		closeDocumentCommand.setHandler(doCloseDocument);
+		
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+			saveDocumentCommand.setEnabled(false);
+			closeDocumentCommand.setEnabled(false);
+		});
+		
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+			saveDocumentCommand.setEnabled(true);
+			closeDocumentCommand.setEnabled(true);
+		});
 
 		// connect undo events emitted from mindmap model with undo controller
 		mindmapModel.undoEvent = undoController.addUndo.bind(undoController);

@@ -54,7 +54,7 @@ mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry,
 		// init all presenters
 		var toolbar = new mindmaps.ToolBarView();
 		var toolbarPresenter = new mindmaps.ToolBarPresenter(eventBus,
-				commandRegistry, toolbar);
+				commandRegistry, toolbar, mindmapModel);
 		toolbarPresenter.go();
 
 		var canvas = new mindmaps.DefaultCanvasView();

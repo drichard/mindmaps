@@ -29,6 +29,16 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 
 		var deleteCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
 		deleteCommand.setHandler(this.deleteNode.bind(this));
+		
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+			createCommand.setEnabled(false);
+			deleteCommand.setEnabled(false);
+		});
+		
+		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+			createCommand.setEnabled(true);
+			deleteCommand.setEnabled(true);
+		});
 	};
 
 	this.deleteNode = function(node) {
@@ -82,7 +92,7 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 
 		// publish event
 		if (action.event) {
-			if (!_.isArray(action.event)) {
+			if (!Array.isArray(action.event)) {
 				action.event = [ action.event ];
 			}
 			eventBus.publish.apply(eventBus, action.event);

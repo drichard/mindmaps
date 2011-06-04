@@ -7,7 +7,7 @@ mindmaps.Command = function() {
 	this.handler = null;
 	this.label = null;
 	this.description = null;
-	this.enabled = true;
+	this.enabled = false;
 };
 
 mindmaps.CommandEvent = {
@@ -42,6 +42,9 @@ mindmaps.Command.prototype = {
 	},
 
 	setEnabled : function(enabled) {
+		if (this.enabled === enabled) {
+			return;
+		}
 		this.enabled = enabled;
 		this.publish(mindmaps.CommandEvent.ENABLED_CHANGED, enabled);
 	}

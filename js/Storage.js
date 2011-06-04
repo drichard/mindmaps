@@ -103,7 +103,7 @@ mindmaps.LocalDocumentStorage = (function() {
 		 * Deletes all documents from the local storage.
 		 */
 		deleteAllDocuments : function() {
-			_.each(this.getDocuments(), this.deleteDocument);
+			this.getDocuments().forEach(this.deleteDocument);
 		}
 	};
 })();

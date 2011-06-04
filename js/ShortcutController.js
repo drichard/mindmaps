@@ -34,8 +34,8 @@ mindmaps.ShortcutController = function() {
 	};
 
 	this.unregisterAll = function() {
-		_.keys(this.shortcuts, function(type) {
-			$(document).unbind(type);
-		});
+		for (var shortcut in shortcuts) {
+			$(document).unbind(shortcut);
+		}
 	};
 };

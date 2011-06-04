@@ -23,7 +23,7 @@ mindmaps.InspectorView = function() {
 	};
 
 	this.setControlsEnabled = function(enabled) {
-		_.each($allControls, function($button) {
+		$allControls.forEach(function($button) {
 			var state = enabled ? "enable" : "disable";
 			$button.button(state);
 		});

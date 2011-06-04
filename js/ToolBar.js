@@ -11,7 +11,8 @@ mindmaps.ToolBarView = function() {
 		}).click(function() {
 			button.click();
 		}).button({
-			label : button.getTitle()
+			label : button.getTitle(),
+			disabled : !button.isEnabled()
 		});
 
 		// callback to update display state
@@ -65,6 +66,10 @@ mindmaps.ToolBarButton = function(command) {
 	});
 };
 
+mindmaps.ToolBarButton.prototype.isEnabled = function() {
+	return this.command.enabled;
+};
+
 mindmaps.ToolBarButton.prototype.click = function() {
 	this.command.execute();
 };
@@ -81,7 +86,8 @@ mindmaps.ToolBarButton.prototype.getId = function() {
 	return "button-" + this.command.id;
 };
 
-mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
+mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
+		mindmapModel) {
 	// map commands to buttons
 	function commandsToButtons(commands) {
 		return commands.map(function(commandType) {
@@ -111,13 +117,29 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view) {
 	view.addButtonGroup(fileButtons, view.alignRight);
 
 	// debug stuff
-	view.bigMapButtonClicked = function() {
-		var map = getBinaryMapWithDepth(8);
-		var doc = new mindmaps.Document();
-		doc.mindmap = map;
-		appModel.setDocument(doc);
-		eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
-	};
+	if (mindmaps.DEBUG) {
+		var bigmapbutton = {
+			getTitle : function() {
+				return "big map";
+			},
+			getId : function() {
+				return "bigmap";
+			},
+			getToolTip : function() {
+				return "create a really big map";
+			},
+			click : function() {
+				var map = getBinaryMapWithDepth(8);
+				var doc = new mindmaps.Document();
+				doc.mindmap = map;
+				mindmapModel.setDocument(doc);
+			},
+			isEnabled : function() {
+				return true;
+			}
+		};
+		view.addButton(bigmapbutton, view.alignLeft);
+	}
 
 	this.go = function() {
 		view.init();

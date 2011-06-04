@@ -8,7 +8,7 @@ mindmaps.FloatPanelFactory = function(container) {
 	function setPosition(dialog) {
 		// reposition dialog on window resize
 		container.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
-			_.each(dialogs, function(dialog) {
+			dialogs.forEach(function(dialog) {
 				if (dialog.visible) {
 					dialog.ensurePosition();
 				}
@@ -19,7 +19,7 @@ mindmaps.FloatPanelFactory = function(container) {
 		var hh = $container.offset().top;
 		var dw = dialog.width();
 		var dh = dialog.height();
-		var heightOffset = _.reduce(dialogs, function(memo, dialog) {
+		var heightOffset = dialogs.reduce(function(memo, dialog) {
 			return memo + dialog.height() + padding;
 		}, 0);
 

@@ -11,7 +11,7 @@ mindmaps.ApplicationModel = function(eventBus) {
 
 		// publish event
 		if (action.event) {
-			if (!_.isArray(action.event)) {
+			if (!Array.isArray(action.event)) {
 				action.event = [ action.event ];
 			}
 			eventBus.publish.apply(eventBus, action.event);

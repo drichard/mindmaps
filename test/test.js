@@ -89,7 +89,7 @@ test("nodeset operations", function() {
 	var values = ns.values();
 	equal(values.length, ns.count, "values should equal the amount of nodes");
 
-	_.each(values, function(value) {
+	values.forEach(function(value) {
 		ok(value instanceof mindmaps.Node, "values should be nodes");
 	});
 
