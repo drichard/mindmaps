@@ -97,8 +97,10 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid : DXImageTransform.Microsoft.gradient (   startColorstr =
-		'#75A8C4', endColorstr = '#E5E5E5', GradientType = 1 ); /* IE6-9 */
+	filter: progid :     DXImageTransform.Microsoft.gradient (     
+		 startColorstr =  
+		  '#75A8C4', endColorstr =     '#E5E5E5', GradientType =     1 );
+	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
 
@@ -238,7 +240,6 @@ html,body {
 	border: 2px solid red;
 	padding: 2px;
 	z-index: 1000;
-	
 	webkit-box-shadow: 3px 3px 7px #828282;
 	-moz-box-shadow: 3px 3px 7px #828282;
 	box-shadow: 3px 3px 7px #828282;
@@ -300,11 +301,11 @@ html,body {
 #creator-wrapper {
 	position: absolute !important;
 	bottom: -16px;
-	cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
+	cursor: url("../img/openhand.cur"), default !important;
 }
 
 #creator-wrapper.ui-draggable-dragging {
-	 cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default !important;
+	cursor: url("../img/closedhand.cur"), default !important;
 }
 
 #creator-wrapper.left {
@@ -314,7 +315,6 @@ html,body {
 #creator-wrapper.right {
 	right: -18px;
 }
-
 
 #creator-nub {
 	width: 24px;

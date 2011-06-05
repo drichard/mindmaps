@@ -61,6 +61,8 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 		// update modified date
 		var doc = mindmapModel.getDocument();
 		doc.dates.modified = new Date();
+		// set title
+		doc.title = mindmapModel.getMindMap().getRoot().getCaption();
 		var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
 		if (success) {
 			eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
@@ -71,7 +73,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 	};
 
 	view.fileNameRequested = function() {
-		return mindmapModel.getDocument().title + ".json";
+		return mindmapModel.getMindMap().getRoot().getCaption() + ".json";
 	};
 
 	view.fileContentsRequested = function() {
