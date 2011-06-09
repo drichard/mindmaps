@@ -148,11 +148,11 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 				newDocument) {
 			showMindMap(doc);
 
-			if (doc.isNew()) {
-				// edit root node on start
-				var root = doc.mindmap.root;
-				view.editNodeCaption(root);
-			}
+//			if (doc.isNew()) {
+//				// edit root node on start
+//				var root = doc.mindmap.root;
+//				view.editNodeCaption(root);
+//			}
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {

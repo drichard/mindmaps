@@ -79,7 +79,7 @@ mindmaps.CanvasView.prototype.drawMap = function(map) {
 
 mindmaps.DefaultCanvasView = function() {
 	// TODO solve this mess?
-	var NODE_CAPTION_WIDTH = 50;
+	var NODE_CAPTION_WIDTH = 70;
 	var ROOT_NODE_CAPTION_WIDTH = 100;
 
 	var self = this;
@@ -685,8 +685,7 @@ mindmaps.DefaultCanvasView = function() {
 		var $cancelArea = null;
 
 		// text input for node edits.
-		var $editor = $("<input/>", {
-			type : "text",
+		var $editor = $("<textarea/>", {
 			id : "caption-editor"
 		}).bind("keydown", "esc", function() {
 			self.stop();
@@ -700,7 +699,7 @@ mindmaps.DefaultCanvasView = function() {
 		}).blur(function() {
 			self.stop();
 		});
-
+		
 		this.edit = function($text_, $cancelArea_) {
 			if (attached) {
 				return;

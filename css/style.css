@@ -224,7 +224,7 @@ html,body {
 	cursor: move;
 	z-index: 100;
 	padding: 4px;
-	min-width: 50px;
+	min-width: 70px;
 	max-width: 200px;
 	text-align: center;
 	word-wrap: break-word;
@@ -331,6 +331,7 @@ html,body {
 
 #caption-editor {
 	display: block; /** important for webkit */
+	resize: none;
 	background: none;
 	border: none;
 	font: inherit;
@@ -338,6 +339,7 @@ html,body {
 	padding: 0;
 	outline: none;
 	text-align: center;
+	overflow: hidden;
 }
 
 .float-panel.ui-dialog {
