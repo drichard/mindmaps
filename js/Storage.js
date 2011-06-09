@@ -3,6 +3,12 @@
 // when many large documents are stored in LS, opening of window takes a rather long time
 mindmaps.LocalStorage = (function() {
 	return {
+		put : function(key, value) {
+			localStorage.setItem(key, value);
+		},
+		get : function(key) {
+			return localStorage.getItem(key);
+		},
 		clear : function() {
 			localStorage.clear();
 		}

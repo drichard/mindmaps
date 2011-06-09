@@ -6,6 +6,7 @@ mindmaps.ApplicationController = function() {
 	var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry);
 	var clipboardController = new mindmaps.ClipboardController(eventBus,
 			commandRegistry, mindmapModel);
+	var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
 
 	function doNewDocument() {
 		// close old document first

@@ -1,5 +1,6 @@
 mindmaps.StatusBarView = function() {
 	var self = this;
+	var $statusbar = $("#statusbar");
 
 	this.init = function() {
 	};
@@ -13,13 +14,19 @@ mindmaps.StatusBarView = function() {
 			if (self.buttonClicked) {
 				self.buttonClicked(id);
 			}
-		}).prependTo($("#statusbar .buttons"));
+		}).prependTo($statusbar.find(".buttons"));
+	};
+
+	this.getContent = function() {
+		return $statusbar;
 	};
 };
 
 mindmaps.StatusBarPresenter = function(eventBus, view) {
 	var buttonCounter = 0;
 	var buttonIdPanelMap = {};
+	var statusController = new mindmaps.StatusNotificationController(eventBus,
+			view.getContent());
 
 	view.buttonClicked = function(id) {
 		buttonIdPanelMap[id].toggle();
@@ -27,6 +34,7 @@ mindmaps.StatusBarPresenter = function(eventBus, view) {
 
 	this.go = function() {
 		view.init();
+
 	};
 
 	this.addEntry = function(panel) {
@@ -35,4 +43,19 @@ mindmaps.StatusBarPresenter = function(eventBus, view) {
 		panel.$hideTarget = $button;
 		buttonIdPanelMap[id] = panel;
 	};
+};
+
+mindmaps.StatusNotificationController = function(eventBus, view) {
+	var $anchor = $("<div class='notification-anchor'/>").css({
+		position : "absolute",
+		right : 20
+	}).appendTo(view);
+
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_SAVED, function() {
+		var n = new mindmaps.Notification($anchor, {
+			position : "topRight",
+			expires : 2500,
+			content : "Mind map saved"
+		});
+	});
 };
