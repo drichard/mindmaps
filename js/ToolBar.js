@@ -4,38 +4,23 @@ mindmaps.ToolBarView = function() {
 	this.init = function() {
 	};
 
-	this.createButton = function(button) {
-		var $button = $("<button/>", {
-			id : button.getId(),
-			title : button.getToolTip()
-		}).click(function() {
-			button.click();
-		}).button({
-			label : button.getTitle(),
-			disabled : !button.isEnabled()
-		});
-
-		// callback to update display state
-		button.setEnabled = function(enabled) {
-			$button.button(enabled ? "enable" : "disable");
-		};
-
-		return $button;
-	};
-
 	this.addButton = function(button, alignFunc) {
-		var $button = this.createButton(button);
-		alignFunc($button);
+		// var $button = this.createButton(button);
+		alignFunc(button.asJquery());
 	};
 
 	this.addButtonGroup = function(buttons, alignFunc) {
 		var $buttonset = $("<span/>");
 		buttons.forEach(function(button) {
-			var $button = self.createButton(button);
-			$buttonset.append($button);
+			// var $button = self.createButton(button);
+			$buttonset.append(button.asJquery());
 		});
 		$buttonset.buttonset();
 		alignFunc($buttonset);
+	};
+
+	this.addMenu = function(menu) {
+		this.alignRight(menu.getContent());
 	};
 
 	this.alignLeft = function($button) {
@@ -86,17 +71,99 @@ mindmaps.ToolBarButton.prototype.getId = function() {
 	return "button-" + this.command.id;
 };
 
-mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
-		mindmapModel) {
-	// map commands to buttons
-	function commandsToButtons(commands) {
-		return commands.map(function(commandType) {
-			var command = commandRegistry.get(commandType);
-			return new mindmaps.ToolBarButton(command);
+mindmaps.ToolBarButton.prototype.asJquery = function() {
+	var self = this;
+	var $button = $("<div/>", {
+		id : this.getId(),
+		title : this.getToolTip()
+	}).click(function() {
+		self.click();
+	}).button({
+		label : this.getTitle(),
+		disabled : !this.isEnabled()
+	});
+
+	var icon = this.command.icon;
+	if (icon) {
+		$button.button({
+			icons : {
+				primary : icon
+			}
 		});
 	}
 
+	// callback to update display state
+	this.setEnabled = function(enabled) {
+		$button.button(enabled ? "enable" : "disable");
+	};
+
+	return $button;
+};
+
+mindmaps.ToolBarMenu = function(title, icon) {
+	var self = this;
+	this.$menuWrapper = $("<span/>", {
+		"class" : "menu-wrapper"
+	});
+
+	this.$menuButton = $("<div/>").button({
+		label : title,
+		icons : {
+			primary : icon,
+			secondary : "ui-icon-triangle-1-s"
+		}
+	}).appendTo(this.$menuWrapper);
+
+	this.$menu = $("<div/>", {
+		"class" : "menu"
+	}).click(function() {
+		/*
+		 * hack to hide menu on click. visibility on hover is triggered by CSS.
+		 * force display:none for a short time and remove class immediately
+		 * again.
+		 */
+		self.$menu.addClass("hidden");
+		setTimeout(function() {
+			self.$menu.removeClass("hidden");
+		}, 10);
+	}).appendTo(this.$menuWrapper);
+
+	this.add = function(buttons) {
+		if (!Array.isArray(buttons)) {
+			buttons = [ buttons ];
+		}
+
+		buttons.forEach(function(button) {
+			var $button = button.asJquery().removeClass("ui-corner-all")
+					.addClass("menu-item");
+			this.$menu.append($button);
+		}, this);
+
+		// last item gets rounded corners
+		this.$menu.children().last().addClass("ui-corner-bottom").prev()
+				.removeClass("ui-corner-bottom");
+	};
+
+	this.getContent = function() {
+		return this.$menuWrapper;
+	};
+};
+
+mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
+		mindmapModel) {
+	// map commands to buttons
+	function commandToButton(commandType) {
+		var command = commandRegistry.get(commandType);
+		return new mindmaps.ToolBarButton(command);
+	}
+
+	function commandsToButtons(commands) {
+		return commands.map(commandToButton);
+	}
+
 	// populate toolbar
+
+	// node buttons
 	var nodeCommands = [ mindmaps.CreateNodeCommand, mindmaps.DeleteNodeCommand ];
 	var nodeButtons = commandsToButtons(nodeCommands);
 	view.addButtonGroup(nodeButtons, view.alignLeft);
@@ -110,36 +177,42 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
 	var clipboardButtons = commandsToButtons(clipboardCommands);
 	view.addButtonGroup(clipboardButtons, view.alignLeft);
 
+	// file menu
+	var fileMenu = new mindmaps.ToolBarMenu("Mind map", "ui-icon-document");
 	var fileCommands = [ mindmaps.NewDocumentCommand,
 			mindmaps.OpenDocumentCommand, mindmaps.SaveDocumentCommand,
 			mindmaps.CloseDocumentCommand ];
 	var fileButtons = commandsToButtons(fileCommands);
-	view.addButtonGroup(fileButtons, view.alignRight);
+	fileMenu.add(fileButtons);
 
-	// debug stuff
-	if (mindmaps.DEBUG) {
-		var bigmapbutton = {
-			getTitle : function() {
-				return "big map";
-			},
-			getId : function() {
-				return "bigmap";
-			},
-			getToolTip : function() {
-				return "create a really big map";
-			},
-			click : function() {
-				var map = getBinaryMapWithDepth(8);
-				var doc = new mindmaps.Document();
-				doc.mindmap = map;
-				mindmapModel.setDocument(doc);
-			},
-			isEnabled : function() {
-				return true;
-			}
-		};
-		view.addButton(bigmapbutton, view.alignLeft);
-	}
+	view.addMenu(fileMenu);
+
+	view.addButton(commandToButton(mindmaps.HelpCommand), view.alignRight);
+
+	// // debug stuff
+	// if (mindmaps.DEBUG) {
+	// var bigmapbutton = {
+	// getTitle : function() {
+	// return "big map";
+	// },
+	// getId : function() {
+	// return "bigmap";
+	// },
+	// getToolTip : function() {
+	// return "create a really big map";
+	// },
+	// click : function() {
+	// var map = getBinaryMapWithDepth(8);
+	// var doc = new mindmaps.Document();
+	// doc.mindmap = map;
+	// mindmapModel.setDocument(doc);
+	// },
+	// isEnabled : function() {
+	// return true;
+	// }
+	// };
+	// view.addButton(bigmapbutton, view.alignLeft);
+	// }
 
 	this.go = function() {
 		view.init();

@@ -97,9 +97,13 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :     DXImageTransform.Microsoft.gradient (     
-		 startColorstr =  
-		  '#75A8C4', endColorstr =     '#E5E5E5', GradientType =     1 );
+	filter: progid :                 DXImageTransform.Microsoft.gradient (  
+		        
+		       startColorstr =        
+		        '#75A8C4', endColorstr =                 '#E5E5E5',
+		GradientType =   
+		        
+		    1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -141,7 +145,7 @@ html,body {
 }
 
 #toolbar .buttons {
-	margin-top: 4px;
+	margin-top: 6px;
 }
 
 #toolbar .ui-buttonset {
@@ -149,8 +153,46 @@ html,body {
 }
 
 .buttons-right {
-	float: right;
+	position: absolute;
+	right: 0;
 	margin-right: 8px;
+}
+
+#toolbar .menu-wrapper {
+	position: relative;
+}
+
+#toolbar .menu-wrapper:hover .menu {
+	display: block;
+}
+
+#toolbar .menu-wrapper .menu {
+	position: absolute;
+	right: 0;
+	z-index: 5000;
+	display: none;
+	background: #EDEDED;
+	box-shadow: 1px 1px 9px 0 #636B6A;
+}
+
+#toolbar .menu-wrapper .menu.hidden {
+	display: none;
+}
+
+#toolbar .menu-wrapper .menu-item {
+	display: block;
+	text-align: left;
+	margin-right: 0;
+}
+
+#toolbar .menu-wrapper .menu-item:hover {
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #B9E0F5),
+		color-stop(0, #92BDD6) );
+	background-image: -moz-linear-gradient(center top, #B9E0F5, #92BDD6);
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	color: #1C4257;
 }
 
 #bottombar {
@@ -365,7 +407,7 @@ html,body {
 }
 
 .float-panel.ui-dialog .ui-dialog-titlebar-close span.ui-icon {
-	background: url("Aristo/images/ui-icons_222222_256x240.png") -64px -16px;
+	background: url("Aristo/images/ui-icons_222222_256x240.png")  -48px -128px;
 }
 
 #navigator {
@@ -411,8 +453,23 @@ html,body {
 	
 }
 
+#inspector-table {
+	width: 100%;
+}
+
+#inspector-table tr {
+	height: 28px;	
+}
+
+
 #inspector-table td {
 	padding: 2px 5px;
+	border-bottom: 1px solid #E5E5E5;
+}
+
+#inspector-table {
+	width: 100%;
+	font-size: 12px;	
 }
 
 .file-dialog h1 {

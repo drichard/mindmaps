@@ -1,5 +1,11 @@
 <!doctype html>
+<!-- DEBUG -->
+<!-- disable offline caching in debug mode -->
+<html>
+<!-- /DEBUG -->
+<!-- PRODUCTION
 <html manifest="cache.manifest">
+/PRODUCTION -->
 <head>
 <meta charset="utf-8">
 <title>MindMaps</title>
@@ -113,8 +119,8 @@
 					class="colorpicker" /></td>
 			</tr>
 		</table>
-		<button id="inspector-button-apply-all" class="buttons-small">Apply
-			styles to children...</button>
+		<!--<button id="inspector-button-apply-all" class="buttons-small">Apply
+			styles to children...</button>-->
 	</div>
 </div>
 </script>
@@ -129,9 +135,10 @@
 				</div>
 
 				<div class="buttons">
-					<span class="buttons-left"> </span> <span
-						class="buttons-right buttonset"> </span>
+					<span class="buttons-left"> </span> 
+					<span class="buttons-right"> </span>
 				</div>
+
 			</div>
 		</div>
 		<div id="canvas-container">
@@ -199,6 +206,7 @@
 <script src="js/Event.js"></script>
 <!-- JS:LIB:END -->
 
+<!-- PRODUCTION
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push([ '_setAccount', 'UA-23624804-1' ]);
@@ -214,6 +222,5 @@
 		s.parentNode.insertBefore(ga, s);
 	})();
 </script>
+/PRODUCTION -->
 </html>
-
-

@@ -97,8 +97,19 @@ desc("Remove debug statements from HTML");
 task("remove-debug", function() {
 	console.log("Removing IF DEBUG statements in index.html");
 
+	// remove debug code
 	var regexDebug = /<!-- DEBUG -->[\s\S]*?<!-- \/DEBUG -->/gmi;
 	indexFile = indexFile.replace(regexDebug, "");
+
+	// insert production code
+	var regexProduction = /<!-- PRODUCTION([\s\S]*?)\/PRODUCTION -->/gmi;
+	indexFile = indexFile.replace(regexProduction, "$1");
+
+	
+	// remove all comments
+	// var regexComments = /<!--[\s\S]*?-->/gmi;
+	// indexFile = indexFile.replace(regexComments, "");
+
 });
 
 desc("Copy index.html");
