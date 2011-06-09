@@ -92,7 +92,7 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		var $panel = $(
 				"<div/>",
 				{
-					"class" : "ui-widget ui-dialog ui-corner-all ui-widget-content float-panel "
+					"class" : "ui-widget ui-dialog ui-corner-all ui-widget-content float-panel no-select "
 				}).draggable({
 			containment : "parent",
 			handle : "div.ui-dialog-titlebar",

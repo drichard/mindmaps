@@ -13,6 +13,18 @@
 <link rel="stylesheet" href="css/Aristo/jquery-ui-1.8.7.custom.css" />
 <link rel="stylesheet" href="css/minicolors/jquery.miniColors.css">
 
+<script id="template-notification" type="text/x-jquery-tmpl">
+<div class="notification">
+	{{if closeButton}}
+	<a href="#" class="close-button">x</a>
+	{{/if}}
+	{{if title}}
+	<h1 class="title">{{html title}}</h1>
+	{{/if}}
+	<div class="content">{{html content}}</div>
+</div>
+</script>
+
 <script id="template-open-table-item" type="text/x-jquery-tmpl">
 <tr>
 	<td><a class="title" href="#">${title}</a></td>
@@ -135,8 +147,8 @@
 				</div>
 
 				<div class="buttons">
-					<span class="buttons-left"> </span> 
-					<span class="buttons-right"> </span>
+					<span class="buttons-left"> </span> <span class="buttons-right">
+					</span>
 				</div>
 
 			</div>
@@ -204,6 +216,7 @@
 <script src="js/MainViewController.js"></script>
 <script src="js/Storage.js"></script>
 <script src="js/Event.js"></script>
+<script src="js/Notification.js"></script>
 <!-- JS:LIB:END -->
 
 <!-- PRODUCTION
