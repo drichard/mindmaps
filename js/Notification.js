@@ -36,7 +36,12 @@ mindmaps.Notification = function(targetSelector, options) {
 		notiLeft = targetLeft;
 		break;
 	case "topMiddle":
-		// TODO
+		notiTop = targetTop - padding - notiHeight;
+		if (notiWidth < targetWidth) {
+			notiLeft = targetLeft + (targetWidth - notiWidth) / 2;
+		} else {
+			notiLeft = targetLeft - (notiWidth - targetWidth) / 2;
+		}
 		break;
 	case "topRight":
 		notiTop = targetTop - padding - notiHeight;
@@ -44,10 +49,15 @@ mindmaps.Notification = function(targetSelector, options) {
 		break;
 	case "rightTop":
 		notiTop = targetTop;
-		notiLeft = targetLeft + padding + targetWidth;
+
 		break;
 	case "rightMiddle":
-		// TODO
+		if (notiHeight < targetHeight) {
+			notiTop = targetTop + (targetHeight - notiHeight) / 2;
+		} else {
+			notiTop = targetTop - (notiHeight - targetHeight) / 2;
+		}
+		notiLeft = targetLeft + padding + targetWidth;
 		break;
 	case "rightBottom":
 		notiTop = targetTop + targetHeight - notiHeight;
@@ -58,7 +68,12 @@ mindmaps.Notification = function(targetSelector, options) {
 		notiLeft = targetLeft;
 		break;
 	case "bottomMiddle":
-		// TODO
+		notiTop = targetTop + padding + targetHeight;
+		if (notiWidth < targetWidth) {
+			notiLeft = targetLeft + (targetWidth - notiWidth) / 2;
+		} else {
+			notiLeft = targetLeft - (notiWidth - targetWidth) / 2;
+		}
 		break;
 	case "bottomRight":
 		notiTop = targetTop + padding + targetHeight;
@@ -69,7 +84,12 @@ mindmaps.Notification = function(targetSelector, options) {
 		notiLeft = targetLeft - padding - notiWidth;
 		break;
 	case "leftMiddle":
-		// TODO
+		if (notiHeight < targetHeight) {
+			notiTop = targetTop + (targetHeight - notiHeight) / 2;
+		} else {
+			notiTop = targetTop - (notiHeight - targetHeight) / 2;
+		}
+		notiLeft = targetLeft - padding - notiWidth;
 		break;
 	case "leftBottom":
 		notiTop = targetTop + targetHeight - notiHeight;

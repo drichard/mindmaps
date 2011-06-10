@@ -1,3 +1,9 @@
+/**
+ * <pre>
+ * -ListenstoHELP_COMMANDand displays notifications.
+ * - Provides interactive tutorial for first time users.
+ * </pre>
+ */
 mindmaps.HelpController = function(eventBus, commandRegistry) {
 
 	function setupInteractiveMode() {
@@ -10,7 +16,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 		var interactiveMode = true;
 
 		eventBus.once(mindmaps.Event.DOCUMENT_OPENED, function() {
-			setTimeout(start, 1500);
+			setTimeout(start, 1000);
 		});
 		var helpMain, helpRoot;
 
@@ -24,7 +30,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 			helpMain = new mindmaps.Notification(
 					"#toolbar",
 					{
-						position : "bottomLeft",
+						position : "bottomMiddle",
 						maxWidth : 550,
 						title : "Welcome to mindmaps",
 						content : "Hello there, it seems like you are new here! These bubbles "
@@ -36,11 +42,17 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 				closeAllNotifications();
 				tutorialDone();
 			});
+			setTimeout(theRoot, 2000);
+		}
+
+		function theRoot() {
+			if (isTutorialDone())
+				return;
 
 			helpRoot = new mindmaps.Notification(
 					".node-caption.root",
 					{
-						position : "bottomLeft",
+						position : "bottomMiddle",
 						closeButton : true,
 						maxWidth : 350,
 						title : "This is where you start - your main idea",
@@ -55,10 +67,13 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 		}
 
 		function theNub() {
+			if (isTutorialDone())
+				return;
+
 			var helpNub = new mindmaps.Notification(
 					".node-caption.root",
 					{
-						position : "bottomLeft",
+						position : "bottomMiddle",
 						closeButton : true,
 						maxWidth : 350,
 						title : "Creating new ideas",
@@ -74,10 +89,13 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 		}
 
 		function newNode() {
+			if (isTutorialDone())
+				return;
+
 			var helpNewNode = new mindmaps.Notification(
 					".node-container.root > .node-container:first",
 					{
-						position : "bottomLeft",
+						position : "bottomMiddle",
 						closeButton : true,
 						maxWidth : 350,
 						title : "Your first branch",
@@ -85,18 +103,21 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 								+ " around by dragging it or double click to change the text again."
 					});
 			notifications.push(helpNewNode);
-			setTimeout(navigate, 5000);
-			setTimeout(inspector, 1000);
+			setTimeout(inspector, 2000);
 
 			eventBus.once(mindmaps.Event.NODE_MOVED, function() {
 				helpNewNode.close();
-				setTimeout(toolbar, 14000);
-				setTimeout(menu, 7500);
-				setTimeout(tutorialDone, 10000);
+				setTimeout(navigate, 0);
+				setTimeout(toolbar, 15000);
+				setTimeout(menu, 10000);
+				setTimeout(tutorialDone, 20000);
 			});
 		}
 
 		function navigate() {
+			if (isTutorialDone())
+				return;
+
 			var helpNavigate = new mindmaps.Notification(
 					".float-panel:has(#navigator)",
 					{
@@ -111,6 +132,9 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 		}
 
 		function inspector() {
+			if (isTutorialDone())
+				return;
+
 			var helpInspector = new mindmaps.Notification(
 					"#inspector",
 					{
@@ -126,12 +150,16 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 		}
 
 		function toolbar() {
+			if (isTutorialDone())
+				return;
+
 			var helpToolbar = new mindmaps.Notification(
 					"#toolbar .buttons-left",
 					{
 						position : "bottomLeft",
 						closeButton : true,
 						maxWidth : 350,
+						padding : 20,
 						title : "The tool bar",
 						content : "Those buttons do what they say. You can use them or work with keyboard shortcuts. "
 								+ "Hover over the buttons for the key combinations."
@@ -140,8 +168,11 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 		}
 
 		function menu() {
+			if (isTutorialDone())
+				return;
+
 			var helpMenu = new mindmaps.Notification(
-					"#toolbar .menu-wrapper",
+					"#toolbar .buttons-right",
 					{
 						position : "leftTop",
 						closeButton : true,
