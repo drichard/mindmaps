@@ -102,15 +102,15 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                      
-		DXImageTransform.Microsoft.gradient (  
+	filter: progid :                       
+		 DXImageTransform.Microsoft.gradient (   
 		  
 		        
-		          startColorstr =           
-		           '#75A8C4', endColorstr =                       '#E5E5E5',
-		GradientType =      
+		           startColorstr =            
+		            '#75A8C4', endColorstr =                         '#E5E5E5',
+		GradientType =       
 		        
-		       1 );
+		        1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -216,6 +216,17 @@ html,body {
 
 #statusbar .buttons {
 	margin-top: 4px;
+}
+
+#about {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+#about .link {
+	color: #454545;
+	font-size: 11px;
 }
 
 /* apply styles to button and wrapper div */
@@ -587,12 +598,13 @@ html,body {
 .notification .close-button {
 	color: #4F4F4F;
 	margin-top: -6px;
-	margin-right: -2px;
-	float: right;
+	margin-right: -2px; float : right;
 	cursor: pointer;
 	text-decoration: none;
 	font-size: 14px;
 	font-weight: bold;
+	float: right; cursor : pointer; text-decoration : none; font-size :
+	14px; font-weight : bold;
 	padding: 4px;
 }
 

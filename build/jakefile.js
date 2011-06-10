@@ -168,8 +168,17 @@ task("copy-files", [ "create-dir", "minify-js" ], function() {
 	}
 });
 
+desc("Update cache manifest");
+task("update-manifest", ["copy-files"], function() {
+	// put new timestamp
+	var fileDir = publishDir + "cache.manifest";
+	var contents = fs.readFileSync(fileDir, "utf8");
+	contents = contents.replace("{{timestamp}}", Date.now());
+	fs.writeFileSync(fileDir, contents);
+});
+
 desc("Build project");
-task("build", [ "copy-index", "copy-files" ], function() {
+task("build", [ "copy-index", "copy-files", "update-manifest" ], function() {
 	console.log("Project built.");
 });
 
