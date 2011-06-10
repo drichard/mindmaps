@@ -49,7 +49,7 @@ mindmaps.Command.prototype = {
 		this.publish(mindmaps.CommandEvent.ENABLED_CHANGED, enabled);
 	}
 };
-MicroEvent.mixin(mindmaps.Command);
+EventEmitter.mixin(mindmaps.Command);
 
 /**
  * Node commands
@@ -144,7 +144,7 @@ mindmaps.PasteNodeCommand.prototype = new mindmaps.Command();
 mindmaps.NewDocumentCommand = function() {
 	this.id = "NEW_DOCUMENT_COMMAND";
 	this.label = "New";
-	this.shortcut = "ctrl+n";
+	this.shortcut = "alt+ctrl+n";
 	this.icon = "ui-icon-document-b";
 	this.description = "Start working on a new mind map";
 };
@@ -153,7 +153,7 @@ mindmaps.NewDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.OpenDocumentCommand = function() {
 	this.id = "OPEN_DOCUMENT_COMMAND";
 	this.label = "Open...";
-	this.shortcut = "ctrl+o";
+	this.shortcut = "alt+ctrl+o";
 	this.icon = "ui-icon-folder-open";
 	this.description = "Open an existing mind map";
 };
@@ -162,7 +162,7 @@ mindmaps.OpenDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.SaveDocumentCommand = function() {
 	this.id = "SAVE_DOCUMENT_COMMAND";
 	this.label = "Save As...";
-	this.shortcut = "ctrl+s";
+	this.shortcut = "alt+ctrl+s";
 	this.icon = "ui-icon-disk";
 	this.description = "Save the mind map";
 };
@@ -171,7 +171,7 @@ mindmaps.SaveDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.CloseDocumentCommand = function() {
 	this.id = "CLOSE_DOCUMENT_COMMAND";
 	this.label = "Close";
-	this.shortcut = "ctrl+w";
+	this.shortcut = "alt+ctrl+w";
 	this.icon = "ui-icon-close";
 	this.description = "Close the mind map";
 };

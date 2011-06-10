@@ -64,7 +64,14 @@ mindmaps.ToolBarButton.prototype.getTitle = function() {
 };
 
 mindmaps.ToolBarButton.prototype.getToolTip = function() {
-	return this.command.description;
+	var tooltip = this.command.description;
+	
+	var shortcut = this.command.shortcut;
+	if (shortcut) {
+		tooltip += " [" + shortcut.toUpperCase() + "]";
+	}
+	
+	return tooltip;
 };
 
 mindmaps.ToolBarButton.prototype.getId = function() {

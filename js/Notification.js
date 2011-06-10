@@ -108,8 +108,11 @@ mindmaps.Notification.prototype = {
 			this.removed = true;
 		});
 	},
-	isVisible: function() {
+	isVisible : function() {
 		return !this.removed;
+	},
+	$ : function() {
+		return this.$el;
 	}
 };
 

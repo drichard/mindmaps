@@ -54,6 +54,11 @@ table {
 	user-select: none;
 }
 
+.link {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 /*
  jquery ui
 */
@@ -570,6 +575,7 @@ html,body {
 	color: #4F4F4F;
 	padding-bottom: 6px;
 	margin-top: -3px;
+	padding-right: 10px;
 }
 
 .notification .content {

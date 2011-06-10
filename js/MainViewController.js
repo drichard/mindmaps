@@ -29,7 +29,7 @@ mindmaps.CanvasContainer = function() {
 	};
 
 };
-MicroEvent.mixin(mindmaps.CanvasContainer);
+EventEmitter.mixin(mindmaps.CanvasContainer);
 
 mindmaps.CanvasContainer.Event = {
 	/**
