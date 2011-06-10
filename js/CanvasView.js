@@ -54,7 +54,7 @@ mindmaps.CanvasView = function() {
 		var backgroundSize = parseFloat(drawingArea.css("background-size"));
 		if (isNaN(backgroundSize)) {
 			// parsing could possibly fail in the future.
-			console.error("Could not set background-size!");
+			console.warn("Could not set background-size!");
 		}
 		drawingArea.css("background-size", backgroundSize * delta);
 	};

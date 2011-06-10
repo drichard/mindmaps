@@ -126,7 +126,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 						maxWidth : 350,
 						expires : 10000,
 						title : "Navigation",
-						content : "You can click and drag the background of the map to move around. Use your mousewheel or the magnifier buttons to zoom in and out."
+						content : "You can click and drag the background of the map to move around. Use your mousewheel or slider over there to zoom in and out."
 					});
 			notifications.push(helpNavigate);
 		}
