@@ -50,6 +50,19 @@ mindmaps.NavigatorView = function() {
 
 	this.init = function(canvasSize) {
 
+		$("#navi-slider", $content).slider({
+			// TODO remove magic numbers. get values from presenter
+			min : 0,
+			max : 11,
+			step : 1,
+			value : 3,
+			slide : function(e, ui) {
+				if (self.sliderChanged) {
+					self.sliderChanged(ui.value);
+				}
+			}
+		});
+
 		$("#button-navi-zoom-in", $content).button({
 			text : false,
 			icons : {
@@ -156,6 +169,10 @@ mindmaps.NavigatorView = function() {
 	this.showZoomLevel = function(zoom) {
 		$("#navi-zoom-level").text(zoom);
 	};
+
+	this.setSliderValue = function(value) {
+		$("#navi-slider").slider("value", value);
+	};
 };
 
 mindmaps.NavigatorPresenter = function(eventBus, view, container,
@@ -208,11 +225,17 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		var top = st * canvasSize.y / docSize.y;
 		view.setDraggerPosition(left, top);
 	}
-	
+
 	function calculateZoomLevel() {
-		var zoomlevel = scale * 100 + "%";
+		var zoomlevel = scale * 100 + " %";
 		view.showZoomLevel(zoomlevel);
 	}
+
+	function calculateSliderValue() {
+		var val = scale / zoomController.ZOOM_STEP - 1;
+		view.setSliderValue(val);
+	}
+	;
 
 	function documentOpened(doc) {
 		docSize = doc.dimensions;
@@ -274,6 +297,10 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		zoomController.zoomOut();
 	};
 
+	view.sliderChanged = function(value) {
+		zoomController.zoomTo((value + 1) * zoomController.ZOOM_STEP);
+	};
+
 	// set dragger size when container was resized
 	container.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
 		if (docSize) {
@@ -320,6 +347,7 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		calculateDraggerPosition();
 		calculateDraggerSize();
 		calculateZoomLevel();
+		calculateSliderValue();
 	});
 
 	this.go = function() {

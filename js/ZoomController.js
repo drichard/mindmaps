@@ -9,10 +9,17 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
 
 	this.ZOOM_STEP = 0.25;
 	this.MAX_ZOOM = 3;
-	this.MIN_ZOOM = 0.2;
+	this.MIN_ZOOM = 0.25;
 	this.DEFAULT_ZOOM = 1;
 
 	this.zoomFactor = this.DEFAULT_ZOOM;
+	
+	this.zoomTo = function(factor) {
+		if (factor <= this.MAX_ZOOM && factor >= this.MIN_ZOOM) {
+			this.zoomFactor = factor;
+			eventBus.publish(mindmaps.Event.ZOOM_CHANGED, factor);
+		}
+	};
 
 	this.zoomIn = function() {
 		this.zoomFactor += this.ZOOM_STEP;
