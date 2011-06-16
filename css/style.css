@@ -284,8 +284,6 @@ html,body {
 	cursor: move;
 	z-index: 100;
 	padding: 4px;
-	min-width: 70px;
-	max-width: 200px;
 	text-align: center;
 	word-wrap: break-word;
 	border-radius: 5px;
@@ -315,8 +313,6 @@ html,body {
 	background: white;
 	border: 3px solid orange;
 	border-radius: 10px 10px 10px 10px;
-	font-weight: bold;
-	min-width: 100px;
 	left: -50px;
 	position: absolute;
 	padding: 4px;

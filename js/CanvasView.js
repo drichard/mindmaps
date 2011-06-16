@@ -86,6 +86,7 @@ mindmaps.DefaultCanvasView = function() {
 	var nodeDragging = false;
 	var creator = new Creator(this);
 	var captionEditor = new CaptionEditor();
+	var textMetrics = new TextMetrics(this);
 
 	captionEditor.commit = function(text) {
 		self.nodeCaptionEditCommitted(text);
@@ -421,8 +422,6 @@ mindmaps.DefaultCanvasView = function() {
 		}
 
 		// text caption
-		var minWidth = node.isRoot() ? ROOT_NODE_CAPTION_WIDTH
-				: NODE_CAPTION_WIDTH;
 		var font = node.text.font;
 		var $text = $("<div/>", {
 			id : "node-caption-" + node.id,
@@ -431,11 +430,13 @@ mindmaps.DefaultCanvasView = function() {
 		}).css({
 			"color" : font.color,
 			"font-size" : this.zoomFactor * 100 + "%",
-			"min-width" : this.zoomFactor * minWidth,
 			"font-weight" : font.weight,
 			"font-style" : font.style,
 			"text-decoration" : font.decoration
 		}).appendTo($node);
+		
+		var metrics = textMetrics.getTextMetrics(node);
+		$text.css(metrics);
 
 		// create fold button for parent if he hasn't one already
 		var parentAlreadyHasFoldButton = $parent.data("foldButton");
@@ -552,7 +553,8 @@ mindmaps.DefaultCanvasView = function() {
 
 	this.setNodeText = function(node, value) {
 		var $text = $getNodeCaption(node);
-		$text.text(value);
+		var metrics = textMetrics.getTextMetrics(node, value);
+		$text.css(metrics).text(value);
 	};
 
 	this.getCreator = function() {
@@ -632,11 +634,12 @@ mindmaps.DefaultCanvasView = function() {
 
 		// handle root differently
 		var $text = $getNodeCaption(root);
+		var metrics = textMetrics.getTextMetrics(root);
 		$text.css({
 			"font-size" : zoomFactor * 100 + "%",
-			"min-width" : zoomFactor * ROOT_NODE_CAPTION_WIDTH,
 			"left" : zoomFactor * -ROOT_NODE_CAPTION_WIDTH / 2
-		});
+		}).css(metrics);
+		
 
 		root.forEachChild(function(child) {
 			scale(child, 1);
@@ -645,24 +648,23 @@ mindmaps.DefaultCanvasView = function() {
 		function scale(node, depth) {
 			var $node = $getNode(node);
 
-			// position
+			// draw border and position manually 
+			var bWidth = zoomFactor * (10 - depth) || 1;
+		
 			$node.css({
 				left : zoomFactor * node.offset.x,
-				top : zoomFactor * node.offset.y
-			});
-
-			// draw border and position manually only non-root nodes
-			var bWidth = zoomFactor * (10 - depth) || 1;
-
-			$node.css({
+				top : zoomFactor * node.offset.y,
 				"border-bottom-width" : bWidth
 			});
 
+
 			var $text = $getNodeCaption(node);
 			$text.css({
-				"font-size" : zoomFactor * 100 + "%",
-				"min-width" : zoomFactor * NODE_CAPTION_WIDTH
+				"font-size" : zoomFactor * 100 + "%"
 			});
+			
+			var metrics = textMetrics.getTextMetrics(node);
+			$text.css(metrics);
 
 			// redraw canvas to parent
 			drawNodeCanvas(node);
@@ -697,9 +699,10 @@ mindmaps.DefaultCanvasView = function() {
 			// avoid premature canceling
 			e.stopPropagation();
 		}).blur(function() {
-			self.stop();
+		//	self.stop();
+		}).bind("keyup", function() {
 		});
-		
+
 		this.edit = function($text_, $cancelArea_) {
 			if (attached) {
 				return;
@@ -715,7 +718,7 @@ mindmaps.DefaultCanvasView = function() {
 			$text.empty();
 
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
-				self.stop();
+			//	self.stop();
 			});
 
 			$text.addClass("edit");
@@ -838,6 +841,39 @@ mindmaps.DefaultCanvasView = function() {
 
 		this.isDragging = function() {
 			return dragging;
+		};
+	}
+
+	function TextMetrics(view) {
+		var $div = $("<div/>", {
+			id : "text-metrics-dummy"
+		}).css({
+			position : "absolute",
+			visibility : "hidden",
+			height : "auto",
+			width : "auto"
+		}).appendTo(view.$getContainer());
+
+		this.getTextMetrics = function(node, text) {
+			text = text || node.getCaption();
+			var font = node.text.font;
+			var minWidth = node.isRoot() ? 100 : 70;
+			var maxWidth = 180;
+
+			$div.css({
+				"font-size" : view.zoomFactor * font.size,
+				"min-width" : view.zoomFactor * minWidth,
+				"max-width" : view.zoomFactor * maxWidth, 
+				"font-weight" : font.weight
+			}).text(text);
+
+			var w = $div.width();
+			var h = $div.height();
+
+			return {
+				width : w,
+				height : h
+			};
 		};
 	}
 };
