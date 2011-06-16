@@ -78,14 +78,10 @@ mindmaps.CanvasView.prototype.drawMap = function(map) {
 };
 
 mindmaps.DefaultCanvasView = function() {
-	// TODO solve this mess?
-	var NODE_CAPTION_WIDTH = 70;
-	var ROOT_NODE_CAPTION_WIDTH = 100;
-
 	var self = this;
 	var nodeDragging = false;
 	var creator = new Creator(this);
-	var captionEditor = new CaptionEditor();
+	var captionEditor = new CaptionEditor(this);
 	var textMetrics = new TextMetrics(this);
 
 	captionEditor.commit = function(text) {
@@ -425,7 +421,7 @@ mindmaps.DefaultCanvasView = function() {
 		var font = node.text.font;
 		var $text = $("<div/>", {
 			id : "node-caption-" + node.id,
-			"class" : "node-caption",
+			"class" : "node-caption node-text-behaviour",
 			text : node.text.caption
 		}).css({
 			"color" : font.color,
@@ -434,7 +430,7 @@ mindmaps.DefaultCanvasView = function() {
 			"font-style" : font.style,
 			"text-decoration" : font.decoration
 		}).appendTo($node);
-		
+
 		var metrics = textMetrics.getTextMetrics(node);
 		$text.css(metrics);
 
@@ -542,9 +538,7 @@ mindmaps.DefaultCanvasView = function() {
 	};
 
 	this.editNodeCaption = function(node) {
-		var $text = $getNodeCaption(node);
-		var $cancelArea = this.$getDrawingArea();
-		captionEditor.edit($text, $cancelArea);
+		captionEditor.edit(node, this.$getDrawingArea());
 	};
 
 	this.stopEditNodeCaption = function() {
@@ -604,12 +598,14 @@ mindmaps.DefaultCanvasView = function() {
 			"border-bottom-color" : node.branchColor
 		});
 
+		var metrics = textMetrics.getTextMetrics(node);
+
 		$text.css({
 			"color" : font.color,
 			"font-weight" : font.weight,
 			"font-style" : font.style,
 			"text-decoration" : font.decoration
-		});
+		}).css(metrics);
 
 		this.redrawNodeConnectors(node);
 	};
@@ -637,9 +633,8 @@ mindmaps.DefaultCanvasView = function() {
 		var metrics = textMetrics.getTextMetrics(root);
 		$text.css({
 			"font-size" : zoomFactor * 100 + "%",
-			"left" : zoomFactor * -ROOT_NODE_CAPTION_WIDTH / 2
+			"left" : zoomFactor * -TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
 		}).css(metrics);
-		
 
 		root.forEachChild(function(child) {
 			scale(child, 1);
@@ -648,21 +643,20 @@ mindmaps.DefaultCanvasView = function() {
 		function scale(node, depth) {
 			var $node = $getNode(node);
 
-			// draw border and position manually 
+			// draw border and position manually
 			var bWidth = zoomFactor * (10 - depth) || 1;
-		
+
 			$node.css({
 				left : zoomFactor * node.offset.x,
 				top : zoomFactor * node.offset.y,
 				"border-bottom-width" : bWidth
 			});
 
-
 			var $text = $getNodeCaption(node);
 			$text.css({
 				"font-size" : zoomFactor * 100 + "%"
 			});
-			
+
 			var metrics = textMetrics.getTextMetrics(node);
 			$text.css(metrics);
 
@@ -676,19 +670,16 @@ mindmaps.DefaultCanvasView = function() {
 				});
 			}
 		}
-
 	};
 
-	function CaptionEditor() {
+	function CaptionEditor(view) {
 		var self = this;
 		var attached = false;
-		var oldText = null;
-		var $text = null;
-		var $cancelArea = null;
 
 		// text input for node edits.
 		var $editor = $("<textarea/>", {
-			id : "caption-editor"
+			id : "caption-editor",
+			"class" : "node-text-behaviour"
 		}).bind("keydown", "esc", function() {
 			self.stop();
 		}).bind("keydown", "return", function() {
@@ -699,46 +690,53 @@ mindmaps.DefaultCanvasView = function() {
 			// avoid premature canceling
 			e.stopPropagation();
 		}).blur(function() {
-		//	self.stop();
-		}).bind("keyup", function() {
+			self.stop();
+		}).bind("input", function() {
+			var metrics = textMetrics.getTextMetrics(self.node, $editor.val());
+			$editor.css(metrics);
+
+			// slightly defer execution for better performance on slow browsers
+			setTimeout(function() {
+				view.redrawNodeConnectors(self.node);
+			}, 1);
 		});
 
-		this.edit = function($text_, $cancelArea_) {
+		this.edit = function(node, $cancelArea) {
 			if (attached) {
 				return;
 			}
+			this.node = node;
 			attached = true;
 
 			// TODO put text into span and hide()
-			$text = $text_;
-			$cancelArea = $cancelArea_;
-			oldText = $text.text();
-			var width = $text.width();
-			var height = $text.innerHeight();
-			$text.empty();
+			this.$text = $getNodeCaption(node);
+			this.$cancelArea = $cancelArea;
+
+			this.text = this.$text.text();
+
+			this.$text.css({
+				width : "auto",
+				height : "auto"
+			}).empty().addClass("edit");
 
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
-			//	self.stop();
+				self.stop();
 			});
 
-			$text.addClass("edit");
-
-			// show editor
+			var metrics = textMetrics.getTextMetrics(self.node, this.text);
 			$editor.attr({
-				value : oldText
-			}).css({
-				width : width,
-				height : height
-			}).appendTo($text).select();
+				value : this.text
+			}).css(metrics).appendTo(this.$text).select();
+
 		};
 
 		this.stop = function() {
 			if (attached) {
 				attached = false;
-				$text.removeClass("edit");
+				this.$text.removeClass("edit");
 				$editor.detach();
-				$cancelArea.unbind("mousedown.editNodeCaption");
-				$text.text(oldText);
+				this.$cancelArea.unbind("mousedown.editNodeCaption");
+				view.setNodeText(this.node, this.text);
 			}
 
 		};
@@ -844,9 +842,15 @@ mindmaps.DefaultCanvasView = function() {
 		};
 	}
 
+	/**
+	 * Utitility object that calculates how much space a text would take up in a
+	 * node. This is done through a dummy div that has the same formatting as
+	 * the node and gets the text injected.
+	 */
 	function TextMetrics(view) {
 		var $div = $("<div/>", {
-			id : "text-metrics-dummy"
+			id : "text-metrics-dummy",
+			"class" : "node-text-behaviour"
 		}).css({
 			position : "absolute",
 			visibility : "hidden",
@@ -854,21 +858,29 @@ mindmaps.DefaultCanvasView = function() {
 			width : "auto"
 		}).appendTo(view.$getContainer());
 
+		/**
+		 * @param node - the node whose text is to be measured.
+		 * @param text - optional, use this instead of text of node
+		 * @returns object with properties width and height.
+		 */
 		this.getTextMetrics = function(node, text) {
 			text = text || node.getCaption();
 			var font = node.text.font;
-			var minWidth = node.isRoot() ? 100 : 70;
-			var maxWidth = 180;
+			var minWidth = node.isRoot() ? TextMetrics.ROOT_CAPTION_MIN_WIDTH
+					: TextMetrics.NODE_CAPTION_MIN_WIDTH;
+			var maxWidth = TextMetrics.NODE_CAPTION_MAX_WIDTH;
 
 			$div.css({
 				"font-size" : view.zoomFactor * font.size,
 				"min-width" : view.zoomFactor * minWidth,
-				"max-width" : view.zoomFactor * maxWidth, 
+				"max-width" : view.zoomFactor * maxWidth,
 				"font-weight" : font.weight
 			}).text(text);
 
-			var w = $div.width();
-			var h = $div.height();
+			// add some safety pixels for firefox, otherwise it doesnt render
+			// right on textareas
+			var w = $div.width() + 2;
+			var h = $div.height() + 2;
 
 			return {
 				width : w,
@@ -876,6 +888,9 @@ mindmaps.DefaultCanvasView = function() {
 			};
 		};
 	}
+	TextMetrics.ROOT_CAPTION_MIN_WIDTH = 100;
+	TextMetrics.NODE_CAPTION_MIN_WIDTH = 70;
+	TextMetrics.NODE_CAPTION_MAX_WIDTH = 200;
 };
 
 // inherit from base canvas view

@@ -102,15 +102,15 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                       
-		 DXImageTransform.Microsoft.gradient (   
+	filter: progid :                          
+		    DXImageTransform.Microsoft.gradient (      
 		  
 		        
-		           startColorstr =            
-		            '#75A8C4', endColorstr =                         '#E5E5E5',
-		GradientType =       
+		              startColorstr =               
+		               '#75A8C4', endColorstr =                            
+		  '#E5E5E5', GradientType =          
 		        
-		        1 );
+		           1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -285,8 +285,12 @@ html,body {
 	z-index: 100;
 	padding: 4px;
 	text-align: center;
-	word-wrap: break-word;
 	border-radius: 5px;
+}
+
+.node-text-behaviour {
+	white-space: pre-wrap;
+	word-wrap: break-word;
 }
 
 .mindmap .node-caption:hover {
@@ -305,7 +309,6 @@ html,body {
 
 .mindmap .node-caption.edit {
 	border: 2px solid blue;
-	padding: 0 2px;
 }
 
 .mindmap .node-caption.root {
@@ -324,7 +327,6 @@ html,body {
 
 .mindmap .node-caption.root.edit {
 	border-color: blue;
-	padding: 0 4px;
 }
 
 .mindmap .button-fold {
@@ -396,6 +398,18 @@ html,body {
 	outline: none;
 	text-align: center;
 	overflow: hidden;
+	vertical-align: baseline;
+	/** override aristo */
+	-webkit-border-radius: none;
+	-moz-border-radius: none;
+	border-radius: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	-webkit-transition: none;
+	-moz-transition: none;
+	-o-transition: none;
+	-webkit-border-radius: none
 }
 
 .float-panel.ui-dialog {
@@ -468,6 +482,7 @@ html,body {
 }
 
 #navi-controls {
+	
 }
 
 #navi-slider {
@@ -613,13 +628,17 @@ html,body {
 .notification .close-button {
 	color: #4F4F4F;
 	margin-top: -6px;
-	margin-right: -2px; float : right;
+	margin-right: -2px;
+	float: right;
 	cursor: pointer;
 	text-decoration: none;
 	font-size: 14px;
 	font-weight: bold;
-	float: right; cursor : pointer; text-decoration : none; font-size :
-	14px; font-weight : bold;
+	float: right;
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: bold;
 	padding: 4px;
 }
 
