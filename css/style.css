@@ -102,15 +102,16 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                          
-		    DXImageTransform.Microsoft.gradient (      
+	filter: progid :                             
+		       DXImageTransform.Microsoft.gradient (         
 		  
 		        
-		              startColorstr =               
-		               '#75A8C4', endColorstr =                            
-		  '#E5E5E5', GradientType =          
+		                 startColorstr =                  
+		                  '#75A8C4', endColorstr = 
+		                             
+		     '#E5E5E5', GradientType =             
 		        
-		           1 );
+		              1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -359,11 +360,17 @@ html,body {
 #creator-wrapper {
 	position: absolute !important;
 	bottom: -16px;
-	cursor: url("../img/openhand.cur"), default !important;
+	/* open hand cursor */
+	cursor:
+		url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAGxJREFUeNqskgsOwCAIQ+n9D80+bkmDVJmTxIRq+giI2Tj8OTKQGN57P6MJQHpYdAbW4Q07AH7L2IIyZfArXwJwjtHw0qknANn7LDpArDAz8xC9WlUBPkN+AXiZ5DeuAqzyjWqVS5DtgEOAAQCmx2gKY+jFZgAAAABJRU5ErkJggg==),
+		default !important;
 }
 
 #creator-wrapper.ui-draggable-dragging {
-	cursor: url("../img/closedhand.cur"), default !important;
+	/* closed hand cursor */
+	cursor:
+		url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAALCAYAAACksgdhAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFhJREFUeNqUkAEKgDAMA5Pi/79cdS5YC2p2MMi6lnQBbnKeLz2gHg6uAok3rZlAQ01dl3vyWUv8cTpG2dtmcx0qsdI8wxhBsCTjDbtByKWvZzsu/UnsAgwAQG4nCi//474AAAAASUVORK5CYII=),
+		default !important;
 }
 
 #creator-wrapper.left {

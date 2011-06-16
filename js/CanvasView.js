@@ -890,7 +890,7 @@ mindmaps.DefaultCanvasView = function() {
 	}
 	TextMetrics.ROOT_CAPTION_MIN_WIDTH = 100;
 	TextMetrics.NODE_CAPTION_MIN_WIDTH = 70;
-	TextMetrics.NODE_CAPTION_MAX_WIDTH = 200;
+	TextMetrics.NODE_CAPTION_MAX_WIDTH = 150;
 };
 
 // inherit from base canvas view
