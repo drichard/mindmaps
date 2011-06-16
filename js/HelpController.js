@@ -7,7 +7,7 @@
 mindmaps.HelpController = function(eventBus, commandRegistry) {
 
 	function setupInteractiveMode() {
-		if (isTutorialDone() || mindmaps.DEBUG) {
+		if (isTutorialDone()) {
 			console.debug("skipping tutorial in debug mode");
 			return;
 		}
@@ -76,9 +76,10 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 						position : "bottomMiddle",
 						closeButton : true,
 						maxWidth : 350,
+						padding: 20,
 						title : "Creating new ideas",
 						content : "Now it's time to build your mind map.<br/> Move your mouse over the idea, click and then drag"
-								+ " the red circle somewhere on the map. This is how you create a new branch."
+								+ " the <span style='color:red'>red circle</span> away from the root. This is how you create a new branch."
 					});
 			notifications.push(helpNub);
 			eventBus.once(mindmaps.Event.NODE_CREATED, function() {
