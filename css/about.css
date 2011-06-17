@@ -62,10 +62,11 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(top, #75a8c4 7%, #ffffff 100%);
 	/* IE10+ */
-	filter: progid : DXImageTransform.Microsoft.gradient (   startColorstr =
-		'#75a8c4', endColorstr = '#ffffff', GradientType = 0 ); /* IE6-9 */
+	filter: progid :     DXImageTransform.Microsoft.gradient (     
+		 startColorstr =  
+		  '#75a8c4', endColorstr =     '#ffffff', GradientType =     0 );
+	/* IE6-9 */
 	background: linear-gradient(top, #75a8c4 7%, #ffffff 100%); /* W3C */
-	
 	height: auto !important;
 	min-height: 100%;
 }
@@ -73,16 +74,20 @@ html,body {
 #container {
 	background-color: white;
 	padding: 25px 25px;
-	width: 650px;
+	padding-bottom: 0px; width : 650px;
 	margin-left: auto;
 	margin-right: auto;
 	box-shadow: #CCC 4px 0 10px, #CCC -4px 0 10px, #AAA 0 38px 36px -24px;
 	border-bottom-right-radius: 2px;
 	border-bottom-left-radius: 2px;
+	width: 650px;
 }
 
 .section {
 	padding-bottom: 15px;
+}
+
+.section:not(:last-child) {
 	border-bottom: 1px dashed #CCC;
 	margin-bottom: 15px;
 }
@@ -113,4 +118,17 @@ h2 {
 	font-size: 16px;
 	font-family: Georgia, serif;
 	line-height: 1.2em;
+}
+
+#footer {
+	margin: auto -25px;
+	padding: 10px 0px;
+	background: #EEE;
+	margin-top: 35px;
+	overflow: hidden;
+	border-top: 1px solid #CCC;
+}
+
+#html5-badge {
+	float: right;
 }
