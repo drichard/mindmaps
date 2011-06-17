@@ -2,25 +2,6 @@
  * Constructor for a tree node.
  */
 mindmaps.Node = function() {
-	// var defaults = {
-	// id : Util.getId(),
-	// parent : null,
-	// children : new NodeMap(),
-	// text : {
-	// caption : "Node " + id,
-	// font : {
-	// weight : "normal",
-	// size : "inherit",
-	// color : "black"
-	// }
-	// },
-	// offset : Point.ZERO,
-	// collapeChildren : false,
-	// branchColor : "black"
-	// };
-	//	
-	// _.extend(this, defaults, options);
-
 	this.id = mindmaps.Util.getId();
 	this.parent = null;
 	this.children = new mindmaps.NodeMap();
