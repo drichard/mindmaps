@@ -85,11 +85,13 @@ html,body {
 
 .section {
 	padding-bottom: 15px;
-}
-
-.section:not(:last-child) {
 	border-bottom: 1px dashed #CCC;
 	margin-bottom: 15px;
+}
+
+.section:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
 }
 
 #head {
