@@ -3,6 +3,7 @@ CACHE MANIFEST
 
 CACHE:
 index.html
+about.html
 css/Aristo/images/bg_fallback.png
 css/Aristo/images/icon_sprite.png
 css/Aristo/images/progress_bar.gif
@@ -16,15 +17,17 @@ css/minicolors/images/line.gif
 css/minicolors/images/rainbow.png
 css/minicolors/images/trigger.png
 css/minicolors/jquery.miniColors.css
-css/style.css
+css/app.css
+css/about.css
 img/creator-nub-selected.png
 img/creator-nub.png
 img/grid.gif
 img/plus-minus.gif
 img/plus-minus.png
 img/transparent.png
-img/openhand.cur
-img/closedhand.cur
 js/script.js
 media/downloadify.swf
 http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js
+
+NETWORK:
+*
