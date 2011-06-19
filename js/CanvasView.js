@@ -306,11 +306,6 @@ mindmaps.DefaultCanvasView = function() {
 		$drawingArea.children().remove();
 
 		var root = map.root;
-		// // center root
-		// var center = new mindmaps.Point($drawingArea.width() / 2,
-		// $drawingArea
-		// .height() / 2);
-		// root.offset = center;
 
 		// 1.5. do NOT detach for now since DIV dont have widths and heights,
 		// and loading maps draws wrong canvases (or create nodes and then draw

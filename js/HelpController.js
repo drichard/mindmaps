@@ -1,6 +1,6 @@
 /**
  * <pre>
- * -ListenstoHELP_COMMANDand displays notifications.
+ * - Listens to HELP_COMMAND and displays notifications.
  * - Provides interactive tutorial for first time users.
  * </pre>
  */
@@ -76,7 +76,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 						position : "bottomMiddle",
 						closeButton : true,
 						maxWidth : 350,
-						padding: 20,
+						padding : 20,
 						title : "Creating new ideas",
 						content : "Now it's time to build your mind map.<br/> Move your mouse over the idea, click and then drag"
 								+ " the <span style='color:red'>red circle</span> away from the root. This is how you create a new branch."
