@@ -1,7 +1,8 @@
 # mindmaps
-mindmaps is a web application written in JavaScript that lets you easily create good looking mind maps.
+mindmaps is a web application that lets you easily create good looking mind maps. 
 
 ## HTML5 goodness
+- Written entirely in JavaScript
 - 100% offline capable thanks to ApplicationCache
 - Stores mind maps in LocalStorage
 - Canvas API draws the mind map
@@ -17,8 +18,8 @@ In order to build the application yourself you need to have node.js and jake ins
 Then run the jakefile:
 
 ```
-	cd /build
-	jake
+cd /build
+jake
 ```
 
 The finished build will appear in /bin.
