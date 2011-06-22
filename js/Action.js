@@ -158,7 +158,7 @@ mindmaps.action.ChangeNodeCaptionAction = function(node, caption) {
 
 	this.event = [ mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, node ];
 	this.undo = function() {
-		return new mindmaps.action.ChangeCaptionAction(node, oldCaption);
+		return new mindmaps.action.ChangeNodeCaptionAction(node, oldCaption);
 	};
 };
 mindmaps.action.ChangeNodeCaptionAction.prototype = new mindmaps.action.Action();

@@ -309,38 +309,16 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 	});
 
 	// document events
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc) {
-		documentOpened(doc);
-	});
-
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
-		documentClosed();
-	});
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, documentOpened);
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED,documentClosed);
 
 	// node events
-	eventBus.subscribe(mindmaps.Event.NODE_MOVED, function() {
-		renderView();
-	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function() {
-		renderView();
-	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_CREATED, function() {
-		renderView();
-	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_DELETED, function() {
-		renderView();
-	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_OPENED, function() {
-		renderView();
-	});
-
-	eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function() {
-		renderView();
-	});
+	eventBus.subscribe(mindmaps.Event.NODE_MOVED, renderView);
+	eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, renderView);
+	eventBus.subscribe(mindmaps.Event.NODE_CREATED, renderView);
+	eventBus.subscribe(mindmaps.Event.NODE_DELETED, renderView);
+	eventBus.subscribe(mindmaps.Event.NODE_OPENED, renderView);
+	eventBus.subscribe(mindmaps.Event.NODE_CLOSED, renderView);
 
 	eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
 		scale = zoomFactor;

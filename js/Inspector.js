@@ -11,9 +11,10 @@ mindmaps.InspectorView = function() {
 	var $applyToAllButton = $("#inspector-button-apply-all", $content);
 	var branchColorPicker = $("#inspector-branch-color-picker", $content);
 	var fontColorPicker = $("#inspector-font-color-picker", $content);
-	var $allControls = [ $sizeDecreaseButton, $sizeIncreaseButton,
+	var $allButtons = [ $sizeDecreaseButton, $sizeIncreaseButton,
 			$boldCheckbox, $italicCheckbox, $underlineCheckbox,
 			$applyToAllButton ];
+	var $allColorpickers = [ branchColorPicker, fontColorPicker ];
 
 	/**
 	 * Returns a jquery object.
@@ -23,9 +24,13 @@ mindmaps.InspectorView = function() {
 	};
 
 	this.setControlsEnabled = function(enabled) {
-		$allControls.forEach(function($button) {
-			var state = enabled ? "enable" : "disable";
+		var state = enabled ? "enable" : "disable";
+		$allButtons.forEach(function($button) {
 			$button.button(state);
+		});
+
+		$allColorpickers.forEach(function($colorpicker) {
+			$colorpicker.miniColors("disabled", !enabled);
 		});
 	};
 
@@ -170,17 +175,17 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
 				}
 			});
 
-	eventBus.subscribe(mindmaps.Event.NODE_DELETED, function() {
-	});
-
 	eventBus.subscribe(mindmaps.Event.NODE_SELECTED, function(node) {
-		//view.setControlsEnabled(true);
 		updateView(node);
 	});
 
-	// eventBus.subscribe(mindmaps.Event.NODE_DESELECTED, function(node) {
-	// view.setControlsEnabled(false);
-	// });
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+		view.setControlsEnabled(true);
+	});
+	
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+		view.setControlsEnabled(false);
+	});
 
 	function updateView(node) {
 		var font = node.text.font;
