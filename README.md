@@ -15,8 +15,10 @@ The latest stable build is hosted [here] (http://drichard.org/mindmaps).
 ## Build
 In order to build the application yourself you need to have node.js and jake installed.
 Then run the jakefile:
-    cd /build
-    jake
+```
+cd /build
+jake
+```
 The finished build will appear in /bin.
 
 
@@ -27,10 +29,14 @@ Make sure your web server serves .manifest files with the mime type `text/cache-
 be accessible offline.
 
 In Apache add the following line to your .htaccess:
+```
 AddType text/cache-manifest .manifest
+```
 
 In nginx add this to conf/mime.types:
+```
 text/cache-manifest manifest; 
+```
 
 ## License
 mindmaps is licensed under AGPL V3, see LICENSE for more information.
