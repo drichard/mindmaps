@@ -93,6 +93,11 @@ mindmaps.InspectorView = function() {
 
 		branchColorPicker.miniColors({
 			hide : function(hex) {
+				// dont emit event if picker was hidden due to disable
+				if (this.attr('disabled')) {
+					return;
+				}
+				
 				console.log("branch", hex);
 				if (self.branchColorPicked) {
 					self.branchColorPicked(hex);
@@ -102,6 +107,10 @@ mindmaps.InspectorView = function() {
 
 		fontColorPicker.miniColors({
 			hide : function(hex) {
+				// dont emit event if picker was hidden due to disable
+				if (this.attr('disabled')) {
+					return;
+				}
 				console.log("font", hex);
 				if (self.fontColorPicked) {
 					self.fontColorPicked(hex);

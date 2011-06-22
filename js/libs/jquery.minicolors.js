@@ -208,9 +208,10 @@ if(jQuery) (function($) {
 				// Disables the input control and the selector
 				//
 				
-				hide(input);
+			
 				input.attr('disabled', true);
 				input.data('trigger').css('opacity', .5);
+				hide(input);
 				
 			};
 			
