@@ -15,6 +15,15 @@ mindmaps.Notification = function(targetSelector, options) {
 
 	// notification target
 	var $target = $(targetSelector);
+	if ($target.length === 0) {
+		/**
+		 * Return unfinished, invisible notification if selector didn't match. It will
+		 * simply not show up, and does not have to be handled specially by the
+		 * caller.
+		 */
+		return this;
+	}
+
 	var offset = $target.offset();
 	var targetLeft = offset.left;
 	var targetTop = offset.top;

@@ -28,12 +28,13 @@ mindmaps.UndoController = function(eventBus, commandRegistry) {
 	};
 
 	this.documentOpened = function() {
+		this.undoManager.reset();
+		this.undoStateChanged();
 	};
 
 	this.documentClosed = function() {
 		this.undoManager.reset();
-		this.undoCommand.setEnabled(false);
-		this.redoCommand.setEnabled(false);
+		this.undoStateChanged();
 	};
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, this.documentOpened

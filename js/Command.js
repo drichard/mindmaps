@@ -42,9 +42,6 @@ mindmaps.Command.prototype = {
 	},
 
 	setEnabled : function(enabled) {
-		if (this.enabled === enabled) {
-			return;
-		}
 		this.enabled = enabled;
 		this.publish(mindmaps.CommandEvent.ENABLED_CHANGED, enabled);
 	}

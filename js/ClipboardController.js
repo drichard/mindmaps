@@ -21,6 +21,7 @@ mindmaps.ClipboardController = function(eventBus, commandRegistry, mindmapModel)
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			copyCommand.setEnabled(true);
 			cutCommand.setEnabled(true);
+			pasteCommand.setEnabled(node != null);
 		});
 
 	}

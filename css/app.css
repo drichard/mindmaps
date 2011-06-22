@@ -87,10 +87,7 @@ html,body {
 	width: 100%;
 }
 
-.logo-css3-bg {
-	-webkit-transition: all 1s ease-in-out;
-	-moz-transition: all 1s ease-in-out;
-	transition: all 1s ease-in-out;
+.logo-bg {
 	background: #75a8c4; /* Old browsers */
 	background: -moz-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* FF3.6+ */
@@ -102,21 +99,27 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                             
-		       DXImageTransform.Microsoft.gradient (         
+	filter: progid :                              
+		        DXImageTransform.Microsoft.gradient (          
 		  
 		        
-		                 startColorstr =                  
-		                  '#75A8C4', endColorstr = 
+		                  startColorstr =                   
+		                   '#75A8C4', endColorstr =  
 		                             
-		     '#E5E5E5', GradientType =             
+		      '#E5E5E5', GradientType =              
 		        
-		              1 );
+		               1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
 
-.logo-css3-bg:hover {
+.rotate-180 {
+	-webkit-transition: all 1s ease-in-out;
+	-moz-transition: all 1s ease-in-out;
+	transition: all 1s ease-in-out;
+}
+
+.rotate-180:hover {
 	-webkit-transition: all 1s ease-out;
 	-moz-transition: all 1s ease-out;
 	transition: all 1s ease-out;
@@ -366,8 +369,7 @@ html,body {
 		default !important;
 }
 
-#creator-wrapper.ui-draggable-dragging {
-	/* closed hand cursor */
+#creator-wrapper.ui-draggable-dragging { /* closed hand cursor */
 	cursor:
 		url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAALCAYAAACksgdhAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFhJREFUeNqUkAEKgDAMA5Pi/79cdS5YC2p2MMi6lnQBbnKeLz2gHg6uAok3rZlAQ01dl3vyWUv8cTpG2dtmcx0qsdI8wxhBsCTjDbtByKWvZzsu/UnsAgwAQG4nCi//474AAAAASUVORK5CYII=),
 		default !important;
