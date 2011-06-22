@@ -15,8 +15,8 @@ The latest stable build is hosted [here] (http://drichard.org/mindmaps).
 ## Build
 In order to build the application yourself you need to have node.js and jake installed.
 Then run the jakefile:
-	cd /build
-	jake
+    cd /build
+    jake
 The finished build will appear in /bin.
 
 
