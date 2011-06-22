@@ -9,7 +9,7 @@ mindmaps is a web application written in JavaScript that lets you easily create 
 
 
 ## Try it out
-The latest stable build is hosted [here] (www.drichard.org/mindmaps)
+The latest stable build is hosted [here] (http://drichard.org/mindmaps).
 
 
 ## Build
