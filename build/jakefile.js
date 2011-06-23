@@ -193,9 +193,13 @@ task(
 		function() {
 			console.log("Deploying project to github pages");
 			var exec = require('child_process').exec;
+			/**
+			 * The command copies all files from /bin into github pages repo,
+			 * commits and pushes the changes.
+			 */
 			var command = "cp -r ../bin/* ../../drichard.github.com/mindmaps/; "
 					+ "cd ../../drichard.github.com/mindmaps/; " + "git add .; "
-					+ "git commit -a -m 'deploy'; " + "git push;";
+					+ "git commit -a -m 'deploy mindmaps'; " + "git push;";
 			exec(
 					command,
 					function(error, stdout, stderr) {
@@ -204,7 +208,7 @@ task(
 							console.log('exec error: ' + error);
 						} else {
 							console.log("Deployed all files successfully");
-							console.log("stdout: " + stdout);
+							console.log("STDOUT:\n" + stdout);
 						}
 					});
 
