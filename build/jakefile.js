@@ -105,7 +105,6 @@ task("remove-debug", function() {
 	var regexProduction = /<!-- PRODUCTION([\s\S]*?)\/PRODUCTION -->/gmi;
 	indexFile = indexFile.replace(regexProduction, "$1");
 
-	
 	// remove all comments
 	// var regexComments = /<!--[\s\S]*?-->/gmi;
 	// indexFile = indexFile.replace(regexComments, "");
@@ -169,7 +168,7 @@ task("copy-files", [ "create-dir", "minify-js" ], function() {
 });
 
 desc("Update cache manifest");
-task("update-manifest", ["copy-files"], function() {
+task("update-manifest", [ "copy-files" ], function() {
 	// put new timestamp
 	var fileDir = publishDir + "cache.manifest";
 	var contents = fs.readFileSync(fileDir, "utf8");
@@ -187,31 +186,48 @@ task("default", [ "build" ], function() {
 	// build on default
 });
 
-desc("Deploy project to server");
+desc("Deploy project to github pages");
 task(
 		"deploy",
 		[ "build" ],
 		function() {
-			console.log("Deploying project to remote server");
+			console.log("Deploying project to github pages");
 			var exec = require('child_process').exec;
-			console.log("Cleaning remote directory");
-			exec("ssh s0522592@remserv.rz.htw-berlin.de 'rm -rf ~/public_html/mindmaps/*'");
-
-			console.log("Copying all files to remote");
+			var command = "cp -r ../bin/* ../../drichard.github.com/mindmaps/; "
+					+ "cd ../../drichard.github.com/mindmaps/; " + "git add .; "
+					+ "git commit -a -m \"deploy\"; " + "git push";
 			exec(
-					"scp -r . s0522592@remserv.rz.htw-berlin.de:~/public_html/mindmaps/",
-					{
-						cwd : "../bin"
-					},
+					command,
 					function(error, stdout, stderr) {
+
 						if (error !== null) {
 							console.log('exec error: ' + error);
 						} else {
-							console.log("Copied all files successfully");
-							console.log("Setting file permissions to 0755");
-							exec("ssh s0522592@remserv.rz.htw-berlin.de 'chmod -R 0755 ~/public_html/mindmaps/*'");
+							console.log("Deployed all files successfully");
 						}
 					});
+
+			// console.log("Cleaning remote directory");
+			// exec("ssh s0522592@remserv.rz.htw-berlin.de 'rm -rf
+			// ~/public_html/mindmaps/*'");
+			//
+			// console.log("Copying all files to remote");
+			// exec(
+			// "scp -r .
+			// s0522592@remserv.rz.htw-berlin.de:~/public_html/mindmaps/",
+			// {
+			// cwd : "../bin"
+			// },
+			// function(error, stdout, stderr) {
+			// if (error !== null) {
+			// console.log('exec error: ' + error);
+			// } else {
+			// console.log("Copied all files successfully");
+			// console.log("Setting file permissions to 0755");
+			// exec("ssh s0522592@remserv.rz.htw-berlin.de 'chmod -R 0755
+			// ~/public_html/mindmaps/*'");
+			// }
+			// });
 		});
 
 desc("Build cache manifest");
