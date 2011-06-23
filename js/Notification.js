@@ -1,4 +1,5 @@
 /**
+ * Creates a new notification.
  * 
  * @param target selector
  * @param options
