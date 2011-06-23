@@ -195,7 +195,7 @@ task(
 			var exec = require('child_process').exec;
 			var command = "cp -r ../bin/* ../../drichard.github.com/mindmaps/; "
 					+ "cd ../../drichard.github.com/mindmaps/; " + "git add .; "
-					+ "git commit -a -m \"deploy\"; " + "git push";
+					+ "git commit -a -m 'deploy'; " + "git push;";
 			exec(
 					command,
 					function(error, stdout, stderr) {
@@ -204,6 +204,7 @@ task(
 							console.log('exec error: ' + error);
 						} else {
 							console.log("Deployed all files successfully");
+							console.log("stdout: " + stdout);
 						}
 					});
 
