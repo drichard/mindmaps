@@ -16,12 +16,12 @@ mindmaps.Node = function() {
 			color : "#000000"
 		}
 	};
-	this.offset = mindmaps.Point.ZERO;
+	this.offset = new mindmaps.Point();
 	this.foldChildren = false;
 	this.branchColor = "#000000";
 };
 
-// TODO test case
+
 /**
  * Create a deep copy of this node, where all nodes have a new IDs.
  * 

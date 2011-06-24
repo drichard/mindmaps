@@ -1,3 +1,5 @@
+var mindmaps = {};
+
 module("models");
 test("node - basic operations", function() {
 	var x = new mindmaps.Node();

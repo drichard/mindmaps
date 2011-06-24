@@ -181,7 +181,7 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 	var $container = container.getContent();
 	var viewDragging = false;
 	var scale = zoomController.DEFAULT_ZOOM;
-	var canvasSize = mindmaps.Point.ZERO;
+	var canvasSize = new mindmaps.Point();
 	var docSize = null;
 	var mindmap = null;
 

@@ -2,8 +2,8 @@
  * Point class.
  */
 mindmaps.Point = function(x, y) {
-	this.x = x;
-	this.y = y;
+	this.x = x || 0;
+	this.y = y || 0;
 };
 
 mindmaps.Point.fromObject = function(obj) {
@@ -22,5 +22,3 @@ mindmaps.Point.prototype.add = function(point) {
 mindmaps.Point.prototype.toString = function() {
 	return "{x: " + this.x + " y: " + this.y + "}";
 };
-
-mindmaps.Point.ZERO = new mindmaps.Point(0, 0);

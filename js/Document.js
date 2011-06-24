@@ -20,7 +20,7 @@ mindmaps.Document.fromObject = function(obj) {
 	doc.mindmap = mindmaps.MindMap.fromObject(obj.mindmap);
 	doc.dates = {
 		created : new Date(obj.dates.created),
-		modified : new Date(obj.dates.modified)
+		modified : obj.dates.modified ? new Date(obj.dates.modified) : null
 	};
 
 	doc.dimensions = mindmaps.Point.fromObject(obj.dimensions);
@@ -32,15 +32,20 @@ mindmaps.Document.fromObject = function(obj) {
  * Called by JSON.stringify().
  */
 mindmaps.Document.prototype.toJSON = function() {
+	// store dates in milliseconds since epoch
+	var dates = {
+		created : this.dates.created.getTime()
+	};
+
+	if (this.dates.modified) {
+		dates.modified = this.dates.modified.getTime();
+	}
+
 	return {
 		id : this.id,
 		title : this.title,
 		mindmap : this.mindmap,
-		dates : {
-			// store dates in milliseconds since epoch
-			created : this.dates.created.getTime(),
-			modified : this.dates.modified.getTime()
-		},
+		dates : dates,
 		dimensions : this.dimensions
 	};
 };
@@ -64,4 +69,8 @@ mindmaps.Document.sortByModifiedDateDescending = function(doc1, doc2) {
 
 mindmaps.Document.prototype.isNew = function() {
 	return this.dates.modified === null;
+};
+
+mindmaps.Document.prototype.getCreatedDate = function() {
+	return this.dates.created;
 };
