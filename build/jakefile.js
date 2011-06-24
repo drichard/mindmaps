@@ -3,8 +3,8 @@ var path = require("path");
 var wrench = require("wrench");
 
 var indexFileName = "index.html";
-var baseDir = "../";
-var publishDir = baseDir + "bin/";
+var baseDir = "../src/";
+var publishDir = "../bin/";
 var scriptFilename = "script.js";
 var scriptDir = "js/";
 var regexScriptSection = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
