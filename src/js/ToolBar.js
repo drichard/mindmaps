@@ -196,31 +196,6 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
 
 	view.addButton(commandToButton(mindmaps.HelpCommand), view.alignRight);
 
-	// // debug stuff
-	// if (mindmaps.DEBUG) {
-	// var bigmapbutton = {
-	// getTitle : function() {
-	// return "big map";
-	// },
-	// getId : function() {
-	// return "bigmap";
-	// },
-	// getToolTip : function() {
-	// return "create a really big map";
-	// },
-	// click : function() {
-	// var map = getBinaryMapWithDepth(8);
-	// var doc = new mindmaps.Document();
-	// doc.mindmap = map;
-	// mindmapModel.setDocument(doc);
-	// },
-	// isEnabled : function() {
-	// return true;
-	// }
-	// };
-	// view.addButton(bigmapbutton, view.alignLeft);
-	// }
-
 	this.go = function() {
 		view.init();
 	};

@@ -20,6 +20,9 @@ mindmaps.LocalDocumentStorage = (function() {
 
 	var getDocumentByKey = function(key) {
 		var json = localStorage.getItem(key);
+		if (json === null) {
+			return null;
+		}
 
 		/**
 		 * Catch any SytaxErrors when document can't be parsed.
