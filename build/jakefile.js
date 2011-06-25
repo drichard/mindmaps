@@ -210,6 +210,10 @@ task(
 							console.log("Deployed all files successfully");
 							console.log("STDOUT:\n" + stdout);
 						}
+						
+						if (stderr) {
+							console.log("STDERR: " + stderr);
+						}
 					});
 
 			// console.log("Cleaning remote directory");

@@ -1,4 +1,3 @@
-// TODO limit max stack size: use circulare buffer or shift array
 function UndoManager(maxStackSize) {
 	this.maxStackSize = maxStackSize || 64;
 
@@ -78,7 +77,10 @@ function UndoManager(maxStackSize) {
 			currentState = State.UNDO;
 			var action = undoStack.pop();
 			callAction(action);
-			redoStack.push(action);
+			
+			if (action.redo) {
+				redoStack.push(action);
+			}
 
 			onStateChange();
 		}
@@ -89,7 +91,10 @@ function UndoManager(maxStackSize) {
 			currentState = State.REDO;
 			var action = redoStack.pop();
 			callAction(action);
-			undoStack.push(action);
+			
+			if (action.undo) {
+				undoStack.push(action);
+			}
 
 			onStateChange();
 		}
@@ -109,10 +114,11 @@ function UndoManager(maxStackSize) {
 		undoContext = false;
 		currentAction = null;
 		currentState = null;
+		
+		onStateChange();
 	};
 }
 
-// TODO unit tests
 UndoManager.CircularStack = function(maxSize) {
 	this.maxSize = maxSize || 32;
 	this.buffer = [];

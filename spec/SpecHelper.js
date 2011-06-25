@@ -9,3 +9,6 @@ beforeEach(function() {
 	});
 });
 
+var noOp = function() {
+};
+
