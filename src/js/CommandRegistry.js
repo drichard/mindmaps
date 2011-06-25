@@ -3,7 +3,8 @@ mindmaps.CommandRegistry = function(shortcutController) {
 
 	function registerShortcut(command) {
 		if (command.shortcut && command.execute) {
-			shortcutController.register(command.shortcut, command.execute.bind(command));
+			shortcutController.register(command.shortcut, command.execute
+					.bind(command));
 		}
 	}
 
@@ -18,7 +19,10 @@ mindmaps.CommandRegistry = function(shortcutController) {
 		if (!command) {
 			command = new commandType;
 			this.commands[commandType] = command;
-			registerShortcut(command);
+
+			if (shortcutController) {
+				registerShortcut(command);
+			}
 		}
 		return command;
 	};
@@ -31,6 +35,9 @@ mindmaps.CommandRegistry = function(shortcutController) {
 		}
 
 		delete this.commands[commandType];
-		unregisterShortcut(command);
+
+		if (shortcutController) {
+			unregisterShortcut(command);
+		}
 	};
 };
