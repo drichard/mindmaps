@@ -1,8 +1,19 @@
 /**
- * Creates a new notification.
+ * Creates a new notification and attaches it to the target selector. If the
+ * selector matches more than one element, the first one is taken.
  * 
- * @param target selector
- * @param options
+ * @constructor
+ * @param {String} targetSelector
+ * @param [options] the options
+ * @param {String} [options.title] the title of the notification
+ * @param {String} [options.content] the content
+ * @param {String} [options.position] possible values: topLeft, topMiddle,
+ *            topRight, rightTop, rightMiddle, rightBottom, bottomLeft,
+ *            bottomMiddle, bottomRight, leftTop, leftMiddle, leftBottom
+ * @param {Integer} [options.padding]
+ * @param {Integer} [options.expires]
+ * @param {Boolean} [options.closeButton]
+ * @param {Integer} [options.maxWidth]
  */
 mindmaps.Notification = function(targetSelector, options) {
 	var self = this;
@@ -18,9 +29,9 @@ mindmaps.Notification = function(targetSelector, options) {
 	var $target = $(targetSelector);
 	if ($target.length === 0) {
 		/**
-		 * Return unfinished, invisible notification if selector didn't match. It will
-		 * simply not show up, and does not have to be handled specially by the
-		 * caller.
+		 * Return unfinished, invisible notification if selector didn't match.
+		 * It will simply not show up, and does not have to be handled specially
+		 * by the caller.
 		 */
 		return this;
 	}
@@ -131,6 +142,9 @@ mindmaps.Notification = function(targetSelector, options) {
 };
 
 mindmaps.Notification.prototype = {
+	/**
+	 * Removes the notification.
+	 */
 	close : function() {
 		var n = this.$el;
 		n.fadeOut(800, function() {
@@ -138,14 +152,27 @@ mindmaps.Notification.prototype = {
 			this.removed = true;
 		});
 	},
+	/**
+	 * Returns whether the notification is still on screen.
+	 * 
+	 * @returns {Boolean}
+	 */
 	isVisible : function() {
 		return !this.removed;
 	},
+	/**
+	 * Returns the element as a jQuery object.
+	 * 
+	 * @returns {jQuery}
+	 */
 	$ : function() {
 		return this.$el;
 	}
 };
 
+/**
+ * The default options.
+ */
 mindmaps.Notification.Defaults = {
 	title : null,
 	content : "New Notification",

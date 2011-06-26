@@ -1,5 +1,7 @@
 /**
- * Constructor for a tree node.
+ * Creates a new node.
+ * 
+ * @constructor
  */
 mindmaps.Node = function() {
 	this.id = mindmaps.Util.getId();
@@ -21,9 +23,8 @@ mindmaps.Node = function() {
 	this.branchColor = "#000000";
 };
 
-
 /**
- * Create a deep copy of this node, where all nodes have a new IDs.
+ * Creates a deep copy of this node, where all nodes have a new IDs.
  * 
  * @returns {mindmaps.Node} the cloned node
  */
@@ -54,14 +55,20 @@ mindmaps.Node.prototype.clone = function() {
 };
 
 /**
- * Creates a node object by parsing JSON text.
+ * Creates a new node object from JSON String.
+ * 
+ * @param {String} json
+ * @returns {mindmaps.Node}
  */
 mindmaps.Node.fromJSON = function(json) {
 	return mindmaps.Node.fromObject(JSON.parse(json));
 };
 
 /**
- * Creates a node from an object as a result of a JSON parser.
+ * Creates a new node object from a generic object.
+ * 
+ * @param {Object} obj
+ * @returns {mindmaps.Node}
  */
 mindmaps.Node.fromObject = function(obj) {
 	var node = new mindmaps.Node();
@@ -83,9 +90,12 @@ mindmaps.Node.fromObject = function(obj) {
 /**
  * Returns a presentation of this node and its children ready for serialization.
  * Called by JSON.stringify().
+ * 
+ * @private
  */
 mindmaps.Node.prototype.toJSON = function() {
-	// TODO see if we cant improve this http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
+	// TODO see if we cant improve this
+	// http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 	// copy all children into array
 	var self = this;
 	var children = (function() {
@@ -110,35 +120,67 @@ mindmaps.Node.prototype.toJSON = function() {
 	return obj;
 };
 
+/**
+ * Creates a JSON representation of the node.
+ * 
+ * @returns {String}
+ */
 mindmaps.Node.prototype.serialize = function() {
 	return JSON.stringify(this);
 };
 
+/**
+ * Adds a child to the node.
+ * 
+ * @param {mindmaps.Node} node
+ */
 mindmaps.Node.prototype.addChild = function(node) {
 	node.parent = this;
 	this.children.add(node);
 };
 
+/**
+ * Removes a direct child.
+ * 
+ * @param {mindmaps.Node} node
+ */
 mindmaps.Node.prototype.removeChild = function(node) {
 	node.parent = null;
 	this.children.remove(node);
 };
 
+/**
+ * Returns whether this node is a root.
+ * 
+ * @returns {Boolean}
+ */
 mindmaps.Node.prototype.isRoot = function() {
 	return this.parent === null;
 };
 
+/**
+ * Returns whether this node is a leaf.
+ * 
+ * @returns {Boolean}
+ */
 mindmaps.Node.prototype.isLeaf = function() {
 	return this.children.size() === 0;
 };
 
+/**
+ * Returns the parent node.
+ * 
+ * @returns {mindmaps.Node}
+ */
 mindmaps.Node.prototype.getParent = function() {
 	return this.parent;
 };
 
 /**
+ * Returns the root if this node is part of a tree structure, otherwise it
+ * returns itself.
  * 
- * @returns The root of the tree structure.
+ * @returns {mindmaps.Node} The root of the tree structure.
  */
 mindmaps.Node.prototype.getRoot = function() {
 	var root = this;
@@ -151,6 +193,8 @@ mindmaps.Node.prototype.getRoot = function() {
 
 /**
  * Gets the position of the node relative to the root.
+ * 
+ * @returns {Number}
  */
 mindmaps.Node.prototype.getPosition = function() {
 	var pos = this.offset.clone();
@@ -205,14 +249,18 @@ mindmaps.Node.prototype.getChildren = function(recursive) {
 };
 
 /**
- * Traverses all child nodes.
+ * Iterator. Traverses all child nodes.
+ * 
+ * @param {Function} func
  */
 mindmaps.Node.prototype.forEachChild = function(func) {
 	this.children.each(func);
 };
 
 /**
- * Traverses all child nodes recursively.
+ * Iterator. Traverses all child nodes recursively.
+ * 
+ * @param {Function} func
  */
 mindmaps.Node.prototype.forEachDescendant = function(func) {
 	this.children.each(function(node) {
@@ -221,10 +269,20 @@ mindmaps.Node.prototype.forEachDescendant = function(func) {
 	});
 };
 
+/**
+ * Sets the caption for the node
+ * 
+ * @param {String} caption
+ */
 mindmaps.Node.prototype.setCaption = function(caption) {
 	this.text.caption = caption;
 };
 
+/**
+ * Gets the caption for the node.
+ * 
+ * @returns {String}
+ */
 mindmaps.Node.prototype.getCaption = function() {
 	return this.text.caption;
 };
@@ -232,8 +290,8 @@ mindmaps.Node.prototype.getCaption = function() {
 /**
  * Tests (depth-first) whether the other node is a descendant of this node.
  * 
- * @param other
- * @returns true if descendant
+ * @param {mindmaps.Node} other
+ * @returns {Boolean} true if descendant, false otherwise.
  */
 mindmaps.Node.prototype.isDescendant = function(other) {
 	function test(node) {

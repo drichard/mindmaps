@@ -1,3 +1,13 @@
+/**
+ * Creates a new ClipboardController.
+ * Handles copy, cut and paste commands.
+ * 
+ * @constructor
+ * 
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.CommandRegistry} commandRegistry
+ * @param {mindmaps.MindMapModel} mindmapModel
+ */
 mindmaps.ClipboardController = function(eventBus, commandRegistry, mindmapModel) {
 	var node, copyCommand, cutCommand, pasteCommand;
 

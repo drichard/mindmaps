@@ -1,6 +1,7 @@
-// TODO maybe bundle events: DocumentEvent, NodeEvent (Type.MOVED, Type.CREATED)
 /**
  * Events that the event bus carries.
+ * 
+ * @static
  */
 mindmaps.Event = {
 	/**
@@ -81,6 +82,9 @@ mindmaps.Event = {
 
 /**
  * Simple Event bus powered by EventEmitter.
+ * 
+ * @constructor
+ * 
  */
 mindmaps.EventBus = EventEmitter;
 

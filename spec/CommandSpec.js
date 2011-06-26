@@ -28,7 +28,7 @@ describe("Command", function() {
 		expect(callback).toHaveBeenCalled();
 	});
 	
-	it("should notify when a enabled state has changed", function() {
+	it("should notify when the enabled state has changed", function() {
 		var callback = jasmine.createSpy();
 		command.setHandler(handler);
 		command.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED, callback);

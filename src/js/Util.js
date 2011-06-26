@@ -1,9 +1,13 @@
+/**
+ * @namespace
+ */
 mindmaps.Util = mindmaps.Util || {};
 
 /**
  * Creates a UUID in compliance with RFC4122.
  * 
- * @returns a unique id as a String
+ * @static
+ * @returns {String} a unique id
  */
 mindmaps.Util.createUUID = function() {
 	// http://www.ietf.org/rfc/rfc4122.txt
@@ -13,10 +17,20 @@ mindmaps.Util.createUUID = function() {
 	});
 };
 
+/**
+ * Returns an ID used by model objects.
+ * 
+ * @returns {String} id
+ */
 mindmaps.Util.getId = function() {
 	return mindmaps.Util.createUUID();
 };
 
+/**
+ * Creates a random color.
+ * 
+ * @returns {String} color in hex format
+ */
 mindmaps.Util.randomColor = function() {
 	// http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript/5365036#5365036
 	// return "#"+((1<<24)*Math.random()|0).toString(16);

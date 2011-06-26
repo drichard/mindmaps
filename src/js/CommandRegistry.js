@@ -1,3 +1,9 @@
+/**
+ * Creates a new CommandRegistry.
+ * 
+ * @constructor
+ * @param {mindmaps.ShortCutController} [shortcutController]
+ */
 mindmaps.CommandRegistry = function(shortcutController) {
 	this.commands = {};
 
@@ -14,6 +20,12 @@ mindmaps.CommandRegistry = function(shortcutController) {
 		}
 	}
 
+	/**
+	 * Returns a command object for the given command type.
+	 * 
+	 * @param commandType
+	 * @returns {mindmaps.Command} a command object.
+	 */
 	this.get = function(commandType) {
 		var command = this.commands[commandType];
 		if (!command) {
@@ -27,6 +39,11 @@ mindmaps.CommandRegistry = function(shortcutController) {
 		return command;
 	};
 
+	/**
+	 * Removes the command object for the given command type.
+	 * 
+	 * @param commandType
+	 */
 	this.remove = function(commandType) {
 		// TODO remove by object
 		var command = this.commands[commandType];

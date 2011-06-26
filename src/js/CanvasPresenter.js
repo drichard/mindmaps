@@ -1,8 +1,21 @@
+/**
+ * Creates a new CanvasPresenter.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.CommandRegistry} commandRegistry
+ * @param {mindmaps.MindMapModel} mindmapModel
+ * @param {mindmaps.CanvasView} view
+ * @param {mindmaps.ZoomController} zoomController
+ */
 mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		view, zoomController) {
 	var self = this;
 	var creator = view.getCreator();
 
+	/**
+	 * Initializes this presenter.
+	 */
 	this.init = function() {
 		var editCaptionCommand = commandRegistry
 				.get(mindmaps.EditNodeCaptionCommand);
@@ -13,6 +26,11 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		toggleNodeFoldedCommand.setHandler(toggleFold);
 	};
 
+	/**
+	 * Handles the edit caption command. Tells view to start edit mode for node.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
 	this.editNodeCaption = function(node) {
 		if (!node) {
 			node = mindmapModel.selectedNode;
@@ -20,6 +38,11 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		view.editNodeCaption(node);
 	};
 
+	/**
+	 * Toggles the fold state of a node.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
 	var toggleFold = function(node) {
 		if (!node) {
 			node = mindmapModel.selectedNode;
@@ -30,6 +53,12 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		mindmapModel.executeAction(action);
 	};
 
+	/**
+	 * Tells the view to select a node.
+	 * 
+	 * @param {mindmaps.Node} selectedNode
+	 * @param {mindmaps.Node} oldSelectedNode
+	 */
 	var selectNode = function(selectedNode, oldSelectedNode) {
 
 		// deselect old node
@@ -39,9 +68,14 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		view.highlightNode(selectedNode);
 	};
 
+	// listen to events from view
+	/**
+	 * View callback: Zoom on mouse wheel.
+	 * 
+	 */
 	view.mouseWheeled = function(delta) {
 		view.stopEditNodeCaption();
-		
+
 		if (delta > 0) {
 			zoomController.zoomIn();
 		} else {
@@ -49,7 +83,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		}
 	};
 
-	// listen to events from view
+	/**
+	 * View callback: Attach creator to node if mouse hovers over node.
+	 */
 	view.nodeMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
@@ -58,6 +94,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		}
 	};
 
+	/**
+	 * View callback: Attach creator to node if mouse hovers over node caption.
+	 */
 	view.nodeCaptionMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
 			// dont relocate the creator if we are dragging
@@ -66,6 +105,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		}
 	};
 
+	/**
+	 * View callback: Select node if mouse was pressed.
+	 */
 	view.nodeMouseDown = function(node) {
 		mindmapModel.selectNode(node);
 		// show creator
@@ -75,6 +117,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 	// view.nodeMouseUp = function(node) {
 	// };
 
+	/**
+	 * View callback: Go into edit mode when node was double clicked.
+	 */
 	view.nodeDoubleClicked = function(node) {
 		view.editNodeCaption(node);
 	};
@@ -82,6 +127,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 	// view.nodeDragging = function() {
 	// };
 
+	/**
+	 * View callback: Execute MoveNodeAction when node was dragged.
+	 */
 	view.nodeDragged = function(node, offset) {
 		// view has updated itself
 
@@ -90,11 +138,18 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		mindmapModel.executeAction(action);
 	};
 
+	/**
+	 * View callback: Toggle fold mode when fold button was clicked.
+	 */
 	view.foldButtonClicked = function(node) {
 		toggleFold(node);
 	};
 
 	// CREATOR TOOL
+	/**
+	 * View callback: Return new random color to view when creator tool was
+	 * started to drag.
+	 */
 	creator.dragStarted = function(node) {
 		// set edge color for new node. inherit from parent or random when root
 		var color = node.isRoot() ? mindmaps.Util.randomColor()
@@ -102,6 +157,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		return color;
 	};
 
+	/**
+	 * View callback: Create a new node when creator tool was stopped.
+	 */
 	creator.dragStopped = function(parent, offsetX, offsetY, distance) {
 		// disregard if the creator was only dragged a bit
 		if (distance < 50) {
@@ -118,6 +176,10 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		mindmapModel.createNode(node, parent);
 	};
 
+	/**
+	 * View callback: Change node caption when text change was committed in
+	 * view.
+	 */
 	view.nodeCaptionEditCommitted = function(str) {
 		// avoid whitespace only strings
 		var str = $.trim(str);
@@ -133,6 +195,11 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		view.init();
 	};
 
+	/**
+	 * Draw the mind map on the canvas.
+	 * 
+	 * @param {mindmaps.Document} doc
+	 */
 	function showMindMap(doc) {
 		view.setZoomFactor(zoomController.DEFAULT_ZOOM);
 		var dimensions = doc.dimensions;
@@ -144,17 +211,20 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		mindmapModel.selectNode(map.root);
 	}
 
+	/**
+	 * Hook up with EventBus.
+	 */
 	function bind() {
 		// listen to global events
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc,
 				newDocument) {
 			showMindMap(doc);
 
-//			if (doc.isNew()) {
-//				// edit root node on start
-//				var root = doc.mindmap.root;
-//				view.editNodeCaption(root);
-//			}
+			// if (doc.isNew()) {
+			// // edit root node on start
+			// var root = doc.mindmap.root;
+			// view.editNodeCaption(root);
+			// }
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
@@ -209,25 +279,21 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 			}
 		});
 
+		eventBus.subscribe(mindmaps.Event.NODE_SELECTED, selectNode);
+		
 		eventBus.subscribe(mindmaps.Event.NODE_OPENED, function(node) {
 			view.openNode(node);
 		});
-
 		eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
 			view.closeNode(node);
 		});
-
-		eventBus.subscribe(mindmaps.Event.NODE_SELECTED, selectNode);
-
 		eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
 			view.updateNode(node);
 		});
-
 		eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(
 				node) {
 			view.updateNode(node);
 		});
-
 		eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
 			view.setZoomFactor(zoomFactor);
 			view.applyViewZoom();

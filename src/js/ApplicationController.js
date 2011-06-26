@@ -1,3 +1,8 @@
+/**
+ * Creates a new Application Controller.
+ * 
+ * @constructor
+ */
 mindmaps.ApplicationController = function() {
 	var eventBus = new mindmaps.EventBus();
 	var shortcutController = new mindmaps.ShortcutController();
@@ -8,6 +13,9 @@ mindmaps.ApplicationController = function() {
 			commandRegistry, mindmapModel);
 	var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
 
+	/**
+	 * Handles the new document command.
+	 */
 	function doNewDocument() {
 		// close old document first
 		var doc = mindmapModel.getDocument();
@@ -20,12 +28,18 @@ mindmaps.ApplicationController = function() {
 		presenter.go();
 	}
 
+	/**
+	 * Handles the save document command.
+	 */
 	function doSaveDocument() {
 		var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
 				mindmapModel, new mindmaps.SaveDocumentView());
 		presenter.go();
 	}
 
+	/**
+	 * Handles the close document command.
+	 */
 	function doCloseDocument() {
 		var doc = mindmapModel.getDocument();
 		if (doc) {
@@ -34,12 +48,19 @@ mindmaps.ApplicationController = function() {
 		}
 	}
 
+	/**
+	 * Handles the open document command.
+	 */
 	function doOpenDocument() {
 		var presenter = new mindmaps.OpenDocumentPresenter(eventBus,
 				mindmapModel, new mindmaps.OpenDocumentView());
 		presenter.go();
 	}
 
+	/**
+	 * Initializes the controller, registers for all commands and subscribes to
+	 * event bus.
+	 */
 	this.init = function() {
 		var newDocumentCommand = commandRegistry
 				.get(mindmaps.NewDocumentCommand);
@@ -58,12 +79,12 @@ mindmaps.ApplicationController = function() {
 		var closeDocumentCommand = commandRegistry
 				.get(mindmaps.CloseDocumentCommand);
 		closeDocumentCommand.setHandler(doCloseDocument);
-		
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 			saveDocumentCommand.setEnabled(false);
 			closeDocumentCommand.setEnabled(false);
 		});
-		
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			saveDocumentCommand.setEnabled(true);
 			closeDocumentCommand.setEnabled(true);
@@ -73,6 +94,9 @@ mindmaps.ApplicationController = function() {
 		mindmapModel.undoEvent = undoController.addUndo.bind(undoController);
 	};
 
+	/**
+	 * Launches the main view controller.
+	 */
 	this.go = function() {
 		var viewController = new mindmaps.MainViewController(eventBus,
 				mindmapModel, commandRegistry, new mindmaps.MainView());
@@ -80,6 +104,6 @@ mindmaps.ApplicationController = function() {
 
 		commandRegistry.get(mindmaps.NewDocumentCommand).execute();
 	};
-	
+
 	this.init();
 };

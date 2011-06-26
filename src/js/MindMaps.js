@@ -1,7 +1,11 @@
+// first file to load
+
 // Use ECMA5 strict mode. see: http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 "use strict";
 
-// first file to load
+/**
+ * @namespace Application wide namespace for mindmaps.
+ */
 var mindmaps = mindmaps || {};
 
 // start up
@@ -16,6 +20,9 @@ $(function() {
 	appController.go();
 });
 
+/**
+ * Initialize the console object.
+ */
 function setupConsole() {
 	var noOp = function() {
 	};
@@ -41,8 +48,13 @@ function setupConsole() {
 	}
 }
 
+/**
+ * Creates ECMA5 shims if the browser does not implement them.
+ */
 function createECMA5Shims() {
 	// from: https://github.com/kriskowal/es5-shim/blob/master/es5-shim.js
+	
+	
 	// ES-5 15.3.4.5
 	// http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
 	if (!Function.prototype.bind) {
@@ -268,6 +280,9 @@ function createECMA5Shims() {
 	}
 }
 
+/**
+ * Create shims for HTML5 functionality if not supported by browser.
+ */
 function createHTML5Shims() {
 	// localstorage dummy (does nothing)
 	if (typeof window.localStorage == 'undefined') {
