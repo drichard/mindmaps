@@ -1,5 +1,7 @@
 /**
  * Unused for now.
+ * 
+ * @constructor
  */
 mindmaps.NewDocumentView = function() {
 
@@ -11,6 +13,7 @@ mindmaps.NewDocumentView = function() {
  * display a dialog where the user could chose options like document title and
  * such.
  * 
+ * @constructor
  */
 mindmaps.NewDocumentPresenter = function(eventBus, mindmapModel, view) {
 

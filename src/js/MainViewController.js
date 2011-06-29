@@ -1,7 +1,17 @@
+/**
+ * The canvas container is the area in between the toolbar and the statusbar.
+ * Inside the mind map will be drawn and the floating panels are contained
+ * within this area.
+ * 
+ * @constructor
+ */
 mindmaps.CanvasContainer = function() {
 	var self = this;
 	var $content = $("#canvas-container");
 
+	/**
+	 * @returns {jQuery}
+	 */
 	this.getContent = function() {
 		return $content;
 	};
@@ -21,6 +31,7 @@ mindmaps.CanvasContainer = function() {
 	};
 
 	this.init = function() {
+		// recalculate size when window is resized.
 		$(window).resize(function() {
 			self.setSize();
 		});
@@ -31,20 +42,31 @@ mindmaps.CanvasContainer = function() {
 };
 EventEmitter.mixin(mindmaps.CanvasContainer);
 
+/**
+ * Events fired by the container.
+ * 
+ * @namespace
+ */
 mindmaps.CanvasContainer.Event = {
 	/**
 	 * Fired when the container has been resized.
 	 * 
-	 * @param {mindmaps.Point} the new size
+	 * @event
+	 * @param {mindmaps.Point} point the new size
 	 */
 	RESIZED : "ResizedEvent"
 };
 
-mindmaps.MainView = function() {
-};
-
-mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry,
-		view) {
+/**
+ * Creates a new MainViewController. The controller is responsible for creating
+ * all main ui elements.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.MindMapModel} mindmapModel
+ * @param {mindmaps.InspectorView} view
+ */
+mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry) {
 	var zoomController = new mindmaps.ZoomController(eventBus, commandRegistry);
 
 	this.go = function() {
@@ -52,16 +74,20 @@ mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry,
 		canvasContainer.init();
 
 		// init all presenters
+
+		// toolbar
 		var toolbar = new mindmaps.ToolBarView();
 		var toolbarPresenter = new mindmaps.ToolBarPresenter(eventBus,
 				commandRegistry, toolbar, mindmapModel);
 		toolbarPresenter.go();
 
+		// canvas
 		var canvas = new mindmaps.DefaultCanvasView();
 		var canvasPresenter = new mindmaps.CanvasPresenter(eventBus,
 				commandRegistry, mindmapModel, canvas, zoomController);
 		canvasPresenter.go();
 
+		// statusbar
 		var statusbar = new mindmaps.StatusBarView();
 		var statusbarPresenter = new mindmaps.StatusBarPresenter(eventBus,
 				statusbar);
@@ -70,6 +96,7 @@ mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry,
 		// floating Panels
 		var fpf = new mindmaps.FloatPanelFactory(canvasContainer);
 
+		// inspector
 		var inspectorView = new mindmaps.InspectorView();
 		var inspectorPresenter = new mindmaps.InspectorPresenter(eventBus,
 				mindmapModel, inspectorView);
@@ -80,6 +107,7 @@ mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry,
 		inspectorPanel.show();
 		statusbarPresenter.addEntry(inspectorPanel);
 
+		// navigator
 		var naviView = new mindmaps.NavigatorView();
 		var naviPresenter = new mindmaps.NavigatorPresenter(eventBus, naviView,
 				canvasContainer, zoomController);

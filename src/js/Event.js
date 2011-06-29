@@ -5,76 +5,90 @@
  */
 mindmaps.Event = {
 	/**
-	 * @param {mindmaps.Document} The document
+	 * @event
+	 * @param {mindmaps.Document} document
 	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
 
 	/**
-	 * @param {mindmaps.Document} The document
+	 * @event
+	 * @param {mindmaps.Document} document
 	 */
 	DOCUMENT_SAVED : "DocumentSavedEvent",
 
 	/**
-	 * @param {mindmaps.Document} The document
+	 * @event
+	 * @param {mindmaps.Document} document
 	 */
 	DOCUMENT_CLOSED : "DocumentClosedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The new selected node
-	 * @param {mindmaps.Node} The old selected node (can be null)
+	 * @event
+	 * @param {mindmaps.Node} node
+	 * @param {mindmaps.Node} oldSelectedNode
 	 */
 	NODE_SELECTED : "NodeSelectedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_DESELECTED : "NodeDeselectedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_MOVED : "NodeMovedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_TEXT_CAPTION_CHANGED : "NodeTextCaptionChangedEvent",
 
 	/**
 	 * Some parameter of the node font attribute has changed.
 	 * 
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_FONT_CHANGED : "NodeFontChangedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_BRANCH_COLOR_CHANGED : "NodeBranchColorChangedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_CREATED : "NodeCreatedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
-	 * @param {mindmaps.Node} The parent
+	 * @event
+	 * @param {mindmaps.Node} node
+	 * @param {mindmaps.Node} parent
 	 */
 	NODE_DELETED : "NodeDeletedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_OPENED : "NodeOpenedEvent",
 
 	/**
-	 * @param {mindmaps.Node} The node
+	 * @event
+	 * @param {mindmaps.Node} node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
 
 	/**
-	 * @param {Number} the new zoom factor
+	 * @event
+	 * @param {Number} zoomFactor
 	 */
 	ZOOM_CHANGED : "ZoomChangedEvent"
 };
@@ -83,6 +97,7 @@ mindmaps.Event = {
  * Simple Event bus powered by EventEmitter.
  * 
  * @constructor
+ * @augments EventEmitter
  * 
  */
 mindmaps.EventBus = EventEmitter;

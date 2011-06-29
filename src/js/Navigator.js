@@ -235,7 +235,6 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		var val = scale / zoomController.ZOOM_STEP - 1;
 		view.setSliderValue(val);
 	}
-	;
 
 	function documentOpened(doc) {
 		docSize = doc.dimensions;
@@ -310,7 +309,7 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 
 	// document events
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, documentOpened);
-	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED,documentClosed);
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, documentClosed);
 
 	// node events
 	eventBus.subscribe(mindmaps.Event.NODE_MOVED, renderView);

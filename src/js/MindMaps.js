@@ -23,6 +23,7 @@ $(function() {
 	appController.go();
 });
 
+// TODO make non global
 /**
  * Initialize the console object.
  */

@@ -2,7 +2,7 @@
  * Creates a new CommandRegistry.
  * 
  * @constructor
- * @param {mindmaps.ShortCutController} [shortcutController]
+ * @param {mindmaps.ShortcutController} [shortcutController]
  */
 mindmaps.CommandRegistry = function(shortcutController) {
 	this.commands = {};

@@ -1,7 +1,7 @@
 /**
  * Point class.
  * 
- * @constcutor
+ * @constructor
  * @param {Number} [x=0]
  * @param {Number} [y=0]
  */

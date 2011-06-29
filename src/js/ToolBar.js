@@ -35,8 +35,8 @@ mindmaps.ToolBarView = function() {
 /**
  * Toolbar button object
  * 
- * @param command
- * @returns {Button}
+ * @constructor
+ * @param {mindmaps.Command} command
  */
 
 mindmaps.ToolBarButton = function(command) {
@@ -44,7 +44,7 @@ mindmaps.ToolBarButton = function(command) {
 
 	// callback to update display state
 	var self = this;
-	command.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED, function(enabled) {
+	command.subscribe(mindmaps.Command.Event.ENABLED_CHANGED, function(enabled) {
 		if (self.setEnabled) {
 			self.setEnabled(enabled);
 		}
@@ -65,12 +65,12 @@ mindmaps.ToolBarButton.prototype.getTitle = function() {
 
 mindmaps.ToolBarButton.prototype.getToolTip = function() {
 	var tooltip = this.command.description;
-	
+
 	var shortcut = this.command.shortcut;
 	if (shortcut) {
 		tooltip += " [" + shortcut.toUpperCase() + "]";
 	}
-	
+
 	return tooltip;
 };
 

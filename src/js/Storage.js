@@ -15,6 +15,9 @@ mindmaps.LocalStorage = (function() {
 	};
 })();
 
+/**
+ * @namespace
+ */
 mindmaps.LocalDocumentStorage = (function() {
 	var prefix = "mindmaps.document.";
 
@@ -36,7 +39,10 @@ mindmaps.LocalDocumentStorage = (function() {
 		}
 	};
 
-	// public API
+	/**
+	 * Public API
+	 * @scope mindmaps.LocalDocumentStorage
+	 */
 	return {
 		/**
 		 * Saves a document to the localstorage. Overwrites the old document if

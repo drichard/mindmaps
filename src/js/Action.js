@@ -96,6 +96,7 @@ mindmaps.action.DeleteNodeAction.prototype = new mindmaps.action.Action();
 /**
  * Creates a new CreateAutoPositionedNodeAction.
  * 
+ * @constructor
  * @param {mindmaps.Node} parent
  * @param {mindmaps.MindMap} mindmap
  * @returns {CreateNodeAction}
@@ -159,6 +160,8 @@ mindmaps.action.CreateNodeAction.prototype = new mindmaps.action.Action();
 /**
  * Creates a new ToggleNodeFoldAction.
  * 
+ * 
+ * @constructor
  * @param {mindmaps.Node} node
  * @returns {Action}
  */
@@ -169,7 +172,6 @@ mindmaps.action.ToggleNodeFoldAction = function(node) {
 		return new mindmaps.action.CloseNodeAction(node);
 	}
 };
-mindmaps.action.ToggleNodeFoldAction.prototype = new mindmaps.action.Action();
 
 /**
  * Creates a new OpenNodeAction.
@@ -252,6 +254,7 @@ mindmaps.action.ChangeNodeFontSizeAction = function(node, step) {
 mindmaps.action.ChangeNodeFontSizeAction.prototype = new mindmaps.action.Action();
 
 /**
+ * @constructor
  * @param {mindmaps.Node} node
  * @returns {ChangeNodeFontSizeAction}
  */
@@ -260,6 +263,7 @@ mindmaps.action.DecreaseNodeFontSizeAction = function(node) {
 };
 
 /**
+ * @constructor
  * @param {mindmaps.Node} node
  * @returns {ChangeNodeFontSizeAction}
  */

@@ -9,13 +9,14 @@ mindmaps.Command = function() {
 	this.shortcut = null;
 	/**
 	 * The handler function.
+	 * 
 	 * @private
 	 * @function
 	 */
 	this.handler = null;
 	this.label = null;
 	this.description = null;
-	
+
 	/**
 	 * @private
 	 */
@@ -24,10 +25,9 @@ mindmaps.Command = function() {
 
 /**
  * Events that can be emitted by a command object.
- * 
- * @static
+ * @namespace
  */
-mindmaps.CommandEvent = {
+mindmaps.Command.Event = {
 	HANDLER_REGISTERED : "HandlerRegisteredCommandEvent",
 	HANDLER_REMOVED : "HandlerRemovedCommandEvent",
 	ENABLED_CHANGED : "EnabledChangedCommandEvent"
@@ -52,12 +52,13 @@ mindmaps.Command.prototype = {
 
 	/**
 	 * Registers a new handler.
+	 * 
 	 * @param {Function} handler
 	 */
 	setHandler : function(handler) {
 		this.removeHandler();
 		this.handler = handler;
-		this.publish(mindmaps.CommandEvent.HANDLER_REGISTERED);
+		this.publish(mindmaps.Command.Event.HANDLER_REGISTERED);
 	},
 
 	/**
@@ -65,7 +66,7 @@ mindmaps.Command.prototype = {
 	 */
 	removeHandler : function() {
 		this.handler = null;
-		this.publish(mindmaps.CommandEvent.HANDLER_REMOVED);
+		this.publish(mindmaps.Command.Event.HANDLER_REMOVED);
 	},
 
 	/**
@@ -75,7 +76,7 @@ mindmaps.Command.prototype = {
 	 */
 	setEnabled : function(enabled) {
 		this.enabled = enabled;
-		this.publish(mindmaps.CommandEvent.ENABLED_CHANGED, enabled);
+		this.publish(mindmaps.Command.Event.ENABLED_CHANGED, enabled);
 	}
 };
 /**
@@ -163,7 +164,6 @@ mindmaps.UndoCommand = function() {
 };
 mindmaps.UndoCommand.prototype = new mindmaps.Command();
 
-
 /**
  * Creates a new RedoCommand.
  * 
@@ -198,7 +198,6 @@ mindmaps.CopyNodeCommand = function() {
 };
 mindmaps.CopyNodeCommand.prototype = new mindmaps.Command();
 
-
 /**
  * Creates a new CutNodeCommand.
  * 
@@ -213,7 +212,6 @@ mindmaps.CutNodeCommand = function() {
 	this.description = "Cut a branch";
 };
 mindmaps.CutNodeCommand.prototype = new mindmaps.Command();
-
 
 /**
  * Creates a new PasteNodeCommand.
@@ -249,7 +247,6 @@ mindmaps.NewDocumentCommand = function() {
 };
 mindmaps.NewDocumentCommand.prototype = new mindmaps.Command();
 
-
 /**
  * Creates a new OpenDocumentCommand.
  * 
@@ -264,7 +261,6 @@ mindmaps.OpenDocumentCommand = function() {
 	this.description = "Open an existing mind map";
 };
 mindmaps.OpenDocumentCommand.prototype = new mindmaps.Command();
-
 
 /**
  * Creates a new SaveDocumentCommand.
@@ -281,7 +277,6 @@ mindmaps.SaveDocumentCommand = function() {
 };
 mindmaps.SaveDocumentCommand.prototype = new mindmaps.Command();
 
-
 /**
  * Creates a new CloseDocumentCommand.
  * 
@@ -296,7 +291,6 @@ mindmaps.CloseDocumentCommand = function() {
 	this.description = "Close the mind map";
 };
 mindmaps.CloseDocumentCommand.prototype = new mindmaps.Command();
-
 
 /**
  * Creates a new HelpCommand.
