@@ -1,3 +1,9 @@
+/**
+ * Creates a new SaveDocumentView. This view renders a dialog where the user can
+ * save the mind map.
+ * 
+ * @constructor
+ */
 mindmaps.SaveDocumentView = function() {
 	var self = this;
 
@@ -55,8 +61,21 @@ mindmaps.SaveDocumentView = function() {
 	};
 };
 
+/**
+ * Creates a new SaveDocumentPresenter. The presenter can store documents in the
+ * local storage or to a hard disk.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.MindMapModel} mindmapModel
+ * @param {mindmaps.SaveDocumentView} view
+ */
 mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 
+	/**
+	 * View callback when local storage button was clicked. Saves the document
+	 * in the local storage.
+	 */
 	view.localStorageButtonClicked = function() {
 		// update modified date
 		var doc = mindmapModel.getDocument();
@@ -72,16 +91,30 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 		}
 	};
 
+	/**
+	 * View callback: Returns the filename for the document for saving on hard
+	 * drive.
+	 * 
+	 * @returns {String}
+	 */
 	view.fileNameRequested = function() {
 		return mindmapModel.getMindMap().getRoot().getCaption() + ".json";
 	};
 
+	/**
+	 * View callback: Returns the serialized document.
+	 * 
+	 * @returns {String}
+	 */
 	view.fileContentsRequested = function() {
 		var doc = mindmapModel.getDocument();
 		doc.dates.modified = new Date();
 		return doc.serialize();
 	};
 
+	/**
+	 * View callback: Saving to the hard drive was sucessful.
+	 */
 	view.saveToHddComplete = function() {
 		var doc = mindmapModel.getDocument();
 		eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);

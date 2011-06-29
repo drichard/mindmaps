@@ -1,3 +1,9 @@
+/**
+ * Creates a new OpenDocumentView. This view shows a dialog from which the user
+ * can select a mind map from the local storage or a hard disk.
+ * 
+ * @constructor
+ */
 mindmaps.OpenDocumentView = function() {
 	var self = this;
 
@@ -32,6 +38,11 @@ mindmaps.OpenDocumentView = function() {
 		}
 	});
 
+	/**
+	 * Render list of documents in the local storage
+	 * 
+	 * @param {mindmaps.Document[]} docs
+	 */
 	this.render = function(docs) {
 		// empty list and insert list of documents
 		var $list = $(".document-list", $dialog).empty();
@@ -46,20 +57,41 @@ mindmaps.OpenDocumentView = function() {
 		}).appendTo($list);
 	};
 
+	/**
+	 * Shows the dialog.
+	 * 
+	 * @param {mindmaps.Document[]} docs
+	 */
 	this.showOpenDialog = function(docs) {
 		this.render(docs);
 		$dialog.dialog("open");
 	};
 
+	/**
+	 * Hides the dialog.
+	 */
 	this.hideOpenDialog = function() {
 		$dialog.dialog("close");
 	};
 };
 
+/**
+ * Creates a new OpenDocumentPresenter. The presenter can load documents from
+ * the local storage or hard disk.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.MindMapModel} mindmapModel
+ * @param {mindmaps.OpenDocumentView} view
+ */
 mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 
 	// TODO experimental, catch errrs
 	// http://www.w3.org/TR/FileAPI/#dfn-filereader
+	/**
+	 * View callback: external file has been selected. Try to read and parse a
+	 * valid mindmaps Document.
+	 */
 	view.openExernalFileClicked = function(e) {
 		var files = e.target.files;
 		var file = files[0];
@@ -74,11 +106,23 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 		reader.readAsText(file);
 	};
 
+	/**
+	 * View callback: A document in the local storage list has been clicked.
+	 * Load the document and close view.
+	 * 
+	 * @param {mindmaps.Document} doc
+	 */
 	view.documentClicked = function(doc) {
 		mindmapModel.setDocument(doc);
 		view.hideOpenDialog();
 	};
 
+	/**
+	 * View callback: The delete link the local storage list has been clicked.
+	 * Delete the document, and render list again.
+	 * 
+	 * @param {mindmaps.Document} doc
+	 */
 	view.deleteDocumentClicked = function(doc) {
 		// TODO event
 		mindmaps.LocalDocumentStorage.deleteDocument(doc);
@@ -88,6 +132,9 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 		view.render(docs);
 	};
 
+	/**
+	 * Initialize.
+	 */
 	this.go = function() {
 		var docs = mindmaps.LocalDocumentStorage.getDocuments();
 		docs.sort(mindmaps.Document.sortByModifiedDateDescending);

@@ -391,11 +391,16 @@ html,body {
 	background-repeat: no-repeat;
 	position: relative;
 	z-index: 1000;
+	
+}
+
+#creator-fakenode {
+	height: 12px;
 	border-bottom-color: transparent;
 	border-bottom-style: none;
 }
 
-#creator-wrapper.ui-draggable-dragging #creator-nub {
+#creator-wrapper.ui-draggable-dragging #creator-fakenode {
 	border-bottom-style: solid;
 }
 

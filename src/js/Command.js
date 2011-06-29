@@ -91,7 +91,7 @@ EventEmitter.mixin(mindmaps.Command);
  * Creates a new CreateNodeCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.CreateNodeCommand = function() {
 	this.id = "CREATE_NODE_COMMAND";
@@ -106,7 +106,7 @@ mindmaps.CreateNodeCommand.prototype = new mindmaps.Command();
  * Creates a new DeleteNodeCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.DeleteNodeCommand = function() {
 	this.id = "DELETE_NODE_COMMAND";
@@ -121,7 +121,7 @@ mindmaps.DeleteNodeCommand.prototype = new mindmaps.Command();
  * Creates a new EditNodeCaptionCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.EditNodeCaptionCommand = function() {
 	this.id = "EDIT_NODE_CAPTION_COMMAND";
@@ -135,7 +135,7 @@ mindmaps.EditNodeCaptionCommand.prototype = new mindmaps.Command();
  * Creates a new ToggleNodeFoldedCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.ToggleNodeFoldedCommand = function() {
 	this.id = "TOGGLE_NODE_FOLDED_COMMAND";
@@ -152,7 +152,7 @@ mindmaps.ToggleNodeFoldedCommand.prototype = new mindmaps.Command();
  * Creates a new UndoCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.UndoCommand = function() {
 	this.id = "UNDO_COMMAND";
@@ -168,7 +168,7 @@ mindmaps.UndoCommand.prototype = new mindmaps.Command();
  * Creates a new RedoCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.RedoCommand = function() {
 	this.id = "REDO_COMMAND";
@@ -187,7 +187,7 @@ mindmaps.RedoCommand.prototype = new mindmaps.Command();
  * Creates a new CopyNodeCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.CopyNodeCommand = function() {
 	this.id = "COPY_COMMAND";
@@ -203,7 +203,7 @@ mindmaps.CopyNodeCommand.prototype = new mindmaps.Command();
  * Creates a new CutNodeCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.CutNodeCommand = function() {
 	this.id = "CUT_COMMAND";
@@ -219,7 +219,7 @@ mindmaps.CutNodeCommand.prototype = new mindmaps.Command();
  * Creates a new PasteNodeCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.PasteNodeCommand = function() {
 	this.id = "PASTE_COMMAND";
@@ -238,7 +238,7 @@ mindmaps.PasteNodeCommand.prototype = new mindmaps.Command();
  * Creates a new NewDocumentCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.NewDocumentCommand = function() {
 	this.id = "NEW_DOCUMENT_COMMAND";
@@ -254,7 +254,7 @@ mindmaps.NewDocumentCommand.prototype = new mindmaps.Command();
  * Creates a new OpenDocumentCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.OpenDocumentCommand = function() {
 	this.id = "OPEN_DOCUMENT_COMMAND";
@@ -270,7 +270,7 @@ mindmaps.OpenDocumentCommand.prototype = new mindmaps.Command();
  * Creates a new SaveDocumentCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.SaveDocumentCommand = function() {
 	this.id = "SAVE_DOCUMENT_COMMAND";
@@ -286,7 +286,7 @@ mindmaps.SaveDocumentCommand.prototype = new mindmaps.Command();
  * Creates a new CloseDocumentCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.CloseDocumentCommand = function() {
 	this.id = "CLOSE_DOCUMENT_COMMAND";
@@ -302,7 +302,7 @@ mindmaps.CloseDocumentCommand.prototype = new mindmaps.Command();
  * Creates a new HelpCommand.
  * 
  * @constructor
- * @augments Command
+ * @augments mindmaps.Command
  */
 mindmaps.HelpCommand = function() {
 	this.id = "HELP_COMMAND";

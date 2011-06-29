@@ -779,6 +779,10 @@ mindmaps.DefaultCanvasView = function() {
 		var $nub = $("<div/>", {
 			id : "creator-nub"
 		}).appendTo($wrapper);
+		
+		var $fakeNode = $("<div/>", {
+			id : "creator-fakenode"
+		}).appendTo($nub);
 
 		// canvas used by the creator tool to draw new lines
 		var $canvas = $("<canvas/>", {
@@ -805,7 +809,7 @@ mindmaps.DefaultCanvasView = function() {
 				// set depth+1 because we are drawing the canvas for the child
 				var $node = $getNode(self.node);
 				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
-						$nub, $node, self.lineColor);
+						$fakeNode, $node, self.lineColor);
 			},
 			stop : function(e, ui) {
 				dragging = false;
@@ -826,13 +830,7 @@ mindmaps.DefaultCanvasView = function() {
 			if (this.node === node) {
 				return;
 			}
-
 			this.node = node;
-			this.depth = node.getDepth();
-			var $node = $getNode(node);
-
-			var w = view.getLineWidth(this.depth + 1);
-			$nub.css("border-bottom-width", w);
 
 			// position the nub correctly
 			$wrapper.removeClass("left right");
@@ -841,8 +839,14 @@ mindmaps.DefaultCanvasView = function() {
 			} else if (node.offset.x < 0) {
 				$wrapper.addClass("left");
 			}
+			
+			// set border on our fake node for correct line drawing
+			this.depth = node.getDepth();
+			var w = view.getLineWidth(this.depth + 1);
+			$fakeNode.css("border-bottom-width", w);
 
 			// remove any positioning that the draggable might have caused
+			var $node = $getNode(node);
 			$wrapper.css({
 				left : "",
 				top : ""

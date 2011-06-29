@@ -50,7 +50,7 @@ mindmaps.action.Action.prototype = {
  * Creates a new MoveNodeAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {Point} offset
  */
@@ -72,7 +72,7 @@ mindmaps.action.MoveNodeAction.prototype = new mindmaps.action.Action();
  * Creates a new DeleteNodeAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {mindmaps.MindMap} mindmap
  */
@@ -138,7 +138,7 @@ mindmaps.action.CreateAutoPositionedNodeAction = function(parent, mindmap) {
  * Creates a new CreateNodeAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {mindmaps.Node} parent
  * @param {mindmaps.MindMap} mindmap
@@ -175,7 +175,7 @@ mindmaps.action.ToggleNodeFoldAction.prototype = new mindmaps.action.Action();
  * Creates a new OpenNodeAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  */
 mindmaps.action.OpenNodeAction = function(node) {
@@ -192,7 +192,7 @@ mindmaps.action.OpenNodeAction.prototype = new mindmaps.action.Action();
  * Creates a new CloseNodeAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  */
 mindmaps.action.CloseNodeAction = function(node) {
@@ -209,7 +209,7 @@ mindmaps.action.CloseNodeAction.prototype = new mindmaps.action.Action();
  * Creates a new ChangeNodeCaptionAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {String} caption
  */
@@ -235,7 +235,7 @@ mindmaps.action.ChangeNodeCaptionAction.prototype = new mindmaps.action.Action()
  * Creates a new ChageNodeFontSizeAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {Integer} step
  */
@@ -271,7 +271,7 @@ mindmaps.action.IncreaseNodeFontSizeAction = function(node) {
  * Creates a new SetFontWeightAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {Boolean} bold
  */
@@ -292,7 +292,7 @@ mindmaps.action.SetFontWeightAction.prototype = new mindmaps.action.Action();
  * Creates a new SetFontStyleAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {Boolean} italic
  */
@@ -313,7 +313,7 @@ mindmaps.action.SetFontStyleAction.prototype = new mindmaps.action.Action();
  * Creates a new SetFontDecorationAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {Boolean} underline
  */
@@ -334,7 +334,7 @@ mindmaps.action.SetFontDecorationAction.prototype = new mindmaps.action.Action()
  * Creates a new SetFontColorAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {String} fontColor color as hex
  */
@@ -355,7 +355,7 @@ mindmaps.action.SetFontColorAction.prototype = new mindmaps.action.Action();
  * Creates a new SetBranchColorAction.
  * 
  * @constructor
- * @augments Action
+ * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
  * @param {String} branchColor color as hex
  */

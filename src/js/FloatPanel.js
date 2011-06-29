@@ -2,6 +2,7 @@
  * Creates a new FloatPanelFactory. This factory object can create new instances
  * of mindmaps.FloatPanel that are constrained inside the container.
  * 
+ * @constructor
  * @param container
  */
 mindmaps.FloatPanelFactory = function(container) {
@@ -52,7 +53,6 @@ mindmaps.FloatPanelFactory = function(container) {
  * transfer effect.
  * 
  * @constructor
- * @private
  * @param {String} caption the float panel title
  * @param {jQuery} $container the surrounding container jquery object
  * @param {jQuery} $content the content as a jquery object
