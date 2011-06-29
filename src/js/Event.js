@@ -1,81 +1,80 @@
 /**
  * Events that the event bus carries.
  * 
- * @static
+ * @namespace
  */
 mindmaps.Event = {
 	/**
-	 * @param The document
+	 * @param {mindmaps.Document} The document
 	 */
 	DOCUMENT_OPENED : "DocumentOpenedEvent",
 
 	/**
-	 * @param The document
+	 * @param {mindmaps.Document} The document
 	 */
 	DOCUMENT_SAVED : "DocumentSavedEvent",
 
 	/**
-	 * @param The document
+	 * @param {mindmaps.Document} The document
 	 */
 	DOCUMENT_CLOSED : "DocumentClosedEvent",
 
 	/**
-	 * @param The new selected node
-	 * @param The old selected node (can be null)
+	 * @param {mindmaps.Node} The new selected node
+	 * @param {mindmaps.Node} The old selected node (can be null)
 	 */
 	NODE_SELECTED : "NodeSelectedEvent",
 
 	/**
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_DESELECTED : "NodeDeselectedEvent",
 
 	/**
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_MOVED : "NodeMovedEvent",
 
 	/**
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_TEXT_CAPTION_CHANGED : "NodeTextCaptionChangedEvent",
 
 	/**
 	 * Some parameter of the node font attribute has changed.
 	 * 
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_FONT_CHANGED : "NodeFontChangedEvent",
 
 	/**
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_BRANCH_COLOR_CHANGED : "NodeBranchColorChangedEvent",
 
 	/**
-	 * @param The node
-	 * @param The origin of creation
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_CREATED : "NodeCreatedEvent",
 
 	/**
-	 * @param The node
-	 * @param The parent
+	 * @param {mindmaps.Node} The node
+	 * @param {mindmaps.Node} The parent
 	 */
 	NODE_DELETED : "NodeDeletedEvent",
 
 	/**
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_OPENED : "NodeOpenedEvent",
 
 	/**
-	 * @param The node
+	 * @param {mindmaps.Node} The node
 	 */
 	NODE_CLOSED : "NodeClosedEvent",
 
 	/**
-	 * @param the new zoom factor
+	 * @param {Number} the new zoom factor
 	 */
 	ZOOM_CHANGED : "ZoomChangedEvent"
 };

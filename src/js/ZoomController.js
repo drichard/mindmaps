@@ -62,6 +62,7 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
 
 	/**
 	 * Zooms out by ZOOM_STEP,
+	 * 
 	 * @returns {Number} the new zoomFactor.
 	 */
 	this.zoomOut = function() {

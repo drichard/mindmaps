@@ -1,3 +1,9 @@
+/**
+ * Creates a new UndoManager
+ * 
+ * @constructor
+ * @param {Integer} [maxStackSize=64]
+ */
 function UndoManager(maxStackSize) {
 	this.maxStackSize = maxStackSize || 64;
 
@@ -43,8 +49,8 @@ function UndoManager(maxStackSize) {
 	 * redo() will have no effect.
 	 * 
 	 * 
-	 * @param undoFunc - The function that should undo the changes.
-	 * @param redoFunc (optional) - The function that should redo the undone
+	 * @param {Function} undoFunc The function that should undo the changes.
+	 * @param {Function} [redoFunc] The function that should redo the undone
 	 *            changes.
 	 */
 	this.addUndo = function(undoFunc, redoFunc) {
@@ -68,16 +74,20 @@ function UndoManager(maxStackSize) {
 			undoStack.push(action);
 			// clear redo stack
 			redoStack.clear();
+
 			onStateChange();
 		}
 	};
 
+	/**
+	 * Undoes the last action.
+	 */
 	this.undo = function() {
 		if (this.canUndo()) {
 			currentState = State.UNDO;
 			var action = undoStack.pop();
 			callAction(action);
-			
+
 			if (action.redo) {
 				redoStack.push(action);
 			}
@@ -86,12 +96,15 @@ function UndoManager(maxStackSize) {
 		}
 	};
 
+	/**
+	 * Redoes the last action.
+	 */
 	this.redo = function() {
 		if (this.canRedo()) {
 			currentState = State.REDO;
 			var action = redoStack.pop();
 			callAction(action);
-			
+
 			if (action.undo) {
 				undoStack.push(action);
 			}
@@ -100,36 +113,73 @@ function UndoManager(maxStackSize) {
 		}
 	};
 
+	/**
+	 * 
+	 * @returns {Boolean} true if undo is possible, false otherwise.
+	 */
 	this.canUndo = function() {
 		return !undoStack.isEmpty();
 	};
 
+	/**
+	 * 
+	 * @returns {Boolean} true if redo is possible, false otherwise.
+	 */
 	this.canRedo = function() {
 		return !redoStack.isEmpty();
 	};
 
+	/**
+	 * Resets this instance of the undo manager.
+	 */
 	this.reset = function() {
 		undoStack.clear();
 		redoStack.clear();
 		undoContext = false;
 		currentAction = null;
 		currentState = null;
-		
+
 		onStateChange();
+	};
+
+	/**
+	 * Event that is fired when undo or redo state changes.
+	 * 
+	 * @event
+	 */
+	this.stateChanged = function() {
 	};
 }
 
+/**
+ * Creates a new CircularStack. This is a stack implementation backed by a
+ * circular buffer where the oldest entries automatically are overwritten when
+ * new items are pushed onto the stack and the maximum size has been reached.
+ * 
+ * @constructor
+ * @param {Integer} [maxSize=32]
+ */
 UndoManager.CircularStack = function(maxSize) {
 	this.maxSize = maxSize || 32;
 	this.buffer = [];
 	this.nextPointer = 0;
 };
 
+/**
+ * Pushes a new item onto the stack.
+ * 
+ * @param {Any} item
+ */
 UndoManager.CircularStack.prototype.push = function(item) {
 	this.buffer[this.nextPointer] = item;
 	this.nextPointer = (this.nextPointer + 1) % this.maxSize;
 };
 
+/**
+ * Checks whether the stack is empty.
+ * 
+ * @returns {Boolean} true if empty, false otherwise.
+ */
 UndoManager.CircularStack.prototype.isEmpty = function() {
 	if (this.buffer.length === 0) {
 		return true;
@@ -143,6 +193,13 @@ UndoManager.CircularStack.prototype.isEmpty = function() {
 	}
 };
 
+/**
+ * Gets the position of the previously inserted item in the buffer.
+ * 
+ * @private
+ * @returns {Integer} the previous pointer position or null if no previous
+ *          exists.
+ */
 UndoManager.CircularStack.prototype.getPreviousPointer = function() {
 	if (this.nextPointer > 0) {
 		return this.nextPointer - 1;
@@ -155,11 +212,19 @@ UndoManager.CircularStack.prototype.getPreviousPointer = function() {
 	}
 };
 
+/**
+ * Clears the stack.
+ */
 UndoManager.CircularStack.prototype.clear = function() {
 	this.buffer.length = 0;
 	this.nextPointer = 0;
 };
 
+/**
+ * Returns and removes the top most item of the stack.
+ * 
+ * @returns {Any} the last inserted item or null if stack is empty.
+ */
 UndoManager.CircularStack.prototype.pop = function() {
 	if (this.isEmpty()) {
 		return null;
@@ -173,6 +238,11 @@ UndoManager.CircularStack.prototype.pop = function() {
 	return item;
 };
 
+/**
+ * Returns but not removes the top most item of the stack.
+ * 
+ * @returns {Any} the last inserted item or null if stack is empty.
+ */
 UndoManager.CircularStack.prototype.peek = function() {
 	if (this.isEmpty()) {
 		return null;

@@ -42,7 +42,9 @@ mindmaps.LocalDocumentStorage = (function() {
 		 * Saves a document to the localstorage. Overwrites the old document if
 		 * one with the same id exists.
 		 * 
-		 * @returns true if save was successful, false otherwise.
+		 * @param {mindmaps.Document} doc
+		 * 
+		 * @returns {Boolean} true if save was successful, false otherwise.
 		 */
 		saveDocument : function(doc) {
 			try {
@@ -59,7 +61,9 @@ mindmaps.LocalDocumentStorage = (function() {
 		/**
 		 * Loads a document from the local storage.
 		 * 
-		 * @returns the document or null if not found.
+		 * @param {String} docId
+		 * 
+		 * @returns {mindmaps.Document} the document or null if not found.
 		 */
 		loadDocument : function(docId) {
 			return getDocumentByKey(prefix + docId);
@@ -68,7 +72,7 @@ mindmaps.LocalDocumentStorage = (function() {
 		/**
 		 * Finds all documents in the local storage object.
 		 * 
-		 * @returns an Array of documents
+		 * @returns {Array} an Array of documents
 		 */
 		getDocuments : function() {
 			var documents = [];
@@ -89,7 +93,7 @@ mindmaps.LocalDocumentStorage = (function() {
 		/**
 		 * Gets all document ids found in the local storage object.
 		 * 
-		 * @returns an Array of document ids
+		 * @returns {Array} an Array of document ids
 		 */
 		getDocumentIds : function() {
 			var ids = [];
@@ -106,6 +110,8 @@ mindmaps.LocalDocumentStorage = (function() {
 
 		/**
 		 * Deletes a document from the local storage.
+		 * 
+		 * @param {mindmaps.Document} doc
 		 */
 		deleteDocument : function(doc) {
 			localStorage.removeItem(prefix + doc.id);

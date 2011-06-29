@@ -1,12 +1,38 @@
+/**
+ * <pre>
+ * Creates a new MindMapModel. 
+ * 
+ * This object represents the underlying mind map model and provides access 
+ * to the document, the mind map and the currently selected node.
+ * 
+ * All changes to the mind map pass through this object, either through calling
+ * methods directly or using the executeAction() method to perform NodeActions.
+ * </pre>
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.CommandRegistry} commandRegistry
+ */
 mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 	var self = this;
 	this.document = null;
 	this.selectedNode = null;
 
+	/**
+	 * Gets the current document.
+	 * 
+	 * @returns {mindmaps.Document} the current document.
+	 */
 	this.getDocument = function() {
 		return this.document;
 	};
 
+	/**
+	 * Sets the current document and will publish a DOCUMENT_OPENED or
+	 * DOCUMENT_CLOSED event.
+	 * 
+	 * @param {mindmaps.Document} doc or pass null to close the document
+	 */
 	this.setDocument = function(doc) {
 		this.document = doc;
 		if (doc) {
@@ -16,6 +42,11 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		}
 	};
 
+	/**
+	 * Gets the current mind map associated with the document.
+	 * 
+	 * @returns {mindmaps.MindMap} the mind map or null
+	 */
 	this.getMindMap = function() {
 		if (this.document) {
 			return this.document.mindmap;
@@ -23,24 +54,34 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		return null;
 	};
 
+	/**
+	 * Initialise.
+	 * 
+	 * @private
+	 */
 	this.init = function() {
 		var createCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
 		createCommand.setHandler(this.createNode.bind(this));
 
 		var deleteCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
 		deleteCommand.setHandler(this.deleteNode.bind(this));
-		
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 			createCommand.setEnabled(false);
 			deleteCommand.setEnabled(false);
 		});
-		
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			createCommand.setEnabled(true);
 			deleteCommand.setEnabled(true);
 		});
 	};
 
+	/**
+	 * Deletes a node or the currently selected one if no argument is passed.
+	 * 
+	 * @param {mindmaps.Node} [node] defaults to currently selected.
+	 */
 	this.deleteNode = function(node) {
 		if (!node) {
 			node = this.selectedNode;
@@ -50,6 +91,14 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		this.executeAction(action);
 	};
 
+	/**
+	 * Attaches a new node the mind map. If invoked without arguments, it will
+	 * add a new child to the selected node with an automatically generated
+	 * position.
+	 * 
+	 * @param {mindmaps.Node} node the new node
+	 * @param {mindmaps.Node} parent
+	 */
 	this.createNode = function(node, parent) {
 		var map = this.getMindMap();
 		if (!(node && parent)) {
@@ -63,6 +112,11 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		this.executeAction(action);
 	};
 
+	/**
+	 * Sets the node as the currently selected.
+	 * 
+	 * @param {mindmaps.Node} node
+	 */
 	this.selectNode = function(node) {
 		if (node === this.selectedNode) {
 			return;
@@ -73,6 +127,13 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		eventBus.publish(mindmaps.Event.NODE_SELECTED, node, oldSelected);
 	};
 
+	/**
+	 * Changes the caption for the passed node or for the selected one if node
+	 * is null.
+	 * 
+	 * @param {mindmaps.Node} node
+	 * @param {String} caption
+	 */
 	this.changeNodeCaption = function(node, caption) {
 		if (!node) {
 			node = this.selectedNode;
@@ -82,6 +143,12 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		this.executeAction(action);
 	};
 
+	/**
+	 * Executes a node action. An executed action might raise an event over the
+	 * event bus and cause an undo event to be emitted via MindMapModel#undoAction.
+	 * 
+	 * @param {mindmaps.Action} action
+	 */
 	this.executeAction = function(action) {
 		var executed = action.execute();
 
@@ -117,6 +184,16 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 				this.undoEvent(undoFunc, redoFunc);
 			}
 		}
+	};
+
+	/**
+	 * Event that is fired when a new undo operation should be recorded.
+	 * 
+	 * @event
+	 * @param {Function} undoFunc
+	 * @param {Function} [redoFunc]
+	 */
+	this.undoEvent = function(undoFunc, redoFunc) {
 	};
 
 	this.init();

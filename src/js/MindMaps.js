@@ -8,14 +8,17 @@
  */
 var mindmaps = mindmaps || {};
 
-// start up
+/**
+ * Start up. This function is exectuted when the DOM is loaded.
+ */
 $(function() {
-	// take of old browsers
+	// take car of old browsers
 	createECMA5Shims();
 	createHTML5Shims();
 
 	setupConsole();
 
+	// create a new app controller and go
 	var appController = new mindmaps.ApplicationController();
 	appController.go();
 });
@@ -53,8 +56,7 @@ function setupConsole() {
  */
 function createECMA5Shims() {
 	// from: https://github.com/kriskowal/es5-shim/blob/master/es5-shim.js
-	
-	
+
 	// ES-5 15.3.4.5
 	// http://www.ecma-international.org/publications/files/drafts/tc39-2009-025.pdf
 	if (!Function.prototype.bind) {
