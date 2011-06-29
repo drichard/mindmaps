@@ -1,4 +1,9 @@
-
+/**
+ * Creates a new FloatPanelFactory. This factory object can create new instances
+ * of mindmaps.FloatPanel that are constrained inside the container.
+ * 
+ * @param container
+ */
 mindmaps.FloatPanelFactory = function(container) {
 	var $container = container.getContent();
 	var dialogs = [];
@@ -26,6 +31,13 @@ mindmaps.FloatPanelFactory = function(container) {
 		dialog.setPosition(ccw - dw - padding, hh + padding + heightOffset);
 	}
 
+	/**
+	 * Creates a new FloatPanel.
+	 * 
+	 * @param {String} caption the float panel title
+	 * @param {jQuery} $content the content as a jquery object
+	 * @returns {mindmaps.FloatPanel}
+	 */
 	this.create = function(caption, $content) {
 		var dialog = new mindmaps.FloatPanel(caption, $container, $content);
 		setPosition(dialog);
@@ -35,11 +47,15 @@ mindmaps.FloatPanelFactory = function(container) {
 };
 
 /**
- * A reusable, draggable dialog gui element. The panel is contained within the
+ * A reusable, draggable panel gui element. The panel is contained within the
  * container. When a $hideTarget is set, the hide/show animations will show a
  * transfer effect.
  * 
- * @param caption
+ * @constructor
+ * @private
+ * @param {String} caption the float panel title
+ * @param {jQuery} $container the surrounding container jquery object
+ * @param {jQuery} $content the content as a jquery object
  */
 mindmaps.FloatPanel = function(caption, $container, $content) {
 	var self = this;
@@ -49,16 +65,27 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 	this.visible = false;
 	this.animationDuration = 400;
 
+	/**
+	 * Replaces the content in the panel.
+	 * 
+	 * @param {jQuery} $content
+	 */
 	this.setContent = function($content) {
 		this.clearContent();
 		$("div.ui-dialog-content", this.$widget).append($content);
 	};
 
+	/**
+	 * Clears the content of the panel.
+	 */
 	this.clearContent = function() {
 		$("div.ui-dialog-content", this.$widget).children().detach();
 	};
 
 	// TODO template
+	/**
+	 * @private
+	 */
 	this.$widget = (function() {
 		var $titleText = $("<span/>", {
 			"class" : "ui-dialog-title"
@@ -102,6 +129,9 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		return $panel;
 	})();
 
+	/**
+	 * Hides the panel. Will show transfer effect if $hideTarget is set.
+	 */
 	this.hide = function() {
 		if (!animating && this.visible) {
 			this.visible = false;
@@ -114,6 +144,9 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		}
 	};
 
+	/**
+	 * Shows the panel. Will show transfer effect if $hideTarget is set.
+	 */
 	this.show = function() {
 		if (!animating && !this.visible) {
 			this.visible = true;
@@ -127,6 +160,9 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		}
 	};
 
+	/**
+	 * Shows or hides the panel.
+	 */
 	this.toggle = function() {
 		if (this.visible) {
 			this.hide();
@@ -135,6 +171,13 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		}
 	};
 
+	/**
+	 * Shows a transfer effect.
+	 * 
+	 * @private
+	 * @param {jQuery} $from
+	 * @param {jQuery} $to
+	 */
 	this.transfer = function($from, $to) {
 		animating = true;
 		var endPosition = $to.offset(), animation = {
@@ -157,18 +200,36 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		});
 	};
 
+	/**
+	 * 
+	 * @returns {Number} the width.
+	 */
 	this.width = function() {
 		return this.$widget.outerWidth();
 	};
 
+	/**
+	 * 
+	 * @returns {Number} the height.
+	 */
 	this.height = function() {
 		return this.$widget.outerHeight();
 	};
 
+	/**
+	 * 
+	 * @returns {Object} the offset
+	 */
 	this.offset = function() {
 		return this.$widget.offset();
 	};
 
+	/**
+	 * Sets the position of the panel relative to the container.
+	 * 
+	 * @param {Number} x
+	 * @param {Number} y
+	 */
 	this.setPosition = function(x, y) {
 		this.$widget.offset({
 			left : x,
@@ -176,7 +237,12 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		});
 	};
 
-	// move dialog into view port if window too small
+	/**
+	 * Moves panel into view port if position exceeds the bounds of the
+	 * container.
+	 * 
+	 * @private
+	 */
 	this.ensurePosition = function() {
 		var cw = $container.outerWidth();
 		var ch = $container.outerHeight();
@@ -198,5 +264,14 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		if (ch + cot < dh + dot && ch >= dh) {
 			this.setPosition(dol, ch + cot - dh);
 		}
+	};
+
+	/**
+	 * Sets the hide target for the panel.
+	 * 
+	 * @param {jQuery} $target
+	 */
+	this.setHideTarget = function($target) {
+		this.$hideTarget = $target;
 	};
 };

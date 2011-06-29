@@ -276,7 +276,7 @@ html,body {
 }
 
 .mindmap .root.node-container {
-	border-bottom: 10px;
+	border-bottom: 10px solid transparent;
 	width: 1px;
 	height: 20px;
 	left: 50%;
@@ -388,8 +388,15 @@ html,body {
 	height: 24px;
 	background-image: url("../img/creator-nub.png");
 	background-size: 24px 24px;
+	background-repeat: no-repeat;
 	position: relative;
 	z-index: 1000;
+	border-bottom-color: transparent;
+	border-bottom-style: none;
+}
+
+#creator-wrapper.ui-draggable-dragging #creator-nub {
+	border-bottom-style: solid;
 }
 
 #creator-nub:hover {

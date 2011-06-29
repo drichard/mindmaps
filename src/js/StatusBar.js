@@ -40,7 +40,7 @@ mindmaps.StatusBarPresenter = function(eventBus, view) {
 	this.addEntry = function(panel) {
 		var id = buttonCounter++;
 		var $button = view.createButton(id, panel.caption);
-		panel.$hideTarget = $button;
+		panel.setHideTarget($button);
 		buttonIdPanelMap[id] = panel;
 	};
 };

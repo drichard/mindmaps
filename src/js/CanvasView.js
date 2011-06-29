@@ -109,7 +109,7 @@ mindmaps.DefaultCanvasView = function() {
 		return $("#node-caption-" + node.id);
 	}
 
-	function drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
+	function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
 			color) {
 		var left, top, width, height;
 		var zoomFactor = self.zoomFactor;
@@ -180,7 +180,7 @@ mindmaps.DefaultCanvasView = function() {
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext("2d");
 
-		var lineWidth = zoomFactor * (10 - depth) || 1;
+		var lineWidth = self.getLineWidth(depth);
 		ctx.lineWidth = lineWidth;
 
 		ctx.strokeStyle = color;
@@ -298,6 +298,17 @@ mindmaps.DefaultCanvasView = function() {
 		drawingArea.width(0).height(0);
 	};
 
+	this.getLineWidth = function(depth) {
+		// var width = this.zoomFactor * (10 - depth);
+		var width = this.zoomFactor * (14 - depth * 2);
+
+		if (width < 2) {
+			width = 2;
+		}
+
+		return width;
+	};
+
 	this.drawMap = function(map) {
 		var now = new Date().getTime();
 		var $drawingArea = this.$getDrawingArea();
@@ -356,9 +367,14 @@ mindmaps.DefaultCanvasView = function() {
 		});
 		$node.appendTo($parent);
 
+		if (node.isRoot()) {
+			var w = this.getLineWidth(depth);
+			$node.css("border-bottom-width", w);
+		}
+
 		if (!node.isRoot()) {
 			// draw border and position manually only non-root nodes
-			var bThickness = this.zoomFactor * (10 - depth) || 1;
+			var bThickness = this.getLineWidth(depth);
 			var bColor = node.branchColor;
 			var bb = bThickness + "px solid " + bColor;
 
@@ -389,7 +405,7 @@ mindmaps.DefaultCanvasView = function() {
 						var color = node.branchColor;
 						var $canvas = $getNodeCanvas(node);
 
-						drawLineCanvas2($canvas, depth, offsetX, offsetY,
+						drawLineCanvas($canvas, depth, offsetX, offsetY,
 								$node, $parent, color);
 
 						// fire dragging event
@@ -451,7 +467,7 @@ mindmaps.DefaultCanvasView = function() {
 			});
 
 			// position and draw connection
-			drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent,
+			drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
 					node.branchColor);
 			$canvas.appendTo($node);
 		}
@@ -566,7 +582,7 @@ mindmaps.DefaultCanvasView = function() {
 		var $parent = $getNode(parent);
 		var $canvas = $getNodeCanvas(node);
 
-		drawLineCanvas2($canvas, depth, offsetX, offsetY, $node, $parent, color);
+		drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color);
 	}
 
 	this.redrawNodeConnectors = function(node) {
@@ -623,6 +639,9 @@ mindmaps.DefaultCanvasView = function() {
 		var $root = this.$getDrawingArea().children().first();
 		var root = $root.data("node");
 
+		var w = this.getLineWidth(0);
+		$root.css("border-bottom-width", w);
+
 		// handle root differently
 		var $text = $getNodeCaption(root);
 		var metrics = textMetrics.getTextMetrics(root);
@@ -639,7 +658,7 @@ mindmaps.DefaultCanvasView = function() {
 			var $node = $getNode(node);
 
 			// draw border and position manually
-			var bWidth = zoomFactor * (10 - depth) || 1;
+			var bWidth = self.getLineWidth(depth);
 
 			$node.css({
 				left : zoomFactor * node.offset.x,
@@ -785,7 +804,7 @@ mindmaps.DefaultCanvasView = function() {
 
 				// set depth+1 because we are drawing the canvas for the child
 				var $node = $getNode(self.node);
-				drawLineCanvas2($canvas, self.depth + 1, offsetX, offsetY,
+				drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
 						$nub, $node, self.lineColor);
 			},
 			stop : function(e, ui) {
@@ -811,6 +830,9 @@ mindmaps.DefaultCanvasView = function() {
 			this.node = node;
 			this.depth = node.getDepth();
 			var $node = $getNode(node);
+
+			var w = view.getLineWidth(this.depth + 1);
+			$nub.css("border-bottom-width", w);
 
 			// position the nub correctly
 			$wrapper.removeClass("left right");
