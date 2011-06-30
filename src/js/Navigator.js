@@ -1,3 +1,9 @@
+/**
+ * Creates a NavigatorView. This view shows a minified version of the mindmap +
+ * controls for adjusting the zoom.
+ * 
+ * @constructor
+ */
 mindmaps.NavigatorView = function() {
 	var self = this;
 
@@ -8,22 +14,36 @@ mindmaps.NavigatorView = function() {
 	var $canvas = $("#navi-canvas", $content);
 
 	/**
-	 * Returns a jquery object.
+	 * Returns the content.
+	 * 
+	 * @returns {jQuery}
 	 */
 	this.getContent = function() {
 		return $content;
 	};
 
+	/**
+	 * Shows the active content.
+	 */
 	this.showActiveContent = function() {
 		$contentInactive.hide();
 		$contentActive.show();
 	};
 
+	/**
+	 * Shows the inactive content.
+	 */
 	this.showInactiveContent = function() {
 		$contentActive.hide();
 		$contentInactive.show();
 	};
 
+	/**
+	 * Adjusts the size of the red rectangle.
+	 * 
+	 * @param {Number} width
+	 * @param {Nubmer} height
+	 */
 	this.setDraggerSize = function(width, height) {
 		$dragger.css({
 			width : width,
@@ -31,6 +51,12 @@ mindmaps.NavigatorView = function() {
 		});
 	};
 
+	/**
+	 * Sets the position of the dragger rectangle.
+	 * 
+	 * @param {Number} x
+	 * @param {Number} y
+	 */
 	this.setDraggerPosition = function(x, y) {
 		$dragger.css({
 			left : x,
@@ -38,18 +64,27 @@ mindmaps.NavigatorView = function() {
 		});
 	};
 
+	/**
+	 * Sets the height of the mini canvas.
+	 * 
+	 * @param {Number} height
+	 */
 	this.setCanvasHeight = function(height) {
 		$("#navi-canvas", $content).css({
 			height : height
 		});
 	};
 
+	/**
+	 * Gets the width of the mini canvas.
+	 * 
+	 * @returns {Number}
+	 */
 	this.getCanvasWidth = function() {
 		return $("#navi-canvas", $content).width();
 	};
 
 	this.init = function(canvasSize) {
-
 		$("#navi-slider", $content).slider({
 			// TODO remove magic numbers. get values from presenter
 			min : 0,
@@ -85,6 +120,7 @@ mindmaps.NavigatorView = function() {
 			}
 		});
 
+		// make draggable
 		$dragger.draggable({
 			containment : "parent",
 			start : function(e, ui) {
@@ -107,6 +143,12 @@ mindmaps.NavigatorView = function() {
 		});
 	};
 
+	/**
+	 * Draws the complete mindmap onto the mini canvas.
+	 * 
+	 * @param {mindmaps.MindMap} mindmap
+	 * @param {Number} scaleFactor
+	 */
 	this.draw = function(mindmap, scaleFactor) {
 		var root = mindmap.root;
 		var canvas = $canvas[0];
@@ -166,15 +208,34 @@ mindmaps.NavigatorView = function() {
 		}
 	};
 
+	/**
+	 * Shows the zoom level as percentage.
+	 * 
+	 * @param {String} zoom
+	 */
 	this.showZoomLevel = function(zoom) {
 		$("#navi-zoom-level").text(zoom);
 	};
 
+	/**
+	 * Sets the value of the zoom slider.
+	 * 
+	 * @param {Integer} value
+	 */
 	this.setSliderValue = function(value) {
 		$("#navi-slider").slider("value", value);
 	};
 };
 
+/**
+ * Creates a new NavigatorPresenter.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.NavigatorView} view
+ * @param {mindmaps.CanvasContainer} container
+ * @param {mindmaps.ZoomController} zoomController
+ */
 mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		zoomController) {
 	var self = this;
@@ -185,6 +246,9 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 	var docSize = null;
 	var mindmap = null;
 
+	/**
+	 * Calculates and sets the size of the dragger element.
+	 */
 	function calculateDraggerSize() {
 		var cw = $container.width() / scale;
 		var ch = $container.height() / scale;
@@ -204,6 +268,9 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		view.setDraggerSize(width, height);
 	}
 
+	/**
+	 * Calculates and sets the size of the mini canvas.
+	 */
 	function calculateCanvasSize() {
 		var width = view.getCanvasWidth();
 		var _scale = docSize.x / width;
@@ -215,6 +282,9 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		canvasSize.y = height;
 	}
 
+	/**
+	 * Calculates and sets the possition of the dragger element.
+	 */
 	function calculateDraggerPosition() {
 		var sl = $container.scrollLeft() / scale;
 		var st = $container.scrollTop() / scale;
@@ -226,16 +296,25 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		view.setDraggerPosition(left, top);
 	}
 
+	/**
+	 * Calculates and sets the zoom level.
+	 */
 	function calculateZoomLevel() {
 		var zoomlevel = scale * 100 + " %";
 		view.showZoomLevel(zoomlevel);
 	}
 
+	/**
+	 * Calculates and sets the slider value for the zoom level.
+	 */
 	function calculateSliderValue() {
 		var val = scale / zoomController.ZOOM_STEP - 1;
 		view.setSliderValue(val);
 	}
 
+	/**
+	 * Initialize view when a document was opened.
+	 */
 	function documentOpened(doc) {
 		docSize = doc.dimensions;
 		mindmap = doc.mindmap;
@@ -256,12 +335,18 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		});
 	}
 
+	/**
+	 * Update the canvas of the view component.
+	 */
 	function renderView() {
 		// draw canvas
 		var scale = docSize.x / canvasSize.x;
 		view.draw(mindmap, scale);
 	}
 
+	/**
+	 * Reset when document was closed.
+	 */
 	function documentClosed() {
 		docSize = null;
 		mindmap = null;
@@ -272,6 +357,12 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 
 		view.showInactiveContent();
 	}
+
+	/**
+	 * View callbacks.
+	 * 
+	 * @ignore
+	 */
 
 	view.dragStart = function() {
 		viewDragging = true;

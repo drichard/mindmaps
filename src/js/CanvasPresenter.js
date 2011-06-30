@@ -73,6 +73,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 	/**
 	 * View callback: Zoom on mouse wheel.
 	 * 
+	 * @ignore
 	 */
 	view.mouseWheeled = function(delta) {
 		view.stopEditNodeCaption();
@@ -86,6 +87,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Attach creator to node if mouse hovers over node.
+	 * 
+	 * @ignore
 	 */
 	view.nodeMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
@@ -97,6 +100,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Attach creator to node if mouse hovers over node caption.
+	 * 
+	 * @ignore
 	 */
 	view.nodeCaptionMouseOver = function(node) {
 		if (view.isNodeDragging() || creator.isDragging()) {
@@ -108,6 +113,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Select node if mouse was pressed.
+	 * 
+	 * @ignore
 	 */
 	view.nodeMouseDown = function(node) {
 		mindmapModel.selectNode(node);
@@ -120,6 +127,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Go into edit mode when node was double clicked.
+	 * 
+	 * @ignore
 	 */
 	view.nodeDoubleClicked = function(node) {
 		view.editNodeCaption(node);
@@ -130,6 +139,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Execute MoveNodeAction when node was dragged.
+	 * 
+	 * @ignore
 	 */
 	view.nodeDragged = function(node, offset) {
 		// view has updated itself
@@ -141,6 +152,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Toggle fold mode when fold button was clicked.
+	 * 
+	 * @ignore
 	 */
 	view.foldButtonClicked = function(node) {
 		toggleFold(node);
@@ -150,6 +163,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 	/**
 	 * View callback: Return new random color to view when creator tool was
 	 * started to drag.
+	 * 
+	 * @ignore
 	 */
 	creator.dragStarted = function(node) {
 		// set edge color for new node. inherit from parent or random when root
@@ -160,6 +175,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 	/**
 	 * View callback: Create a new node when creator tool was stopped.
+	 * 
+	 * @ignore
 	 */
 	creator.dragStopped = function(parent, offsetX, offsetY, distance) {
 		// disregard if the creator was only dragged a bit
@@ -180,6 +197,9 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 	/**
 	 * View callback: Change node caption when text change was committed in
 	 * view.
+	 * 
+	 * @ignore
+	 * @param {String} str
 	 */
 	view.nodeCaptionEditCommitted = function(str) {
 		// avoid whitespace only strings

@@ -91,6 +91,8 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback: external file has been selected. Try to read and parse a
 	 * valid mindmaps Document.
+	 * 
+	 * @ignore
 	 */
 	view.openExernalFileClicked = function(e) {
 		var files = e.target.files;
@@ -110,6 +112,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 	 * View callback: A document in the local storage list has been clicked.
 	 * Load the document and close view.
 	 * 
+	 * @ignore
 	 * @param {mindmaps.Document} doc
 	 */
 	view.documentClicked = function(doc) {
@@ -121,6 +124,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 	 * View callback: The delete link the local storage list has been clicked.
 	 * Delete the document, and render list again.
 	 * 
+	 * @ignore
 	 * @param {mindmaps.Document} doc
 	 */
 	view.deleteDocumentClicked = function(doc) {

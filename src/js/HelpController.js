@@ -1,24 +1,31 @@
 /**
  * <pre>
- * - Listens to HELP_COMMAND and displays notifications.
- * - Provides interactive tutorial for first time users.
+ * Listens to HELP_COMMAND and displays notifications.
+ * Provides interactive tutorial for first time users.
  * </pre>
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.commandRegistry} commandRegistry
  */
 mindmaps.HelpController = function(eventBus, commandRegistry) {
 
+	/**
+	 * Prepare tutorial guiders.
+	 */
 	function setupInteractiveMode() {
 		if (isTutorialDone()) {
-			console.debug("skipping tutorial in debug mode");
+			console.debug("skipping tutorial");
 			return;
 		}
 
 		var notifications = [];
 		var interactiveMode = true;
 
+		// start tutorial after a short delay
 		eventBus.once(mindmaps.Event.DOCUMENT_OPENED, function() {
 			setTimeout(start, 1000);
 		});
-		var helpMain, helpRoot;
 
 		function closeAllNotifications() {
 			notifications.forEach(function(n) {
@@ -26,6 +33,7 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 			});
 		}
 
+		var helpMain, helpRoot;
 		function start() {
 			helpMain = new mindmaps.Notification(
 					"#toolbar",
@@ -195,6 +203,9 @@ mindmaps.HelpController = function(eventBus, commandRegistry) {
 
 	}
 
+	/**
+	 * Prepares notfications to show for help command.
+	 */
 	function setupHelpButton() {
 		var command = commandRegistry.get(mindmaps.HelpCommand);
 		command.setHandler(showHelp);

@@ -14,7 +14,7 @@ describe("Command", function() {
 	
 	it("should notify when a handler was registered", function() {
 		var callback = jasmine.createSpy();
-		command.subscribe(mindmaps.CommandEvent.HANDLER_REGISTERED, callback);
+		command.subscribe(mindmaps.Command.Event.HANDLER_REGISTERED, callback);
 		command.setHandler(handler);
 		expect(callback).toHaveBeenCalled();
 		
@@ -23,7 +23,7 @@ describe("Command", function() {
 	it("should notify when a handler was removed", function() {
 		var callback = jasmine.createSpy();
 		command.setHandler(handler);
-		command.subscribe(mindmaps.CommandEvent.HANDLER_REMOVED, callback);
+		command.subscribe(mindmaps.Command.Event.HANDLER_REMOVED, callback);
 		command.removeHandler();
 		expect(callback).toHaveBeenCalled();
 	});
@@ -31,7 +31,7 @@ describe("Command", function() {
 	it("should notify when the enabled state has changed", function() {
 		var callback = jasmine.createSpy();
 		command.setHandler(handler);
-		command.subscribe(mindmaps.CommandEvent.ENABLED_CHANGED, callback);
+		command.subscribe(mindmaps.Command.Event.ENABLED_CHANGED, callback);
 		
 		// string instead of boolean so jasmine checks if argument was the same
 		command.setEnabled("false");

@@ -71,10 +71,11 @@ mindmaps.SaveDocumentView = function() {
  * @param {mindmaps.SaveDocumentView} view
  */
 mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
-
 	/**
 	 * View callback when local storage button was clicked. Saves the document
 	 * in the local storage.
+	 * 
+	 * @ignore
 	 */
 	view.localStorageButtonClicked = function() {
 		// update modified date
@@ -95,6 +96,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 	 * View callback: Returns the filename for the document for saving on hard
 	 * drive.
 	 * 
+	 * @ignore
 	 * @returns {String}
 	 */
 	view.fileNameRequested = function() {
@@ -104,6 +106,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback: Returns the serialized document.
 	 * 
+	 * @ignore
 	 * @returns {String}
 	 */
 	view.fileContentsRequested = function() {
@@ -114,6 +117,8 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 
 	/**
 	 * View callback: Saving to the hard drive was sucessful.
+	 * 
+	 * @ignore
 	 */
 	view.saveToHddComplete = function() {
 		var doc = mindmapModel.getDocument();
