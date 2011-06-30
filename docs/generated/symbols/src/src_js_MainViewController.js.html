@@ -1,0 +1,128 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * The canvas container is the area in between the toolbar and the statusbar.
+<span class='line'>  3</span>  * Inside the mind map will be drawn and the floating panels are contained
+<span class='line'>  4</span>  * within this area.
+<span class='line'>  5</span>  * 
+<span class='line'>  6</span>  * @constructor
+<span class='line'>  7</span>  */</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="NAME">mindmaps.CanvasContainer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">self</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$content</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">"#canvas-container"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 11</span> 
+<span class='line'> 12</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 13</span> 	 * @returns {jQuery}
+<span class='line'> 14</span> 	 */</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="NAME">this.getContent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">$content</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> 
+<span class='line'> 19</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 20</span> 	 * Sets the height of the canvas to fit between header and footer.
+<span class='line'> 21</span> 	 */</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">	</span><span class="NAME">this.setSize</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">windowHeight</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">window</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">headerHeight</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">"#topbar"</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">outerHeight</span><span class="PUNC">(</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">footerHeight</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">"#bottombar"</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">outerHeight</span><span class="PUNC">(</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">windowHeight</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">headerHeight</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">footerHeight</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">		</span><span class="NAME">$content.height</span><span class="PUNC">(</span><span class="NAME">height</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> 
+<span class='line'> 29</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">size</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.Point</span><span class="PUNC">(</span><span class="NAME">$content.width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">		</span><span class="NAME">self.publish</span><span class="PUNC">(</span><span class="NAME">mindmaps.CanvasContainer.Event.RESIZED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">size</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> 
+<span class='line'> 33</span> </span><span class="WHIT">	</span><span class="NAME">this.init</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="WHIT">		</span><span class="COMM">// recalculate size when window is resized.</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">		</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">window</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">resize</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">			</span><span class="NAME">self.setSize</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 38</span> 
+<span class='line'> 39</span> </span><span class="WHIT">		</span><span class="NAME">this.setSize</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 41</span> 
+<span class='line'> 42</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="NAME">EventEmitter.mixin</span><span class="PUNC">(</span><span class="NAME">mindmaps.CanvasContainer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> 
+<span class='line'> 45</span> </span><span class="COMM">/**
+<span class='line'> 46</span>  * Events fired by the container.
+<span class='line'> 47</span>  * 
+<span class='line'> 48</span>  * @namespace
+<span class='line'> 49</span>  */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="NAME">mindmaps.CanvasContainer.Event</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 52</span> 	 * Fired when the container has been resized.
+<span class='line'> 53</span> 	 * 
+<span class='line'> 54</span> 	 * @event
+<span class='line'> 55</span> 	 * @param {mindmaps.Point} point the new size
+<span class='line'> 56</span> 	 */</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">	</span><span class="NAME">RESIZED</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"ResizedEvent"</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span> 
+<span class='line'> 60</span> </span><span class="COMM">/**
+<span class='line'> 61</span>  * Creates a new MainViewController. The controller is responsible for creating
+<span class='line'> 62</span>  * all main ui elements.
+<span class='line'> 63</span>  * 
+<span class='line'> 64</span>  * @constructor
+<span class='line'> 65</span>  * @param {mindmaps.EventBus} eventBus
+<span class='line'> 66</span>  * @param {mindmaps.MindMapModel} mindmapModel
+<span class='line'> 67</span>  * @param {mindmaps.InspectorView} view
+<span class='line'> 68</span>  */</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="NAME">mindmaps.MainViewController</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mindmapModel</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">commandRegistry</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">zoomController</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.ZoomController</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">commandRegistry</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> 
+<span class='line'> 72</span> </span><span class="WHIT">	</span><span class="NAME">this.go</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">canvasContainer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.CanvasContainer</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">		</span><span class="NAME">canvasContainer.init</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> 
+<span class='line'> 76</span> </span><span class="WHIT">		</span><span class="COMM">// init all presenters</span><span class="WHIT">
+<span class='line'> 77</span> 
+<span class='line'> 78</span> </span><span class="WHIT">		</span><span class="COMM">// toolbar</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">toolbar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.ToolBarView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">toolbarPresenter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.ToolBarPresenter</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">				</span><span class="NAME">commandRegistry</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">toolbar</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mindmapModel</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">		</span><span class="NAME">toolbarPresenter.go</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 83</span> 
+<span class='line'> 84</span> </span><span class="WHIT">		</span><span class="COMM">// canvas</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">canvas</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.DefaultCanvasView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">canvasPresenter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.CanvasPresenter</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">				</span><span class="NAME">commandRegistry</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mindmapModel</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">canvas</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">zoomController</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">		</span><span class="NAME">canvasPresenter.go</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> 
+<span class='line'> 90</span> </span><span class="WHIT">		</span><span class="COMM">// statusbar</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">statusbar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.StatusBarView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">statusbarPresenter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.StatusBarPresenter</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">				</span><span class="NAME">statusbar</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">		</span><span class="NAME">statusbarPresenter.go</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 95</span> 
+<span class='line'> 96</span> </span><span class="WHIT">		</span><span class="COMM">// floating Panels</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fpf</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.FloatPanelFactory</span><span class="PUNC">(</span><span class="NAME">canvasContainer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> 
+<span class='line'> 99</span> </span><span class="WHIT">		</span><span class="COMM">// inspector</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">inspectorView</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.InspectorView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">inspectorPresenter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.InspectorPresenter</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">				</span><span class="NAME">mindmapModel</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">inspectorView</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">		</span><span class="NAME">inspectorPresenter.go</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>104</span> 
+<span class='line'>105</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">inspectorPanel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">fpf</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">				</span><span class="PUNC">.</span><span class="NAME">create</span><span class="PUNC">(</span><span class="STRN">"Inspector"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">inspectorView.getContent</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">		</span><span class="NAME">inspectorPanel.show</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">		</span><span class="NAME">statusbarPresenter.addEntry</span><span class="PUNC">(</span><span class="NAME">inspectorPanel</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>109</span> 
+<span class='line'>110</span> </span><span class="WHIT">		</span><span class="COMM">// navigator</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">naviView</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.NavigatorView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">naviPresenter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.NavigatorPresenter</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">naviView</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">				</span><span class="NAME">canvasContainer</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">zoomController</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">		</span><span class="NAME">naviPresenter.go</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> 
+<span class='line'>116</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">navigatorPanel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">fpf.create</span><span class="PUNC">(</span><span class="STRN">"Navigator"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">naviView.getContent</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">		</span><span class="NAME">navigatorPanel.show</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">		</span><span class="NAME">statusbarPresenter.addEntry</span><span class="PUNC">(</span><span class="NAME">navigatorPanel</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>121</span> </span></pre></body></html>

@@ -3,14 +3,14 @@ var path = require("path");
 var wrench = require("wrench");
 
 var indexFileName = "index.html";
-var baseDir = "../src/";
+var srcDir = "../src/";
 var publishDir = "../bin/";
 var scriptFilename = "script.js";
 var scriptDir = "js/";
 var regexScriptSection = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
 var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
 		".project", "README.md", "canvas.html", "*psd", "*.psd", "*libs" ];
-var indexFile = fs.readFileSync(baseDir + indexFileName, "utf8");
+var indexFile = fs.readFileSync(srcDir + indexFileName, "utf8");
 var scriptNames = [];
 
 desc("Clean old build directory");
@@ -59,7 +59,7 @@ task("minify-js", [ "create-dir" ], function() {
 		var regexCopyright = /^\/\*![\s\S]*?\*\//m;
 		var buffer = [];
 		scriptNames.forEach(function(script) {
-			var scriptFile = fs.readFileSync(baseDir + script, "utf8");
+			var scriptFile = fs.readFileSync(srcDir + script, "utf8");
 			var copyright = regexCopyright.exec(scriptFile);
 			if (copyright) {
 				buffer.push(copyright);
@@ -147,18 +147,18 @@ task("copy-files", [ "create-dir", "minify-js" ], function() {
 	 * base directory to the publish directory.
 	 */
 	function copyFiles(dir) {
-		var files = fs.readdirSync(baseDir + dir);
+		var files = fs.readdirSync(srcDir + dir);
 		files.forEach(function(file) {
 			var currentDir = dir + file;
 			if (!regexExcludeFiles.test(currentDir)) {
-				var stats = fs.statSync(baseDir + currentDir);
+				var stats = fs.statSync(srcDir + currentDir);
 				if (stats.isDirectory()) {
 					if (!path.existsSync(publishDir + currentDir)) {
 						fs.mkdirSync(publishDir + currentDir, 0755);
 					}
 					copyFiles(currentDir + "/");
 				} else if (stats.isFile()) {
-					var contents = fs.readFileSync(baseDir + currentDir);
+					var contents = fs.readFileSync(srcDir + currentDir);
 					fs.writeFileSync(publishDir + currentDir, contents);
 					fs.chmodSync(publishDir + currentDir, 0755);
 				}
@@ -187,68 +187,46 @@ task("default", [ "build" ], function() {
 });
 
 desc("Deploy project to github pages");
-task(
-		"deploy",
-		[ "build" ],
-		function() {
-			console.log("Deploying project to github pages");
-			var exec = require('child_process').exec;
-			/**
-			 * The command copies all files from /bin into github pages repo,
-			 * commits and pushes the changes.
-			 */
-			var command = "cp -r ../bin/* ../../drichard.github.com/mindmaps/; "
-					+ "cd ../../drichard.github.com/mindmaps/; " + "git add .; "
-					+ "git commit -a -m 'deploy mindmaps'; " + "git push;";
-			exec(
-					command,
-					function(error, stdout, stderr) {
-
-						if (error !== null) {
-							console.log('exec error: ' + error);
-						} else {
-							console.log("Deployed all files successfully");
-							console.log("STDOUT:\n" + stdout);
-						}
-						
-						if (stderr) {
-							console.log("STDERR: " + stderr);
-						}
-					});
-
-			// console.log("Cleaning remote directory");
-			// exec("ssh s0522592@remserv.rz.htw-berlin.de 'rm -rf
-			// ~/public_html/mindmaps/*'");
-			//
-			// console.log("Copying all files to remote");
-			// exec(
-			// "scp -r .
-			// s0522592@remserv.rz.htw-berlin.de:~/public_html/mindmaps/",
-			// {
-			// cwd : "../bin"
-			// },
-			// function(error, stdout, stderr) {
-			// if (error !== null) {
-			// console.log('exec error: ' + error);
-			// } else {
-			// console.log("Copied all files successfully");
-			// console.log("Setting file permissions to 0755");
-			// exec("ssh s0522592@remserv.rz.htw-berlin.de 'chmod -R 0755
-			// ~/public_html/mindmaps/*'");
-			// }
-			// });
-		});
-
-desc("Build cache manifest");
-task("manifest", function() {
-	/*
-	 * TODO after building add all copied files to the cache.manifest
-	 * automatically and set timestamp could use a manifest template which has
-	 * filesections and timestamp replaced.
-	 * 
-	 * <pre> CACHE MANIFEST # {timeStamp}
-	 * 
-	 * CACHE: {files}
-	 * http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js </pre>
+task("deploy", [ "build" ], function() {
+	console.log("Deploying project to github pages");
+	var exec = require('child_process').exec;
+	/**
+	 * The command copies all files from /bin into github pages repo, commits
+	 * and pushes the changes.
 	 */
+	var command = "cp -r ../bin/* ../../drichard.github.com/mindmaps/; "
+			+ "cd ../../drichard.github.com/mindmaps/; " + "git add .; "
+			+ "git commit -a -m 'deploy mindmaps'; " + "git push;";
+	exec(command, function(error, stdout, stderr) {
+
+		if (error !== null) {
+			console.log('exec error: ' + error);
+		} else {
+			console.log("Deployed all files successfully");
+			console.log("STDOUT:\n" + stdout);
+		}
+
+		if (stderr) {
+			console.log("STDERR: " + stderr);
+		}
+	});
+});
+
+desc("Generate JSDoc");
+task("generate-docs", [ "build" ], function() {
+	console.log("Creating project documentation");
+	var exec = require('child_process').exec;
+	var command = "../docs/generate.sh";
+	exec(command, function(error, stdout, stderr) {
+		if (error !== null) {
+			console.log('exec error: ' + error);
+		} else {
+			console.log("Created documentation");
+			console.log("STDOUT:\n" + stdout);
+		}
+
+		if (stderr) {
+			console.log("STDERR: " + stderr);
+		}
+	});
 });

@@ -1,0 +1,334 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * Creates a new CanvasPresenter. The canvas presenter is responsible for drawing the mind map onto a
+<span class='line'>  3</span>  * canvas view and reacting to user input on the map (e.g. dragging a node, double clicking it etc.)
+<span class='line'>  4</span>  * 
+<span class='line'>  5</span>  * @constructor
+<span class='line'>  6</span>  * @param {mindmaps.EventBus} eventBus
+<span class='line'>  7</span>  * @param {mindmaps.CommandRegistry} commandRegistry
+<span class='line'>  8</span>  * @param {mindmaps.MindMapModel} mindmapModel
+<span class='line'>  9</span>  * @param {mindmaps.CanvasView} view
+<span class='line'> 10</span>  * @param {mindmaps.ZoomController} zoomController
+<span class='line'> 11</span>  */</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="NAME">mindmaps.CanvasPresenter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">eventBus</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">commandRegistry</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mindmapModel</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="WHIT">		</span><span class="NAME">view</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">zoomController</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">self</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">creator</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">view.getCreator</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> 
+<span class='line'> 17</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 18</span> 	 * Initializes this presenter.
+<span class='line'> 19</span> 	 */</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">	</span><span class="NAME">this.init</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">editCaptionCommand</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">commandRegistry</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">				</span><span class="PUNC">.</span><span class="NAME">get</span><span class="PUNC">(</span><span class="NAME">mindmaps.EditNodeCaptionCommand</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="WHIT">		</span><span class="NAME">editCaptionCommand.setHandler</span><span class="PUNC">(</span><span class="NAME">this.editNodeCaption.bind</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 24</span> 
+<span class='line'> 25</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">toggleNodeFoldedCommand</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">commandRegistry</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">				</span><span class="PUNC">.</span><span class="NAME">get</span><span class="PUNC">(</span><span class="NAME">mindmaps.ToggleNodeFoldedCommand</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">		</span><span class="NAME">toggleNodeFoldedCommand.setHandler</span><span class="PUNC">(</span><span class="NAME">toggleFold</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 29</span> 
+<span class='line'> 30</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 31</span> 	 * Handles the edit caption command. Tells view to start edit mode for node.
+<span class='line'> 32</span> 	 * 
+<span class='line'> 33</span> 	 * @param {mindmaps.Node} node
+<span class='line'> 34</span> 	 */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">	</span><span class="NAME">this.editNodeCaption</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">			</span><span class="NAME">node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mindmapModel.selectedNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">		</span><span class="NAME">view.editNodeCaption</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 41</span> 
+<span class='line'> 42</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 43</span> 	 * Toggles the fold state of a node.
+<span class='line'> 44</span> 	 * 
+<span class='line'> 45</span> 	 * @param {mindmaps.Node} node
+<span class='line'> 46</span> 	 */</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">toggleFold</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">			</span><span class="NAME">node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mindmapModel.selectedNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 51</span> 
+<span class='line'> 52</span> </span><span class="WHIT">		</span><span class="COMM">// toggle node visibility</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">action</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.action.ToggleNodeFoldAction</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">		</span><span class="NAME">mindmapModel.executeAction</span><span class="PUNC">(</span><span class="NAME">action</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> 
+<span class='line'> 57</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 58</span> 	 * Tells the view to select a node.
+<span class='line'> 59</span> 	 * 
+<span class='line'> 60</span> 	 * @param {mindmaps.Node} selectedNode
+<span class='line'> 61</span> 	 * @param {mindmaps.Node} oldSelectedNode
+<span class='line'> 62</span> 	 */</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">selectNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">selectedNode</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">oldSelectedNode</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 64</span> 
+<span class='line'> 65</span> </span><span class="WHIT">		</span><span class="COMM">// deselect old node</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">oldSelectedNode</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">			</span><span class="NAME">view.unhighlightNode</span><span class="PUNC">(</span><span class="NAME">oldSelectedNode</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">		</span><span class="NAME">view.highlightNode</span><span class="PUNC">(</span><span class="NAME">selectedNode</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> 
+<span class='line'> 72</span> </span><span class="WHIT">	</span><span class="COMM">// listen to events from view</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 74</span> 	 * View callback: Zoom on mouse wheel.
+<span class='line'> 75</span> 	 * 
+<span class='line'> 76</span> 	 * @ignore
+<span class='line'> 77</span> 	 */</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">	</span><span class="NAME">view.mouseWheeled</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">delta</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">		</span><span class="NAME">view.stopEditNodeCaption</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 80</span> 
+<span class='line'> 81</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">delta</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">			</span><span class="NAME">zoomController.zoomIn</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">			</span><span class="NAME">zoomController.zoomOut</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> 
+<span class='line'> 88</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 89</span> 	 * View callback: Attach creator to node if mouse hovers over node.
+<span class='line'> 90</span> 	 * 
+<span class='line'> 91</span> 	 * @ignore
+<span class='line'> 92</span> 	 */</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">	</span><span class="NAME">view.nodeMouseOver</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">view.isNodeDragging</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">creator.isDragging</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">			</span><span class="COMM">// dont relocate the creator if we are dragging</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">			</span><span class="NAME">creator.attachToNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>100</span> 
+<span class='line'>101</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>102</span> 	 * View callback: Attach creator to node if mouse hovers over node caption.
+<span class='line'>103</span> 	 * 
+<span class='line'>104</span> 	 * @ignore
+<span class='line'>105</span> 	 */</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">	</span><span class="NAME">view.nodeCaptionMouseOver</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">view.isNodeDragging</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">creator.isDragging</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">			</span><span class="COMM">// dont relocate the creator if we are dragging</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">			</span><span class="NAME">creator.attachToNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> 
+<span class='line'>114</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>115</span> 	 * View callback: Select node if mouse was pressed.
+<span class='line'>116</span> 	 * 
+<span class='line'>117</span> 	 * @ignore
+<span class='line'>118</span> 	 */</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">	</span><span class="NAME">view.nodeMouseDown</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">		</span><span class="NAME">mindmapModel.selectNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">		</span><span class="COMM">// show creator</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">		</span><span class="NAME">creator.attachToNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> 
+<span class='line'>125</span> </span><span class="WHIT">	</span><span class="COMM">// view.nodeMouseUp = function(node) {</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">	</span><span class="COMM">// };</span><span class="WHIT">
+<span class='line'>127</span> 
+<span class='line'>128</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>129</span> 	 * View callback: Go into edit mode when node was double clicked.
+<span class='line'>130</span> 	 * 
+<span class='line'>131</span> 	 * @ignore
+<span class='line'>132</span> 	 */</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">	</span><span class="NAME">view.nodeDoubleClicked</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">		</span><span class="NAME">view.editNodeCaption</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> 
+<span class='line'>137</span> </span><span class="WHIT">	</span><span class="COMM">// view.nodeDragging = function() {</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">	</span><span class="COMM">// };</span><span class="WHIT">
+<span class='line'>139</span> 
+<span class='line'>140</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>141</span> 	 * View callback: Execute MoveNodeAction when node was dragged.
+<span class='line'>142</span> 	 * 
+<span class='line'>143</span> 	 * @ignore
+<span class='line'>144</span> 	 */</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">	</span><span class="NAME">view.nodeDragged</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">offset</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">		</span><span class="COMM">// view has updated itself</span><span class="WHIT">
+<span class='line'>147</span> 
+<span class='line'>148</span> </span><span class="WHIT">		</span><span class="COMM">// update model</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">action</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.action.MoveNodeAction</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">offset</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">		</span><span class="NAME">mindmapModel.executeAction</span><span class="PUNC">(</span><span class="NAME">action</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>152</span> 
+<span class='line'>153</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>154</span> 	 * View callback: Toggle fold mode when fold button was clicked.
+<span class='line'>155</span> 	 * 
+<span class='line'>156</span> 	 * @ignore
+<span class='line'>157</span> 	 */</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">	</span><span class="NAME">view.foldButtonClicked</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">		</span><span class="NAME">toggleFold</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> 
+<span class='line'>162</span> </span><span class="WHIT">	</span><span class="COMM">// CREATOR TOOL</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>164</span> 	 * View callback: Return new random color to view when creator tool was
+<span class='line'>165</span> 	 * started to drag.
+<span class='line'>166</span> 	 * 
+<span class='line'>167</span> 	 * @ignore
+<span class='line'>168</span> 	 */</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">	</span><span class="NAME">creator.dragStarted</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">		</span><span class="COMM">// set edge color for new node. inherit from parent or random when root</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">color</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.isRoot</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">mindmaps.Util.randomColor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">				</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">node.branchColor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">color</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> 
+<span class='line'>176</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>177</span> 	 * View callback: Create a new node when creator tool was stopped.
+<span class='line'>178</span> 	 * 
+<span class='line'>179</span> 	 * @ignore
+<span class='line'>180</span> 	 */</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">	</span><span class="NAME">creator.dragStopped</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">offsetX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">offsetY</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">distance</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="WHIT">		</span><span class="COMM">// disregard if the creator was only dragged a bit</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">distance</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NUMB">50</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>186</span> 
+<span class='line'>187</span> </span><span class="WHIT">		</span><span class="COMM">// update the model</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.Node</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">		</span><span class="NAME">node.branchColor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">creator.lineColor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">		</span><span class="NAME">node.offset</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.Point</span><span class="PUNC">(</span><span class="NAME">offsetX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">offsetY</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="WHIT">		</span><span class="COMM">// indicate that we want to set this nodes caption after creation</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="WHIT">		</span><span class="NAME">node.shouldEditCaption</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span> 
+<span class='line'>194</span> </span><span class="WHIT">		</span><span class="NAME">mindmapModel.createNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">parent</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span> 
+<span class='line'>197</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>198</span> 	 * View callback: Change node caption when text change was committed in
+<span class='line'>199</span> 	 * view.
+<span class='line'>200</span> 	 * 
+<span class='line'>201</span> 	 * @ignore
+<span class='line'>202</span> 	 * @param {String} str
+<span class='line'>203</span> 	 */</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">	</span><span class="NAME">view.nodeCaptionEditCommitted</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">		</span><span class="COMM">// avoid whitespace only strings</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$.trim</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>210</span> 
+<span class='line'>211</span> </span><span class="WHIT">		</span><span class="NAME">view.stopEditNodeCaption</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">		</span><span class="NAME">mindmapModel.changeNodeCaption</span><span class="PUNC">(</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">str</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> 
+<span class='line'>215</span> </span><span class="WHIT">	</span><span class="NAME">this.go</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT">		</span><span class="NAME">view.init</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>218</span> 
+<span class='line'>219</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>220</span> 	 * Draw the mind map on the canvas.
+<span class='line'>221</span> 	 * 
+<span class='line'>222</span> 	 * @param {mindmaps.Document} doc
+<span class='line'>223</span> 	 */</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">showMindMap</span><span class="PUNC">(</span><span class="NAME">doc</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">		</span><span class="NAME">view.setZoomFactor</span><span class="PUNC">(</span><span class="NAME">zoomController.DEFAULT_ZOOM</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">dimensions</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">doc.dimensions</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">		</span><span class="NAME">view.setDimensions</span><span class="PUNC">(</span><span class="NAME">dimensions.x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">dimensions.y</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">map</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">doc.mindmap</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">		</span><span class="NAME">view.drawMap</span><span class="PUNC">(</span><span class="NAME">map</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">		</span><span class="NAME">view.center</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>231</span> 
+<span class='line'>232</span> </span><span class="WHIT">		</span><span class="NAME">mindmapModel.selectNode</span><span class="PUNC">(</span><span class="NAME">map.root</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>234</span> 
+<span class='line'>235</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>236</span> 	 * Hook up with EventBus.
+<span class='line'>237</span> 	 */</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">bind</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">		</span><span class="COMM">// listen to global events</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.DOCUMENT_OPENED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">doc</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">				</span><span class="NAME">newDocument</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">			</span><span class="NAME">showMindMap</span><span class="PUNC">(</span><span class="NAME">doc</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>243</span> 
+<span class='line'>244</span> </span><span class="WHIT">			</span><span class="COMM">// if (doc.isNew()) {</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">			</span><span class="COMM">// // edit root node on start</span><span class="WHIT">
+<span class='line'>246</span> </span><span class="WHIT">			</span><span class="COMM">// var root = doc.mindmap.root;</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">			</span><span class="COMM">// view.editNodeCaption(root);</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">			</span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>250</span> 
+<span class='line'>251</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.DOCUMENT_CLOSED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">doc</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">			</span><span class="NAME">view.clear</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>254</span> 
+<span class='line'>255</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_MOVED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">			</span><span class="NAME">view.positionNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>258</span> 
+<span class='line'>259</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_TEXT_CAPTION_CHANGED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">				</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">			</span><span class="NAME">view.setNodeText</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">node.getCaption</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>262</span> 
+<span class='line'>263</span> </span><span class="WHIT">			</span><span class="COMM">// redraw node in case height has changed</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">			</span><span class="COMM">// TODO maybe only redraw if height has changed</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">			</span><span class="NAME">view.redrawNodeConnectors</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>267</span> 
+<span class='line'>268</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_CREATED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">			</span><span class="NAME">view.createNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>270</span> 
+<span class='line'>271</span> </span><span class="WHIT">			</span><span class="COMM">// edit node caption immediately if requested</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">node.shouldEditCaption</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="WHIT">				</span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">node.shouldEditCaption</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">				</span><span class="COMM">// open parent node when creating a new child and the other</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">				</span><span class="COMM">// children are hidden</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">parent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.getParent</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">parent.foldChildren</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">action</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.action.OpenNodeAction</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="WHIT">					</span><span class="NAME">mindmapModel.executeAction</span><span class="PUNC">(</span><span class="NAME">action</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>280</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>281</span> 
+<span class='line'>282</span> </span><span class="WHIT">				</span><span class="COMM">// select and go into edit mode on new node</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="WHIT">				</span><span class="NAME">mindmapModel.selectNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">				</span><span class="NAME">view.editNodeCaption</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>287</span> 
+<span class='line'>288</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_DELETED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">parent</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="WHIT">			</span><span class="COMM">// select parent if we are deleting a selected node or a descendant</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">selected</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mindmapModel.selectedNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">node</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="NAME">selected</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">node.isDescendant</span><span class="PUNC">(</span><span class="NAME">selected</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="WHIT">				</span><span class="COMM">// deselectCurrentNode();</span><span class="WHIT">
+<span class='line'>293</span> </span><span class="WHIT">				</span><span class="NAME">mindmapModel.selectNode</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>294</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>295</span> 
+<span class='line'>296</span> </span><span class="WHIT">			</span><span class="COMM">// update view</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="WHIT">			</span><span class="NAME">view.deleteNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">parent.isLeaf</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="WHIT">				</span><span class="NAME">view.removeFoldButton</span><span class="PUNC">(</span><span class="NAME">parent</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>302</span> 
+<span class='line'>303</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_SELECTED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">selectNode</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="WHIT">		</span><span class="WHIT">
+<span class='line'>305</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_OPENED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="WHIT">			</span><span class="NAME">view.openNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_CLOSED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">			</span><span class="NAME">view.closeNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_FONT_CHANGED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT">			</span><span class="NAME">view.updateNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.NODE_BRANCH_COLOR_CHANGED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">				</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">			</span><span class="NAME">view.updateNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">		</span><span class="NAME">eventBus.subscribe</span><span class="PUNC">(</span><span class="NAME">mindmaps.Event.ZOOM_CHANGED</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">zoomFactor</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="WHIT">			</span><span class="NAME">view.setZoomFactor</span><span class="PUNC">(</span><span class="NAME">zoomFactor</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>320</span> </span><span class="WHIT">			</span><span class="NAME">view.applyViewZoom</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>321</span> </span><span class="WHIT">			</span><span class="NAME">view.scaleMap</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>322</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>323</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>324</span> 
+<span class='line'>325</span> </span><span class="WHIT">	</span><span class="NAME">bind</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>326</span> </span><span class="WHIT">	</span><span class="NAME">this.init</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>327</span> </span><span class="PUNC">}</span><span class="PUNC">;</span></pre></body></html>
