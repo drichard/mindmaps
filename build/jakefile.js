@@ -213,7 +213,7 @@ task("deploy", [ "build" ], function() {
 });
 
 desc("Generate JSDoc");
-task("generate-docs", [ "build" ], function() {
+task("generate-docs", function() {
 	console.log("Creating project documentation");
 	var exec = require('child_process').exec;
 	var command = "../docs/generate.sh";
@@ -221,8 +221,8 @@ task("generate-docs", [ "build" ], function() {
 		if (error !== null) {
 			console.log('exec error: ' + error);
 		} else {
-			console.log("Created documentation");
 			console.log("STDOUT:\n" + stdout);
+			console.log("Created documentation");
 		}
 
 		if (stderr) {
