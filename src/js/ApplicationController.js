@@ -99,7 +99,7 @@ mindmaps.ApplicationController = function() {
 	 */
 	this.go = function() {
 		var viewController = new mindmaps.MainViewController(eventBus,
-				mindmapModel, commandRegistry, new mindmaps.MainView());
+				mindmapModel, commandRegistry);
 		viewController.go();
 
 		commandRegistry.get(mindmaps.NewDocumentCommand).execute();

@@ -50,6 +50,14 @@ html,body {
 	height: 100%
 }
 
+a {
+	color: inherit;
+}
+
+em {
+	font-style: italic;
+}
+
 #wrap {
 	background: #75a8c4; /* Old browsers */
 	background: -moz-linear-gradient(top, #75a8c4 7%, #ffffff 100%);
@@ -62,9 +70,10 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(top, #75a8c4 7%, #ffffff 100%);
 	/* IE10+ */
-	filter: progid :     DXImageTransform.Microsoft.gradient (     
-		 startColorstr =  
-		  '#75a8c4', endColorstr =     '#ffffff', GradientType =     0 );
+	filter: progid :         DXImageTransform.Microsoft.gradient (       
+		   startColorstr =    
+		    '#75a8c4', endColorstr =         '#ffffff', GradientType =        
+		0 );
 	/* IE6-9 */
 	background: linear-gradient(top, #75a8c4 7%, #ffffff 100%); /* W3C */
 	height: auto !important;
@@ -74,7 +83,8 @@ html,body {
 #container {
 	background-color: white;
 	padding: 25px 25px;
-	padding-bottom: 0px; width : 650px;
+	padding-bottom: 0px;
+	width: 650px;
 	margin-left: auto;
 	margin-right: auto;
 	box-shadow: #CCC 4px 0 10px, #CCC -4px 0 10px, #AAA 0 38px 36px -24px;
@@ -122,13 +132,27 @@ h2 {
 	line-height: 1.2em;
 }
 
+.text p {
+	margin: 5px auto;
+}
+
 #footer {
-	margin: auto -25px;
+	position: relative; margin : auto -25px;
 	padding: 10px 0px;
 	background: #EEE;
 	margin-top: 35px;
 	overflow: hidden;
 	border-top: 1px solid #CCC;
+	margin: auto -25px;
+}
+
+#copyright {
+	position: absolute;
+	bottom: 10px; left : 10px;
+	font-size: 11px;
+	color: #888;
+	font-family: sans-serif;
+	left: 10px;
 }
 
 #html5-badge {
