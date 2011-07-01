@@ -1,3 +1,8 @@
+/**
+ * @fileOverview old test suite in qunit
+ * 
+ * @deprecated
+ */
 var mindmaps = {};
 
 module("models");
