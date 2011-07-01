@@ -9,6 +9,7 @@ describe("Command", function() {
 	it("should call a handler when executed", function() {
 		command.setHandler(handler);
 		command.execute();
+		
 		expect(handler).toHaveBeenCalled();
 	});
 	
@@ -16,6 +17,7 @@ describe("Command", function() {
 		var callback = jasmine.createSpy();
 		command.subscribe(mindmaps.Command.Event.HANDLER_REGISTERED, callback);
 		command.setHandler(handler);
+		
 		expect(callback).toHaveBeenCalled();
 		
 	});
@@ -25,6 +27,7 @@ describe("Command", function() {
 		command.setHandler(handler);
 		command.subscribe(mindmaps.Command.Event.HANDLER_REMOVED, callback);
 		command.removeHandler();
+		
 		expect(callback).toHaveBeenCalled();
 	});
 	
@@ -53,6 +56,7 @@ describe("CommandRegistry", function() {
 	
 	it("should a return a command object for a command type", function() {
 		var command = registry.get(type);
+		
 		expect(command).toBeDefined();
 		expect(command instanceof type).toBeTruthy();
 	});
