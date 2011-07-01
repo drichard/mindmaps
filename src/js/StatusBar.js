@@ -1,3 +1,10 @@
+// TODO Rename those objects to TaskBar*
+
+/**
+ * Creates a new StatusBarView.
+ * 
+ * @constructor
+ */
 mindmaps.StatusBarView = function() {
 	var self = this;
 	var $statusbar = $("#statusbar");
@@ -5,6 +12,13 @@ mindmaps.StatusBarView = function() {
 	this.init = function() {
 	};
 
+	/**
+	 * Creates and adds a new button to the stats baar.
+	 * 
+	 * @param {String} id
+	 * @param {String} text
+	 * @returns {jQuery}
+	 */
 	this.createButton = function(id, text) {
 		return $("<button/>", {
 			id : "statusbar-button-" + id
@@ -17,11 +31,24 @@ mindmaps.StatusBarView = function() {
 		}).prependTo($statusbar.find(".buttons"));
 	};
 
+	/**
+	 * Returns the underlying jquery object.
+	 * 
+	 * @returns {jQuery}
+	 */
 	this.getContent = function() {
 		return $statusbar;
 	};
 };
 
+/**
+ * Creates a new StatusBarPresenter. This object provides buttons for the
+ * floating panels for a taskbar-like behaviour.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.StatusBarView} view
+ */
 mindmaps.StatusBarPresenter = function(eventBus, view) {
 	var buttonCounter = 0;
 	var buttonIdPanelMap = {};
@@ -37,6 +64,12 @@ mindmaps.StatusBarPresenter = function(eventBus, view) {
 
 	};
 
+	/**
+	 * Adds a new button for a panel to the statusbar and registers the button
+	 * as a hide target for the panel.
+	 * 
+	 * @param {mindmaps.FloatPanel} panel
+	 */
 	this.addEntry = function(panel) {
 		var id = buttonCounter++;
 		var $button = view.createButton(id, panel.caption);
@@ -45,6 +78,14 @@ mindmaps.StatusBarPresenter = function(eventBus, view) {
 	};
 };
 
+/**
+ * This object subscribes to some events and displays status messages in the
+ * bottom right corner.
+ * 
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.StatusBarView} view
+ */
 mindmaps.StatusNotificationController = function(eventBus, view) {
 	var $anchor = $("<div class='notification-anchor'/>").css({
 		position : "absolute",
