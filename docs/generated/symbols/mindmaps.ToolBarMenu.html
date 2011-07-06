@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - mindmaps.DefaultCanvasView-TextMetrics</title>
+		<title>JsDoc Reference - mindmaps.ToolBarMenu</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -366,7 +366,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class mindmaps.DefaultCanvasView-TextMetrics
+				Class mindmaps.ToolBarMenu
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -377,13 +377,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_CanvasView.js.html">CanvasView.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_ToolBar.js.html">ToolBar.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.ToolBarMenu.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -393,12 +393,12 @@ ul.inheritsList
 				</thead>
 				<tbody>
 					<tr>
-						<td class="attributes">&lt;inner&gt; &nbsp;</td>
+						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#constructor">mindmaps.DefaultCanvasView-TextMetrics</a></b>(view)
+								<b><a href="../symbols/mindmaps.ToolBarMenu.html#constructor">mindmaps.ToolBarMenu</a></b>(title, icon)
 							</div>
-							<div class="description">Utitility object that calculates how much space a text would take up in anode.</div>
+							<div class="description">Creates a new ToolBarMenu.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -412,7 +412,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.ToolBarMenu.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -425,9 +425,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#getTextMetrics">getTextMetrics</a></b>(node, text)
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarMenu.html#add">add</a></b>(buttons)
 								</div>
-								<div class="description">Calculates the width and height a node would have to provide to showthe text.</div>
+								<div class="description">Adds a new button entry to the menu.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarMenu.html#getContent">getContent</a></b>()
+								</div>
+								<div class="description">Returns the underlying jquery object.</div>
 							</td>
 						</tr>
 					
@@ -447,12 +456,12 @@ ul.inheritsList
 					Class Detail
 				</div>
 				
-				<div class="fixedFont">&lt;inner&gt; 
-						<b>mindmaps.DefaultCanvasView-TextMetrics</b>(view)
+				<div class="fixedFont">
+						<b>mindmaps.ToolBarMenu</b>(title, icon)
 				</div>
 				
 				<div class="description">
-					Utitility object that calculates how much space a text would take up in anode. This is done through a dummy div that has the same formatting asthe node and gets the text injected.
+					Creates a new ToolBarMenu.
 					
 				</div>
 				
@@ -464,7 +473,13 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{<a href="../symbols/mindmaps.CanvasView.html">mindmaps.CanvasView</a>}</span>  <b>view</b>
+								<span class="light fixedFont">{String}</span>  <b>title</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{String}</span>  <b>icon</b>
 								
 							</dt>
 								<dd></dd>
@@ -490,15 +505,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="getTextMetrics"> </a>
+					<a name="add"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Object}</span>
-					<b>getTextMetrics</b>(node, text)
+					
+					<b>add</b>(buttons)
 					
 					</div>
 					<div class="description">
-						Calculates the width and height a node would have to provide to showthe text.
+						Adds a new button entry to the menu.
 						
 						
 					</div>
@@ -510,18 +525,37 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>node</b>
+									<span class="light fixedFont">{<a href="../symbols/mindmaps.ToolBarButton.html">mindmaps.ToolBarButton</a>|mindmaps.ToolBarButtons[]}</span> <b>buttons</b>
 									
 								</dt>
-								<dd>the node whose text is to be measured.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>text</b>
-									<i>Optional</i>
-								</dt>
-								<dd>use this instead of the text of node</dd>
+								<dd>a           single button or an array of buttons</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getContent"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{jQuery}</span>
+					<b>getContent</b>()
+					
+					</div>
+					<div class="description">
+						Returns the underlying jquery object.
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -530,7 +564,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> object with properties width and height.</dd>
+								<dd><span class="light fixedFont">{jQuery}</span> </dd>
 							
 							</dl>
 						

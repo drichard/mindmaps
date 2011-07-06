@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - mindmaps.DefaultCanvasView-TextMetrics</title>
+		<title>JsDoc Reference - mindmaps.ToolBarView</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -366,7 +366,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class mindmaps.DefaultCanvasView-TextMetrics
+				Class mindmaps.ToolBarView
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -377,13 +377,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_CanvasView.js.html">CanvasView.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_ToolBar.js.html">ToolBar.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.ToolBarView.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -393,12 +393,12 @@ ul.inheritsList
 				</thead>
 				<tbody>
 					<tr>
-						<td class="attributes">&lt;inner&gt; &nbsp;</td>
+						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#constructor">mindmaps.DefaultCanvasView-TextMetrics</a></b>(view)
+								<b><a href="../symbols/mindmaps.ToolBarView.html#constructor">mindmaps.ToolBarView</a></b>()
 							</div>
-							<div class="description">Utitility object that calculates how much space a text would take up in anode.</div>
+							<div class="description">Creates a new ToolBarView.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -412,7 +412,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.ToolBarView.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -425,9 +425,45 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#getTextMetrics">getTextMetrics</a></b>(node, text)
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarView.html#addButton">addButton</a></b>(button, alignFunc)
 								</div>
-								<div class="description">Calculates the width and height a node would have to provide to showthe text.</div>
+								<div class="description">Adds a button to the toolbar with the given align function.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarView.html#addButtonGroup">addButtonGroup</a></b>(buttons, alignFunc)
+								</div>
+								<div class="description">Adds a set of buttons grouped together to the toolbar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarView.html#addMenu">addMenu</a></b>(menu)
+								</div>
+								<div class="description">Adds a menu to the toolbar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarView.html#alignLeft">alignLeft</a></b>($el)
+								</div>
+								<div class="description">Adds the element to the left side of the toolbar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarView.html#alignRight">alignRight</a></b>($el)
+								</div>
+								<div class="description">Adds the element to the right side of the toolbar.</div>
 							</td>
 						</tr>
 					
@@ -447,29 +483,18 @@ ul.inheritsList
 					Class Detail
 				</div>
 				
-				<div class="fixedFont">&lt;inner&gt; 
-						<b>mindmaps.DefaultCanvasView-TextMetrics</b>(view)
+				<div class="fixedFont">
+						<b>mindmaps.ToolBarView</b>()
 				</div>
 				
 				<div class="description">
-					Utitility object that calculates how much space a text would take up in anode. This is done through a dummy div that has the same formatting asthe node and gets the text injected.
+					Creates a new ToolBarView.
 					
 				</div>
 				
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{<a href="../symbols/mindmaps.CanvasView.html">mindmaps.CanvasView</a>}</span>  <b>view</b>
-								
-							</dt>
-								<dd></dd>
-						
-						</dl>
 					
 					
 					
@@ -490,15 +515,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="getTextMetrics"> </a>
+					<a name="addButton"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Object}</span>
-					<b>getTextMetrics</b>(node, text)
+					
+					<b>addButton</b>(button, alignFunc)
 					
 					</div>
 					<div class="description">
-						Calculates the width and height a node would have to provide to showthe text.
+						Adds a button to the toolbar with the given align function.
 						
 						
 					</div>
@@ -510,29 +535,172 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>node</b>
+									<span class="light fixedFont">{<a href="../symbols/mindmaps.ToolBarButton.html">mindmaps.ToolBarButton</a>}</span> <b>button</b>
 									
 								</dt>
-								<dd>the node whose text is to be measured.</dd>
+								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>text</b>
-									<i>Optional</i>
+									<span class="light fixedFont">{Function}</span> <b>alignFunc</b>
+									
 								</dt>
-								<dd>use this instead of the text of node</dd>
+								<dd></dd>
 							
 							</dl>
 						
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addButtonGroup"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addButtonGroup</b>(buttons, alignFunc)
+					
+					</div>
+					<div class="description">
+						Adds a set of buttons grouped together to the toolbar.
+						
+						
+					</div>
+					
+					
+					
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading">Parameters:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> object with properties width and height.</dd>
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/mindmaps.ToolBarButton.html">mindmaps.ToolBarButton</a>[]}</span> <b>buttons</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>alignFunc</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addMenu"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addMenu</b>(menu)
+					
+					</div>
+					<div class="description">
+						Adds a menu to the toolbar.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/mindmaps.ToolBarMenu.html">mindmaps.ToolBarMenu</a>}</span> <b>menu</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="alignLeft"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>alignLeft</b>($el)
+					
+					</div>
+					<div class="description">
+						Adds the element to the left side of the toolbar.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{jQuery}</span> <b>$el</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="alignRight"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>alignRight</b>($el)
+					
+					</div>
+					<div class="description">
+						Adds the element to the right side of the toolbar.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{jQuery}</span> <b>$el</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
 						
 						
 						

@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - mindmaps.DefaultCanvasView-TextMetrics</title>
+		<title>JsDoc Reference - mindmaps.StatusNotificationController</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -366,7 +366,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class mindmaps.DefaultCanvasView-TextMetrics
+				Class mindmaps.StatusNotificationController
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -377,13 +377,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_CanvasView.js.html">CanvasView.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_StatusBar.js.html">StatusBar.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.StatusNotificationController.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -393,12 +393,12 @@ ul.inheritsList
 				</thead>
 				<tbody>
 					<tr>
-						<td class="attributes">&lt;inner&gt; &nbsp;</td>
+						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#constructor">mindmaps.DefaultCanvasView-TextMetrics</a></b>(view)
+								<b><a href="../symbols/mindmaps.StatusNotificationController.html#constructor">mindmaps.StatusNotificationController</a></b>(eventBus, view)
 							</div>
-							<div class="description">Utitility object that calculates how much space a text would take up in anode.</div>
+							<div class="description">This object subscribes to some events and displays status messages in thebottom right corner.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -410,33 +410,6 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#getTextMetrics">getTextMetrics</a></b>(node, text)
-								</div>
-								<div class="description">Calculates the width and height a node would have to provide to showthe text.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -447,12 +420,12 @@ ul.inheritsList
 					Class Detail
 				</div>
 				
-				<div class="fixedFont">&lt;inner&gt; 
-						<b>mindmaps.DefaultCanvasView-TextMetrics</b>(view)
+				<div class="fixedFont">
+						<b>mindmaps.StatusNotificationController</b>(eventBus, view)
 				</div>
 				
 				<div class="description">
-					Utitility object that calculates how much space a text would take up in anode. This is done through a dummy div that has the same formatting asthe node and gets the text injected.
+					This object subscribes to some events and displays status messages in thebottom right corner.
 					
 				</div>
 				
@@ -464,7 +437,13 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{<a href="../symbols/mindmaps.CanvasView.html">mindmaps.CanvasView</a>}</span>  <b>view</b>
+								<span class="light fixedFont">{<a href="../symbols/mindmaps.EventBus.html">mindmaps.EventBus</a>}</span>  <b>eventBus</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/mindmaps.StatusBarView.html">mindmaps.StatusBarView</a>}</span>  <b>view</b>
 								
 							</dt>
 								<dd></dd>
@@ -485,60 +464,6 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="getTextMetrics"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Object}</span>
-					<b>getTextMetrics</b>(node, text)
-					
-					</div>
-					<div class="description">
-						Calculates the width and height a node would have to provide to showthe text.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>node</b>
-									
-								</dt>
-								<dd>the node whose text is to be measured.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>text</b>
-									<i>Optional</i>
-								</dt>
-								<dd>use this instead of the text of node</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Object}</span> object with properties width and height.</dd>
-							
-							</dl>
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		

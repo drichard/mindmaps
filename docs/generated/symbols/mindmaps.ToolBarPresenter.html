@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - mindmaps.DefaultCanvasView-TextMetrics</title>
+		<title>JsDoc Reference - mindmaps.ToolBarPresenter</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -366,7 +366,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class mindmaps.DefaultCanvasView-TextMetrics
+				Class mindmaps.ToolBarPresenter
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -377,13 +377,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_CanvasView.js.html">CanvasView.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_js_ToolBar.js.html">ToolBar.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class mindmaps.ToolBarPresenter.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -393,12 +393,12 @@ ul.inheritsList
 				</thead>
 				<tbody>
 					<tr>
-						<td class="attributes">&lt;inner&gt; &nbsp;</td>
+						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#constructor">mindmaps.DefaultCanvasView-TextMetrics</a></b>(view)
+								<b><a href="../symbols/mindmaps.ToolBarPresenter.html#constructor">mindmaps.ToolBarPresenter</a></b>(eventBus, commandRegistry, view, mindmapModel)
 							</div>
-							<div class="description">Utitility object that calculates how much space a text would take up in anode.</div>
+							<div class="description">Creates a new ToolBarPresenter.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -412,7 +412,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.DefaultCanvasView-TextMetrics.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.ToolBarPresenter.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -423,11 +423,11 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/mindmaps.DefaultCanvasView-TextMetrics.html#getTextMetrics">getTextMetrics</a></b>(node, text)
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarPresenter.html#-commandToButton">commandToButton</a></b>(commandType)
 								</div>
-								<div class="description">Calculates the width and height a node would have to provide to showthe text.</div>
+								<div class="description">Returns a button that registers with a command of the given commandType</div>
 							</td>
 						</tr>
 					
@@ -447,12 +447,12 @@ ul.inheritsList
 					Class Detail
 				</div>
 				
-				<div class="fixedFont">&lt;inner&gt; 
-						<b>mindmaps.DefaultCanvasView-TextMetrics</b>(view)
+				<div class="fixedFont">
+						<b>mindmaps.ToolBarPresenter</b>(eventBus, commandRegistry, view, mindmapModel)
 				</div>
 				
 				<div class="description">
-					Utitility object that calculates how much space a text would take up in anode. This is done through a dummy div that has the same formatting asthe node and gets the text injected.
+					Creates a new ToolBarPresenter.
 					
 				</div>
 				
@@ -464,7 +464,25 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{<a href="../symbols/mindmaps.CanvasView.html">mindmaps.CanvasView</a>}</span>  <b>view</b>
+								<span class="light fixedFont">{<a href="../symbols/mindmaps.EventBus.html">mindmaps.EventBus</a>}</span>  <b>eventBus</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/mindmaps.CommandRegistry.html">mindmaps.CommandRegistry</a>}</span>  <b>commandRegistry</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/mindmaps.ToolBarView.html">mindmaps.ToolBarView</a>}</span>  <b>view</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/mindmaps.MindMapModel.html">mindmaps.MindMapModel</a>}</span>  <b>mindmapModel</b>
 								
 							</dt>
 								<dd></dd>
@@ -490,15 +508,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="getTextMetrics"> </a>
-					<div class="fixedFont">
+					<a name="-commandToButton"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
-					<span class="light">{Object}</span>
-					<b>getTextMetrics</b>(node, text)
+					<span class="light">{<a href="../symbols/mindmaps.ToolBarButton.html">mindmaps.ToolBarButton</a>}</span>
+					<b>commandToButton</b>(commandType)
 					
 					</div>
 					<div class="description">
-						Calculates the width and height a node would have to provide to showthe text.
+						Returns a button that registers with a command of the given commandType
 						
 						
 					</div>
@@ -510,16 +528,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>node</b>
+									<span class="light fixedFont">{<a href="../symbols/mindmaps.Command.html">mindmaps.Command</a>}</span> <b>commandType</b>
 									
 								</dt>
-								<dd>the node whose text is to be measured.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/mindmaps.Node.html">mindmaps.Node</a>}</span> <b>text</b>
-									<i>Optional</i>
-								</dt>
-								<dd>use this instead of the text of node</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -530,7 +542,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> object with properties width and height.</dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/mindmaps.ToolBarButton.html">mindmaps.ToolBarButton</a>}</span> </dd>
 							
 							</dl>
 						

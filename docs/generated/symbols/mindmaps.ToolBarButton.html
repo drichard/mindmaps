@@ -329,9 +329,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/mindmaps.ShortcutController.html">mindmaps.ShortcutController</a></li>
 	
+	<li><a href="../symbols/mindmaps.StatusBarPresenter.html">mindmaps.StatusBarPresenter</a></li>
+	
+	<li><a href="../symbols/mindmaps.StatusBarView.html">mindmaps.StatusBarView</a></li>
+	
+	<li><a href="../symbols/mindmaps.StatusNotificationController.html">mindmaps.StatusNotificationController</a></li>
+	
 	<li><a href="../symbols/mindmaps.ToggleNodeFoldedCommand.html">mindmaps.ToggleNodeFoldedCommand</a></li>
 	
 	<li><a href="../symbols/mindmaps.ToolBarButton.html">mindmaps.ToolBarButton</a></li>
+	
+	<li><a href="../symbols/mindmaps.ToolBarMenu.html">mindmaps.ToolBarMenu</a></li>
+	
+	<li><a href="../symbols/mindmaps.ToolBarPresenter.html">mindmaps.ToolBarPresenter</a></li>
+	
+	<li><a href="../symbols/mindmaps.ToolBarView.html">mindmaps.ToolBarView</a></li>
 	
 	<li><a href="../symbols/mindmaps.UndoCommand.html">mindmaps.UndoCommand</a></li>
 	
@@ -386,7 +398,7 @@ ul.inheritsList
 							<div class="fixedFont">
 								<b><a href="../symbols/mindmaps.ToolBarButton.html#constructor">mindmaps.ToolBarButton</a></b>(command)
 							</div>
-							<div class="description">Toolbar button object</div>
+							<div class="description">Toolbar button model.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -397,6 +409,78 @@ ul.inheritsList
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class mindmaps.ToolBarButton.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarButton.html#asJquery">asJquery</a></b>()
+								</div>
+								<div class="description">Constructs a jQuery element that represents the button.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarButton.html#click">click</a></b>()
+								</div>
+								<div class="description">Executes the button's command.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarButton.html#getId">getId</a></b>()
+								</div>
+								<div class="description">Gets the unique id of the button.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarButton.html#getTitle">getTitle</a></b>()
+								</div>
+								<div class="description">Gets the button's title.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarButton.html#getToolTip">getToolTip</a></b>()
+								</div>
+								<div class="description">Gets the tooltip.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/mindmaps.ToolBarButton.html#isEnabled">isEnabled</a></b>()
+								</div>
+								<div class="description">Returns whether the button should have an enabled style.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -413,7 +497,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="description">
-					Toolbar button object
+					Toolbar button model.
 					
 				</div>
 				
@@ -447,6 +531,196 @@ ul.inheritsList
 
 <!-- ============================== method details ========================= -->		
 			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="asJquery"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{jQuery}</span>
+					<b>asJquery</b>()
+					
+					</div>
+					<div class="description">
+						Constructs a jQuery element that represents the button.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{jQuery}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="click"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>click</b>()
+					
+					</div>
+					<div class="description">
+						Executes the button's command.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getId"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>getId</b>()
+					
+					</div>
+					<div class="description">
+						Gets the unique id of the button.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getTitle"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>getTitle</b>()
+					
+					</div>
+					<div class="description">
+						Gets the button's title.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getToolTip"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>getToolTip</b>()
+					
+					</div>
+					<div class="description">
+						Gets the tooltip.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isEnabled"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>isEnabled</b>()
+					
+					</div>
+					<div class="description">
+						Returns whether the button should have an enabled style.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					
+				
+			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -458,7 +732,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Jun 30 2011 13:44:42 GMT+0000 (WEST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Jul 01 2011 15:51:34 GMT+0000 (WEST)
 		</div>
 	</body>
 </html>
