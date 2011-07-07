@@ -1007,12 +1007,21 @@ mindmaps.DefaultCanvasView = function() {
 				$canvas.hide();
 				if (self.dragStopped) {
 					var $wp = $wrapper.position();
+					var $wpLeft = $wp.left / view.zoomFactor;
+					var $wpTop = $wp.top / view.zoomFactor;
 					var nubLeft = ui.position.left / view.zoomFactor;
 					var nubTop = ui.position.top / view.zoomFactor;
-					var distance = mindmaps.Util.distance($wp.left - nubLeft,
-							$wp.top - nubTop);
+					
+					var distance = mindmaps.Util.distance($wpLeft - nubLeft,
+							$wpTop - nubTop);
 					self.dragStopped(self.node, nubLeft, nubTop, distance);
 				}
+				
+				// remove any positioning that the draggable might have caused
+				$wrapper.css({
+					left : "",
+					top : ""
+				});
 			}
 		});
 
@@ -1040,12 +1049,8 @@ mindmaps.DefaultCanvasView = function() {
 			var w = view.getLineWidth(this.depth + 1);
 			$fakeNode.css("border-bottom-width", w);
 
-			// remove any positioning that the draggable might have caused
 			var $node = $getNode(node);
-			$wrapper.css({
-				left : "",
-				top : ""
-			}).appendTo($node);
+			$wrapper.appendTo($node);
 		};
 
 		/**

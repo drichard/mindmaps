@@ -281,6 +281,8 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 
 				// select and go into edit mode on new node
 				mindmapModel.selectNode(node);
+				// attach creator manually, sometimes the mouseover listener wont fire
+				creator.attachToNode(node);
 				view.editNodeCaption(node);
 			}
 		});
