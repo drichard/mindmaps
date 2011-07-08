@@ -102,7 +102,7 @@ mindmaps.ApplicationController = function() {
 				mindmapModel, commandRegistry);
 		viewController.go();
 
-		commandRegistry.get(mindmaps.NewDocumentCommand).execute();
+		doNewDocument();
 	};
 
 	this.init();
