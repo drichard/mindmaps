@@ -38,11 +38,25 @@ $(function() {
 	createHTML5Shims();
 
 	setupConsole();
+	trackErrors();
 
 	// create a new app controller and go
 	var appController = new mindmaps.ApplicationController();
 	appController.go();
 });
+
+function trackErrors() {
+	window.onerror = function(msg, url, line) {
+		if (!window._gaq) {
+			return;
+		}
+
+		// Track JS errors in GA.
+		_gaq.push([ '_trackEvent', 'Error Log', msg, url + '_' + line ]);
+
+		return false; // false prevents default error handling.
+	};
+}
 
 // TODO make non global
 /**
