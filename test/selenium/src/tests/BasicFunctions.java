@@ -226,7 +226,6 @@ public class BasicFunctions extends BaseMindMapsTestCase {
 		style = selenium.getAttribute(stylePath);
 		String fontUnderlineAfterClickTwice = getTextDecoration(style);
 		assertEquals(fontUnderlineBefore, fontUnderlineAfterClickTwice);
-
 	}
 
 	@Test
