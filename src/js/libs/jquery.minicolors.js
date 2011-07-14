@@ -259,7 +259,7 @@ if(jQuery) (function($) {
 				input.data('mousebutton', 0);
 				
 				// invisible overlay accept clicks outside the color picker area
-				var $overlay = $("<div/>").css({
+				var $overlay = $("<div class='miniColors-overlay'/>").css({
 					position: "absolute",
 					left: 0,
 					top: 0,

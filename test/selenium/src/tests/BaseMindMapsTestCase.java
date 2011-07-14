@@ -15,11 +15,21 @@ public class BaseMindMapsTestCase {
 
 	protected static DefaultSelenium selenium;
 
+	static class Browser {
+		final static String FIREFOX = "*firefox";
+		final static String CHROME = "*googlechrome";
+		final static String IE = "*iexplore";
+	}
+
+	static class Server {
+		final static String DEVELOPMENT = "http://localhost:8080/debug/";
+		final static String PRODUCTION = "http://drichard.org/mindmaps/";
+	}
+
 	@BeforeClass
 	public static void setUp() {
-		selenium = new DefaultSelenium("localhost", 4444, "*googlechrome", "http://drichard.org");
-		// selenium = new DefaultSelenium("localhost", 4444, "*firefox", "http://drichard.org");
-		// selenium = new DefaultSelenium("localhost", 4444, "*iexplore", "http://drichard.org");
+		selenium = new DefaultSelenium("localhost", 4444, Browser.CHROME,
+				Server.DEVELOPMENT);
 		selenium.start();
 	}
 
@@ -28,18 +38,16 @@ public class BaseMindMapsTestCase {
 		selenium.stop();
 	}
 
-
 	@Before
 	public void before() {
-		selenium.open("/mindmaps/");
+		selenium.open("");
 	}
-
 
 	protected String createNodeFromRoot() {
 		clickNewDocumentButton();
 		clickCreateNodeButton();
 		sendEnterKeyOnEditor();
-		
+
 		String nodeId = selenium.getAttribute(Root().next().id());
 		assertNotNull(nodeId);
 		assertTrue(!nodeId.isEmpty());
@@ -52,7 +60,7 @@ public class BaseMindMapsTestCase {
 		String simulateEnterKey = "var e = window.jQuery.Event(\"keydown\");"
 				+ "e.which = 13;" + "window.$(\"#caption-editor\").trigger(e)";
 		selenium.getEval(simulateEnterKey);
-		
+
 		// selenium.keyDown("caption-editor", "\\13");
 	}
 
@@ -68,7 +76,7 @@ public class BaseMindMapsTestCase {
 		selenium.mouseDown(Root().next().text().get());
 		clickCreateNodeButton();
 		clickSaveDocumentButton();
-	
+
 		assertTrue(selenium.isTextPresent("Save mind map"));
 		selenium.click("button-save-localstorage");
 		assertFalse(selenium.isTextPresent("Save mind map"));
@@ -126,4 +134,23 @@ public class BaseMindMapsTestCase {
 		selenium.click("button-CLOSE_DOCUMENT_COMMAND");
 	}
 
+	protected void clickIncreaseFontSizeButton() {
+		selenium.click("inspector-button-font-size-increase");
+	}
+
+	protected void clickDecreaseFontSizeButton() {
+		selenium.click("inspector-button-font-size-decrease");
+	}
+
+	protected void clickToggleFontUnderlineButton() {
+		selenium.click("inspector-checkbox-font-underline");
+	}
+
+	protected void clickToggleFontItalicButton() {
+		selenium.click("inspector-checkbox-font-italic");
+	}
+
+	protected void clickToggleFontBoldButton() {
+		selenium.click("inspector-checkbox-font-bold");
+	}
 }

@@ -4,7 +4,6 @@ import static helper.SeleniumHelper.Root;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class LoadTests extends BaseMindMapsTestCase {
 
@@ -17,6 +16,8 @@ public class LoadTests extends BaseMindMapsTestCase {
 	protected void createNodes(int num) {
 		while (num > 0) {
 			selenium.mouseDown(Root().text().get());
+			clickCreateNodeButton();
+			num--;
 			clickCreateNodeButton();
 			num--;
 			clickCreateNodeButton();

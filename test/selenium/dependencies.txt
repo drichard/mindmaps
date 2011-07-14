@@ -1,6 +1,6 @@
 Selenium RC tests
 
-Tests require:
+External libraries required:
 - Selenium 2.0.0+ (selenium-java-2.0.0.jar)
 - JUnit 4 (junit-dep-4.8.1.jar)
 
