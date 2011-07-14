@@ -55,4 +55,4 @@ describe("MindMap", function() {
 		expect(mindmap.nodes.size()).toEqual(restored.nodes.size());
 		expect(restored.getRoot()).toEqual(mindmap.getRoot());
 	});
-})
+});

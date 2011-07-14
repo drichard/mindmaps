@@ -1,0 +1,8 @@
+Selenium RC tests
+
+Tests require:
+- Selenium 2.0.0+ (selenium-java-2.0.0.jar)
+- JUnit 4 (junit-dep-4.8.1.jar)
+
+Standalone Server must be running:
+- selenium-server-standalone-2.0.0.jar
