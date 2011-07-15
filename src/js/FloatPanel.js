@@ -8,7 +8,8 @@
 mindmaps.FloatPanelFactory = function(container) {
 	var $container = container.getContent();
 	var dialogs = [];
-	var padding = 5;
+	var paddingRight = 15;
+	var paddingTop = 5;
 
 	// TODO
 	function setPosition(dialog) {
@@ -26,10 +27,10 @@ mindmaps.FloatPanelFactory = function(container) {
 		var dw = dialog.width();
 		var dh = dialog.height();
 		var heightOffset = dialogs.reduce(function(memo, dialog) {
-			return memo + dialog.height() + padding;
+			return memo + dialog.height() + paddingTop;
 		}, 0);
 
-		dialog.setPosition(ccw - dw - padding, hh + padding + heightOffset);
+		dialog.setPosition(ccw - dw - paddingRight, hh + paddingTop + heightOffset);
 	}
 
 	/**
