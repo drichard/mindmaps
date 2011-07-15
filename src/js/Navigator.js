@@ -323,6 +323,7 @@ mindmaps.NavigatorPresenter = function(eventBus, view, container,
 		calculateDraggerPosition();
 		calculateDraggerSize();
 		calculateZoomLevel();
+		calculateSliderValue();
 		renderView();
 
 		view.showActiveContent();

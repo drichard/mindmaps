@@ -75,4 +75,13 @@ mindmaps.ZoomController = function(eventBus, commandRegistry) {
 
 		return this.zoomFactor;
 	};
+
+	/**
+	 * Reset zoom factor when document was closed.
+	 * 
+	 * @ignore
+	 */
+	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
+		self.zoomTo(self.DEFAULT_ZOOM);
+	});
 };
