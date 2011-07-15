@@ -141,7 +141,7 @@ mindmaps.ToolBarButton.prototype.getId = function() {
  */
 mindmaps.ToolBarButton.prototype.asJquery = function() {
 	var self = this;
-	var $button = $("<div/>", {
+	var $button = $("<button/>", {
 		id : this.getId(),
 		title : this.getToolTip()
 	}).click(function() {
@@ -181,7 +181,7 @@ mindmaps.ToolBarMenu = function(title, icon) {
 		"class" : "menu-wrapper"
 	});
 
-	this.$menuButton = $("<div/>").button({
+	this.$menuButton = $("<button/>").button({
 		label : title,
 		icons : {
 			primary : icon,

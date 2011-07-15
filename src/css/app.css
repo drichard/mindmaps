@@ -43,6 +43,10 @@ table {
 	USER STYLES
 */
 
+button {
+	margin: 0;
+}
+
 /*
 	UTIL
 */
@@ -193,7 +197,7 @@ html,body {
 #toolbar .menu-wrapper .menu-item {
 	display: block;
 	text-align: left;
-	margin-right: 0;
+	width: 100%;
 }
 
 #toolbar .menu-wrapper .menu-item:hover {
