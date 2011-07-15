@@ -1014,132 +1014,137 @@
 <span class='line'>1007</span> </span><span class="WHIT">				</span><span class="NAME">$canvas.hide</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>1008</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">self.dragStopped</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>1009</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$wp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$wrapper.position</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1010</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">nubLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ui.position.left</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1011</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">nubTop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ui.position.top</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1012</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">distance</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mindmaps.Util.distance</span><span class="PUNC">(</span><span class="NAME">$wp.left</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">nubLeft</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1013</span> </span><span class="WHIT">							</span><span class="NAME">$wp.top</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">nubTop</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1014</span> </span><span class="WHIT">					</span><span class="NAME">self.dragStopped</span><span class="PUNC">(</span><span class="NAME">self.node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nubLeft</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nubTop</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">distance</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1015</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>1016</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>1017</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1018</span> 
-<span class='line'>1019</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>1020</span> 		 * Attaches the tool to a node.
-<span class='line'>1021</span> 		 * 
-<span class='line'>1022</span> 		 * @param {mindmaps.Node} node
-<span class='line'>1023</span> 		 */</span><span class="WHIT">
-<span class='line'>1024</span> </span><span class="WHIT">		</span><span class="NAME">this.attachToNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1025</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1026</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1027</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>1028</span> </span><span class="WHIT">			</span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1029</span> 
-<span class='line'>1030</span> </span><span class="WHIT">			</span><span class="COMM">// position the nub correctly</span><span class="WHIT">
-<span class='line'>1031</span> </span><span class="WHIT">			</span><span class="NAME">$wrapper.removeClass</span><span class="PUNC">(</span><span class="STRN">"left right"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1032</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">node.offset.x</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1033</span> </span><span class="WHIT">				</span><span class="NAME">$wrapper.addClass</span><span class="PUNC">(</span><span class="STRN">"right"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1034</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">node.offset.x</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1035</span> </span><span class="WHIT">				</span><span class="NAME">$wrapper.addClass</span><span class="PUNC">(</span><span class="STRN">"left"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1010</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$wpLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$wp.left</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1011</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$wpTop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$wp.top</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1012</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">nubLeft</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ui.position.left</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1013</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">nubTop</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ui.position.top</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1014</span> </span><span class="WHIT">					</span><span class="WHIT">
+<span class='line'>1015</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">distance</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mindmaps.Util.distance</span><span class="PUNC">(</span><span class="NAME">$wpLeft</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">nubLeft</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1016</span> </span><span class="WHIT">							</span><span class="NAME">$wpTop</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">nubTop</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1017</span> </span><span class="WHIT">					</span><span class="NAME">self.dragStopped</span><span class="PUNC">(</span><span class="NAME">self.node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nubLeft</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nubTop</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">distance</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1018</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>1019</span> </span><span class="WHIT">				</span><span class="WHIT">
+<span class='line'>1020</span> </span><span class="WHIT">				</span><span class="COMM">// remove any positioning that the draggable might have caused</span><span class="WHIT">
+<span class='line'>1021</span> </span><span class="WHIT">				</span><span class="NAME">$wrapper.css</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1022</span> </span><span class="WHIT">					</span><span class="NAME">left</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1023</span> </span><span class="WHIT">					</span><span class="NAME">top</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">""</span><span class="WHIT">
+<span class='line'>1024</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1025</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>1026</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1027</span> 
+<span class='line'>1028</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>1029</span> 		 * Attaches the tool to a node.
+<span class='line'>1030</span> 		 * 
+<span class='line'>1031</span> 		 * @param {mindmaps.Node} node
+<span class='line'>1032</span> 		 */</span><span class="WHIT">
+<span class='line'>1033</span> </span><span class="WHIT">		</span><span class="NAME">this.attachToNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1034</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="NAME">node</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1035</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>1036</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>1037</span> 
-<span class='line'>1038</span> </span><span class="WHIT">			</span><span class="COMM">// set border on our fake node for correct line drawing</span><span class="WHIT">
-<span class='line'>1039</span> </span><span class="WHIT">			</span><span class="NAME">this.depth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.getDepth</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1040</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">w</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">view.getLineWidth</span><span class="PUNC">(</span><span class="NAME">this.depth</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1041</span> </span><span class="WHIT">			</span><span class="NAME">$fakeNode.css</span><span class="PUNC">(</span><span class="STRN">"border-bottom-width"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">w</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1042</span> 
-<span class='line'>1043</span> </span><span class="WHIT">			</span><span class="COMM">// remove any positioning that the draggable might have caused</span><span class="WHIT">
-<span class='line'>1044</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$getNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1045</span> </span><span class="WHIT">			</span><span class="NAME">$wrapper.css</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1046</span> </span><span class="WHIT">				</span><span class="NAME">left</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1047</span> </span><span class="WHIT">				</span><span class="NAME">top</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">""</span><span class="WHIT">
-<span class='line'>1048</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">appendTo</span><span class="PUNC">(</span><span class="NAME">$node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1049</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1050</span> 
-<span class='line'>1051</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>1052</span> 		 * Removes the tool from the current node.
-<span class='line'>1053</span> 		 */</span><span class="WHIT">
-<span class='line'>1054</span> </span><span class="WHIT">		</span><span class="NAME">this.detach</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1055</span> </span><span class="WHIT">			</span><span class="NAME">$wrapper.detach</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1056</span> </span><span class="WHIT">			</span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1057</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1058</span> 
-<span class='line'>1059</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>1060</span> 		 * Returns whether the tool is currently in use being dragged.
-<span class='line'>1061</span> 		 * 
-<span class='line'>1062</span> 		 * @returns {Boolean}
-<span class='line'>1063</span> 		 */</span><span class="WHIT">
-<span class='line'>1064</span> </span><span class="WHIT">		</span><span class="NAME">this.isDragging</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1065</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">dragging</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1066</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1067</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>1068</span> 
-<span class='line'>1069</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>1070</span> 	 * Utitility object that calculates how much space a text would take up in a
-<span class='line'>1071</span> 	 * node. This is done through a dummy div that has the same formatting as
-<span class='line'>1072</span> 	 * the node and gets the text injected.
-<span class='line'>1073</span> 	 * 
-<span class='line'>1074</span> 	 * @constructor
-<span class='line'>1075</span> 	 * @param {mindmaps.CanvasView} view
-<span class='line'>1076</span> 	 */</span><span class="WHIT">
-<span class='line'>1077</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">TextMetrics</span><span class="PUNC">(</span><span class="NAME">view</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1078</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$div</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">"&lt;div/>"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1079</span> </span><span class="WHIT">			</span><span class="NAME">id</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"text-metrics-dummy"</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1080</span> </span><span class="WHIT">			</span><span class="STRN">"class"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"node-text-behaviour"</span><span class="WHIT">
-<span class='line'>1081</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">css</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1082</span> </span><span class="WHIT">			</span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1083</span> </span><span class="WHIT">			</span><span class="NAME">visibility</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"hidden"</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1084</span> </span><span class="WHIT">			</span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"auto"</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1085</span> </span><span class="WHIT">			</span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"auto"</span><span class="WHIT">
-<span class='line'>1086</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">appendTo</span><span class="PUNC">(</span><span class="NAME">view.$getContainer</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1087</span> 
-<span class='line'>1088</span> </span><span class="WHIT">		</span><span class="COMM">/**
-<span class='line'>1089</span> 		 * Calculates the width and height a node would have to provide to show
-<span class='line'>1090</span> 		 * the text.
-<span class='line'>1091</span> 		 * 
-<span class='line'>1092</span> 		 * @param {mindmaps.Node} node the node whose text is to be measured.
-<span class='line'>1093</span> 		 * @param {mindmaps.Node} [text] use this instead of the text of node
-<span class='line'>1094</span> 		 * @returns {Object} object with properties width and height.
-<span class='line'>1095</span> 		 */</span><span class="WHIT">
-<span class='line'>1096</span> </span><span class="WHIT">		</span><span class="NAME">this.getTextMetrics</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">text</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1097</span> </span><span class="WHIT">			</span><span class="NAME">text</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">text</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">node.getCaption</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1098</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">font</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.text.font</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1099</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">minWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.isRoot</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">TextMetrics.ROOT_CAPTION_MIN_WIDTH</span><span class="WHIT">
-<span class='line'>1100</span> </span><span class="WHIT">					</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">TextMetrics.NODE_CAPTION_MIN_WIDTH</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1101</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">maxWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">TextMetrics.NODE_CAPTION_MAX_WIDTH</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1102</span> 
-<span class='line'>1103</span> </span><span class="WHIT">			</span><span class="NAME">$div.css</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1104</span> </span><span class="WHIT">				</span><span class="STRN">"font-size"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">font.size</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1105</span> </span><span class="WHIT">				</span><span class="STRN">"min-width"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">minWidth</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1106</span> </span><span class="WHIT">				</span><span class="STRN">"max-width"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">maxWidth</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1107</span> </span><span class="WHIT">				</span><span class="STRN">"font-weight"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">font.weight</span><span class="WHIT">
-<span class='line'>1108</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">text</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1109</span> 
-<span class='line'>1110</span> </span><span class="WHIT">			</span><span class="COMM">// add some safety pixels for firefox, otherwise it doesnt render</span><span class="WHIT">
-<span class='line'>1111</span> </span><span class="WHIT">			</span><span class="COMM">// right on textareas</span><span class="WHIT">
-<span class='line'>1112</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">w</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$div.width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1113</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">h</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$div.height</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1037</span> </span><span class="WHIT">			</span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1038</span> 
+<span class='line'>1039</span> </span><span class="WHIT">			</span><span class="COMM">// position the nub correctly</span><span class="WHIT">
+<span class='line'>1040</span> </span><span class="WHIT">			</span><span class="NAME">$wrapper.removeClass</span><span class="PUNC">(</span><span class="STRN">"left right"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1041</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">node.offset.x</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1042</span> </span><span class="WHIT">				</span><span class="NAME">$wrapper.addClass</span><span class="PUNC">(</span><span class="STRN">"right"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1043</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">node.offset.x</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1044</span> </span><span class="WHIT">				</span><span class="NAME">$wrapper.addClass</span><span class="PUNC">(</span><span class="STRN">"left"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1045</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>1046</span> 
+<span class='line'>1047</span> </span><span class="WHIT">			</span><span class="COMM">// set border on our fake node for correct line drawing</span><span class="WHIT">
+<span class='line'>1048</span> </span><span class="WHIT">			</span><span class="NAME">this.depth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.getDepth</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1049</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">w</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">view.getLineWidth</span><span class="PUNC">(</span><span class="NAME">this.depth</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1050</span> </span><span class="WHIT">			</span><span class="NAME">$fakeNode.css</span><span class="PUNC">(</span><span class="STRN">"border-bottom-width"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">w</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1051</span> 
+<span class='line'>1052</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$getNode</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1053</span> </span><span class="WHIT">			</span><span class="NAME">$wrapper.appendTo</span><span class="PUNC">(</span><span class="NAME">$node</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1054</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1055</span> 
+<span class='line'>1056</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>1057</span> 		 * Removes the tool from the current node.
+<span class='line'>1058</span> 		 */</span><span class="WHIT">
+<span class='line'>1059</span> </span><span class="WHIT">		</span><span class="NAME">this.detach</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1060</span> </span><span class="WHIT">			</span><span class="NAME">$wrapper.detach</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1061</span> </span><span class="WHIT">			</span><span class="NAME">this.node</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1062</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1063</span> 
+<span class='line'>1064</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>1065</span> 		 * Returns whether the tool is currently in use being dragged.
+<span class='line'>1066</span> 		 * 
+<span class='line'>1067</span> 		 * @returns {Boolean}
+<span class='line'>1068</span> 		 */</span><span class="WHIT">
+<span class='line'>1069</span> </span><span class="WHIT">		</span><span class="NAME">this.isDragging</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1070</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">dragging</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1071</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1072</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>1073</span> 
+<span class='line'>1074</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>1075</span> 	 * Utitility object that calculates how much space a text would take up in a
+<span class='line'>1076</span> 	 * node. This is done through a dummy div that has the same formatting as
+<span class='line'>1077</span> 	 * the node and gets the text injected.
+<span class='line'>1078</span> 	 * 
+<span class='line'>1079</span> 	 * @constructor
+<span class='line'>1080</span> 	 * @param {mindmaps.CanvasView} view
+<span class='line'>1081</span> 	 */</span><span class="WHIT">
+<span class='line'>1082</span> </span><span class="WHIT">	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">TextMetrics</span><span class="PUNC">(</span><span class="NAME">view</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1083</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$div</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">"&lt;div/>"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1084</span> </span><span class="WHIT">			</span><span class="NAME">id</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"text-metrics-dummy"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1085</span> </span><span class="WHIT">			</span><span class="STRN">"class"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"node-text-behaviour"</span><span class="WHIT">
+<span class='line'>1086</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">css</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1087</span> </span><span class="WHIT">			</span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"absolute"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1088</span> </span><span class="WHIT">			</span><span class="NAME">visibility</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"hidden"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1089</span> </span><span class="WHIT">			</span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"auto"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1090</span> </span><span class="WHIT">			</span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"auto"</span><span class="WHIT">
+<span class='line'>1091</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">appendTo</span><span class="PUNC">(</span><span class="NAME">view.$getContainer</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1092</span> 
+<span class='line'>1093</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>1094</span> 		 * Calculates the width and height a node would have to provide to show
+<span class='line'>1095</span> 		 * the text.
+<span class='line'>1096</span> 		 * 
+<span class='line'>1097</span> 		 * @param {mindmaps.Node} node the node whose text is to be measured.
+<span class='line'>1098</span> 		 * @param {mindmaps.Node} [text] use this instead of the text of node
+<span class='line'>1099</span> 		 * @returns {Object} object with properties width and height.
+<span class='line'>1100</span> 		 */</span><span class="WHIT">
+<span class='line'>1101</span> </span><span class="WHIT">		</span><span class="NAME">this.getTextMetrics</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">node</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">text</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1102</span> </span><span class="WHIT">			</span><span class="NAME">text</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">text</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">node.getCaption</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1103</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">font</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.text.font</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1104</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">minWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">node.isRoot</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">TextMetrics.ROOT_CAPTION_MIN_WIDTH</span><span class="WHIT">
+<span class='line'>1105</span> </span><span class="WHIT">					</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">TextMetrics.NODE_CAPTION_MIN_WIDTH</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1106</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">maxWidth</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">TextMetrics.NODE_CAPTION_MAX_WIDTH</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1107</span> 
+<span class='line'>1108</span> </span><span class="WHIT">			</span><span class="NAME">$div.css</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1109</span> </span><span class="WHIT">				</span><span class="STRN">"font-size"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">font.size</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1110</span> </span><span class="WHIT">				</span><span class="STRN">"min-width"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">minWidth</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1111</span> </span><span class="WHIT">				</span><span class="STRN">"max-width"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">view.zoomFactor</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">maxWidth</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1112</span> </span><span class="WHIT">				</span><span class="STRN">"font-weight"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">font.weight</span><span class="WHIT">
+<span class='line'>1113</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">text</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>1114</span> 
-<span class='line'>1115</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>1116</span> </span><span class="WHIT">				</span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">w</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>1117</span> </span><span class="WHIT">				</span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">h</span><span class="WHIT">
-<span class='line'>1118</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1119</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1120</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>1121</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>1122</span> 	 * @constant
-<span class='line'>1123</span> 	 */</span><span class="WHIT">
-<span class='line'>1124</span> </span><span class="WHIT">	</span><span class="NAME">TextMetrics.ROOT_CAPTION_MIN_WIDTH</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">100</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1125</span> 
+<span class='line'>1115</span> </span><span class="WHIT">			</span><span class="COMM">// add some safety pixels for firefox, otherwise it doesnt render</span><span class="WHIT">
+<span class='line'>1116</span> </span><span class="WHIT">			</span><span class="COMM">// right on textareas</span><span class="WHIT">
+<span class='line'>1117</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">w</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$div.width</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1118</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">h</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$div.height</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1119</span> 
+<span class='line'>1120</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1121</span> </span><span class="WHIT">				</span><span class="NAME">width</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">w</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1122</span> </span><span class="WHIT">				</span><span class="NAME">height</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">h</span><span class="WHIT">
+<span class='line'>1123</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1124</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1125</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>1126</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'>1127</span> 	 * @constant
 <span class='line'>1128</span> 	 */</span><span class="WHIT">
-<span class='line'>1129</span> </span><span class="WHIT">	</span><span class="NAME">TextMetrics.NODE_CAPTION_MIN_WIDTH</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">70</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1129</span> </span><span class="WHIT">	</span><span class="NAME">TextMetrics.ROOT_CAPTION_MIN_WIDTH</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">100</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>1130</span> 
 <span class='line'>1131</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'>1132</span> 	 * @constant
 <span class='line'>1133</span> 	 */</span><span class="WHIT">
-<span class='line'>1134</span> </span><span class="WHIT">	</span><span class="NAME">TextMetrics.NODE_CAPTION_MAX_WIDTH</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">150</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1135</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>1136</span> 
-<span class='line'>1137</span> </span><span class="COMM">// inherit from base canvas view</span><span class="WHIT">
-<span class='line'>1138</span> </span><span class="NAME">mindmaps.DefaultCanvasView.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.CanvasView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>1134</span> </span><span class="WHIT">	</span><span class="NAME">TextMetrics.NODE_CAPTION_MIN_WIDTH</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">70</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1135</span> 
+<span class='line'>1136</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>1137</span> 	 * @constant
+<span class='line'>1138</span> 	 */</span><span class="WHIT">
+<span class='line'>1139</span> </span><span class="WHIT">	</span><span class="NAME">TextMetrics.NODE_CAPTION_MAX_WIDTH</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">150</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1140</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1141</span> 
+<span class='line'>1142</span> </span><span class="COMM">// inherit from base canvas view</span><span class="WHIT">
+<span class='line'>1143</span> </span><span class="NAME">mindmaps.DefaultCanvasView.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">mindmaps.CanvasView</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
