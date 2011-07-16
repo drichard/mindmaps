@@ -58,6 +58,10 @@ em {
 	font-style: italic;
 }
 
+strong {
+	font-weight: bold;
+}
+
 #wrap {
 	background: #75a8c4; /* Old browsers */
 	background: -moz-linear-gradient(top, #75a8c4 7%, #ffffff 100%);
@@ -70,10 +74,11 @@ em {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(top, #75a8c4 7%, #ffffff 100%);
 	/* IE10+ */
-	filter: progid :         DXImageTransform.Microsoft.gradient (       
-		   startColorstr =    
-		    '#75a8c4', endColorstr =         '#ffffff', GradientType =        
-		0 );
+	filter: progid :           DXImageTransform.Microsoft.gradient (        
+		    startColorstr =     
+		     '#75a8c4', endColorstr =           '#ffffff', GradientType =
+		        
+		 0 );
 	/* IE6-9 */
 	background: linear-gradient(top, #75a8c4 7%, #ffffff 100%); /* W3C */
 	height: auto !important;
@@ -136,8 +141,18 @@ h2 {
 	margin: 5px auto;
 }
 
+.text .feature {
+	text-align: center;
+	margin: 15px auto;
+	background-color: #F2F2F2;
+	padding: 5px;
+	box-shadow: 1px 1px 6px #AAA;
+	border-radius: 2px;
+}
+
 #footer {
-	position: relative; margin : auto -25px;
+	position: relative;
+	margin: auto -25px;
 	padding: 10px 0px;
 	background: #EEE;
 	margin-top: 35px;
@@ -148,7 +163,8 @@ h2 {
 
 #copyright {
 	position: absolute;
-	bottom: 10px; left : 10px;
+	bottom: 10px;
+	left: 10px;
 	font-size: 11px;
 	color: #888;
 	font-family: sans-serif;
