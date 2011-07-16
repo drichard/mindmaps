@@ -179,92 +179,105 @@ mindmaps.DefaultCanvasView = function() {
 	 */
 	function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
 			color) {
-		var left, top, width, height;
 		var zoomFactor = self.zoomFactor;
 		offsetX = offsetX * zoomFactor;
 		offsetY = offsetY * zoomFactor;
 
-		// TODO find good solution for edge cases
-		// if (offsetX <= 0) {
-		// if ( offsetX + $node.width() < 0) {
-		// // normal left
-		// left = $node.width();
-		// width = Math.abs(offsetX) - left;
-		// } else {
-		// left = -offsetX;
-		// width = $node.width() + offsetX;
-		// }
-		//			
-		// } else if (offsetX > 0){
-		// if (offsetX > $parent.width()) {
-		// // normal right
-		// left = $parent.width() - offsetX;
-		// width = -left;
-		// } else if (offsetX > $parent.width() / 2) {
-		// left = 0;
-		// width = $parent.width() - offsetX;
-		// } else {
-		// left = -offsetX;
-		// width = offsetX + $node.width();
-		// }
-		// }
+		var pw = $parent.width();
+		var nw = $node.width();
+		var pih = $parent.innerHeight();
+		var nih = $node.innerHeight();
 
-		// determine left and width
-		if (offsetX < 0) {
-			left = $node.width();
-			width = Math.abs(offsetX) - left;
+		// position relative to parent
+		var nodeLeft = offsetX + nw / 2 < pw / 2;
+		var nodeAbove = offsetY + nih < pih;
+		
+		var lineWidth = self.getLineWidth(depth);
+		var halfLineWidth = lineWidth / 2;
+
+		// draw direction
+		var leftToRight, topToBottom;
+		
+		// node overlaps with parent above or delow
+		var overlap = false;
+		
+		// canvas attributes
+		var left, top, width, height;
+		var bColor;
+		
+		if (nodeLeft) {
+			var aOffsetX = Math.abs(offsetX);
+			if (aOffsetX > nw) {
+				// normal left
+				
+				// make it one pixel too wide to fix firefox rounding issues
+				width = aOffsetX - nw + 1;
+				left = nw;
+				leftToRight = true;
+
+				//bColor = "red";
+			} else {
+				// left overlap
+				left = -offsetX;
+				width = nw + offsetX;
+				leftToRight = false;
+				overlap = true;
+
+				//bColor = "orange";
+			}
 		} else {
-			left = $parent.width() - offsetX;
-			width = -left;
+			if (offsetX > pw) {
+				// normal right
+				
+				// make it one pixel too wide to fix firefox rounding issues
+				width = offsetX - pw + 1; 
+				left = pw - offsetX;
+				leftToRight = false;
+
+				//bColor = "green";
+			} else {
+				// right overlap
+				width = pw - offsetX;
+				left = 0;
+				leftToRight = true;
+				overlap = true;
+
+				//bColor = "yellow";
+			}
 		}
 
-		if (width < 0) {
-			width = 1;
+		// avoid zero widths
+		if (width < lineWidth) {
+			width = lineWidth;
 		}
 
-		// determine top and right
-		// is the node's border bottom bar above the parent's?
-		var nodeBelowParent = offsetY + $node.innerHeight() < $parent
-				.innerHeight();
-		if (nodeBelowParent) {
-			top = $node.innerHeight();
+		if (nodeAbove) {
+			top = nih;
 			height = $parent.outerHeight() - offsetY - top;
+
+			topToBottom = true;
 		} else {
-			top = $parent.innerHeight() - offsetY;
+			top = pih - offsetY;
 			height = $node.outerHeight() - top;
+
+			topToBottom = false;
 		}
 
 		/**
-		 * Positions the canvas correctly.
+		 * Positions the canvas
 		 */
 		$canvas.attr({
 			width : width,
 			height : height
 		}).css({
-			// "border" : "1px solid green",
 			left : left,
 			top : top
+		// ,border: "1px solid " + bColor
 		});
 
-		// 2. draw the thing
-		var canvas = $canvas[0];
-		var ctx = canvas.getContext("2d");
-
-		var lineWidth = self.getLineWidth(depth);
-		ctx.lineWidth = lineWidth;
-
-		ctx.strokeStyle = color;
-		ctx.fillStyle = color;
-
-		// shadow
-		// ctx.shadowOffsetX = 3;
-		// ctx.shadowOffsetY = 3;
-		// ctx.shadowBlur = 5;
-		// ctx.shadowColor = "#828282";
-
+		// determine start and end coordinates
 		var startX, startY, endX, endY;
-
-		if (left < 0) {
+		if (leftToRight) {
 			startX = 0;
 			endX = width;
 		} else {
@@ -272,23 +285,56 @@ mindmaps.DefaultCanvasView = function() {
 			endX = 0;
 		}
 
-		if (nodeBelowParent) {
-			startY = height - lineWidth / 2;
-			endY = 0 + lineWidth / 2;
+		// calculate difference in line width to parent node
+		// and position line vertically centered to parent line
+		var pLineWidth = self.getLineWidth(depth - 1);
+		var diff = (pLineWidth - lineWidth)/2;
+		
+		if (topToBottom) {
+			startY = 0 + halfLineWidth;
+			endY = height - halfLineWidth - diff;
 		} else {
-			startY = 0 + lineWidth / 2;
-			endY = height - lineWidth / 2;
+			startY = height - halfLineWidth;
+			endY = 0 + halfLineWidth + diff;
 		}
 
+		// calculate bezier points
+		if (!overlap) {
+			var cp2x = startX > endX ? startX / 5 : endX - (endX / 5);
+			var cp2y = endY;
+
+			var cp1x = Math.abs(startX - endX) / 2;
+			var cp1y = startY;
+		} else {
+			// node overlaps with parent
+			
+			// take left and right a bit away so line fits fully in canvas
+			if (leftToRight) {
+				startX += halfLineWidth;
+				endX -= halfLineWidth;
+			} else {
+				startX -= halfLineWidth;
+				endX += halfLineWidth;
+			}
+
+			// reversed bezier for overlap
+			var cp1x = startX;
+			var cp1y = Math.abs(startY - endY) / 2;
+
+			var cp2x = endX;
+			var cp2y = startY > endY ? startY / 5 : endY - (endY / 5);
+		}
+
+		// draw
+		var canvas = $canvas[0];
+		var ctx = canvas.getContext("2d");
+		ctx.lineWidth = lineWidth;
+		ctx.strokeStyle = color;
+		ctx.fillStyle = color;
+		
 		ctx.beginPath();
 		ctx.moveTo(startX, startY);
-
-		var cp1x = startX < endX ? endX / 5 : startX - (startX / 5);
-		var cp1y = startY;
-		var cp2x = Math.abs(startX - endX) / 2;
-		var cp2y = endY;
 		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-		// ctx.lineTo(endX, endY);
 		ctx.stroke();
 
 		var drawControlPoints = false;
@@ -303,8 +349,8 @@ mindmaps.DefaultCanvasView = function() {
 			ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
 			ctx.fill();
 		}
-
 	}
+
 
 	this.init = function() {
 		makeDraggable();
@@ -1011,12 +1057,12 @@ mindmaps.DefaultCanvasView = function() {
 					var $wpTop = $wp.top / view.zoomFactor;
 					var nubLeft = ui.position.left / view.zoomFactor;
 					var nubTop = ui.position.top / view.zoomFactor;
-					
+
 					var distance = mindmaps.Util.distance($wpLeft - nubLeft,
 							$wpTop - nubTop);
 					self.dragStopped(self.node, nubLeft, nubTop, distance);
 				}
-				
+
 				// remove any positioning that the draggable might have caused
 				$wrapper.css({
 					left : "",
