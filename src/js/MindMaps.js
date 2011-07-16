@@ -30,7 +30,7 @@
 var mindmaps = mindmaps || {};
 
 /**
- * Start up. This function is exectuted when the DOM is loaded.
+ * Start up. This function is executed when the DOM is loaded.
  */
 $(function() {
 	// take car of old browsers

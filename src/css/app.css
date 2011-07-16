@@ -42,7 +42,6 @@ table {
 /*
 	USER STYLES
 */
-
 button {
 	margin: 0;
 }
@@ -103,16 +102,16 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                              
-		        DXImageTransform.Microsoft.gradient (          
+	filter: progid :                               
+		         DXImageTransform.Microsoft.gradient (           
 		  
 		        
-		                  startColorstr =                   
-		                   '#75A8C4', endColorstr =  
+		                   startColorstr =                    
+		                    '#75A8C4', endColorstr =   
 		                             
-		      '#E5E5E5', GradientType =              
+		       '#E5E5E5', GradientType =               
 		        
-		               1 );
+		                1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -390,12 +389,10 @@ html,body {
 #creator-nub {
 	width: 24px;
 	height: 24px;
-	background-image: url("../img/creator-nub.png");
-	background-size: 24px 24px;
+	background-image: url("../img/creator-nub-sprite.png");
 	background-repeat: no-repeat;
 	position: relative;
 	z-index: 1000;
-	
 }
 
 #creator-fakenode {
@@ -409,7 +406,7 @@ html,body {
 }
 
 #creator-nub:hover {
-	background-image: url("../img/creator-nub-selected.png")
+	background-position: -24px 0;
 }
 
 #caption-editor {

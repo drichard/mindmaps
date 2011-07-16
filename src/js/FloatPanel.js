@@ -11,7 +11,6 @@ mindmaps.FloatPanelFactory = function(container) {
 	var paddingRight = 15;
 	var paddingTop = 5;
 
-	// TODO
 	function setPosition(dialog) {
 		// reposition dialog on window resize
 		container.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {

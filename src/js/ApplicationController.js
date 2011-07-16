@@ -19,8 +19,6 @@ mindmaps.ApplicationController = function() {
 	function doNewDocument() {
 		// close old document first
 		var doc = mindmapModel.getDocument();
-		// TODO for now simply publish events, should be intercepted by
-		// someone
 		doCloseDocument();
 
 		var presenter = new mindmaps.NewDocumentPresenter(eventBus,
@@ -43,7 +41,8 @@ mindmaps.ApplicationController = function() {
 	function doCloseDocument() {
 		var doc = mindmapModel.getDocument();
 		if (doc) {
-			// TODO close document presenter
+			// TODO for now simply publish events, should be intercepted by
+			// someone
 			mindmapModel.setDocument(null);
 		}
 	}

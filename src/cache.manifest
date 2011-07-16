@@ -20,10 +20,8 @@ css/minicolors/jquery.miniColors.css
 css/app.css
 css/about.css
 img/favicon.png
-img/creator-nub-selected.png
-img/creator-nub.png
+img/creator-nub-sprite.png
 img/grid.gif
-img/plus-minus.gif
 img/plus-minus.png
 img/transparent.png
 js/script.js
