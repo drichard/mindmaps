@@ -9,11 +9,25 @@
 <head>
 <meta charset="utf-8">
 <title>MindMaps</title>
-<link rel="icon" type="image/png"  href="img/favicon.png" />
+<link rel="icon" type="image/png" href="img/favicon.png" />
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/Aristo/jquery-ui-1.8.7.custom.css" />
 <link rel="stylesheet" href="css/minicolors/jquery.miniColors.css">
- 
+
+<script id="template-float-panel" type="text/x-jquery-tmpl">
+<div class="ui-widget ui-dialog ui-corner-all ui-widget-content float-panel no-select  ui-draggable">
+	<div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix">
+		<span class="ui-dialog-title">${title}</span>
+		<a class="ui-dialog-titlebar-close ui-corner-all" href="#" role="button">
+			<span class="ui-icon"></span>
+		</a>
+	</div>
+	<div class="ui-dialog-content ui-widget-content">
+		${content}
+	</div>
+</div>
+</script>
+
 <script id="template-notification" type="text/x-jquery-tmpl">
 <div class="notification">
 	{{if closeButton}}
@@ -154,8 +168,7 @@
 		</div>
 		<div id="bottombar">
 			<div id="about">
-				<a href="about.html" target="_blank" class="link">About
-					mindmaps</a>
+				<a href="about.html" target="_blank" class="link">About mindmaps</a>
 			</div>
 			<div id="statusbar">
 				<div
@@ -163,62 +176,63 @@
 			</div>
 		</div>
 	</div>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 
-<!-- DEBUG -->
-<!-- set debug flag for all scripts. Will be removed in production -->
-<script type="text/javascript">
-	var mindmaps = mindmaps || {};
-	mindmaps.DEBUG = true;
-</script>
-<!-- /DEBUG -->
+	<!-- DEBUG -->
+	<!-- set debug flag for all scripts. Will be removed in production -->
+	<script type="text/javascript">
+		var mindmaps = mindmaps || {};
+		mindmaps.DEBUG = true;
+	</script>
+	<!-- /DEBUG -->
 
-<!-- JS:LIB:BEGIN -->
-<script src="js/libs/jquery-ui-1.8.11.custom.min.js"></script>
-<script src="js/libs/dragscrollable.js"></script>
-<script src="js/libs/jquery.hotkeys.js"></script>
-<script src="js/libs/jquery.mousewheel.js"></script>
-<script src="js/libs/jquery.minicolors.js"></script>
-<script src="js/libs/jquery.tmpl.js"></script>
-<script src="js/libs/swfobject.js"></script>
-<script src="js/libs/downloadify.min.js"></script>
-<script src="js/libs/events.js"></script>
+	<!-- JS:LIB:BEGIN -->
+	<script src="js/libs/jquery-ui-1.8.11.custom.min.js"></script>
+	<script src="js/libs/dragscrollable.js"></script>
+	<script src="js/libs/jquery.hotkeys.js"></script>
+	<script src="js/libs/jquery.mousewheel.js"></script>
+	<script src="js/libs/jquery.minicolors.js"></script>
+	<script src="js/libs/jquery.tmpl.js"></script>
+	<script src="js/libs/swfobject.js"></script>
+	<script src="js/libs/downloadify.min.js"></script>
+	<script src="js/libs/events.js"></script>
 
-<script src="js/MindMaps.js"></script>
-<script src="js/Command.js"></script>
-<script src="js/CommandRegistry.js"></script>
-<script src="js/Action.js"></script>
-<script src="js/Util.js"></script>
-<script src="js/Point.js"></script>
-<script src="js/Document.js"></script>
-<script src="js/MindMap.js"></script>
-<script src="js/Node.js"></script>
-<script src="js/NodeMap.js"></script>
-<script src="js/UndoManager.js"></script>
-<script src="js/UndoController.js"></script>
-<script src="js/ClipboardController.js"></script>
-<script src="js/ZoomController.js"></script>
-<script src="js/ShortcutController.js"></script>
-<script src="js/HelpController.js"></script>
-<script src="js/FloatPanel.js"></script>
-<script src="js/Navigator.js"></script>
-<script src="js/Inspector.js"></script>
-<script src="js/ToolBar.js"></script>
-<script src="js/StatusBar.js"></script>
-<script src="js/CanvasView.js"></script>
-<script src="js/CanvasPresenter.js"></script>
-<script src="js/ApplicationController.js"></script>
-<script src="js/MindMapModel.js"></script>
-<script src="js/NewDocument.js"></script>
-<script src="js/OpenDocument.js"></script>
-<script src="js/SaveDocument.js"></script>
-<script src="js/MainViewController.js"></script>
-<script src="js/Storage.js"></script>
-<script src="js/Event.js"></script>
-<script src="js/Notification.js"></script>
-<!-- JS:LIB:END -->
+	<script src="js/MindMaps.js"></script>
+	<script src="js/Command.js"></script>
+	<script src="js/CommandRegistry.js"></script>
+	<script src="js/Action.js"></script>
+	<script src="js/Util.js"></script>
+	<script src="js/Point.js"></script>
+	<script src="js/Document.js"></script>
+	<script src="js/MindMap.js"></script>
+	<script src="js/Node.js"></script>
+	<script src="js/NodeMap.js"></script>
+	<script src="js/UndoManager.js"></script>
+	<script src="js/UndoController.js"></script>
+	<script src="js/ClipboardController.js"></script>
+	<script src="js/ZoomController.js"></script>
+	<script src="js/ShortcutController.js"></script>
+	<script src="js/HelpController.js"></script>
+	<script src="js/FloatPanel.js"></script>
+	<script src="js/Navigator.js"></script>
+	<script src="js/Inspector.js"></script>
+	<script src="js/ToolBar.js"></script>
+	<script src="js/StatusBar.js"></script>
+	<script src="js/CanvasView.js"></script>
+	<script src="js/CanvasPresenter.js"></script>
+	<script src="js/ApplicationController.js"></script>
+	<script src="js/MindMapModel.js"></script>
+	<script src="js/NewDocument.js"></script>
+	<script src="js/OpenDocument.js"></script>
+	<script src="js/SaveDocument.js"></script>
+	<script src="js/MainViewController.js"></script>
+	<script src="js/Storage.js"></script>
+	<script src="js/Event.js"></script>
+	<script src="js/Notification.js"></script>
+	<!-- JS:LIB:END -->
 
-<!-- PRODUCTION
+	<!-- PRODUCTION
 <script type="text/javascript">
 	var _gaq = _gaq || [];
 	_gaq.push([ '_setAccount', 'UA-23624804-1' ]);

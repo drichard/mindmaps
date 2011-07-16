@@ -30,7 +30,8 @@ mindmaps.FloatPanelFactory = function(container) {
 			return memo + dialog.height() + paddingTop;
 		}, 0);
 
-		dialog.setPosition(ccw - dw - paddingRight, hh + paddingTop + heightOffset);
+		dialog.setPosition(ccw - dw - paddingRight, hh + paddingTop
+				+ heightOffset);
 	}
 
 	/**
@@ -83,50 +84,31 @@ mindmaps.FloatPanel = function(caption, $container, $content) {
 		$("div.ui-dialog-content", this.$widget).children().detach();
 	};
 
-	// TODO template
 	/**
 	 * @private
 	 */
 	this.$widget = (function() {
-		var $titleText = $("<span/>", {
-			"class" : "ui-dialog-title"
-		}).text(caption);
-
-		var $closeButton = $("<span/>", {
-			"class" : "ui-icon"
+		var $panel = $("#template-float-panel").tmpl({
+			title : caption
 		});
-
-		var $titleButton = $("<a/>", {
-			"class" : "ui-dialog-titlebar-close ui-corner-all",
-			href : "#",
-			role : "button"
-		}).click(function() {
+		
+		// hide button
+		$panel.find(".ui-dialog-titlebar-close").click(function() {
 			self.hide();
-		}).append($closeButton);
-
-		var $title = $("<div/>", {
-			"class" : "ui-dialog-titlebar ui-widget-header ui-helper-clearfix"
-		}).append($titleText).append($titleButton);
-
-		var $body = $("<div/>", {
-			"class" : "ui-dialog-content ui-widget-content"
 		});
 
+		// add content panel
 		if ($content) {
-			$body.append($content);
+			$panel.find(".ui-dialog-content").append($content);
 		}
-
-		// TODO zIndex while not dragging too small with stack option
-		var $panel = $(
-				"<div/>",
-				{
-					"class" : "ui-widget ui-dialog ui-corner-all ui-widget-content float-panel no-select "
-				}).draggable({
+		
+		// make draggable, hide, append to container
+		$panel.draggable({
 			containment : "parent",
 			handle : "div.ui-dialog-titlebar",
 			opacity : 0.75
-		}).hide().append($title).append($body).appendTo($container);
-
+		}).hide().appendTo($container);
+		
 		return $panel;
 	})();
 
