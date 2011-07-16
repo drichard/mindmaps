@@ -188,13 +188,7 @@ mindmaps.DefaultCanvasView = function() {
 		var pih = $parent.innerHeight();
 		var nih = $node.innerHeight();
 
-		// position relative to parent
-		var nodeLeft = offsetX + nw / 2 < pw / 2;
-		var nodeAbove = offsetY + nih < pih;
-		
-		var lineWidth = self.getLineWidth(depth);
-		var halfLineWidth = lineWidth / 2;
-
+		// line is drawn from node to parent
 		// draw direction
 		var leftToRight, topToBottom;
 		
@@ -205,6 +199,8 @@ mindmaps.DefaultCanvasView = function() {
 		var left, top, width, height;
 		var bColor;
 		
+		// position relative to parent
+		var nodeLeft = offsetX + nw / 2 < pw / 2;
 		if (nodeLeft) {
 			var aOffsetX = Math.abs(offsetX);
 			if (aOffsetX > nw) {
@@ -246,11 +242,16 @@ mindmaps.DefaultCanvasView = function() {
 			}
 		}
 
+
+		var lineWidth = self.getLineWidth(depth);
+		var halfLineWidth = lineWidth / 2;
+		
 		// avoid zero widths
 		if (width < lineWidth) {
 			width = lineWidth;
 		}
 
+		var nodeAbove = offsetY + nih < pih;
 		if (nodeAbove) {
 			top = nih;
 			height = $parent.outerHeight() - offsetY - top;
@@ -263,9 +264,7 @@ mindmaps.DefaultCanvasView = function() {
 			topToBottom = false;
 		}
 
-		/**
-		 * Positions the canvas
-		 */
+		// position canvas
 		$canvas.attr({
 			width : width,
 			height : height
