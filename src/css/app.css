@@ -621,16 +621,31 @@ html,body {
 * NOTIFICATION
 */
 .notification {
-	border: 7px solid #E2E2E2;
+	border: 7px solid;
 	border-radius: 7px;
 	position: absolute;
 	z-index: 5000;
 	display: block;
 	padding: 7px;
 	background-color: white;
-	box-shadow: 1px 1px 7px 1px #B2B2B2;
 	display: none;
 }
+
+.notification.info {
+	border-color: #E2E2E2;
+	box-shadow: 1px 1px 7px 1px #B2B2B2;
+}
+
+.notification.warn {
+	border-color: #FFC53D;
+	box-shadow: 1px 1px 7px 1px #FF943D;
+}
+
+.notification.error {
+	border-color: #F75F00;
+	box-shadow: 1px 1px 7px 1px #F70000;
+}
+
 
 .notification .title {
 	font-weight: bold;

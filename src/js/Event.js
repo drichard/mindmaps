@@ -90,7 +90,25 @@ mindmaps.Event = {
 	 * @event
 	 * @param {Number} zoomFactor
 	 */
-	ZOOM_CHANGED : "ZoomChangedEvent"
+	ZOOM_CHANGED : "ZoomChangedEvent",
+	
+	/**
+	 * @event
+	 * @param {String} message
+	 */
+	NOTIFICATION_INFO: "NotificationInfoEvent",
+	
+	/**
+	 * @event
+	 * @param {String} message
+	 */
+	NOTIFICATION_WARN: "NotificationWarnEvent",
+	
+	/**
+	 * @event
+	 * @param {String} message
+	 */
+	NOTIFICATION_ERROR: "NotificationErrorEvent"
 };
 
 /**

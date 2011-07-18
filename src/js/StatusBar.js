@@ -99,4 +99,34 @@ mindmaps.StatusNotificationController = function(eventBus, view) {
 			content : "Mind map saved"
 		});
 	});
+	
+	eventBus.subscribe(mindmaps.Event.NOTIFICATION_INFO, function(message) {
+		var n = new mindmaps.Notification($anchor, {
+			position : "topRight",
+			content : message,
+			expires : 2500,
+			type: "info"
+		});
+	});
+	
+	eventBus.subscribe(mindmaps.Event.NOTIFICATION_WARN, function(message) {
+		var n = new mindmaps.Notification($anchor, {
+			position : "topRight",
+			title: "Warning",
+			content : message,
+			expires : 3000,
+			type: "warn"
+		});
+	});
+	
+	
+	eventBus.subscribe(mindmaps.Event.NOTIFICATION_ERROR, function(message) {
+		var n = new mindmaps.Notification($anchor, {
+			position : "topRight",
+			title: "Error",
+			content : message,
+			expires : 3500,
+			type: "error"
+		});
+	});
 };

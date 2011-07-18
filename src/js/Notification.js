@@ -14,6 +14,7 @@
  * @param {Integer} [options.expires]
  * @param {Boolean} [options.closeButton]
  * @param {Integer} [options.maxWidth]
+ * @param {String} [options.type] possible values: info, warn, error
  */
 mindmaps.Notification = function(targetSelector, options) {
 	var self = this;
@@ -23,7 +24,7 @@ mindmaps.Notification = function(targetSelector, options) {
 	var $notification = this.$el = $("#template-notification").tmpl(options)
 			.css({
 				"max-width" : options.maxWidth
-			});
+			}).addClass(options.type);
 
 	// notification target
 	var $target = $(targetSelector);
@@ -180,5 +181,6 @@ mindmaps.Notification.Defaults = {
 	padding : 10,
 	expires : 0,
 	closeButton : false,
-	maxWidth : 500
+	maxWidth : 500,
+	type : "info"
 };
