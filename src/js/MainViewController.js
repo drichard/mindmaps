@@ -30,6 +30,37 @@ mindmaps.CanvasContainer = function() {
 		self.publish(mindmaps.CanvasContainer.Event.RESIZED, size);
 	};
 
+	/**
+	 * Set up the container to accept drag and drop of files from the desktop.
+	 */
+	this.acceptFileDrop = function() {
+
+		function ignore(e) {
+			e.originalEvent.stopPropagation();
+			e.originalEvent.preventDefault();
+		}
+
+		function handleDragOver(e) {
+			ignore(e);
+		}
+
+		function handleDrop(e) {
+			ignore(e);
+
+			var files = e.originalEvent.dataTransfer.files;
+			var file = files[0];
+
+			var reader = new FileReader();
+			reader.onload = function() {
+				self.receivedFileDrop(reader.result);
+			};
+			reader.readAsText(file);
+		}
+
+		$content.bind('dragover', handleDragOver);
+		$content.bind('drop', handleDrop);
+	};
+
 	this.init = function() {
 		// recalculate size when window is resized.
 		$(window).resize(function() {
@@ -37,6 +68,16 @@ mindmaps.CanvasContainer = function() {
 		});
 
 		this.setSize();
+		this.acceptFileDrop();
+	};
+
+	/**
+	 * Callback for when a file was dropped onto the container.
+	 * 
+	 * @event
+	 * @param {String} result
+	 */
+	this.receivedFileDrop = function(result) {
 	};
 
 };
@@ -68,9 +109,22 @@ mindmaps.CanvasContainer.Event = {
  */
 mindmaps.MainViewController = function(eventBus, mindmapModel, commandRegistry) {
 	var zoomController = new mindmaps.ZoomController(eventBus, commandRegistry);
+	var canvasContainer = new mindmaps.CanvasContainer();
+
+	/**
+	 * When a file was dropped on the canvas container try to open it.
+	 */
+	canvasContainer.receivedFileDrop = function(result) {
+		try {
+			var doc = mindmaps.Document.fromJSON(result);
+			mindmapModel.setDocument(doc);
+		} catch (e) {
+			eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, "Could not read the file.");
+			console.warn("Could not open the mind map via drag and drop.");
+		}
+	};
 
 	this.go = function() {
-		var canvasContainer = new mindmaps.CanvasContainer();
 		canvasContainer.init();
 
 		// init all presenters
