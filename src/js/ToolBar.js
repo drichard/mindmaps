@@ -179,6 +179,10 @@ mindmaps.ToolBarMenu = function(title, icon) {
 	var self = this;
 	this.$menuWrapper = $("<span/>", {
 		"class" : "menu-wrapper"
+	}).hover(function() {
+		self.$menu.show();
+	}, function() {
+		self.$menu.hide();
 	});
 
 	this.$menuButton = $("<button/>").button({
@@ -192,15 +196,7 @@ mindmaps.ToolBarMenu = function(title, icon) {
 	this.$menu = $("<div/>", {
 		"class" : "menu"
 	}).click(function() {
-		/*
-		 * hack to hide menu on click. visibility on hover is triggered by CSS.
-		 * force display:none for a short time and remove class immediately
-		 * again.
-		 */
-		self.$menu.addClass("hidden");
-		setTimeout(function() {
-			self.$menu.removeClass("hidden");
-		}, 10);
+		self.$menu.hide();
 	}).appendTo(this.$menuWrapper);
 
 	/**

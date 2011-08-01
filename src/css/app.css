@@ -174,10 +174,7 @@ html,body {
 
 #toolbar .menu-wrapper {
 	position: relative;
-}
-
-#toolbar .menu-wrapper:hover .menu {
-	display: block;
+	display: inline-block; /* fix for opera 11.50 */
 }
 
 #toolbar .menu-wrapper .menu {
@@ -187,10 +184,6 @@ html,body {
 	display: none;
 	background: #EDEDED;
 	box-shadow: 1px 1px 9px 0 #636B6A;
-}
-
-#toolbar .menu-wrapper .menu.hidden {
-	display: none;
 }
 
 #toolbar .menu-wrapper .menu-item {
@@ -203,6 +196,7 @@ html,body {
 	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(1, #B9E0F5),
 		color-stop(0, #92BDD6) );
 	background-image: -moz-linear-gradient(center top, #B9E0F5, #92BDD6);
+	background-image: -o-linear-gradient(center top, #B9E0F5, #92BDD6);
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
