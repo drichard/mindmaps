@@ -161,6 +161,16 @@ h2 {
 	margin: auto -25px;
 }
 
+#social {
+	position: absolute;
+	left: 10px;
+}
+
+#social .button {
+	float: left;
+	margin-right: 10px;
+}
+
 #copyright {
 	position: absolute;
 	bottom: 10px;
