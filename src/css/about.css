@@ -156,7 +156,7 @@ h2 {
 	padding: 10px 0px;
 	background: #EEE;
 	margin-top: 35px;
-	overflow: hidden;
+	height: 66px;
 	border-top: 1px solid #CCC;
 	margin: auto -25px;
 }
