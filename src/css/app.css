@@ -223,11 +223,12 @@ html,body {
 	position: absolute;
 	top: 10px;
 	left: 10px;
-}
-
-#about .link {
 	color: #454545;
 	font-size: 12px;
+}
+
+#about a {
+	color: inherit;
 }
 
 /* apply styles to button and wrapper div */
