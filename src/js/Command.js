@@ -96,7 +96,7 @@ EventEmitter.mixin(mindmaps.Command);
  */
 mindmaps.CreateNodeCommand = function() {
 	this.id = "CREATE_NODE_COMMAND";
-	this.shortcut = "insert";
+	this.shortcut = "tab";
 	this.label = "Add";
 	this.icon = "ui-icon-plusthick";
 	this.description = "Creates a new node";
