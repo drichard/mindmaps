@@ -60,20 +60,26 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 	 * @private
 	 */
 	this.init = function() {
-		var createCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
-		createCommand.setHandler(this.createNode.bind(this));
+		var createNodeCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
+		createNodeCommand.setHandler(this.createNode.bind(this));
 
-		var deleteCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
-		deleteCommand.setHandler(this.deleteNode.bind(this));
+		var createSiblingNodeCommand = commandRegistry
+				.get(mindmaps.CreateSiblingNodeCommand);
+		createSiblingNodeCommand.setHandler(this.createSiblingNode.bind(this));
+
+		var deleteNodeCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
+		deleteNodeCommand.setHandler(this.deleteNode.bind(this));
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
-			createCommand.setEnabled(false);
+			createNodeCommand.setEnabled(false);
+			createSiblingNodeCommand.setEnabled(false);
 			deleteCommand.setEnabled(false);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
-			createCommand.setEnabled(true);
-			deleteCommand.setEnabled(true);
+			createNodeCommand.setEnabled(true);
+			createSiblingNodeCommand.setEnabled(true);
+			deleteNodeCommand.setEnabled(true);
 		});
 	};
 
@@ -113,6 +119,25 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 	};
 
 	/**
+	 * Creates a new auto positioned node as a sibling to the current selected
+	 * node.
+	 */
+	this.createSiblingNode = function() {
+		var map = this.getMindMap();
+		var selected = this.selectedNode;
+		var parent = selected.getParent();
+
+		// root nodes dont have a parent
+		if (parent === null) {
+			return;
+		}
+
+		var action = new mindmaps.action.CreateAutoPositionedNodeAction(parent,
+				map);
+		this.executeAction(action);
+	};
+
+	/**
 	 * Sets the node as the currently selected.
 	 * 
 	 * @param {mindmaps.Node} node
@@ -145,7 +170,8 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 
 	/**
 	 * Executes a node action. An executed action might raise an event over the
-	 * event bus and cause an undo event to be emitted via MindMapModel#undoAction.
+	 * event bus and cause an undo event to be emitted via
+	 * MindMapModel#undoAction.
 	 * 
 	 * @param {mindmaps.Action} action
 	 */

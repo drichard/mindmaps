@@ -104,6 +104,21 @@ mindmaps.CreateNodeCommand = function() {
 mindmaps.CreateNodeCommand.prototype = new mindmaps.Command();
 
 /**
+ * Creates a new CreateSiblingNodeCommand.
+ * 
+ * @constructor
+ * @augments mindmaps.Command
+ */
+mindmaps.CreateSiblingNodeCommand = function() {
+	this.id = "CREATE_SIBLING_NODE_COMMAND";
+	this.shortcut = "shift+tab";
+	this.label = "Add";
+	this.icon = "ui-icon-plusthick";
+	this.description = "Creates a new sibling node";
+};
+mindmaps.CreateSiblingNodeCommand.prototype = new mindmaps.Command();
+
+/**
  * Creates a new DeleteNodeCommand.
  * 
  * @constructor
