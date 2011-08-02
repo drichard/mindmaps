@@ -956,8 +956,11 @@ mindmaps.DefaultCanvasView = function() {
 				height : "auto"
 			}).empty().addClass("edit");
 
+			// TODO cancel area doesnt cancel but commits now. fix this mess and try to commit on blur() event
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
-				self.stop();
+				if (self.commit) {
+					self.commit($editor.val());
+				}
 			});
 
 			var metrics = textMetrics.getTextMetrics(self.node, this.text);
