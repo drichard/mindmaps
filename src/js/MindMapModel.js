@@ -73,7 +73,7 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 			createNodeCommand.setEnabled(false);
 			createSiblingNodeCommand.setEnabled(false);
-			deleteCommand.setEnabled(false);
+			deleteNodeCommand.setEnabled(false);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
