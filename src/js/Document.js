@@ -11,7 +11,7 @@ mindmaps.Document = function() {
 		created : new Date(),
 		modified : null
 	};
-	
+
 	this.dimensions = new mindmaps.Point(4000, 2000);
 };
 
@@ -115,4 +115,22 @@ mindmaps.Document.prototype.isNew = function() {
  */
 mindmaps.Document.prototype.getCreatedDate = function() {
 	return this.dates.created;
+};
+
+/**
+ * Gets the width of the document.
+ * 
+ * @returns {Number}
+ */
+mindmaps.Document.prototype.getWidth = function() {
+	return this.dimensions.x;
+};
+
+/**
+ * Gets the height of the document.
+ * 
+ * @returns {Number}
+ */
+mindmaps.Document.prototype.getHeight = function() {
+	return this.dimensions.y;
 };
