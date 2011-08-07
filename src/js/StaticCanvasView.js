@@ -4,7 +4,8 @@ var mindmaps = mindmaps || {};
 $(function() {
 	var view = new mindmaps.StaticCanvasView($("#container"));
 	var docs = mindmaps.LocalDocumentStorage.getDocuments();
-	view.render(docs[0]);
+//	view.render(docs[1]);
+	view.renderAsPNG(docs[0]);
 });
 
 mindmaps.StaticCanvasView = function($container) {
@@ -20,7 +21,7 @@ mindmaps.StaticCanvasView = function($container) {
 
 	var textMetrics = new mindmaps.TextMetrics(this);
 
-	var $canvas = $("<canvas/>").appendTo($container);
+	var $canvas = $("<canvas/>").hide().appendTo($container);
 	var ctx = $canvas[0].getContext("2d");
 
 	var branchDrawer = new mindmaps.CanvasBranchDrawer();
@@ -103,7 +104,8 @@ mindmaps.StaticCanvasView = function($container) {
 			checkDimensions(node);
 		});
 
-		// find the longest offset to either side and use twice the length for canvas width
+		// find the longest offset to either side and use twice the length for
+		// canvas width
 		var horizontal = Math.max(Math.abs(right), Math.abs(left));
 		var vertical = Math.max(Math.abs(bottom), Math.abs(top));
 
@@ -113,16 +115,34 @@ mindmaps.StaticCanvasView = function($container) {
 		};
 	}
 
+	this.renderAsPNG = function(document) {
+		renderCanvas(document);
+		//location.href = $canvas[0].toDataURL("image/png");
+		window.open($canvas[0].toDataURL("image/png"), "Image", "target=_blank");
+	};
+	
+	this.render = function(document) {
+		renderCanvas(document);
+		$canvas.show();
+	};
+	
+	this.renderAndPrint = function(document) {
+		renderCanvas(document);
+		$canvas.show();
+		window.print();
+	};
+	
 	/**
 	 * @param {mindmaps.Document} document
 	 */
-	this.render = function(document) {
+	function renderCanvas(document) {
+		$canvas.hide();
+		
 		var map = document.mindmap;
 		var root = map.getRoot();
 
 		prepareNodes(map);
 		var dimensions = getMindMapDimensions(root);
-		console.log(dimensions);
 
 		var width = dimensions.width;
 		var height = dimensions.height;
@@ -144,9 +164,8 @@ mindmaps.StaticCanvasView = function($container) {
 			ctx.save();
 			var x = node.offset.x;
 			var y = node.offset.y;
-			var tm = node.textMetrics;
 			ctx.translate(x, y);
-			
+
 			// branch
 			if (parent) {
 				drawBranch(node, parent);
@@ -155,6 +174,7 @@ mindmaps.StaticCanvasView = function($container) {
 			// bottom border
 			if (!node.isRoot()) {
 				ctx.fillStyle = node.branchColor;
+				var tm = node.textMetrics;
 				ctx.fillRect(0, tm.height + padding, tm.width, node.lineWidth);
 			}
 			node.forEachChild(function(child) {
@@ -164,27 +184,55 @@ mindmaps.StaticCanvasView = function($container) {
 			ctx.restore();
 		}
 
+		function roundedRect(ctx, x, y, width, height, radius) {
+			ctx.beginPath();
+			ctx.moveTo(x, y + radius);
+			ctx.lineTo(x, y + height - radius);
+			ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
+			ctx.lineTo(x + width - radius, y + height);
+			ctx.quadraticCurveTo(x + width, y + height, x + width, y + height
+					- radius);
+			ctx.lineTo(x + width, y + radius);
+			ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
+			ctx.lineTo(x + radius, y);
+			ctx.quadraticCurveTo(x, y, x, y + radius);
+			ctx.stroke();
+			ctx.fill();
+		}
+
 		function drawCaptions(node) {
 			ctx.save();
 			var x = node.offset.x;
 			var y = node.offset.y;
-			var tm = node.textMetrics;
 			ctx.translate(x, y);
-			
-			//ctx.strokeStyle = "#CCC";
+
+			// ctx.strokeStyle = "#CCC";
 			// ctx.strokeRect(0, 0, tm.width, tm.height);
 
+			var tm = node.textMetrics;
 			var caption = node.getCaption();
 			var font = node.text.font;
-			ctx.strokeStyle = font.color;
-			ctx.fillStyle = font.color;
+			
 			ctx.font = font.style + " " + font.weight + " " + font.size
 					+ "px sans-serif";
 			ctx.textAlign = "center";
 			var captionX = tm.width / 2;
+			var captionY = 0;
 			if (node.isRoot()) {
+				// TODO remove magic numbers
 				captionX = 0;
+				captionY = 20;
+
+				// root box
+				ctx.lineWidth = 5.0;
+				ctx.strokeStyle = "orange";
+				ctx.fillStyle = "white";
+				roundedRect(ctx, 0 - tm.width/2 - 4, 20 - 4, tm.width + 8, tm.height + 8, 10);
 			}
+			
+			ctx.strokeStyle = font.color;
+			ctx.fillStyle = font.color;
+
 			// TODO underline manually. canvas doesnt support it
 
 			function checkLength(str) {
@@ -194,7 +242,7 @@ mindmaps.StaticCanvasView = function($container) {
 
 			// TODO line split
 			if (checkLength(caption)) {
-				ctx.fillText(caption, captionX, 0);
+				ctx.fillText(caption, captionX, captionY);
 			} else {
 				var line = "";
 				var lines = [];
@@ -217,8 +265,6 @@ mindmaps.StaticCanvasView = function($container) {
 					ctx.fillText(line, captionX, 4 + j * font.size);
 				}
 			}
-
-			// TODO extra formtatting for root
 
 			node.forEachChild(function(child) {
 				drawCaptions(child);
