@@ -44,6 +44,22 @@ mindmaps.Util.randomColor = function() {
 	})((~~(Math.random() * (1 << 24))).toString(16));
 };
 
+
+mindmaps.Util.getUrlParams = function() {
+	// http://stackoverflow.com/questions/901115/get-query-string-values-in-javascript/2880929#2880929
+	var urlParams = {};
+    var e,
+        a = /\+/g,  // Regex for replacing addition symbol with a space
+        r = /([^&=]+)=?([^&]*)/g,
+        d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+        q = window.location.search.substring(1);
+
+    while (e = r.exec(q))
+       urlParams[d(e[1])] = d(e[2]);
+    
+	return urlParams;
+};
+
 function timeit(func, caption) {
 	var start = new Date().getTime();
 	func();

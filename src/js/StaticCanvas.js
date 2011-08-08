@@ -1,24 +1,84 @@
-/*
- * TODO
- * on print, save as png etc.. make link to /view.html 
- * and param action=print|view|saveAsPNG, load data from sessionStorage 
- * and act according to action
- * 
- * 
+/**
+ * Singleton module for communication between application and static canvas
+ * viewer. Stores data about the mind map to render in session storage and
+ * retrieves it.
  */
+mindmaps.StaticCanvasViewController = (function() {
+	// session storage keys
+	var prefix = "mindmaps.view.";
+	var keyDocument = prefix + "document";
+	var keyAction = prefix + "action";
+	var keyOptions = prefix + "options";
 
-"use strict";
-var mindmaps = mindmaps || {};
+	return {
+		Action : {
+			Print : "Print",
+			View : "View",
+			SaveAsPNG : "SaveAsPNG"
+		},
 
-$(function() {
-	var view = new mindmaps.StaticCanvasView($("#container"));
-	var docs = mindmaps.LocalDocumentStorage.getDocuments();
-	// view.render(docs[1]);
-	view.renderAsPNG(docs[0]);
-});
+		launch : function(document, action, options) {
+			mindmaps.SessionStorage.put(keyDocument, document.serialize());
+			mindmaps.SessionStorage.put(keyAction, action);
 
+			if (options) {
+				mindmaps.SessionStorage
+						.put(keyOptions, JSON.stringify(options));
+			}
+
+			window.open("/view.html");
+		},
+
+		getAction : function() {
+			var action = mindmaps.SessionStorage.get(keyAction);
+			return action;
+		},
+
+		getDocument : function() {
+			var json = mindmaps.SessionStorage.get(keyDocument);
+			return mindmaps.Document.fromJSON(json);
+		},
+
+		getOptions : function() {
+			var json = mindmaps.SessionStorage.get(keyOptions);
+			if (!json) {
+				return null;
+			}
+
+			return JSON.parse(json);
+		}
+	};
+})();
+
+/**
+ * @constructor
+ * @param {mindmaps.Document} document
+ * @param {mindmaps.StaticCanvasViewController.Action} actions
+ * @param {Object} options
+ * @param {mindmaps.StaticCanvasView} view
+ */
+mindmaps.StaticCanvasPresenter = function(document, action, options, view) {
+	this.go = function() {
+		switch (action) {
+		case mindmaps.StaticCanvasViewController.Action.View:
+			view.renderOnCanvas(document);
+			break;
+		case mindmaps.StaticCanvasViewController.Action.Print:
+			view.renderOnCanvas(document);
+			view.print();
+			break;
+		case mindmaps.StaticCanvasViewController.Action.SaveAsPNG:
+			view.renderAsPNG(document);
+			break;
+		}
+	};
+};
+
+/**
+ * @constructor
+ * @param $container
+ */
 mindmaps.StaticCanvasView = function($container) {
-	if ($container )
 	// magic number. node caption padding top/bottom + node padding bottom - two
 	// extra pixel from text metrics
 	var padding = 8;
@@ -31,7 +91,7 @@ mindmaps.StaticCanvasView = function($container) {
 
 	var textMetrics = new mindmaps.TextMetrics(this);
 
-	var $canvas = $("<canvas/>").hide().appendTo($container);
+	var $canvas = $("<canvas/>");
 	var ctx = $canvas[0].getContext("2d");
 
 	var branchDrawer = new mindmaps.CanvasBranchDrawer();
@@ -125,22 +185,35 @@ mindmaps.StaticCanvasView = function($container) {
 		};
 	}
 
+	/**
+	 * Returns the canvas image in Base64 encoding. The canvas has to be
+	 * rendered first.
+	 * 
+	 * @returns {String}
+	 */
+	this.getImageData = function() {
+		return $canvas[0].toDataURL("image/png");
+	};
+
 	this.renderAsPNG = function(document) {
 		renderCanvas(document);
-		// location.href = $canvas[0].toDataURL("image/png");
-		window
-				.open($canvas[0].toDataURL("image/png"), "Image",
-						"target=_blank");
+
+		$("<p/>").text("Right-click image and Select 'Save As'").appendTo(
+				$container);
+
+		var data = this.getImageData();
+		$("<img/>", {
+			src : data
+		}).appendTo($container);
+
 	};
 
-	this.render = function(document) {
+	this.renderOnCanvas = function(document) {
 		renderCanvas(document);
-		$canvas.show();
+		$canvas.appendTo($container);
 	};
 
-	this.renderAndPrint = function(document) {
-		renderCanvas(document);
-		$canvas.show();
+	this.print = function() {
 		window.print();
 	};
 
@@ -148,8 +221,6 @@ mindmaps.StaticCanvasView = function($container) {
 	 * @param {mindmaps.Document} document
 	 */
 	function renderCanvas(document) {
-		$canvas.hide();
-
 		var map = document.mindmap;
 		var root = map.getRoot();
 
@@ -172,6 +243,22 @@ mindmaps.StaticCanvasView = function($container) {
 		drawLines(root);
 		drawCaptions(root);
 
+		function roundedRect(ctx, x, y, width, height, radius) {
+			ctx.beginPath();
+			ctx.moveTo(x, y + radius);
+			ctx.lineTo(x, y + height - radius);
+			ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
+			ctx.lineTo(x + width - radius, y + height);
+			ctx.quadraticCurveTo(x + width, y + height, x + width, y + height
+					- radius);
+			ctx.lineTo(x + width, y + radius);
+			ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
+			ctx.lineTo(x + radius, y);
+			ctx.quadraticCurveTo(x, y, x, y + radius);
+			ctx.stroke();
+			ctx.fill();
+		}
+		
 		function drawLines(node, parent) {
 			ctx.save();
 			var x = node.offset.x;
@@ -194,22 +281,6 @@ mindmaps.StaticCanvasView = function($container) {
 			});
 
 			ctx.restore();
-		}
-
-		function roundedRect(ctx, x, y, width, height, radius) {
-			ctx.beginPath();
-			ctx.moveTo(x, y + radius);
-			ctx.lineTo(x, y + height - radius);
-			ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
-			ctx.lineTo(x + width - radius, y + height);
-			ctx.quadraticCurveTo(x + width, y + height, x + width, y + height
-					- radius);
-			ctx.lineTo(x + width, y + radius);
-			ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
-			ctx.lineTo(x + radius, y);
-			ctx.quadraticCurveTo(x, y, x, y + radius);
-			ctx.stroke();
-			ctx.fill();
 		}
 
 		function drawCaptions(node) {
@@ -286,5 +357,4 @@ mindmaps.StaticCanvasView = function($container) {
 			ctx.restore();
 		}
 	}
-	;
 };

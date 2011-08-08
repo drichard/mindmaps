@@ -39,10 +39,10 @@ $(function() {
 
 	setupConsole();
 	trackErrors();
-
-	// create a new app controller and go
-	var appController = new mindmaps.ApplicationController();
-	appController.go();
+	
+	if ($.isFunction(mindmaps.start)) {
+		mindmaps.start();
+	}
 });
 
 function trackErrors() {

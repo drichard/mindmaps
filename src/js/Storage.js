@@ -15,6 +15,20 @@ mindmaps.LocalStorage = (function() {
 	};
 })();
 
+mindmaps.SessionStorage = (function() {
+	return {
+		put : function(key, value) {
+			sessionStorage.setItem(key, value);
+		},
+		get : function(key) {
+			return sessionStorage.getItem(key);
+		},
+		clear : function() {
+			sessionStorage.clear();
+		}
+	};
+})();
+
 /**
  * @namespace
  */

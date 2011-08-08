@@ -347,7 +347,7 @@ mindmaps.PrintCommand.prototype = new mindmaps.Command();
 mindmaps.ExportCommand = function() {
 	this.id = "EXPORT_COMMAND";
 	this.icon = "ui-icon-image";
-	this.label = "Export";
+	this.label = "Export As Image";
 	this.description = "Export the mind map";
 };
 mindmaps.ExportCommand.prototype = new mindmaps.Command();

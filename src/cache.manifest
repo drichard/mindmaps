@@ -4,6 +4,7 @@ CACHE MANIFEST
 CACHE:
 index.html
 about.html
+view.html
 css/Aristo/images/bg_fallback.png
 css/Aristo/images/icon_sprite.png
 css/Aristo/images/progress_bar.gif
@@ -17,6 +18,7 @@ css/minicolors/images/line.gif
 css/minicolors/images/rainbow.png
 css/minicolors/images/trigger.png
 css/minicolors/jquery.miniColors.css
+css/common.css
 css/app.css
 css/about.css
 img/favicon.png

@@ -56,6 +56,16 @@ mindmaps.ApplicationController = function() {
 		presenter.go();
 	}
 
+	function doPrintDocument() {
+		mindmaps.StaticCanvasViewController.launch(mindmapModel.getDocument(),
+				mindmaps.StaticCanvasViewController.Action.Print, {foo: "bar"});
+	}
+
+	function doExportDocument() {
+		mindmaps.StaticCanvasViewController.launch(mindmapModel.getDocument(),
+				mindmaps.StaticCanvasViewController.Action.SaveAsPNG, {foo: "bar"});
+	}
+
 	/**
 	 * Initializes the controller, registers for all commands and subscribes to
 	 * event bus.
@@ -79,14 +89,24 @@ mindmaps.ApplicationController = function() {
 				.get(mindmaps.CloseDocumentCommand);
 		closeDocumentCommand.setHandler(doCloseDocument);
 
+		var exportCommand = commandRegistry.get(mindmaps.ExportCommand);
+		exportCommand.setHandler(doExportDocument);
+
+		var printCommand = commandRegistry.get(mindmaps.PrintCommand);
+		printCommand.setHandler(doPrintDocument);
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 			saveDocumentCommand.setEnabled(false);
 			closeDocumentCommand.setEnabled(false);
+			exportCommand.setEnabled(false);
+			printCommand.setEnabled(false);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			saveDocumentCommand.setEnabled(true);
 			closeDocumentCommand.setEnabled(true);
+			exportCommand.setEnabled(true);
+			printCommand.setEnabled(true);
 		});
 
 		// connect undo events emitted from mindmap model with undo controller
