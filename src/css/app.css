@@ -47,21 +47,21 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                                                 
-		                           DXImageTransform.Microsoft.gradient (  
+	filter: progid :                                                  
+		                            DXImageTransform.Microsoft.gradient (   
 		        
 		                 
 		  
 		        
-		                                     startColorstr =         
+		                                      startColorstr =          
 		                            
-		                                      '#75A8C4', endColorstr =      
+		                                       '#75A8C4', endColorstr =       
 		              
 		                             
-		                         '#E5E5E5', GradientType =      
+		                          '#E5E5E5', GradientType =       
 		                          
 		        
-		                                  1 );
+		                                   1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -664,8 +664,6 @@ html,body {
 	padding: 10px;
 	font-size: 12px;
 	background-color: #EEE;
-	max-width: 90%;
-	max-height: 600px;
 }
 
 #export-map-dialog .image-description {
@@ -677,9 +675,9 @@ html,body {
 	text-align: center;
 }
 
-
 #export-preview .map {
 	border: 2px dashed #AAA;
 	border-radius: 5px;
 	max-width: 100%;
+	max-height: 100%;
 }

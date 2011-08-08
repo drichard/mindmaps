@@ -15,6 +15,12 @@ mindmaps.ExportMapView = function() {
 		close : function() {
 			$(this).dialog("destroy");
 			$(this).remove();
+		},
+		open: function() {
+			$(this).css({
+				"max-width": $(window).width() - 100,
+				"max-height": $(window).height() - 100
+			});
 		}
 	});
 
@@ -34,7 +40,8 @@ mindmaps.ExportMapView = function() {
 	};
 
 	this.setImage = function($img) {
-		$("#export-preview", $dialog).empty().append($img);
+		//$("#export-map-dialog .map", $dialog).remove();
+		$("#export-preview").html($img);
 		//$dialog.dialog("option", "position", "center");
 	};
 };
@@ -54,6 +61,6 @@ mindmaps.ExportMapPresenter = function(eventBus, mindmapModel, view) {
 		view.setImage($img);
 		setTimeout(function() {
 			view.showDialog();
-		})
+		});
 	};
 };
