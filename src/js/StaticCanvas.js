@@ -136,8 +136,8 @@ mindmaps.StaticCanvasRenderer = function() {
 				top = pos.y;
 			}
 
-			if (pos.y + tm.height > bottom) {
-				bottom = pos.y + tm.height;
+			if (pos.y + node.outerHeight() > bottom) {
+				bottom = pos.y + node.outerHeight();
 			}
 		}
 
