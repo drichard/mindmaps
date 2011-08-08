@@ -30,6 +30,15 @@
 var mindmaps = mindmaps || {};
 
 /**
+ * Callback function that active module should overwrite to start up the module.
+ * 
+ * @event
+ */
+mindmaps.start = function() {
+
+};
+
+/**
  * Start up. This function is executed when the DOM is loaded.
  */
 $(function() {
@@ -39,10 +48,9 @@ $(function() {
 
 	setupConsole();
 	trackErrors();
-	
-	if ($.isFunction(mindmaps.start)) {
-		mindmaps.start();
-	}
+
+	// start active module
+	mindmaps.start();
 });
 
 function trackErrors() {

@@ -3,7 +3,7 @@
  * viewer. Stores data about the mind map to render in session storage and
  * retrieves it.
  */
-mindmaps.StaticCanvasViewController = (function() {
+mindmaps.StaticCanvas = (function() {
 	// session storage keys
 	var prefix = "mindmaps.view.";
 	var keyDocument = prefix + "document";
@@ -26,7 +26,7 @@ mindmaps.StaticCanvasViewController = (function() {
 						.put(keyOptions, JSON.stringify(options));
 			}
 
-			window.open("/view.html");
+			window.open("/mapviewer.html");
 		},
 
 		getAction : function() {
@@ -53,21 +53,21 @@ mindmaps.StaticCanvasViewController = (function() {
 /**
  * @constructor
  * @param {mindmaps.Document} document
- * @param {mindmaps.StaticCanvasViewController.Action} actions
+ * @param {mindmaps.StaticCanvas.Action} actions
  * @param {Object} options
  * @param {mindmaps.StaticCanvasView} view
  */
 mindmaps.StaticCanvasPresenter = function(document, action, options, view) {
 	this.go = function() {
 		switch (action) {
-		case mindmaps.StaticCanvasViewController.Action.View:
+		case mindmaps.StaticCanvas.Action.View:
 			view.renderOnCanvas(document);
 			break;
-		case mindmaps.StaticCanvasViewController.Action.Print:
+		case mindmaps.StaticCanvas.Action.Print:
 			view.renderOnCanvas(document);
 			view.print();
 			break;
-		case mindmaps.StaticCanvasViewController.Action.SaveAsPNG:
+		case mindmaps.StaticCanvas.Action.SaveAsPNG:
 			view.renderAsPNG(document);
 			break;
 		}
@@ -91,7 +91,9 @@ mindmaps.StaticCanvasView = function($container) {
 
 	var textMetrics = new mindmaps.TextMetrics(this);
 
-	var $canvas = $("<canvas/>");
+	var $canvas = $("<canvas/>", {
+		"class" : "map"
+	});
 	var ctx = $canvas[0].getContext("2d");
 
 	var branchDrawer = new mindmaps.CanvasBranchDrawer();
@@ -198,12 +200,15 @@ mindmaps.StaticCanvasView = function($container) {
 	this.renderAsPNG = function(document) {
 		renderCanvas(document);
 
-		$("<p/>").text("Right-click image and Select 'Save As'").appendTo(
-				$container);
+		$("<h2 class='image-description no-print'/>")
+				.text(
+						"To download the map right-click the image and select \"Save Image As\"")
+				.appendTo($container);
 
 		var data = this.getImageData();
 		$("<img/>", {
-			src : data
+			src : data,
+			"class" : "map"
 		}).appendTo($container);
 
 	};
@@ -235,7 +240,11 @@ mindmaps.StaticCanvasView = function($container) {
 		});
 
 		ctx.textBaseline = "top";
-		ctx.strokeRect(0, 0, width, height);
+
+		// fill background white
+		ctx.fillStyle = "white";
+		ctx.fillRect(0, 0, width, height);
+
 		ctx.translate(width / 2, height / 2);
 
 		// render in two passes: 1. lines, 2. captions. because we have
@@ -258,7 +267,7 @@ mindmaps.StaticCanvasView = function($container) {
 			ctx.stroke();
 			ctx.fill();
 		}
-		
+
 		function drawLines(node, parent) {
 			ctx.save();
 			var x = node.offset.x;

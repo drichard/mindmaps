@@ -1,7 +1,7 @@
 mindmaps.start = function() {
-	var action = mindmaps.StaticCanvasViewController.getAction();
-	var options = mindmaps.StaticCanvasViewController.getOptions();
-	var document = mindmaps.StaticCanvasViewController.getDocument();
+	var action = mindmaps.StaticCanvas.getAction();
+	var options = mindmaps.StaticCanvas.getOptions();
+	var document = mindmaps.StaticCanvas.getDocument();
 
 	console.log(action);
 	console.log(options);
@@ -12,7 +12,7 @@ mindmaps.start = function() {
 		return;
 	}
 	
-	var view = new mindmaps.StaticCanvasView($("#content"));
+	var view = new mindmaps.StaticCanvasView($("#container"));
 	var viewPresenter = new mindmaps.StaticCanvasPresenter(document, action, options, view);
 	viewPresenter.go();
 };

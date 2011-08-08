@@ -1,0 +1,33 @@
+html {
+	font-family: sans-serif;
+}
+
+body {
+	background-color: #EEE;
+}
+
+#container {
+	margin: 10px;
+}
+
+.image-description {
+	font-style: italic;
+	padding-bottom: 10px;
+}
+
+.map {
+	max-width: 100%;
+	border: 2px dashed #AAA;
+	border-radius: 5px;
+}
+
+@media print {
+	.no-print {
+		visibility: hidden;
+		display: none
+	}
+	
+	.map {
+		border: none;
+	}
+}

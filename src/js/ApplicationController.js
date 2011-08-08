@@ -57,13 +57,13 @@ mindmaps.ApplicationController = function() {
 	}
 
 	function doPrintDocument() {
-		mindmaps.StaticCanvasViewController.launch(mindmapModel.getDocument(),
-				mindmaps.StaticCanvasViewController.Action.Print, {foo: "bar"});
+		var action = mindmaps.StaticCanvas.Action.Print;
+		mindmaps.StaticCanvas.launch(mindmapModel.getDocument(), action);
 	}
 
 	function doExportDocument() {
-		mindmaps.StaticCanvasViewController.launch(mindmapModel.getDocument(),
-				mindmaps.StaticCanvasViewController.Action.SaveAsPNG, {foo: "bar"});
+		var action = mindmaps.StaticCanvas.Action.SaveAsPNG;
+		mindmaps.StaticCanvas.launch(mindmapModel.getDocument(), action);
 	}
 
 	/**
