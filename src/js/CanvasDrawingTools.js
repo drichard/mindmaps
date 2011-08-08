@@ -35,7 +35,7 @@ mindmaps.CanvasBranchDrawer = function() {
 	};
 
 	/**
-	 * Render.
+	 * Render that.
 	 * 
 	 * @param {Context} ctx
 	 * @param {Integer} depth
@@ -213,7 +213,7 @@ mindmaps.CanvasBranchDrawer = function() {
 };
 
 /**
- * Utitility object that calculates how much space a text would take up in a
+ * Utility object that calculates how much space a text would take up in a
  * node. This is done through a dummy div that has the same formatting as the
  * node and gets the text injected.
  * 

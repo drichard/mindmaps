@@ -322,3 +322,32 @@ mindmaps.HelpCommand = function() {
 	this.description = "Get help!";
 };
 mindmaps.HelpCommand.prototype = new mindmaps.Command();
+
+/**
+ * Creates a new PrintCommand.
+ * 
+ * @constructor
+ * @augments mindmaps.Command
+ */
+mindmaps.PrintCommand = function() {
+	this.id = "PRINT_COMMAND";
+	this.icon = "ui-icon-print";
+	this.label = "Print";
+	this.shortcut = "alt+ctrl+p";
+	this.description = "Print the mind map";
+};
+mindmaps.PrintCommand.prototype = new mindmaps.Command();
+
+/**
+ * Creates a new ExportCommand.
+ * 
+ * @constructor
+ * @augments mindmaps.Command
+ */
+mindmaps.ExportCommand = function() {
+	this.id = "EXPORT_COMMAND";
+	this.icon = "ui-icon-image";
+	this.label = "Export";
+	this.description = "Export the mind map";
+};
+mindmaps.ExportCommand.prototype = new mindmaps.Command();

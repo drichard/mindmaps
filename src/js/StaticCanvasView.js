@@ -1,14 +1,24 @@
+/*
+ * TODO
+ * on print, save as png etc.. make link to /view.html 
+ * and param action=print|view|saveAsPNG, load data from sessionStorage 
+ * and act according to action
+ * 
+ * 
+ */
+
 "use strict";
 var mindmaps = mindmaps || {};
 
 $(function() {
 	var view = new mindmaps.StaticCanvasView($("#container"));
 	var docs = mindmaps.LocalDocumentStorage.getDocuments();
-//	view.render(docs[1]);
+	// view.render(docs[1]);
 	view.renderAsPNG(docs[0]);
 });
 
 mindmaps.StaticCanvasView = function($container) {
+	if ($container )
 	// magic number. node caption padding top/bottom + node padding bottom - two
 	// extra pixel from text metrics
 	var padding = 8;
@@ -117,27 +127,29 @@ mindmaps.StaticCanvasView = function($container) {
 
 	this.renderAsPNG = function(document) {
 		renderCanvas(document);
-		//location.href = $canvas[0].toDataURL("image/png");
-		window.open($canvas[0].toDataURL("image/png"), "Image", "target=_blank");
+		// location.href = $canvas[0].toDataURL("image/png");
+		window
+				.open($canvas[0].toDataURL("image/png"), "Image",
+						"target=_blank");
 	};
-	
+
 	this.render = function(document) {
 		renderCanvas(document);
 		$canvas.show();
 	};
-	
+
 	this.renderAndPrint = function(document) {
 		renderCanvas(document);
 		$canvas.show();
 		window.print();
 	};
-	
+
 	/**
 	 * @param {mindmaps.Document} document
 	 */
 	function renderCanvas(document) {
 		$canvas.hide();
-		
+
 		var map = document.mindmap;
 		var root = map.getRoot();
 
@@ -212,7 +224,7 @@ mindmaps.StaticCanvasView = function($container) {
 			var tm = node.textMetrics;
 			var caption = node.getCaption();
 			var font = node.text.font;
-			
+
 			ctx.font = font.style + " " + font.weight + " " + font.size
 					+ "px sans-serif";
 			ctx.textAlign = "center";
@@ -227,9 +239,10 @@ mindmaps.StaticCanvasView = function($container) {
 				ctx.lineWidth = 5.0;
 				ctx.strokeStyle = "orange";
 				ctx.fillStyle = "white";
-				roundedRect(ctx, 0 - tm.width/2 - 4, 20 - 4, tm.width + 8, tm.height + 8, 10);
+				roundedRect(ctx, 0 - tm.width / 2 - 4, 20 - 4, tm.width + 8,
+						tm.height + 8, 10);
 			}
-			
+
 			ctx.strokeStyle = font.color;
 			ctx.fillStyle = font.color;
 
@@ -272,5 +285,6 @@ mindmaps.StaticCanvasView = function($container) {
 
 			ctx.restore();
 		}
-	};
+	}
+	;
 };

@@ -279,6 +279,7 @@ mindmaps.ToolBarPresenter = function(eventBus, commandRegistry, view,
 	var fileMenu = new mindmaps.ToolBarMenu("Mind map", "ui-icon-document");
 	var fileCommands = [ mindmaps.NewDocumentCommand,
 			mindmaps.OpenDocumentCommand, mindmaps.SaveDocumentCommand,
+			mindmaps.ExportCommand, mindmaps.PrintCommand,
 			mindmaps.CloseDocumentCommand ];
 	var fileButtons = commandsToButtons(fileCommands);
 	fileMenu.add(fileButtons);
