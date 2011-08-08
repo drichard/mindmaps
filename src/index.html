@@ -147,8 +147,19 @@
 </div>
 </script>
 
+<script id="template-export-map" type="text/x-jquery-tmpl">
+<div id="export-map-dialog" title="Export mind map">
+	<h2 class='image-description'>To download the map right-click the
+		image and select "Save Image As"</h2>
+	<div id="export-preview">
+	</div>
+
+</div>
+</script>
+
 </head>
 <body>
+	<div id="print-area"></div>
 	<div id="container">
 		<div id="topbar">
 			<div id="toolbar">
@@ -235,8 +246,9 @@
 	<script src="js/Event.js"></script>
 	<script src="js/Notification.js"></script>
 	<script src="js/StaticCanvas.js"></script>
+	<script src="js/PrintController.js"></script>
+	<script src="js/ExportMap.js"></script>
 	<!-- JS:LIB:END -->
-	<script src="js/Modules/MainApplication.js"></script>
 
 	<!-- PRODUCTION
 <script type="text/javascript">

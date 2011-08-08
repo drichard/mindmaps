@@ -139,7 +139,7 @@ mindmaps.DefaultCanvasView = function() {
 		self.nodeCaptionEditCommitted(text);
 	};
 
-	var textMetrics = new mindmaps.TextMetrics(this);
+	var textMetrics = mindmaps.TextMetrics;
 	var branchDrawer = new mindmaps.CanvasBranchDrawer();
 	branchDrawer.beforeDraw = function(width, height, left, top) {
 		this.$canvas.attr({
@@ -399,7 +399,7 @@ mindmaps.DefaultCanvasView = function() {
 			"text-decoration" : font.decoration
 		}).appendTo($node);
 
-		var metrics = textMetrics.getTextMetrics(node);
+		var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
 		$text.css(metrics);
 
 		// create fold button for parent if he hasn't one already
@@ -563,7 +563,7 @@ mindmaps.DefaultCanvasView = function() {
 	 */
 	this.setNodeText = function(node, value) {
 		var $text = $getNodeCaption(node);
-		var metrics = textMetrics.getTextMetrics(node, value);
+		var metrics = textMetrics.getTextMetrics(node, this.zoomFactor, value);
 		$text.css(metrics).text(value);
 	};
 
@@ -638,7 +638,7 @@ mindmaps.DefaultCanvasView = function() {
 			"border-bottom-color" : node.branchColor
 		});
 
-		var metrics = textMetrics.getTextMetrics(node);
+		var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
 
 		$text.css({
 			"color" : font.color,
@@ -681,10 +681,10 @@ mindmaps.DefaultCanvasView = function() {
 
 		// handle root differently
 		var $text = $getNodeCaption(root);
-		var metrics = textMetrics.getTextMetrics(root);
+		var metrics = textMetrics.getTextMetrics(root, this.zoomFactor);
 		$text.css({
 			"font-size" : zoomFactor * 100 + "%",
-			"left" : zoomFactor * -TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
+			"left" : zoomFactor * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
 		}).css(metrics);
 
 		root.forEachChild(function(child) {
@@ -708,7 +708,7 @@ mindmaps.DefaultCanvasView = function() {
 				"font-size" : zoomFactor * 100 + "%"
 			});
 
-			var metrics = textMetrics.getTextMetrics(node);
+			var metrics = textMetrics.getTextMetrics(node, self.zoomFactor);
 			$text.css(metrics);
 
 			// redraw canvas to parent
@@ -750,7 +750,7 @@ mindmaps.DefaultCanvasView = function() {
 		}).blur(function() {
 			self.stop();
 		}).bind("input", function() {
-			var metrics = textMetrics.getTextMetrics(self.node, $editor.val());
+			var metrics = textMetrics.getTextMetrics(self.node, view.zoomFactor, $editor.val());
 			$editor.css(metrics);
 
 			// slightly defer execution for better performance on slow browsers
@@ -792,7 +792,7 @@ mindmaps.DefaultCanvasView = function() {
 				}
 			});
 
-			var metrics = textMetrics.getTextMetrics(self.node, this.text);
+			var metrics = textMetrics.getTextMetrics(self.node, view.zoomFactor, this.text);
 			$editor.attr({
 				value : this.text
 			}).css(metrics).appendTo(this.$text).select();

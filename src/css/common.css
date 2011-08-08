@@ -61,12 +61,3 @@ button {
 	text-decoration: underline;
 	cursor: pointer;
 }
-
-/*
- Text Metrics and Node behaviour
-*/
-.node-text-behaviour {
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	font-family: sans-serif;
-}

@@ -213,69 +213,69 @@ mindmaps.CanvasBranchDrawer = function() {
 };
 
 /**
- * Utility object that calculates how much space a text would take up in a
- * node. This is done through a dummy div that has the same formatting as the
- * node and gets the text injected.
+ * Utility module that calculates how much space a text would take up in a node.
+ * This is done through a dummy div that has the same formatting as the node and
+ * gets the text injected.
  * 
- * @constructor
- * @param {mindmaps.CanvasView} view
  */
-mindmaps.TextMetrics = function(view) {
+mindmaps.TextMetrics = (function() {
 	var $div = $("<div/>", {
-		id : "text-metrics-dummy",
 		"class" : "node-text-behaviour"
 	}).css({
 		position : "absolute",
 		visibility : "hidden",
 		height : "auto",
 		width : "auto"
-	}).appendTo(view.$getContainer());
+	}).prependTo($("body"));
 
-	/**
-	 * Calculates the width and height a node would have to provide to show the
-	 * text.
-	 * 
-	 * @param {mindmaps.Node} node the node whose text is to be measured.
-	 * @param {mindmaps.Node} [text] use this instead of the text of node
-	 * @returns {Object} object with properties width and height.
-	 */
-	this.getTextMetrics = function(node, text) {
-		text = text || node.getCaption();
-		var font = node.text.font;
-		var minWidth = node.isRoot() ? mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH
-				: mindmaps.TextMetrics.NODE_CAPTION_MIN_WIDTH;
-		var maxWidth = mindmaps.TextMetrics.NODE_CAPTION_MAX_WIDTH;
+	return {
+		/**
+		 * @constant
+		 */
+		ROOT_CAPTION_MIN_WIDTH : 100,
 
-		$div.css({
-			"font-size" : view.zoomFactor * font.size,
-			"min-width" : view.zoomFactor * minWidth,
-			"max-width" : view.zoomFactor * maxWidth,
-			"font-weight" : font.weight
-		}).text(text);
+		/**
+		 * @constant
+		 */
+		NODE_CAPTION_MIN_WIDTH : 70,
 
-		// add some safety pixels for firefox, otherwise it doesnt render
-		// right on textareas
-		var w = $div.width() + 2;
-		var h = $div.height() + 2;
+		/**
+		 * @constant
+		 */
+		NODE_CAPTION_MAX_WIDTH : 150,
 
-		return {
-			width : w,
-			height : h
-		};
+		/**
+		 * Calculates the width and height a node would have to provide to show
+		 * the text.
+		 * 
+		 * @param {mindmaps.Node} node the node whose text is to be measured.
+		 * @param {mindmaps.Node} [text] use this instead of the text of node
+		 * @returns {Object} object with properties width and height.
+		 */
+		getTextMetrics : function(node, zoomFactor, text) {
+			zoomFactor = zoomFactor || 1;
+			text = text || node.getCaption();
+			var font = node.text.font;
+			var minWidth = node.isRoot() ? this.ROOT_CAPTION_MIN_WIDTH
+					: this.NODE_CAPTION_MIN_WIDTH;
+			var maxWidth = this.NODE_CAPTION_MAX_WIDTH;
+
+			$div.css({
+				"font-size" : zoomFactor * font.size,
+				"min-width" : zoomFactor * minWidth,
+				"max-width" : zoomFactor * maxWidth,
+				"font-weight" : font.weight
+			}).text(text);
+
+			// add some safety pixels for firefox, otherwise it doesnt render
+			// right on textareas
+			var w = $div.width() + 2;
+			var h = $div.height() + 2;
+
+			return {
+				width : w,
+				height : h
+			};
+		}
 	};
-};
-
-/**
- * @constant
- */
-mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH = 100;
-
-/**
- * @constant
- */
-mindmaps.TextMetrics.NODE_CAPTION_MIN_WIDTH = 70;
-
-/**
- * @constant
- */
-mindmaps.TextMetrics.NODE_CAPTION_MAX_WIDTH = 150;
+})();

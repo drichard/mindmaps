@@ -12,6 +12,8 @@ mindmaps.ApplicationController = function() {
 	var clipboardController = new mindmaps.ClipboardController(eventBus,
 			commandRegistry, mindmapModel);
 	var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
+	var printController = new mindmaps.PrintController(eventBus,
+			commandRegistry, mindmapModel);
 
 	/**
 	 * Handles the new document command.
@@ -56,14 +58,10 @@ mindmaps.ApplicationController = function() {
 		presenter.go();
 	}
 
-	function doPrintDocument() {
-		var action = mindmaps.StaticCanvas.Action.Print;
-		mindmaps.StaticCanvas.launch(mindmapModel.getDocument(), action);
-	}
-
 	function doExportDocument() {
-		var action = mindmaps.StaticCanvas.Action.SaveAsPNG;
-		mindmaps.StaticCanvas.launch(mindmapModel.getDocument(), action);
+		var presenter = new mindmaps.ExportMapPresenter(eventBus,
+				mindmapModel, new mindmaps.ExportMapView());
+		presenter.go();
 	}
 
 	/**
@@ -92,21 +90,16 @@ mindmaps.ApplicationController = function() {
 		var exportCommand = commandRegistry.get(mindmaps.ExportCommand);
 		exportCommand.setHandler(doExportDocument);
 
-		var printCommand = commandRegistry.get(mindmaps.PrintCommand);
-		printCommand.setHandler(doPrintDocument);
-
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 			saveDocumentCommand.setEnabled(false);
 			closeDocumentCommand.setEnabled(false);
 			exportCommand.setEnabled(false);
-			printCommand.setEnabled(false);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			saveDocumentCommand.setEnabled(true);
 			closeDocumentCommand.setEnabled(true);
 			exportCommand.setEnabled(true);
-			printCommand.setEnabled(true);
 		});
 
 		// connect undo events emitted from mindmap model with undo controller

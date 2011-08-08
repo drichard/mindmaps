@@ -52,44 +52,14 @@ mindmaps.StaticCanvas = (function() {
 
 /**
  * @constructor
- * @param {mindmaps.Document} document
- * @param {mindmaps.StaticCanvas.Action} actions
- * @param {Object} options
- * @param {mindmaps.StaticCanvasView} view
  */
-mindmaps.StaticCanvasPresenter = function(document, action, options, view) {
-	this.go = function() {
-		switch (action) {
-		case mindmaps.StaticCanvas.Action.View:
-			view.renderOnCanvas(document);
-			break;
-		case mindmaps.StaticCanvas.Action.Print:
-			view.renderOnCanvas(document);
-			view.print();
-			break;
-		case mindmaps.StaticCanvas.Action.SaveAsPNG:
-			view.renderAsPNG(document);
-			break;
-		}
-	};
-};
+mindmaps.StaticCanvasRenderer = function() {
 
-/**
- * @constructor
- * @param $container
- */
-mindmaps.StaticCanvasView = function($container) {
 	// magic number. node caption padding top/bottom + node padding bottom - two
 	// extra pixel from text metrics
 	var padding = 8;
-
+	var zoomFactor = 1;
 	var self = this;
-	this.zoomFactor = 1;
-	this.$getContainer = function() {
-		return $container;
-	};
-
-	var textMetrics = new mindmaps.TextMetrics(this);
 
 	var $canvas = $("<canvas/>", {
 		"class" : "map"
@@ -104,7 +74,7 @@ mindmaps.StaticCanvasView = function($container) {
 	function drawBranch(node, $parent) {
 		ctx.save();
 		branchDrawer.render(ctx, node.getDepth(), node.offset.x, node.offset.y,
-				node, $parent, node.branchColor, self.zoomFactor);
+				node, $parent, node.branchColor, zoomFactor);
 		ctx.restore();
 	}
 
@@ -113,9 +83,9 @@ mindmaps.StaticCanvasView = function($container) {
 		var root = mindmap.getRoot();
 
 		function addProps(node) {
-			var lineWidth = mindmaps.CanvasDrawingUtil.getLineWidth(
-					self.zoomFactor, node.getDepth());
-			var metrics = textMetrics.getTextMetrics(node);
+			var lineWidth = mindmaps.CanvasDrawingUtil.getLineWidth(zoomFactor,
+					node.getDepth());
+			var metrics = mindmaps.TextMetrics.getTextMetrics(node, zoomFactor);
 
 			var props = {
 				lineWidth : lineWidth,
@@ -193,33 +163,25 @@ mindmaps.StaticCanvasView = function($container) {
 	 * 
 	 * @returns {String}
 	 */
-	this.getImageData = function() {
+	this.getImageData = function(document) {
+		renderCanvas(document);
 		return $canvas[0].toDataURL("image/png");
 	};
 
 	this.renderAsPNG = function(document) {
-		renderCanvas(document);
+		var data = this.getImageData(document);
 
-		$("<h2 class='image-description no-print'/>")
-				.text(
-						"To download the map right-click the image and select \"Save Image As\"")
-				.appendTo($container);
-
-		var data = this.getImageData();
-		$("<img/>", {
+		var img = $("<img/>", {
 			src : data,
 			"class" : "map"
-		}).appendTo($container);
+		});
 
+		return img;
 	};
 
-	this.renderOnCanvas = function(document) {
+	this.renderAsCanvas = function(document) {
 		renderCanvas(document);
-		$canvas.appendTo($container);
-	};
-
-	this.print = function() {
-		window.print();
+		return $canvas;
 	};
 
 	/**

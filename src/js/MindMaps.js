@@ -29,14 +29,6 @@
  */
 var mindmaps = mindmaps || {};
 
-/**
- * Callback function that active module should overwrite to start up the module.
- * 
- * @event
- */
-mindmaps.start = function() {
-
-};
 
 /**
  * Start up. This function is executed when the DOM is loaded.
@@ -49,8 +41,9 @@ $(function() {
 	setupConsole();
 	trackErrors();
 
-	// start active module
-	mindmaps.start();
+	// create a new app controller and go
+	var appController = new mindmaps.ApplicationController();
+	appController.go();
 });
 
 function trackErrors() {

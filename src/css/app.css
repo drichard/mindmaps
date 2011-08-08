@@ -1,4 +1,13 @@
 /*
+ Text Metrics and Node behaviour
+*/
+.node-text-behaviour {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	font-family: sans-serif;
+}
+
+/*
  jquery ui
 */
 .ui-effects-transfer {
@@ -38,16 +47,21 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                                 
-		           DXImageTransform.Microsoft.gradient (             
+	filter: progid :                                                 
+		                           DXImageTransform.Microsoft.gradient (  
+		        
+		                 
 		  
 		        
-		                     startColorstr =                      
-		                      '#75A8C4', endColorstr =     
+		                                     startColorstr =         
+		                            
+		                                      '#75A8C4', endColorstr =      
+		              
 		                             
-		         '#E5E5E5', GradientType =                 
+		                         '#E5E5E5', GradientType =      
+		                          
 		        
-		                  1 );
+		                                  1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -606,4 +620,66 @@ html,body {
 
 .notification .close-button:hover {
 	text-decoration: underline;
+}
+
+#print-area {
+	visibility: hidden;
+	position: absolute;
+	overflow: hidden;
+	height: 0px;
+}
+
+#print-area .map {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+@media print {
+	body {
+		height: auto;
+	}
+	#container {
+		display: none;
+		visibility: hidden;
+	}
+	.no-print {
+		visibility: hidden;
+		display: none
+	}
+	#print-area {
+		display: block;
+		visibility: visible;
+		height: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		max-width: 100%;
+		max-height: 100%;
+	}
+}
+
+#export-map-dialog {
+	padding: 10px;
+	font-size: 12px;
+	background-color: #EEE;
+	max-width: 90%;
+	max-height: 600px;
+}
+
+#export-map-dialog .image-description {
+	font-style: italic;
+	padding-bottom: 10px;
+}
+
+#export-preview {
+	text-align: center;
+}
+
+
+#export-preview .map {
+	border: 2px dashed #AAA;
+	border-radius: 5px;
+	max-width: 100%;
 }

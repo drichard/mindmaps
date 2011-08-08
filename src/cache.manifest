@@ -4,7 +4,6 @@ CACHE MANIFEST
 CACHE:
 index.html
 about.html
-mapviewer.html
 css/Aristo/images/bg_fallback.png
 css/Aristo/images/icon_sprite.png
 css/Aristo/images/progress_bar.gif
