@@ -180,7 +180,7 @@ mindmaps.NavigatorView = function() {
 					var posY = scale(child.offset.y);
 					// var textWidth =
 					// ctx.measureText(child.getCaption()).width;
-					textWidth = 5;
+					var textWidth = 5;
 
 					/**
 					 * draw two lines: one going up to the node, and a second
