@@ -13,12 +13,14 @@ mindmaps.InspectorView = function() {
 	var $boldCheckbox = $("#inspector-checkbox-font-bold", $content);
 	var $italicCheckbox = $("#inspector-checkbox-font-italic", $content);
 	var $underlineCheckbox = $("#inspector-checkbox-font-underline", $content);
+	var $linethroughCheckbox = $("#inspector-checkbox-font-linethrough",
+			$content);
 	var $applyToAllButton = $("#inspector-button-apply-all", $content);
 	var branchColorPicker = $("#inspector-branch-color-picker", $content);
 	var fontColorPicker = $("#inspector-font-color-picker", $content);
 	var $allButtons = [ $sizeDecreaseButton, $sizeIncreaseButton,
 			$boldCheckbox, $italicCheckbox, $underlineCheckbox,
-			$applyToAllButton ];
+			$linethroughCheckbox, $applyToAllButton ];
 	var $allColorpickers = [ branchColorPicker, fontColorPicker ];
 
 	/**
@@ -71,6 +73,15 @@ mindmaps.InspectorView = function() {
 	 */
 	this.setUnderlineCheckboxState = function(checked) {
 		$underlineCheckbox.prop("checked", checked).button("refresh");
+	};
+
+	/**
+	 * Sets the checked state of the linethrough font option.
+	 * 
+	 * @param {Boolean} checked
+	 */
+	this.setLinethroughCheckboxState = function(checked) {
+		$linethroughCheckbox.prop("checked", checked).button("refresh");
 	};
 
 	/**
@@ -128,6 +139,13 @@ mindmaps.InspectorView = function() {
 			if (self.fontUnderlineCheckboxClicked) {
 				var checked = $(this).prop("checked");
 				self.fontUnderlineCheckboxClicked(checked);
+			}
+		});
+
+		$linethroughCheckbox.click(function() {
+			if (self.fontLinethroughCheckboxClicked) {
+				var checked = $(this).prop("checked");
+				self.fontLinethroughCheckboxClicked(checked);
 			}
 		});
 
@@ -208,7 +226,13 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
 
 	view.fontUnderlineCheckboxClicked = function(checked) {
 		var action = new mindmaps.action.SetFontDecorationAction(
-				mindmapModel.selectedNode, checked);
+				mindmapModel.selectedNode, checked ? "underline" : "none");
+		mindmapModel.executeAction(action);
+	};
+
+	view.fontLinethroughCheckboxClicked = function(checked) {
+		var action = new mindmaps.action.SetFontDecorationAction(
+				mindmapModel.selectedNode, checked ? "line-through" : "none");
 		mindmapModel.executeAction(action);
 	};
 
@@ -268,6 +292,7 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
 		view.setBoldCheckboxState(font.weight === "bold");
 		view.setItalicCheckboxState(font.style === "italic");
 		view.setUnderlineCheckboxState(font.decoration === "underline");
+		view.setLinethroughCheckboxState(font.decoration === "line-through");
 		view.setFontColorPickerColor(font.color);
 		view.setBranchColorPickerColor(node.branchColor);
 	}

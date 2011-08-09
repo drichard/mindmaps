@@ -314,22 +314,23 @@ mindmaps.action.SetFontStyleAction = function(node, italic) {
 mindmaps.action.SetFontStyleAction.prototype = new mindmaps.action.Action();
 
 /**
- * Creates a new SetFontDecorationAction.
+ * Creates a new SetFontDecorationAction. Possible styles: "none", "underline",
+ * "line-through".
  * 
  * @constructor
  * @augments mindmaps.action.Action
  * @param {mindmaps.Node} node
- * @param {Boolean} underline
+ * @param {String} style
  */
-mindmaps.action.SetFontDecorationAction = function(node, underline) {
+mindmaps.action.SetFontDecorationAction = function(node, style) {
+	var oldDecoration = node.text.font.decoration;
 	this.execute = function() {
-		var decoration = underline ? "underline" : "none";
-		node.text.font.decoration = decoration;
+		node.text.font.decoration = style;
 	};
 
 	this.event = [ mindmaps.Event.NODE_FONT_CHANGED, node ];
 	this.undo = function() {
-		return new mindmaps.action.SetFontDecorationAction(node, !underline);
+		return new mindmaps.action.SetFontDecorationAction(node, oldDecoration);
 	};
 };
 mindmaps.action.SetFontDecorationAction.prototype = new mindmaps.action.Action();

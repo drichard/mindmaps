@@ -47,21 +47,22 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                                                  
-		                            DXImageTransform.Microsoft.gradient (   
+	filter: progid :                                                   
+		                             DXImageTransform.Microsoft.gradient (    
 		        
 		                 
 		  
 		        
-		                                      startColorstr =          
+		                                       startColorstr =           
 		                            
-		                                       '#75A8C4', endColorstr =       
+		                                        '#75A8C4', endColorstr =
+		       
 		              
 		                             
-		                          '#E5E5E5', GradientType =       
+		                           '#E5E5E5', GradientType =        
 		                          
 		        
-		                                   1 );
+		                                    1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -480,6 +481,27 @@ html,body {
 #inspector-table {
 	width: 100%;
 	font-size: 12px;
+}
+
+#inspector-table .font-styles .ui-button-text {
+	font-size: 11px;
+	font-weight: normal;
+}
+
+#inspector-label-font-bold .ui-button-text {
+	font-weight: bold !important;
+}
+
+#inspector-label-font-italic .ui-button-text {
+	font-style: italic;
+}
+
+#inspector-label-font-underline .ui-button-text {
+	text-decoration: underline;
+}
+
+#inspector-label-font-linethrough .ui-button-text {
+	text-decoration: line-through;
 }
 
 .file-dialog h1 {
