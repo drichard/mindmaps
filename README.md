@@ -13,7 +13,7 @@ mindmaps is a web application that lets you easily create good looking mind maps
 The latest stable build is hosted [here] (http://drichard.org/mindmaps).
 
 ## Changelog
-###09/08/11
+### 09/08/11
 - Implemented PNG export
 - Added support for printing the mind map
 
