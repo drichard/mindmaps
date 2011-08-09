@@ -16,6 +16,15 @@ mindmaps.CanvasDrawingUtil = {
 		return width;
 	},
 
+	/**
+	 * Draws a rounded rectangle
+	 * @param ctx
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param radius
+	 */
 	roundedRect : function roundedRect(ctx, x, y, width, height, radius) {
 		// from MDN docs
 		ctx.beginPath();
@@ -54,7 +63,7 @@ mindmaps.CanvasBranchDrawer = function() {
 	/**
 	 * Render that.
 	 * 
-	 * @param {Context} ctx
+	 * @param {CanvasRenderingContext2D} ctx
 	 * @param {Integer} depth
 	 * @param {Number} offsetX
 	 * @param {Number} offsetY

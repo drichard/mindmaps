@@ -9,11 +9,14 @@ mindmaps.PrintController = function(eventBus, commandRegistry, mindmapModel) {
 	printCommand.setHandler(doPrintDocument);
 
 	var renderer = new mindmaps.StaticCanvasRenderer();
-	
+
 	function doPrintDocument() {
 		var $img = renderer.renderAsPNG(mindmapModel.getDocument());
 		$("#print-area").html($img);
 		window.print();
+
+		// TODO chrome only: after print() opens a new tab, and one switches
+		// back to the old tab the canvas container has scrolled top-left.
 	}
 
 	eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {

@@ -46,7 +46,6 @@ mindmaps.ExportMapView = function() {
 	};
 
 	this.setImage = function($img) {
-		// $("#export-map-dialog .map", $dialog).remove();
 		$("#export-preview").html($img);
 	};
 };
@@ -64,6 +63,9 @@ mindmaps.ExportMapPresenter = function(eventBus, mindmapModel, view) {
 	this.go = function() {
 		var $img = renderer.renderAsPNG(mindmapModel.getDocument());
 		view.setImage($img);
+
+		// slightly delay showing the dialog. otherwise dialog is not correctly
+		// centered, because the image is inserted too late
 		setTimeout(function() {
 			view.showDialog();
 		}, 30);
