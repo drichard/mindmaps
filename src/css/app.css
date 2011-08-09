@@ -1,65 +1,10 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video
-	{
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section
-	{
-	display: block;
-}
-
-body {
-	line-height: 1;
-}
-
-ol,ul {
-	list-style: none;
-}
-
-blockquote,q {
-	quotes: none;
-}
-
-blockquote:before,blockquote:after,q:before,q:after {
-	content: '';
-	content: none;
-}
-
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
 /*
-	USER STYLES
+ Text Metrics and Node behaviour
 */
-button {
-	margin: 0;
-}
-
-/*
-	UTIL
-*/
-.no-select {
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-o-user-select: none;
-	user-select: none;
-}
-
-.link {
-	text-decoration: underline;
-	cursor: pointer;
+.node-text-behaviour {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	font-family: sans-serif;
 }
 
 /*
@@ -102,16 +47,21 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                               
-		         DXImageTransform.Microsoft.gradient (           
+	filter: progid :                                                  
+		                            DXImageTransform.Microsoft.gradient (   
+		        
+		                 
 		  
 		        
-		                   startColorstr =                    
-		                    '#75A8C4', endColorstr =   
+		                                      startColorstr =          
+		                            
+		                                       '#75A8C4', endColorstr =       
+		              
 		                             
-		       '#E5E5E5', GradientType =               
+		                          '#E5E5E5', GradientType =       
+		                          
 		        
-		                1 );
+		                                   1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
 }
@@ -288,11 +238,6 @@ html,body {
 	padding: 4px;
 	text-align: center;
 	border-radius: 5px;
-}
-
-.node-text-behaviour {
-	white-space: pre-wrap;
-	word-wrap: break-word;
 }
 
 .mindmap .node-caption:hover {
@@ -641,7 +586,6 @@ html,body {
 	box-shadow: 1px 1px 7px 1px #F70000;
 }
 
-
 .notification .title {
 	font-weight: bold;
 	font-size: 18px;
@@ -676,4 +620,63 @@ html,body {
 
 .notification .close-button:hover {
 	text-decoration: underline;
+}
+
+#print-area {
+	visibility: hidden;
+	position: absolute;
+	overflow: hidden;
+	height: 0px;
+}
+
+#print-area .map {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+@media print {
+	body {
+		height: auto;
+	}
+	#container {
+		display: none;
+		visibility: hidden;
+	}
+	.no-print {
+		visibility: hidden;
+		display: none
+	}
+	#print-area {
+		display: block;
+		visibility: visible;
+		height: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		max-width: 100%;
+		max-height: 100%;
+	}
+}
+
+#export-map-dialog {
+	padding: 10px;
+	font-size: 12px;
+	background-color: #EEE;
+}
+
+#export-map-dialog .image-description {
+	font-style: italic;
+	padding-bottom: 10px;
+}
+
+#export-preview {
+	text-align: center;
+}
+
+#export-preview .map {
+	border: 2px dashed #AAA;
+	border-radius: 5px;
+	max-width: 100%;
 }

@@ -12,6 +12,8 @@ mindmaps.ApplicationController = function() {
 	var clipboardController = new mindmaps.ClipboardController(eventBus,
 			commandRegistry, mindmapModel);
 	var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
+	var printController = new mindmaps.PrintController(eventBus,
+			commandRegistry, mindmapModel);
 
 	/**
 	 * Handles the new document command.
@@ -56,6 +58,12 @@ mindmaps.ApplicationController = function() {
 		presenter.go();
 	}
 
+	function doExportDocument() {
+		var presenter = new mindmaps.ExportMapPresenter(eventBus,
+				mindmapModel, new mindmaps.ExportMapView());
+		presenter.go();
+	}
+
 	/**
 	 * Initializes the controller, registers for all commands and subscribes to
 	 * event bus.
@@ -79,14 +87,19 @@ mindmaps.ApplicationController = function() {
 				.get(mindmaps.CloseDocumentCommand);
 		closeDocumentCommand.setHandler(doCloseDocument);
 
+		var exportCommand = commandRegistry.get(mindmaps.ExportCommand);
+		exportCommand.setHandler(doExportDocument);
+
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
 			saveDocumentCommand.setEnabled(false);
 			closeDocumentCommand.setEnabled(false);
+			exportCommand.setEnabled(false);
 		});
 
 		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
 			saveDocumentCommand.setEnabled(true);
 			closeDocumentCommand.setEnabled(true);
+			exportCommand.setEnabled(true);
 		});
 
 		// connect undo events emitted from mindmap model with undo controller

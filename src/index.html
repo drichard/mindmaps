@@ -10,6 +10,7 @@
 <meta charset="utf-8">
 <title>mindmaps</title>
 <link rel="icon" type="image/png" href="img/favicon.png" />
+<link rel="stylesheet" href="css/common.css">
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/Aristo/jquery-ui-1.8.7.custom.css" />
 <link rel="stylesheet" href="css/minicolors/jquery.miniColors.css">
@@ -146,8 +147,20 @@
 </div>
 </script>
 
+<script id="template-export-map" type="text/x-jquery-tmpl">
+<div id="export-map-dialog" title="Export mind map">
+	<h2 class='image-description'>To download the map right-click the
+		image and select "Save Image As"</h2>
+	<div id="export-preview"></div>
+</div>
+</script>
+
 </head>
 <body>
+	<div id="print-area">
+		<p class="print-placeholder">Please use the print option from the
+			mind map menu</p>
+	</div>
 	<div id="container">
 		<div id="topbar">
 			<div id="toolbar">
@@ -167,9 +180,10 @@
 		</div>
 		<div id="bottombar">
 			<div id="about">
-				<a href="about.html" target="_blank">About mindmaps</a>
-				<span style="padding: 0 4px;">|</span>
-				<a style="font-weight: bold" href="https://spreadsheets.google.com/a/drichard.org/spreadsheet/viewform?formkey=dEE3VzFWOFp6ZV9odEhhczVBUUdzc2c6MQ" target="_blank">Feedback</a>
+				<a href="about.html" target="_blank">About mindmaps</a> <span
+					style="padding: 0 4px;">|</span> <a style="font-weight: bold"
+					href="https://spreadsheets.google.com/a/drichard.org/spreadsheet/viewform?formkey=dEE3VzFWOFp6ZV9odEhhczVBUUdzc2c6MQ"
+					target="_blank">Feedback</a>
 			</div>
 			<div id="statusbar">
 				<div
@@ -220,6 +234,7 @@
 	<script src="js/Inspector.js"></script>
 	<script src="js/ToolBar.js"></script>
 	<script src="js/StatusBar.js"></script>
+	<script src="js/CanvasDrawingTools.js"></script>
 	<script src="js/CanvasView.js"></script>
 	<script src="js/CanvasPresenter.js"></script>
 	<script src="js/ApplicationController.js"></script>
@@ -231,6 +246,9 @@
 	<script src="js/Storage.js"></script>
 	<script src="js/Event.js"></script>
 	<script src="js/Notification.js"></script>
+	<script src="js/StaticCanvas.js"></script>
+	<script src="js/PrintController.js"></script>
+	<script src="js/ExportMap.js"></script>
 	<!-- JS:LIB:END -->
 
 	<!-- PRODUCTION

@@ -135,10 +135,20 @@ mindmaps.DefaultCanvasView = function() {
 	var nodeDragging = false;
 	var creator = new Creator(this);
 	var captionEditor = new CaptionEditor(this);
-	var textMetrics = new TextMetrics(this);
-
 	captionEditor.commit = function(text) {
 		self.nodeCaptionEditCommitted(text);
+	};
+
+	var textMetrics = mindmaps.TextMetrics;
+	var branchDrawer = new mindmaps.CanvasBranchDrawer();
+	branchDrawer.beforeDraw = function(width, height, left, top) {
+		this.$canvas.attr({
+			width : width,
+			height : height
+		}).css({
+			left : left,
+			top : top
+		});
 	};
 
 	/**
@@ -165,191 +175,16 @@ mindmaps.DefaultCanvasView = function() {
 		return $("#node-caption-" + node.id);
 	}
 
-	/**
-	 * Draws the line connection (the branch) between two nodes onto the canvas
-	 * object.
-	 * 
-	 * @param {jQuery} $canvas
-	 * @param {Integer} depth
-	 * @param {Number} offsetX
-	 * @param {Number} offsetY
-	 * @param {jQuery} $node
-	 * @param {jQuery} $parent
-	 * @param {String} color
-	 */
 	function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
 			color) {
-		var zoomFactor = self.zoomFactor;
-		offsetX = offsetX * zoomFactor;
-		offsetY = offsetY * zoomFactor;
-
-		var pw = $parent.width();
-		var nw = $node.width();
-		var pih = $parent.innerHeight();
-		var nih = $node.innerHeight();
-
-		// line is drawn from node to parent
-		// draw direction
-		var leftToRight, topToBottom;
-		
-		// node overlaps with parent above or delow
-		var overlap = false;
-		
-		// canvas attributes
-		var left, top, width, height;
-		var bColor;
-		
-		// position relative to parent
-		var nodeLeft = offsetX + nw / 2 < pw / 2;
-		if (nodeLeft) {
-			var aOffsetX = Math.abs(offsetX);
-			if (aOffsetX > nw) {
-				// normal left
-				
-				// make it one pixel too wide to fix firefox rounding issues
-				width = aOffsetX - nw + 1;
-				left = nw;
-				leftToRight = true;
-
-				//bColor = "red";
-			} else {
-				// left overlap
-				left = -offsetX;
-				width = nw + offsetX;
-				leftToRight = false;
-				overlap = true;
-
-				//bColor = "orange";
-			}
-		} else {
-			if (offsetX > pw) {
-				// normal right
-				
-				// make it one pixel too wide to fix firefox rounding issues
-				width = offsetX - pw + 1; 
-				left = pw - offsetX;
-				leftToRight = false;
-
-				//bColor = "green";
-			} else {
-				// right overlap
-				width = pw - offsetX;
-				left = 0;
-				leftToRight = true;
-				overlap = true;
-
-				//bColor = "yellow";
-			}
-		}
-
-
-		var lineWidth = self.getLineWidth(depth);
-		var halfLineWidth = lineWidth / 2;
-		
-		// avoid zero widths
-		if (width < lineWidth) {
-			width = lineWidth;
-		}
-
-		var nodeAbove = offsetY + nih < pih;
-		if (nodeAbove) {
-			top = nih;
-			height = $parent.outerHeight() - offsetY - top;
-
-			topToBottom = true;
-		} else {
-			top = pih - offsetY;
-			height = $node.outerHeight() - top;
-
-			topToBottom = false;
-		}
-
-		// position canvas
-		$canvas.attr({
-			width : width,
-			height : height
-		}).css({
-			left : left,
-			top : top
-		// ,border: "1px solid " + bColor
-		});
-
-		// determine start and end coordinates
-		var startX, startY, endX, endY;
-		if (leftToRight) {
-			startX = 0;
-			endX = width;
-		} else {
-			startX = width;
-			endX = 0;
-		}
-
-		// calculate difference in line width to parent node
-		// and position line vertically centered to parent line
-		var pLineWidth = self.getLineWidth(depth - 1);
-		var diff = (pLineWidth - lineWidth)/2;
-		
-		if (topToBottom) {
-			startY = 0 + halfLineWidth;
-			endY = height - halfLineWidth - diff;
-		} else {
-			startY = height - halfLineWidth;
-			endY = 0 + halfLineWidth + diff;
-		}
-
-		// calculate bezier points
-		if (!overlap) {
-			var cp2x = startX > endX ? startX / 5 : endX - (endX / 5);
-			var cp2y = endY;
-
-			var cp1x = Math.abs(startX - endX) / 2;
-			var cp1y = startY;
-		} else {
-			// node overlaps with parent
-			
-			// take left and right a bit away so line fits fully in canvas
-			if (leftToRight) {
-				startX += halfLineWidth;
-				endX -= halfLineWidth;
-			} else {
-				startX -= halfLineWidth;
-				endX += halfLineWidth;
-			}
-
-			// reversed bezier for overlap
-			var cp1x = startX;
-			var cp1y = Math.abs(startY - endY) / 2;
-
-			var cp2x = endX;
-			var cp2y = startY > endY ? startY / 5 : endY - (endY / 5);
-		}
-
-		// draw
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext("2d");
-		ctx.lineWidth = lineWidth;
-		ctx.strokeStyle = color;
-		ctx.fillStyle = color;
-		
-		ctx.beginPath();
-		ctx.moveTo(startX, startY);
-		ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-		ctx.stroke();
 
-		var drawControlPoints = false;
-		if (drawControlPoints) {
-			// control points
-			ctx.beginPath();
-			ctx.fillStyle = "red";
-			ctx.arc(cp1x, cp1y, 4, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.beginPath();
-			ctx.fillStyle = "green";
-			ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
-			ctx.fill();
-		}
+		// set $canvas for beforeDraw() callback.
+		branchDrawer.$canvas = $canvas;
+		branchDrawer.render(ctx, depth, offsetX, offsetY, $node, $parent,
+				color, self.zoomFactor);
 	}
-
 
 	this.init = function() {
 		makeDraggable();
@@ -424,14 +259,7 @@ mindmaps.DefaultCanvasView = function() {
 	 * @returns {Number}
 	 */
 	this.getLineWidth = function(depth) {
-		// var width = this.zoomFactor * (10 - depth);
-		var width = this.zoomFactor * (12 - depth * 2);
-
-		if (width < 2) {
-			width = 2;
-		}
-
-		return width;
+		return mindmaps.CanvasDrawingUtil.getLineWidth(this.zoomFactor, depth);
 	};
 
 	/**
@@ -571,7 +399,7 @@ mindmaps.DefaultCanvasView = function() {
 			"text-decoration" : font.decoration
 		}).appendTo($node);
 
-		var metrics = textMetrics.getTextMetrics(node);
+		var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
 		$text.css(metrics);
 
 		// create fold button for parent if he hasn't one already
@@ -735,7 +563,7 @@ mindmaps.DefaultCanvasView = function() {
 	 */
 	this.setNodeText = function(node, value) {
 		var $text = $getNodeCaption(node);
-		var metrics = textMetrics.getTextMetrics(node, value);
+		var metrics = textMetrics.getTextMetrics(node, this.zoomFactor, value);
 		$text.css(metrics).text(value);
 	};
 
@@ -810,7 +638,7 @@ mindmaps.DefaultCanvasView = function() {
 			"border-bottom-color" : node.branchColor
 		});
 
-		var metrics = textMetrics.getTextMetrics(node);
+		var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
 
 		$text.css({
 			"color" : font.color,
@@ -853,10 +681,10 @@ mindmaps.DefaultCanvasView = function() {
 
 		// handle root differently
 		var $text = $getNodeCaption(root);
-		var metrics = textMetrics.getTextMetrics(root);
+		var metrics = textMetrics.getTextMetrics(root, this.zoomFactor);
 		$text.css({
 			"font-size" : zoomFactor * 100 + "%",
-			"left" : zoomFactor * -TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
+			"left" : zoomFactor * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
 		}).css(metrics);
 
 		root.forEachChild(function(child) {
@@ -880,7 +708,7 @@ mindmaps.DefaultCanvasView = function() {
 				"font-size" : zoomFactor * 100 + "%"
 			});
 
-			var metrics = textMetrics.getTextMetrics(node);
+			var metrics = textMetrics.getTextMetrics(node, self.zoomFactor);
 			$text.css(metrics);
 
 			// redraw canvas to parent
@@ -922,7 +750,7 @@ mindmaps.DefaultCanvasView = function() {
 		}).blur(function() {
 			self.stop();
 		}).bind("input", function() {
-			var metrics = textMetrics.getTextMetrics(self.node, $editor.val());
+			var metrics = textMetrics.getTextMetrics(self.node, view.zoomFactor, $editor.val());
 			$editor.css(metrics);
 
 			// slightly defer execution for better performance on slow browsers
@@ -956,14 +784,15 @@ mindmaps.DefaultCanvasView = function() {
 				height : "auto"
 			}).empty().addClass("edit");
 
-			// TODO cancel area doesnt cancel but commits now. fix this mess and try to commit on blur() event
+			// TODO cancel area doesnt cancel but commits now. fix this mess and
+			// try to commit on blur() event
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
 				if (self.commit) {
 					self.commit($editor.val());
 				}
 			});
 
-			var metrics = textMetrics.getTextMetrics(self.node, this.text);
+			var metrics = textMetrics.getTextMetrics(self.node, view.zoomFactor, this.text);
 			$editor.attr({
 				value : this.text
 			}).css(metrics).appendTo(this.$text).select();
@@ -1118,73 +947,6 @@ mindmaps.DefaultCanvasView = function() {
 			return dragging;
 		};
 	}
-
-	/**
-	 * Utitility object that calculates how much space a text would take up in a
-	 * node. This is done through a dummy div that has the same formatting as
-	 * the node and gets the text injected.
-	 * 
-	 * @constructor
-	 * @param {mindmaps.CanvasView} view
-	 */
-	function TextMetrics(view) {
-		var $div = $("<div/>", {
-			id : "text-metrics-dummy",
-			"class" : "node-text-behaviour"
-		}).css({
-			position : "absolute",
-			visibility : "hidden",
-			height : "auto",
-			width : "auto"
-		}).appendTo(view.$getContainer());
-
-		/**
-		 * Calculates the width and height a node would have to provide to show
-		 * the text.
-		 * 
-		 * @param {mindmaps.Node} node the node whose text is to be measured.
-		 * @param {mindmaps.Node} [text] use this instead of the text of node
-		 * @returns {Object} object with properties width and height.
-		 */
-		this.getTextMetrics = function(node, text) {
-			text = text || node.getCaption();
-			var font = node.text.font;
-			var minWidth = node.isRoot() ? TextMetrics.ROOT_CAPTION_MIN_WIDTH
-					: TextMetrics.NODE_CAPTION_MIN_WIDTH;
-			var maxWidth = TextMetrics.NODE_CAPTION_MAX_WIDTH;
-
-			$div.css({
-				"font-size" : view.zoomFactor * font.size,
-				"min-width" : view.zoomFactor * minWidth,
-				"max-width" : view.zoomFactor * maxWidth,
-				"font-weight" : font.weight
-			}).text(text);
-
-			// add some safety pixels for firefox, otherwise it doesnt render
-			// right on textareas
-			var w = $div.width() + 2;
-			var h = $div.height() + 2;
-
-			return {
-				width : w,
-				height : h
-			};
-		};
-	}
-	/**
-	 * @constant
-	 */
-	TextMetrics.ROOT_CAPTION_MIN_WIDTH = 100;
-
-	/**
-	 * @constant
-	 */
-	TextMetrics.NODE_CAPTION_MIN_WIDTH = 70;
-
-	/**
-	 * @constant
-	 */
-	TextMetrics.NODE_CAPTION_MAX_WIDTH = 150;
 };
 
 // inherit from base canvas view

@@ -194,7 +194,7 @@ mindmaps.Node.prototype.getRoot = function() {
 /**
  * Gets the position of the node relative to the root.
  * 
- * @returns {Number}
+ * @returns {mindmaps.Point}
  */
 mindmaps.Node.prototype.getPosition = function() {
 	var pos = this.offset.clone();

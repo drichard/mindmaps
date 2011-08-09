@@ -9,7 +9,7 @@ var scriptFilename = "script.js";
 var scriptDir = "js/";
 var regexScriptSection = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
 var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
-		".project", "README.md", "canvas.html", "*psd", "*.psd", "*libs" ];
+		".project", "README.md", "*psd", "*.psd", "*libs" ];
 var indexFile = fs.readFileSync(srcDir + indexFileName, "utf8");
 var scriptNames = [];
 
