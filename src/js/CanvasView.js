@@ -135,8 +135,10 @@ mindmaps.DefaultCanvasView = function() {
 	var nodeDragging = false;
 	var creator = new Creator(this);
 	var captionEditor = new CaptionEditor(this);
-	captionEditor.commit = function(text) {
-		self.nodeCaptionEditCommitted(text);
+	captionEditor.commit = function(node, text) {
+		if (self.nodeCaptionEditCommitted) {
+			self.nodeCaptionEditCommitted(node, text);
+		}
 	};
 
 	var textMetrics = mindmaps.TextMetrics;
@@ -682,10 +684,12 @@ mindmaps.DefaultCanvasView = function() {
 		// handle root differently
 		var $text = $getNodeCaption(root);
 		var metrics = textMetrics.getTextMetrics(root, this.zoomFactor);
-		$text.css({
-			"font-size" : zoomFactor * 100 + "%",
-			"left" : zoomFactor * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
-		}).css(metrics);
+		$text.css(
+				{
+					"font-size" : zoomFactor * 100 + "%",
+					"left" : zoomFactor
+							* -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
+				}).css(metrics);
 
 		root.forEachChild(function(child) {
 			scale(child, 1);
@@ -741,23 +745,34 @@ mindmaps.DefaultCanvasView = function() {
 		}).bind("keydown", "esc", function() {
 			self.stop();
 		}).bind("keydown", "return", function() {
-			if (self.commit) {
-				self.commit($editor.val());
-			}
+			commitText();
 		}).mousedown(function(e) {
 			// avoid premature canceling
 			e.stopPropagation();
 		}).blur(function() {
-			self.stop();
-		}).bind("input", function() {
-			var metrics = textMetrics.getTextMetrics(self.node, view.zoomFactor, $editor.val());
-			$editor.css(metrics);
+			commitText();
+		}).bind(
+				"input",
+				function() {
+					var metrics = textMetrics.getTextMetrics(self.node,
+							view.zoomFactor, $editor.val());
+					$editor.css(metrics);
+					alignBranches();
+				});
 
-			// slightly defer execution for better performance on slow browsers
+		function commitText() {
+			if (attached && self.commit) {
+				self.commit(self.node, $editor.val());
+			}
+		}
+
+		function alignBranches() {
+			// slightly defer execution for better performance on slow
+			// browsers
 			setTimeout(function() {
 				view.redrawNodeConnectors(self.node);
 			}, 1);
-		});
+		}
 
 		/**
 		 * Attaches the textarea to the node and temporarily removes the
@@ -784,15 +799,15 @@ mindmaps.DefaultCanvasView = function() {
 				height : "auto"
 			}).empty().addClass("edit");
 
-			// TODO cancel area doesnt cancel but commits now. fix this mess and
-			// try to commit on blur() event
+			// jquery ui prevents blur() event from happening when dragging a
+			// draggable. need this
+			// workaround to detect click on other draggable
 			$cancelArea.bind("mousedown.editNodeCaption", function(e) {
-				if (self.commit) {
-					self.commit($editor.val());
-				}
+				commitText();
 			});
 
-			var metrics = textMetrics.getTextMetrics(self.node, view.zoomFactor, this.text);
+			var metrics = textMetrics.getTextMetrics(self.node,
+					view.zoomFactor, this.text);
 			$editor.attr({
 				value : this.text
 			}).css(metrics).appendTo(this.$text).select();
@@ -809,8 +824,9 @@ mindmaps.DefaultCanvasView = function() {
 				$editor.detach();
 				this.$cancelArea.unbind("mousedown.editNodeCaption");
 				view.setNodeText(this.node, this.text);
-			}
 
+				alignBranches();
+			}
 		};
 	}
 

@@ -199,9 +199,10 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 	 * view.
 	 * 
 	 * @ignore
+	 * @param {mindmaps.Node} node
 	 * @param {String} str
 	 */
-	view.nodeCaptionEditCommitted = function(str) {
+	view.nodeCaptionEditCommitted = function(node, str) {
 		// avoid whitespace only strings
 		var str = $.trim(str);
 		if (!str) {
@@ -209,7 +210,7 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
 		}
 
 		view.stopEditNodeCaption();
-		mindmapModel.changeNodeCaption(null, str);
+		mindmapModel.changeNodeCaption(node, str);
 	};
 
 	this.go = function() {
