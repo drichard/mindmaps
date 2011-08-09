@@ -1,56 +1,4 @@
 /**
- * Singleton module for communication between application and static canvas
- * viewer. Stores data about the mind map to render in session storage and
- * retrieves it.
- */
-mindmaps.StaticCanvas = (function() {
-	// session storage keys
-	var prefix = "mindmaps.view.";
-	var keyDocument = prefix + "document";
-	var keyAction = prefix + "action";
-	var keyOptions = prefix + "options";
-
-	return {
-		Action : {
-			Print : "Print",
-			View : "View",
-			SaveAsPNG : "SaveAsPNG"
-		},
-
-		launch : function(document, action, options) {
-			mindmaps.SessionStorage.put(keyDocument, document.serialize());
-			mindmaps.SessionStorage.put(keyAction, action);
-
-			if (options) {
-				mindmaps.SessionStorage
-						.put(keyOptions, JSON.stringify(options));
-			}
-
-			window.open("/mapviewer.html");
-		},
-
-		getAction : function() {
-			var action = mindmaps.SessionStorage.get(keyAction);
-			return action;
-		},
-
-		getDocument : function() {
-			var json = mindmaps.SessionStorage.get(keyDocument);
-			return mindmaps.Document.fromJSON(json);
-		},
-
-		getOptions : function() {
-			var json = mindmaps.SessionStorage.get(keyOptions);
-			if (!json) {
-				return null;
-			}
-
-			return JSON.parse(json);
-		}
-	};
-})();
-
-/**
  * @constructor
  */
 mindmaps.StaticCanvasRenderer = function() {
@@ -202,6 +150,7 @@ mindmaps.StaticCanvasRenderer = function() {
 		});
 
 		ctx.textBaseline = "top";
+		ctx.textAlign = "center";
 
 		// fill background white
 		ctx.fillStyle = "white";
@@ -213,22 +162,6 @@ mindmaps.StaticCanvasRenderer = function() {
 		// no z-index, captions should not be covered by lines
 		drawLines(root);
 		drawCaptions(root);
-
-		function roundedRect(ctx, x, y, width, height, radius) {
-			ctx.beginPath();
-			ctx.moveTo(x, y + radius);
-			ctx.lineTo(x, y + height - radius);
-			ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
-			ctx.lineTo(x + width - radius, y + height);
-			ctx.quadraticCurveTo(x + width, y + height, x + width, y + height
-					- radius);
-			ctx.lineTo(x + width, y + radius);
-			ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
-			ctx.lineTo(x + radius, y);
-			ctx.quadraticCurveTo(x, y, x, y + radius);
-			ctx.stroke();
-			ctx.fill();
-		}
 
 		function drawLines(node, parent) {
 			ctx.save();
@@ -247,6 +180,7 @@ mindmaps.StaticCanvasRenderer = function() {
 				var tm = node.textMetrics;
 				ctx.fillRect(0, tm.height + padding, tm.width, node.lineWidth);
 			}
+
 			node.forEachChild(function(child) {
 				drawLines(child, node);
 			});
@@ -260,16 +194,16 @@ mindmaps.StaticCanvasRenderer = function() {
 			var y = node.offset.y;
 			ctx.translate(x, y);
 
-			// ctx.strokeStyle = "#CCC";
-			// ctx.strokeRect(0, 0, tm.width, tm.height);
-
 			var tm = node.textMetrics;
 			var caption = node.getCaption();
 			var font = node.text.font;
 
+			// ctx.strokeStyle = "#CCC";
+			// ctx.strokeRect(0, 0, tm.width, tm.height);
+
 			ctx.font = font.style + " " + font.weight + " " + font.size
 					+ "px sans-serif";
-			ctx.textAlign = "center";
+
 			var captionX = tm.width / 2;
 			var captionY = 0;
 			if (node.isRoot()) {
@@ -281,7 +215,8 @@ mindmaps.StaticCanvasRenderer = function() {
 				ctx.lineWidth = 5.0;
 				ctx.strokeStyle = "orange";
 				ctx.fillStyle = "white";
-				roundedRect(ctx, 0 - tm.width / 2 - 4, 20 - 4, tm.width + 8,
+				mindmaps.CanvasDrawingUtil.roundedRect(ctx,
+						0 - tm.width / 2 - 4, 20 - 4, tm.width + 8,
 						tm.height + 8, 10);
 			}
 
@@ -289,35 +224,103 @@ mindmaps.StaticCanvasRenderer = function() {
 			ctx.fillStyle = font.color;
 
 			// TODO underline manually. canvas doesnt support it
+			// TODO strike through manually
 
 			function checkLength(str) {
 				var ctm = ctx.measureText(str);
 				return ctm.width <= tm.width;
 			}
 
-			// TODO line split
+			// write node caption.
+
 			if (checkLength(caption)) {
+				// easy part only one line
 				ctx.fillText(caption, captionX, captionY);
 			} else {
-				var line = "";
-				var lines = [];
-				for ( var i = 0; i < caption.length; i++) {
-					var c = caption.charAt(i);
-					line += c;
-					if (checkLength(line)) {
-						continue;
-					} else {
-						var split = line.split(/\W/);
-						split.forEach(function(s) {
-							lines.push(s);
-						});
-						line = "";
-					}
-				}
+				/**
+				 * caption consists of multiple lines. needs special handling
+				 * that imitates the line breaking algorithm "word-wrap:
+				 * break-word;"
+				 * 
+				 * <pre>
+				 * 1. break up string into words
+				 * 2. cut words that are too long into smaller pieces so they fit on a line
+				 * 3. construct lines: fit as many words as possible on a line
+				 * 4. print lines
+				 * </pre>
+				 */
 
+				/**
+				 * step 1
+				 */
+				// check all words and break words that are too long for a one
+				// line
+				// TODO not perfect yet
+				// find words in string (special treatment for hyphens)
+				// a hyphen breaks like a white-space does
+				var regex = /(\w+-+)|(\w+)|(-+)/gi;
+				var words1 = caption.match(regex);
+				console.log("words1", words1);
+
+				/**
+				 * step 2
+				 */
+				var words2 = [];
+				words1.forEach(function(word) {
+					if (!checkLength(word)) {
+						var part = "";
+						for ( var i = 0; i < word.length; i++) {
+							var c = word.charAt(i);
+							if (checkLength(part + c)) {
+								part += c;
+								continue;
+							} else {
+								words2.push(part);
+								part = c;
+							}
+						}
+						words2.push(part);
+					} else {
+						words2.push(word);
+					}
+				});
+
+				console.log("words2", words2);
+
+				/**
+				 * step 3
+				 */
+				var wordWidth = function(str) {
+					return ctx.measureText(str).width;
+				};
+
+				var lines = [];
+				var line = "";
+				var lineWidth = tm.width;
+
+				// construct invidual lines
+				words2.forEach(function(word) {
+					if (line === "") {
+						line = word;
+					} else {
+						if (wordWidth(line + " " + word) > lineWidth) {
+							lines.push(line);
+							line = word;
+						} else {
+							line += " " + word;
+						}
+					}
+				});
+				lines.push(line);
+				console.log("lines", lines);
+
+				/**
+				 * step 4
+				 */
+				// print lines
 				for ( var j = 0; j < lines.length; j++) {
 					var line = lines[j];
-					ctx.fillText(line, captionX, 4 + j * font.size);
+					ctx.fillText(line, captionX, captionY + j * font.size);
 				}
 			}
 
