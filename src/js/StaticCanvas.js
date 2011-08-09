@@ -1,4 +1,11 @@
+// TODO proper emulation of line-break: word-wrap
+
 /**
+ * Object that renders a mindmap model onto a single canvas object. The map will
+ * be drawn without it's interactive elements (fold buttons, creator nub) and
+ * the resulting image will be trimmed to fit the map plus a bit of padding onto
+ * it.
+ * 
  * @constructor
  */
 mindmaps.StaticCanvasRenderer = function() {
@@ -26,9 +33,15 @@ mindmaps.StaticCanvasRenderer = function() {
 		ctx.restore();
 	}
 
+	/**
+	 * Adds some information to each node which are needed for rendering.
+	 * 
+	 * @param mindmap
+	 * @returns
+	 */
 	function prepareNodes(mindmap) {
-		// TODO check if we should clone the map instead of in-place edits
-		var root = mindmap.getRoot();
+		// clone tree since we modify it
+		var root = mindmap.getRoot().clone();
 
 		function addProps(node) {
 			var lineWidth = mindmaps.CanvasDrawingUtil.getLineWidth(zoomFactor,
@@ -61,8 +74,17 @@ mindmaps.StaticCanvasRenderer = function() {
 		}
 
 		addProps(root);
+
+		return root;
 	}
 
+	/**
+	 * Finds the nodes which are farthest away from the root and calculates the
+	 * actual dimensions of the mind map.
+	 * 
+	 * @param {mindmaps.Node} root
+	 * @returns {object} with properties width and height
+	 */
 	function getMindMapDimensions(root) {
 		var pos = root.getPosition();
 		var left = 0, top = 0, right = 0, bottom = 0;
@@ -109,6 +131,7 @@ mindmaps.StaticCanvasRenderer = function() {
 	 * Returns the canvas image in Base64 encoding. The canvas has to be
 	 * rendered first.
 	 * 
+	 * @param {mindmaps.Document} document
 	 * @returns {String}
 	 */
 	this.getImageData = function(document) {
@@ -116,30 +139,42 @@ mindmaps.StaticCanvasRenderer = function() {
 		return $canvas[0].toDataURL("image/png");
 	};
 
+	/**
+	 * Returns a jquery object containing an IMG object with the map as PNG.
+	 * 
+	 * @param {mindmaps.Document} document
+	 * @returns {jQuery}
+	 */
 	this.renderAsPNG = function(document) {
 		var data = this.getImageData(document);
 
-		var img = $("<img/>", {
+		var $img = $("<img/>", {
 			src : data,
 			"class" : "map"
 		});
 
-		return img;
+		return $img;
 	};
 
+	/**
+	 * Returns the rendered canvas as a jQuery object.
+	 * 
+	 * @param {mindmaps.Document} document
+	 * @returns {jQuery}
+	 */
 	this.renderAsCanvas = function(document) {
 		renderCanvas(document);
 		return $canvas;
 	};
 
 	/**
+	 * Renders the map onto the canvas.
+	 * 
 	 * @param {mindmaps.Document} document
 	 */
 	function renderCanvas(document) {
 		var map = document.mindmap;
-		var root = map.getRoot();
-
-		prepareNodes(map);
+		var root = prepareNodes(map);
 		var dimensions = getMindMapDimensions(root);
 
 		var width = dimensions.width;
@@ -163,6 +198,9 @@ mindmaps.StaticCanvasRenderer = function() {
 		drawLines(root);
 		drawCaptions(root);
 
+		/**
+		 * Draws all branches
+		 */
 		function drawLines(node, parent) {
 			ctx.save();
 			var x = node.offset.x;
@@ -188,6 +226,11 @@ mindmaps.StaticCanvasRenderer = function() {
 			ctx.restore();
 		}
 
+		/**
+		 * Draws all captions.
+		 * 
+		 * @param node
+		 */
 		function drawCaptions(node) {
 			ctx.save();
 			var x = node.offset.x;
@@ -258,7 +301,12 @@ mindmaps.StaticCanvasRenderer = function() {
 				// TODO not perfect yet
 				// find words in string (special treatment for hyphens)
 				// a hyphen breaks like a white-space does
-				var regex = /(\w+-+)|(\w+)|(-+)/gi;
+				// var regex = /(\w+-+)|(\w+)|(-+)/gi;
+				// var regex = /[^- ]+[- ]*/gi;
+				// var regex = /[^ -]+-* *|[- ]+/gi;
+				// for now just match for words and the trailing space
+				// hyphenating has probably be done in step 2
+				var regex = /[^ ]+ */gi;
 				var words1 = caption.match(regex);
 				console.log("words1", words1);
 
