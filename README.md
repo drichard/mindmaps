@@ -16,7 +16,6 @@ The latest stable build is hosted [here] (http://drichard.org/mindmaps).
 Although the application runs fine if you launch `/src/index.html`, be aware that this is just the DEBUG mode for development. In debug mode quite a lot of output is sent to the console, ApplicationCache is deactivated and all script files are served individually and uncompressed.
 
 If you plan to host the application please build it properly by running the build script.
-
 In order to build the application yourself you need to have node.js and a couple of modules installed.
 
 - [jake] (https://github.com/mde/jake): npm install jake
