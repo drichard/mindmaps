@@ -702,3 +702,13 @@ html,body {
 	border-radius: 5px;
 	max-width: 100%;
 }
+
+#debug-warning {
+	position: fixed;
+	top: 50px;
+	left: 10px;
+	z-index: 10000;
+	font-size: 15px;
+	font-weight: bold;
+	color: gray;
+}
