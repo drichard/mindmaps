@@ -18,9 +18,9 @@ Although the application runs fine if you launch `/src/index.html`, be aware tha
 If you plan to host the application please build it properly by running the build script.
 In order to build the application yourself you need to have node.js and a couple of modules installed.
 
-- [jake] (https://github.com/mde/jake): npm install jake
-- [wrench-js] (https://github.com/ryanmcgrath/wrench-js): npm install wrench
-- [uglify-js] (https://github.com/mishoo/UglifyJS): npm install uglify-js
+- [jake] (https://github.com/mde/jake): `npm install jake`
+- [wrench-js] (https://github.com/ryanmcgrath/wrench-js): `npm install wrench`
+- [uglify-js] (https://github.com/mishoo/UglifyJS): `npm install uglify-js`
 
 
 Then run the jakefile:
