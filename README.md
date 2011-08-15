@@ -1,5 +1,5 @@
 # mindmaps
-mindmaps is a web application that lets you easily create neat looking mind maps. 
+mindmapsis a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser. 
 
 ## HTML5 goodness
 - Written entirely in JavaScript
