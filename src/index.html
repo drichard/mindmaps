@@ -68,6 +68,19 @@
 	<div class="file-chooser">
 		<input type="file" />
 	</div>
+	<div class="seperator"></div>
+	<h1>Database</h1>
+	<p>This is a list of all mind maps that are saved in your database. Click on the title of a map to open it.</p>
+	<table class="database-filelist">
+		<thead>
+			<tr>
+				<th class="title">Title</th>
+				<th class="modified">Last Modified</th>
+				<th class="delete"></th>
+			</tr>
+		</thead>
+		<tbody class="database-list"></tbody>
+	</table>
 </div>
 </script>
 
@@ -80,6 +93,10 @@
 	<h1>To file</h1>
 	<p>Save the mind map as a file on your computer.</p>
 	<div id="button-save-hdd">Save</div>
+	<div class="seperator"></div>
+	<h1>Database</h1>
+	<p>Save to your database using the settings you have setup in the db_actions.php file.</p>
+	<div id="button-save-db">Save</div>
 </div>
 </script>
 
@@ -121,19 +138,19 @@
 				<td>Font style:</td>
 				<td><div
 						class="font-styles buttonset buttons-very-small buttons-less-padding">
-						<input type="checkbox" id="inspector-checkbox-font-bold" /> 
+						<input type="checkbox" id="inspector-checkbox-font-bold" />
 						<label
 						for="inspector-checkbox-font-bold" id="inspector-label-font-bold">B</label>
-							
-						<input type="checkbox" id="inspector-checkbox-font-italic" /> 
+
+						<input type="checkbox" id="inspector-checkbox-font-italic" />
 						<label
-						for="inspector-checkbox-font-italic" id="inspector-label-font-italic">I</label> 
-						
+						for="inspector-checkbox-font-italic" id="inspector-label-font-italic">I</label>
+
 						<input
-						type="checkbox" id="inspector-checkbox-font-underline" /> 
+						type="checkbox" id="inspector-checkbox-font-underline" />
 						<label
-						for="inspector-checkbox-font-underline" id="inspector-label-font-underline">U</label> 
-						
+						for="inspector-checkbox-font-underline" id="inspector-label-font-underline">U</label>
+
 						<input
 						type="checkbox" id="inspector-checkbox-font-linethrough" />
 						 <label
