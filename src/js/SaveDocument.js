@@ -1,7 +1,7 @@
 /**
  * Creates a new SaveDocumentView. This view renders a dialog where the user can
  * save the mind map.
- * 
+ *
  * @constructor
  */
 mindmaps.SaveDocumentView = function() {
@@ -52,6 +52,12 @@ mindmaps.SaveDocumentView = function() {
 		append : true
 	});
 
+	var $dbSaveButton = $('#button-save-db').button().click(function()
+	{
+		if ( self.saveToDB )
+			self.saveToDB();
+	})
+
 	this.showSaveDialog = function() {
 		$dialog.dialog("open");
 	};
@@ -64,7 +70,7 @@ mindmaps.SaveDocumentView = function() {
 /**
  * Creates a new SaveDocumentPresenter. The presenter can store documents in the
  * local storage or to a hard disk.
- * 
+ *
  * @constructor
  * @param {mindmaps.EventBus} eventBus
  * @param {mindmaps.MindMapModel} mindmapModel
@@ -74,7 +80,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback when local storage button was clicked. Saves the document
 	 * in the local storage.
-	 * 
+	 *
 	 * @ignore
 	 */
 	view.localStorageButtonClicked = function() {
@@ -95,7 +101,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback: Returns the filename for the document for saving on hard
 	 * drive.
-	 * 
+	 *
 	 * @ignore
 	 * @returns {String}
 	 */
@@ -105,7 +111,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 
 	/**
 	 * View callback: Returns the serialized document.
-	 * 
+	 *
 	 * @ignore
 	 * @returns {String}
 	 */
@@ -117,7 +123,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 
 	/**
 	 * View callback: Saving to the hard drive was sucessful.
-	 * 
+	 *
 	 * @ignore
 	 */
 	view.saveToHddComplete = function() {
@@ -129,4 +135,22 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
 	this.go = function() {
 		view.showSaveDialog();
 	};
+
+	view.saveToDB = function()
+	{
+		var doc = mindmapModel.getDocument();
+		doc.dates.modified = new Date();
+		doc.title = mindmapModel.getMindMap().getRoot().getCaption();
+		$.ajax(
+		{
+			url : './db_actions.php',
+			type : 'post',
+			data :
+			{
+				action : 'save',
+				mindmap : doc.serialize()
+			},
+			success : view.hideSaveDialog
+		})
+	}
 };

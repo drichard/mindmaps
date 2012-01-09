@@ -1,7 +1,7 @@
 /**
  * Creates a new OpenDocumentView. This view shows a dialog from which the user
  * can select a mind map from the local storage or a hard disk.
- * 
+ *
  * @constructor
  */
 mindmaps.OpenDocumentView = function() {
@@ -38,9 +38,27 @@ mindmaps.OpenDocumentView = function() {
 		}
 	});
 
+	$dialog.find('.database-filelist')
+	.delegate('a.title', 'click', function()
+	{
+		if ( self.databaseClicked )
+		{
+			var t = $(this).tmplItem();
+			self.databaseClicked(t.data);
+		}
+	})
+	.delegate('a.delete', 'click', function()
+	{
+		if ( self.deleteDatabaseClicked )
+		{
+			var t = $(this).tmplItem();
+			self.deleteDatabaseClicked(t.data);
+		}
+	})
+
 	/**
 	 * Render list of documents in the local storage
-	 * 
+	 *
 	 * @param {mindmaps.Document[]} docs
 	 */
 	this.render = function(docs) {
@@ -55,11 +73,35 @@ mindmaps.OpenDocumentView = function() {
 				return day + "/" + month + "/" + year;
 			}
 		}).appendTo($list);
+
+		// database render
+		$.ajax(
+		{
+			url : './db_actions.php',
+			type : 'post',
+			data : { action : 'load' },
+			dataType : 'json',
+			success : function(data)
+			{
+				// empty list and insert list of documents
+				var $list = $(".database-list", $dialog).empty();
+
+				$("#template-open-table-item").tmpl(data, {
+					format : function(date) {
+						date = new Date(date);
+						var day = date.getDate();
+						var month = date.getMonth() + 1;
+						var year = date.getFullYear();
+						return day + "/" + month + "/" + year;
+					}
+				}).appendTo($list);
+			}
+		})
 	};
 
 	/**
 	 * Shows the dialog.
-	 * 
+	 *
 	 * @param {mindmaps.Document[]} docs
 	 */
 	this.showOpenDialog = function(docs) {
@@ -78,7 +120,7 @@ mindmaps.OpenDocumentView = function() {
 /**
  * Creates a new OpenDocumentPresenter. The presenter can load documents from
  * the local storage or hard disk.
- * 
+ *
  * @constructor
  * @param {mindmaps.EventBus} eventBus
  * @param {mindmaps.MindMapModel} mindmapModel
@@ -91,7 +133,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback: external file has been selected. Try to read and parse a
 	 * valid mindmaps Document.
-	 * 
+	 *
 	 * @ignore
 	 */
 	view.openExernalFileClicked = function(e) {
@@ -111,7 +153,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback: A document in the local storage list has been clicked.
 	 * Load the document and close view.
-	 * 
+	 *
 	 * @ignore
 	 * @param {mindmaps.Document} doc
 	 */
@@ -123,7 +165,7 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 	/**
 	 * View callback: The delete link the local storage list has been clicked.
 	 * Delete the document, and render list again.
-	 * 
+	 *
 	 * @ignore
 	 * @param {mindmaps.Document} doc
 	 */
@@ -144,4 +186,30 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
 		docs.sort(mindmaps.Document.sortByModifiedDateDescending);
 		view.showOpenDialog(docs);
 	};
+
+	view.databaseClicked = function(doc)
+	{
+		doc = mindmaps.Document.fromObject(doc);
+		mindmapModel.setDocument(doc);
+		view.hideOpenDialog();
+	}
+
+	view.deleteDatabaseClicked = function(doc)
+	{
+		$.ajax(
+		{
+			url : './db_actions.php',
+			type : 'post',
+			data :
+			{
+				action : 'remove',
+				id : doc.id
+			},
+			success : function()
+			{
+				var docs = mindmaps.LocalDocumentStorage.getDocuments();
+				view.render(docs);
+			}
+		})
+	}
 };

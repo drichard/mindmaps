@@ -47,21 +47,21 @@ html,body {
 	/* Opera11.10+ */
 	background: -ms-linear-gradient(left, #75a8c4 7%, #e5e5e5 100%);
 	/* IE10+ */
-	filter: progid :                                                   
-		                             DXImageTransform.Microsoft.gradient (    
-		        
-		                 
-		  
-		        
-		                                       startColorstr =           
-		                            
+	filter: progid :
+		                             DXImageTransform.Microsoft.gradient (
+
+
+
+
+		                                       startColorstr =
+
 		                                        '#75A8C4', endColorstr =
-		       
-		              
-		                             
-		                           '#E5E5E5', GradientType =        
-		                          
-		        
+
+
+
+		                           '#E5E5E5', GradientType =
+
+
 		                                    1 );
 	/* IE6-9 */
 	background: linear-gradient(left, #75a8c4 7%, #e5e5e5 100%); /* W3C */
@@ -403,7 +403,7 @@ html,body {
 }
 
 #navigator {
-	
+
 }
 
 #navigator .inactive {
@@ -411,7 +411,7 @@ html,body {
 }
 
 #navi-content {
-	
+
 }
 
 #navi-canvas-wrapper {
@@ -445,7 +445,7 @@ html,body {
 }
 
 #navi-controls {
-	
+
 }
 
 #navi-slider {
@@ -462,7 +462,7 @@ html,body {
 }
 
 #inspector {
-	
+
 }
 
 #inspector-table {
@@ -515,47 +515,58 @@ html,body {
 	font-size: 13px;
 }
 
-.file-dialog .localstorage-filelist {
+.file-dialog .localstorage-filelist,
+.file-dialog .database-filelist {
 	width: 100%;
 	margin: 12px 0;
 	font-size: 14px;
 }
 
-.file-dialog .localstorage-filelist thead {
+.file-dialog .localstorage-filelist thead,
+.file-dialog .database-filelist thead {
 	font-weight: bold;
 	text-align: left;
 }
 
-.file-dialog .localstorage-filelist th {
+.file-dialog .localstorage-filelist th,
+.file-dialog .database-filelist th {
 	padding-bottom: 4px;
 }
 
-.file-dialog .localstorage-filelist th.title {
+.file-dialog .localstorage-filelist th.title,
+.file-dialog .database-filelist th.title {
 	width: 50%;
 }
 
-.file-dialog .localstorage-filelist th.modified {
+.file-dialog .localstorage-filelist th.modified,
+.file-dialog .database-filelist th.modified {
 	width: 40%;
 }
 
-.file-dialog .localstorage-filelist tbody td {
+.file-dialog .localstorage-filelist tbody td,
+.file-dialog .database-filelist tbody td {
 	padding: 4px;
 }
 
-.file-dialog .localstorage-filelist tbody tr:nth-child(odd) {
+.file-dialog .localstorage-filelist tbody tr:nth-child(odd),
+.file-dialog .database-filelist tbody tr:nth-child(odd) {
 	background-color: #E8E8E8;
 }
 
-.file-dialog .localstorage-filelist tbody tr:hover,.file-dialog .localstorage-filelist tbody tr:nth-child(odd):hover
-	{
+.file-dialog .localstorage-filelist tbody tr:hover,
+.file-dialog .database-filelist tbody tr:hover,
+.file-dialog .localstorage-filelist tbody tr:nth-child(odd):hover,
+.file-dialog .database-filelist tbody tr:nth-child(odd):hover {
 	background-color: #B9E0F5;
 }
 
-.file-dialog .localstorage-filelist a.delete {
+.file-dialog .localstorage-filelist a.delete,
+.file-dialog .database-filelist a.delete {
 	display: none;
 }
 
-.file-dialog .localstorage-filelist tr:hover a.delete {
+.file-dialog .localstorage-filelist tr:hover a.delete,
+.file-dialog .database-filelist tr:hover a.delete {
 	display: inline;
 }
 
