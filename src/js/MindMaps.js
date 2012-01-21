@@ -40,11 +40,31 @@ $(function() {
 
 	setupConsole();
 	trackErrors();
+	addUnloadHook();
 
 	// create a new app controller and go
 	var appController = new mindmaps.ApplicationController();
 	appController.go();
 });
+
+/**
+ * Adds a confirmation dialog when the user navigates away from the app.
+ */
+function addUnloadHook () {
+	window.onbeforeunload = function (e) {
+		var msg = "Are you sure? Any unsaved progress will be lost."
+			e = e || window.event;
+
+		// For IE and Firefox prior to version 4
+		if (e) {
+			e.returnValue = msg;
+		}
+
+		// For Safari
+		return msg;
+	};
+}
+
 
 function trackErrors() {
 	window.onerror = function(msg, url, line) {
