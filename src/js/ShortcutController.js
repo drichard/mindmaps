@@ -24,7 +24,9 @@ mindmaps.ShortcutController = function() {
 	}
 
 	/**
-	 * Registers a new application wide shortcut.
+	 * Registers a new application wide shortcut. shortcuts can be
+	 * either a string or an array containing multiple possible
+	 * shortcuts for the same action.
 	 * 
 	 * @param {String|Array} shortcuts
 	 * @param {Function} handler
