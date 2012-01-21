@@ -26,21 +26,28 @@ mindmaps.ShortcutController = function() {
 	/**
 	 * Registers a new application wide shortcut.
 	 * 
-	 * @param {String} shortcut
+	 * @param {String|Array} shortcuts
 	 * @param {Function} handler
 	 * @param {String} [type="keydown"]
 	 */
-	this.register = function(shortcut, handler, type) {
-		type = getType(shortcut, type);
-		$(document).bind(type, shortcut, function(e) {
-			// try best to cancel default actions on shortcuts like ctrl+n
-			e.stopImmediatePropagation();
-			e.stopPropagation();
-			e.preventDefault();
-			handler();
-			return false;
+	this.register = function(shortcuts, handler, type) {
+		if (!Array.isArray(shortcuts)) {
+			shortcuts = [shortcuts];
+		}
+
+		var self = this;
+		shortcuts.forEach(function(shortcut) {
+			type = getType(shortcut, type);
+			$(document).bind(type, shortcut, function(e) {
+				// try best to cancel default actions on shortcuts like ctrl+n
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+				e.preventDefault();
+				handler();
+				return false;
+				self.shortcut[type] = true
+			});
 		});
-		this.shortcuts[type] = true;
 	};
 
 	/**

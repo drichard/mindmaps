@@ -126,7 +126,7 @@ mindmaps.CreateSiblingNodeCommand.prototype = new mindmaps.Command();
  */
 mindmaps.DeleteNodeCommand = function() {
 	this.id = "DELETE_NODE_COMMAND";
-	this.shortcut = "del";
+	this.shortcut = ["del", "backspace"];
 	this.label = "Delete";
 	this.icon = "ui-icon-minusthick";
 	this.description = "Deletes a new node";
@@ -141,7 +141,7 @@ mindmaps.DeleteNodeCommand.prototype = new mindmaps.Command();
  */
 mindmaps.EditNodeCaptionCommand = function() {
 	this.id = "EDIT_NODE_CAPTION_COMMAND";
-	this.shortcut = "F2";
+	this.shortcut = ["F2", "return"];
 	this.label = "Edit node caption";
 	this.description = "Edits the node text";
 };
@@ -172,7 +172,7 @@ mindmaps.ToggleNodeFoldedCommand.prototype = new mindmaps.Command();
  */
 mindmaps.UndoCommand = function() {
 	this.id = "UNDO_COMMAND";
-	this.shortcut = "ctrl+z";
+	this.shortcut = ["ctrl+z", "meta+z"];
 	this.label = "Undo";
 	this.icon = "ui-icon-arrowreturnthick-1-w";
 	this.description = "Undo";
@@ -187,7 +187,7 @@ mindmaps.UndoCommand.prototype = new mindmaps.Command();
  */
 mindmaps.RedoCommand = function() {
 	this.id = "REDO_COMMAND";
-	this.shortcut = "ctrl+y";
+	this.shortcut = ["ctrl+y", "meta+shift+z"];
 	this.label = "Redo";
 	this.icon = "ui-icon-arrowreturnthick-1-e";
 	this.description = "Redo";
@@ -206,7 +206,7 @@ mindmaps.RedoCommand.prototype = new mindmaps.Command();
  */
 mindmaps.CopyNodeCommand = function() {
 	this.id = "COPY_COMMAND";
-	this.shortcut = "ctrl+c";
+	this.shortcut = ["ctrl+c", "meta+c"];
 	this.label = "Copy";
 	this.icon = "ui-icon-copy";
 	this.description = "Copy a branch";
@@ -221,7 +221,7 @@ mindmaps.CopyNodeCommand.prototype = new mindmaps.Command();
  */
 mindmaps.CutNodeCommand = function() {
 	this.id = "CUT_COMMAND";
-	this.shortcut = "ctrl+x";
+	this.shortcut = ["ctrl+x", "meta+x"];
 	this.label = "Cut";
 	this.icon = "ui-icon-scissors";
 	this.description = "Cut a branch";
@@ -236,7 +236,7 @@ mindmaps.CutNodeCommand.prototype = new mindmaps.Command();
  */
 mindmaps.PasteNodeCommand = function() {
 	this.id = "PASTE_COMMAND";
-	this.shortcut = "ctrl+v";
+	this.shortcut = ["ctrl+v", "meta+v"];
 	this.label = "Paste";
 	this.icon = "ui-icon-clipboard";
 	this.description = "Paste a branch";
@@ -270,7 +270,7 @@ mindmaps.NewDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.OpenDocumentCommand = function() {
 	this.id = "OPEN_DOCUMENT_COMMAND";
 	this.label = "Open...";
-	this.shortcut = "ctrl+o";
+	this.shortcut = ["ctrl+o", "meta+o"];
 	this.icon = "ui-icon-folder-open";
 	this.description = "Open an existing mind map";
 };
@@ -285,7 +285,7 @@ mindmaps.OpenDocumentCommand.prototype = new mindmaps.Command();
 mindmaps.SaveDocumentCommand = function() {
 	this.id = "SAVE_DOCUMENT_COMMAND";
 	this.label = "Save...";
-	this.shortcut = "ctrl+s";
+	this.shortcut = ["ctrl+s", "meta+s"];
 	this.icon = "ui-icon-disk";
 	this.description = "Save the mind map";
 };
@@ -331,7 +331,7 @@ mindmaps.PrintCommand = function() {
 	this.id = "PRINT_COMMAND";
 	this.icon = "ui-icon-print";
 	this.label = "Print";
-	this.shortcut = "ctrl+p";
+	this.shortcut = ["ctrl+p", "meta+p"];
 	this.description = "Print the mind map";
 };
 mindmaps.PrintCommand.prototype = new mindmaps.Command();

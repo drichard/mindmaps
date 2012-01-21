@@ -115,10 +115,14 @@ mindmaps.ToolBarButton.prototype.getTitle = function() {
  * @returns {String}
  */
 mindmaps.ToolBarButton.prototype.getToolTip = function() {
-	var tooltip = this.command.description;
-
+	var tooltip = this.command.description; 
+	
 	var shortcut = this.command.shortcut;
 	if (shortcut) {
+		if (Array.isArray(shortcut)) {
+			shortcut = shortcut.join(", ");
+		}
+
 		tooltip += " [" + shortcut.toUpperCase() + "]";
 	}
 
