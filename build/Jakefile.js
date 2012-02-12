@@ -30,7 +30,7 @@ task("create-dir", [ "clean-dir" ], function() {
 });
 
 desc("Minify scripts");
-task("minify-js", [ "create-dir" ], function() {
+task("minify-js", function() {
 	extractScriptNames();
 	minifyScripts();
 
@@ -86,7 +86,7 @@ task("minify-js", [ "create-dir" ], function() {
 });
 
 desc("Use minified scripts in HTML");
-task("use-min-js", [ "create-dir", "minify-js" ], function() {
+task("use-min-js", [ "minify-js" ], function() {
 	console.log("Replacing script files with minified version in index.html");
 	indexFile = indexFile.replace(regexScriptSection, "<script src=\"js/"
 			+ scriptFilename + "\"></script>");
@@ -112,7 +112,7 @@ task("remove-debug", function() {
 });
 
 desc("Copy index.html");
-task("copy-index", [ "create-dir", "use-min-js", "remove-debug" ], function() {
+task("copy-index", [ "use-min-js", "remove-debug" ], function() {
 	console.log("Copying index.html to /bin");
 
 	fs.writeFileSync(publishDir + indexFileName, indexFile);
@@ -120,7 +120,7 @@ task("copy-index", [ "create-dir", "use-min-js", "remove-debug" ], function() {
 });
 
 desc("Copy all other files");
-task("copy-files", [ "create-dir", "minify-js" ], function() {
+task("copy-files", [ "minify-js" ], function() {
 	console.log("Copying all other files into /bin");
 
 	function createExludeRegex() {
@@ -168,7 +168,7 @@ task("copy-files", [ "create-dir", "minify-js" ], function() {
 });
 
 desc("Update cache manifest");
-task("update-manifest", [ "copy-files" ], function() {
+task("update-manifest", function() {
 	// put new timestamp
 	var fileDir = publishDir + "cache.manifest";
 	var contents = fs.readFileSync(fileDir, "utf8");
