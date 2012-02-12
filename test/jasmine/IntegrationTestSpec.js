@@ -1,11 +1,11 @@
 describe("Integration", function() {
-	var appController;
+  var appController;
 
-	beforeEach(function() {
-		// appController = new mindmaps.ApplicationController();
-	});
+  beforeEach(function() {
+    // appController = new mindmaps.ApplicationController();
+  });
 
-	it("should work", function() {
-		
-	});
+  it("should work", function() {
+    
+  });
 });

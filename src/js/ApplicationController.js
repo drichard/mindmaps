@@ -4,118 +4,118 @@
  * @constructor
  */
 mindmaps.ApplicationController = function() {
-	var eventBus = new mindmaps.EventBus();
-	var shortcutController = new mindmaps.ShortcutController();
-	var commandRegistry = new mindmaps.CommandRegistry(shortcutController);
-	var undoController = new mindmaps.UndoController(eventBus, commandRegistry);
-	var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry);
-	var clipboardController = new mindmaps.ClipboardController(eventBus,
-			commandRegistry, mindmapModel);
-	var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
-	var printController = new mindmaps.PrintController(eventBus,
-			commandRegistry, mindmapModel);
+  var eventBus = new mindmaps.EventBus();
+  var shortcutController = new mindmaps.ShortcutController();
+  var commandRegistry = new mindmaps.CommandRegistry(shortcutController);
+  var undoController = new mindmaps.UndoController(eventBus, commandRegistry);
+  var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry);
+  var clipboardController = new mindmaps.ClipboardController(eventBus,
+      commandRegistry, mindmapModel);
+  var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
+  var printController = new mindmaps.PrintController(eventBus,
+      commandRegistry, mindmapModel);
 
-	/**
-	 * Handles the new document command.
-	 */
-	function doNewDocument() {
-		// close old document first
-		var doc = mindmapModel.getDocument();
-		doCloseDocument();
+  /**
+   * Handles the new document command.
+   */
+  function doNewDocument() {
+    // close old document first
+    var doc = mindmapModel.getDocument();
+    doCloseDocument();
 
-		var presenter = new mindmaps.NewDocumentPresenter(eventBus,
-				mindmapModel, new mindmaps.NewDocumentView());
-		presenter.go();
-	}
+    var presenter = new mindmaps.NewDocumentPresenter(eventBus,
+        mindmapModel, new mindmaps.NewDocumentView());
+    presenter.go();
+  }
 
-	/**
-	 * Handles the save document command.
-	 */
-	function doSaveDocument() {
-		var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
-				mindmapModel, new mindmaps.SaveDocumentView());
-		presenter.go();
-	}
+  /**
+   * Handles the save document command.
+   */
+  function doSaveDocument() {
+    var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
+        mindmapModel, new mindmaps.SaveDocumentView());
+    presenter.go();
+  }
 
-	/**
-	 * Handles the close document command.
-	 */
-	function doCloseDocument() {
-		var doc = mindmapModel.getDocument();
-		if (doc) {
-			// TODO for now simply publish events, should be intercepted by
-			// someone
-			mindmapModel.setDocument(null);
-		}
-	}
+  /**
+   * Handles the close document command.
+   */
+  function doCloseDocument() {
+    var doc = mindmapModel.getDocument();
+    if (doc) {
+      // TODO for now simply publish events, should be intercepted by
+      // someone
+      mindmapModel.setDocument(null);
+    }
+  }
 
-	/**
-	 * Handles the open document command.
-	 */
-	function doOpenDocument() {
-		var presenter = new mindmaps.OpenDocumentPresenter(eventBus,
-				mindmapModel, new mindmaps.OpenDocumentView());
-		presenter.go();
-	}
+  /**
+   * Handles the open document command.
+   */
+  function doOpenDocument() {
+    var presenter = new mindmaps.OpenDocumentPresenter(eventBus,
+        mindmapModel, new mindmaps.OpenDocumentView());
+    presenter.go();
+  }
 
-	function doExportDocument() {
-		var presenter = new mindmaps.ExportMapPresenter(eventBus,
-				mindmapModel, new mindmaps.ExportMapView());
-		presenter.go();
-	}
+  function doExportDocument() {
+    var presenter = new mindmaps.ExportMapPresenter(eventBus,
+        mindmapModel, new mindmaps.ExportMapView());
+    presenter.go();
+  }
 
-	/**
-	 * Initializes the controller, registers for all commands and subscribes to
-	 * event bus.
-	 */
-	this.init = function() {
-		var newDocumentCommand = commandRegistry
-				.get(mindmaps.NewDocumentCommand);
-		newDocumentCommand.setHandler(doNewDocument);
-		newDocumentCommand.setEnabled(true);
+  /**
+   * Initializes the controller, registers for all commands and subscribes to
+   * event bus.
+   */
+  this.init = function() {
+    var newDocumentCommand = commandRegistry
+        .get(mindmaps.NewDocumentCommand);
+    newDocumentCommand.setHandler(doNewDocument);
+    newDocumentCommand.setEnabled(true);
 
-		var openDocumentCommand = commandRegistry
-				.get(mindmaps.OpenDocumentCommand);
-		openDocumentCommand.setHandler(doOpenDocument);
-		openDocumentCommand.setEnabled(true);
+    var openDocumentCommand = commandRegistry
+        .get(mindmaps.OpenDocumentCommand);
+    openDocumentCommand.setHandler(doOpenDocument);
+    openDocumentCommand.setEnabled(true);
 
-		var saveDocumentCommand = commandRegistry
-				.get(mindmaps.SaveDocumentCommand);
-		saveDocumentCommand.setHandler(doSaveDocument);
+    var saveDocumentCommand = commandRegistry
+        .get(mindmaps.SaveDocumentCommand);
+    saveDocumentCommand.setHandler(doSaveDocument);
 
-		var closeDocumentCommand = commandRegistry
-				.get(mindmaps.CloseDocumentCommand);
-		closeDocumentCommand.setHandler(doCloseDocument);
+    var closeDocumentCommand = commandRegistry
+        .get(mindmaps.CloseDocumentCommand);
+    closeDocumentCommand.setHandler(doCloseDocument);
 
-		var exportCommand = commandRegistry.get(mindmaps.ExportCommand);
-		exportCommand.setHandler(doExportDocument);
+    var exportCommand = commandRegistry.get(mindmaps.ExportCommand);
+    exportCommand.setHandler(doExportDocument);
 
-		eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
-			saveDocumentCommand.setEnabled(false);
-			closeDocumentCommand.setEnabled(false);
-			exportCommand.setEnabled(false);
-		});
+    eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+      saveDocumentCommand.setEnabled(false);
+      closeDocumentCommand.setEnabled(false);
+      exportCommand.setEnabled(false);
+    });
 
-		eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
-			saveDocumentCommand.setEnabled(true);
-			closeDocumentCommand.setEnabled(true);
-			exportCommand.setEnabled(true);
-		});
+    eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+      saveDocumentCommand.setEnabled(true);
+      closeDocumentCommand.setEnabled(true);
+      exportCommand.setEnabled(true);
+    });
 
-		// connect undo events emitted from mindmap model with undo controller
-		mindmapModel.undoEvent = undoController.addUndo.bind(undoController);
-	};
+    // connect undo events emitted from mindmap model with undo controller
+    mindmapModel.undoEvent = undoController.addUndo.bind(undoController);
+  };
 
-	/**
-	 * Launches the main view controller.
-	 */
-	this.go = function() {
-		var viewController = new mindmaps.MainViewController(eventBus,
-				mindmapModel, commandRegistry);
-		viewController.go();
+  /**
+   * Launches the main view controller.
+   */
+  this.go = function() {
+    var viewController = new mindmaps.MainViewController(eventBus,
+        mindmapModel, commandRegistry);
+    viewController.go();
 
-		doNewDocument();
-	};
+    doNewDocument();
+  };
 
-	this.init();
+  this.init();
 };

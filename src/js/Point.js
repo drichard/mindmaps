@@ -6,8 +6,8 @@
  * @param {Number} [y=0]
  */
 mindmaps.Point = function(x, y) {
-	this.x = x || 0;
-	this.y = y || 0;
+  this.x = x || 0;
+  this.y = y || 0;
 };
 
 /**
@@ -18,7 +18,7 @@ mindmaps.Point = function(x, y) {
  * @returns {mindmaps.Point}
  */
 mindmaps.Point.fromObject = function(obj) {
-	return new mindmaps.Point(obj.x, obj.y);
+  return new mindmaps.Point(obj.x, obj.y);
 };
 
 /**
@@ -27,7 +27,7 @@ mindmaps.Point.fromObject = function(obj) {
  * @returns {mindmaps.Point}
  */
 mindmaps.Point.prototype.clone = function() {
-	return new mindmaps.Point(this.x, this.y);
+  return new mindmaps.Point(this.x, this.y);
 };
 
 /**
@@ -35,8 +35,8 @@ mindmaps.Point.prototype.clone = function() {
  * @param {mindmaps.Point} point
  */
 mindmaps.Point.prototype.add = function(point) {
-	this.x += point.x;
-	this.y += point.y;
+  this.x += point.x;
+  this.y += point.y;
 };
 
 /**
@@ -44,5 +44,5 @@ mindmaps.Point.prototype.add = function(point) {
  * @returns {String}
  */
 mindmaps.Point.prototype.toString = function() {
-	return "{x: " + this.x + " y: " + this.y + "}";
+  return "{x: " + this.x + " y: " + this.y + "}";
 };

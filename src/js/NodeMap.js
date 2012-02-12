@@ -5,8 +5,8 @@
  * @constructor
  */
 mindmaps.NodeMap = function() {
-	this.nodes = {};
-	this.count = 0;
+  this.nodes = {};
+  this.count = 0;
 };
 
 /**
@@ -16,7 +16,7 @@ mindmaps.NodeMap = function() {
  * @returns {mindmaps.Node}
  */
 mindmaps.NodeMap.prototype.get = function(nodeId) {
-	return this.nodes[nodeId];
+  return this.nodes[nodeId];
 };
 
 /**
@@ -26,12 +26,12 @@ mindmaps.NodeMap.prototype.get = function(nodeId) {
  * @returns {Boolean} true if added, false otherwise.
  */
 mindmaps.NodeMap.prototype.add = function(node) {
-	if (!this.nodes.hasOwnProperty(node.id)) {
-		this.nodes[node.id] = node;
-		this.count++;
-		return true;
-	}
-	return false;
+  if (!this.nodes.hasOwnProperty(node.id)) {
+    this.nodes[node.id] = node;
+    this.count++;
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -41,12 +41,12 @@ mindmaps.NodeMap.prototype.add = function(node) {
  * @returns {Boolean} true if removed, false otherwise.
  */
 mindmaps.NodeMap.prototype.remove = function(node) {
-	if (this.nodes.hasOwnProperty(node.id)) {
-		delete this.nodes[node.id];
-		this.count--;
-		return true;
-	}
-	return false;
+  if (this.nodes.hasOwnProperty(node.id)) {
+    delete this.nodes[node.id];
+    this.count--;
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -55,7 +55,7 @@ mindmaps.NodeMap.prototype.remove = function(node) {
  * @returns {Number}
  */
 mindmaps.NodeMap.prototype.size = function() {
-	return this.count;
+  return this.count;
 };
 
 /**
@@ -64,9 +64,9 @@ mindmaps.NodeMap.prototype.size = function() {
  * @returns {Array}
  */
 mindmaps.NodeMap.prototype.values = function() {
-	return Object.keys(this.nodes).map(function(key) {
-		return this.nodes[key];
-	}, this);
+  return Object.keys(this.nodes).map(function(key) {
+    return this.nodes[key];
+  }, this);
 };
 
 /**
@@ -75,7 +75,7 @@ mindmaps.NodeMap.prototype.values = function() {
  * @param {Function} callback, first argument should be the node.
  */
 mindmaps.NodeMap.prototype.each = function(callback) {
-	for ( var id in this.nodes) {
-		callback(this.nodes[id]);
-	}
+  for ( var id in this.nodes) {
+    callback(this.nodes[id]);
+  }
 };

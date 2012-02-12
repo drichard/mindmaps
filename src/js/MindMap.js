@@ -6,22 +6,22 @@
  * @param {mindmaps.Node} [root]
  */
 mindmaps.MindMap = function(root) {
-	/**
-	 * nodes is only used for quick lookup of a node by id. Each node must be
-	 * registered in this map via createNode() or addNode(node).
-	 */
-	this.nodes = new mindmaps.NodeMap();
+  /**
+   * nodes is only used for quick lookup of a node by id. Each node must be
+   * registered in this map via createNode() or addNode(node).
+   */
+  this.nodes = new mindmaps.NodeMap();
 
-	if (root) {
-		this.root = root;
-	} else {
-		this.root = new mindmaps.Node();
-		this.root.text.font.size = 20;
-		this.root.text.font.weight = "bold";
-		this.root.text.caption = "Central Idea";
-	}
+  if (root) {
+    this.root = root;
+  } else {
+    this.root = new mindmaps.Node();
+    this.root.text.font.size = 20;
+    this.root.text.font.weight = "bold";
+    this.root.text.caption = "Central Idea";
+  }
 
-	this.addNode(this.root);
+  this.addNode(this.root);
 };
 
 /**
@@ -32,7 +32,7 @@ mindmaps.MindMap = function(root) {
  * @returns {mindmaps.MindMap}
  */
 mindmaps.MindMap.fromJSON = function(json) {
-	return mindmaps.MindMap.fromObject(JSON.parse(json));
+  return mindmaps.MindMap.fromObject(JSON.parse(json));
 };
 
 /**
@@ -43,15 +43,15 @@ mindmaps.MindMap.fromJSON = function(json) {
  * @returns {mindmaps.MindMap}
  */
 mindmaps.MindMap.fromObject = function(obj) {
-	var root = mindmaps.Node.fromObject(obj.root);
-	var mm = new mindmaps.MindMap(root);
+  var root = mindmaps.Node.fromObject(obj.root);
+  var mm = new mindmaps.MindMap(root);
 
-	// register all nodes in the map
-	root.forEachDescendant(function(descendant) {
-		mm.addNode(descendant);
-	});
+  // register all nodes in the map
+  root.forEachDescendant(function(descendant) {
+    mm.addNode(descendant);
+  });
 
-	return mm;
+  return mm;
 };
 
 /**
@@ -61,10 +61,10 @@ mindmaps.MindMap.fromObject = function(obj) {
  * 
  */
 mindmaps.MindMap.prototype.toJSON = function() {
-	var obj = {
-		root : this.root
-	};
-	return obj;
+  var obj = {
+    root : this.root
+  };
+  return obj;
 };
 
 /**
@@ -73,7 +73,7 @@ mindmaps.MindMap.prototype.toJSON = function() {
  * @returns {String}
  */
 mindmaps.MindMap.prototype.serialize = function() {
-	return JSON.stringify(this);
+  return JSON.stringify(this);
 };
 
 /**
@@ -82,9 +82,9 @@ mindmaps.MindMap.prototype.serialize = function() {
  * @returns {mindmaps.Node}
  */
 mindmaps.MindMap.prototype.createNode = function() {
-	var node = new mindmaps.Node();
-	this.addNode(node);
-	return node;
+  var node = new mindmaps.Node();
+  this.addNode(node);
+  return node;
 };
 
 /**
@@ -93,13 +93,13 @@ mindmaps.MindMap.prototype.createNode = function() {
  * @param {mindmaps.Node} node
  */
 mindmaps.MindMap.prototype.addNode = function(node) {
-	this.nodes.add(node);
+  this.nodes.add(node);
 
-	// add all children
-	var self = this;
-	node.forEachDescendant(function(descendant) {
-		self.nodes.add(descendant);
-	});
+  // add all children
+  var self = this;
+  node.forEachDescendant(function(descendant) {
+    self.nodes.add(descendant);
+  });
 };
 
 /**
@@ -108,17 +108,17 @@ mindmaps.MindMap.prototype.addNode = function(node) {
  * @param {mindmaps.Node} node
  */
 mindmaps.MindMap.prototype.removeNode = function(node) {
-	// detach node from parent
-	var parent = node.parent;
-	parent.removeChild(node);
+  // detach node from parent
+  var parent = node.parent;
+  parent.removeChild(node);
 
-	// clear nodes table: remove node and its children
-	var self = this;
-	node.forEachDescendant(function(descendant) {
-		self.nodes.remove(descendant);
-	});
+  // clear nodes table: remove node and its children
+  var self = this;
+  node.forEachDescendant(function(descendant) {
+    self.nodes.remove(descendant);
+  });
 
-	this.nodes.remove(node);
+  this.nodes.remove(node);
 };
 
 /**
@@ -127,5 +127,5 @@ mindmaps.MindMap.prototype.removeNode = function(node) {
  * @returns {mindmaps.Node}
  */
 mindmaps.MindMap.prototype.getRoot = function() {
-	return this.root;
+  return this.root;
 };
