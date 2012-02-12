@@ -177,7 +177,7 @@ task("update-manifest", function() {
 });
 
 desc("Build project");
-task("build", [ "copy-index", "copy-files", "update-manifest" ], function() {
+task("build", [ "create-dir", "copy-index", "copy-files", "update-manifest" ], function() {
 	console.log("Project built.");
 });
 
