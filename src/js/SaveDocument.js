@@ -69,8 +69,9 @@ mindmaps.SaveDocumentView = function() {
  * @param {mindmaps.EventBus} eventBus
  * @param {mindmaps.MindMapModel} mindmapModel
  * @param {mindmaps.SaveDocumentView} view
+ * @param {mindmaps.AutoSaveController} autosaveController
  */
-mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view) {
+mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController) {
   /**
    * View callback when local storage button was clicked. Saves the document
    * in the local storage.

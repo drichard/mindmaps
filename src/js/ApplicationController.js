@@ -14,6 +14,7 @@ mindmaps.ApplicationController = function() {
   var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
   var printController = new mindmaps.PrintController(eventBus,
       commandRegistry, mindmapModel);
+  var autosaveController = new mindmaps.AutoSaveController(eventBus, mindmapModel);
 
   /**
    * Handles the new document command.
@@ -33,7 +34,7 @@ mindmaps.ApplicationController = function() {
    */
   function doSaveDocument() {
     var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
-        mindmapModel, new mindmaps.SaveDocumentView());
+        mindmapModel, new mindmaps.SaveDocumentView(), autosaveController);
     presenter.go();
   }
 

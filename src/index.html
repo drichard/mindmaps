@@ -76,6 +76,8 @@
   <h1>Local Storage</h1>
   <p>You can save your mind map in your browser's local storage. Be aware that this is still experimental: the space is limited and there is no guarantee that the browser will keep this document forever.</p>
   <button id="button-save-localstorage">Save</button>
+  <input type="checkbox" id="checkbox-autosave-localstorage">
+  <label for="checkbox-autosave-localstorage">Save automatically every 2 minutes</label>
   <div class="seperator"></div>
   <h1>To file</h1>
   <p>Save the mind map as a file on your computer.</p>
@@ -263,6 +265,7 @@
   <script src="js/StaticCanvas.js"></script>
   <script src="js/PrintController.js"></script>
   <script src="js/ExportMap.js"></script>
+  <script src="js/AutoSaveController.js"></script>
   <!-- JS:LIB:END -->
 
   <!-- PRODUCTION
