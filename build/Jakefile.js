@@ -25,8 +25,8 @@ task("clean-dir", function() {
 desc("Create new directory");
 task("create-dir", [ "clean-dir" ], function() {
   console.log("Creating new directory structure");
-  fs.mkdirSync(publishDir, 0755);
-  fs.mkdirSync(publishDir + scriptDir, 0755);
+  fs.mkdirSync(publishDir);
+  fs.mkdirSync(publishDir + scriptDir);
 });
 
 desc("Minify scripts");
@@ -80,7 +80,6 @@ task("minify-js", function() {
 
     var combined = buffer.join("\n");
     fs.writeFileSync(publishDir + scriptDir + scriptFilename, combined);
-    fs.chmodSync(publishDir + scriptDir + scriptFilename, 0755);
     console.log("Combined all scripts into " + scriptFilename);
   }
 });
@@ -116,7 +115,6 @@ task("copy-index", [ "use-min-js", "remove-debug" ], function() {
   console.log("Copying index.html to /bin");
 
   fs.writeFileSync(publishDir + indexFileName, indexFile);
-  fs.chmodSync(publishDir + indexFileName, 0755);
 });
 
 desc("Copy all other files");
@@ -154,13 +152,12 @@ task("copy-files", [ "minify-js" ], function() {
         var stats = fs.statSync(srcDir + currentDir);
         if (stats.isDirectory()) {
           if (!path.existsSync(publishDir + currentDir)) {
-            fs.mkdirSync(publishDir + currentDir, 0755);
+            fs.mkdirSync(publishDir + currentDir);
           }
           copyFiles(currentDir + "/");
         } else if (stats.isFile()) {
           var contents = fs.readFileSync(srcDir + currentDir);
           fs.writeFileSync(publishDir + currentDir, contents);
-          fs.chmodSync(publishDir + currentDir, 0755);
         }
       }
     });
