@@ -26,6 +26,13 @@ mindmaps.SaveDocumentView = function() {
         }
       });
 
+  var $autoSaveCheckbox = $("#checkbox-autosave-localstorage").click(
+      function() {
+        if (self.autoSaveCheckboxClicked) {
+          self.autoSaveCheckboxClicked($(this).prop("checked"));
+        }
+      });
+
   var $hddSaveButton = $("#button-save-hdd").button().downloadify({
     filename : function() {
       if (self.fileNameRequested) {
@@ -51,6 +58,10 @@ mindmaps.SaveDocumentView = function() {
     height : 29,
     append : true
   });
+
+  this.setAutoSaveCheckboxState = function(checked) {
+    $autoSaveCheckbox.prop("checked", checked);
+  }
 
   this.showSaveDialog = function() {
     $dialog.dialog("open");
@@ -79,19 +90,27 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
    * @ignore
    */
   view.localStorageButtonClicked = function() {
-    // update modified date
-    var doc = mindmapModel.getDocument();
-    doc.dates.modified = new Date();
-    // set title
-    doc.title = mindmapModel.getMindMap().getRoot().getCaption();
-    var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
+    var success = mindmapModel.saveToLocalStorage();
     if (success) {
-      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
       view.hideSaveDialog();
     } else {
       // TODO display error hint
     }
   };
+
+
+  /**
+   * View callback: Enables or disables the autosave function for localstorage.
+   *
+   * @ignore
+   */
+  view.autoSaveCheckboxClicked = function(checked) {
+    if (checked) {
+      autosaveController.enable();
+    } else {
+      autosaveController.disable();
+    }
+  }
 
   /**
    * View callback: Returns the filename for the document for saving on hard
@@ -128,6 +147,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   };
 
   this.go = function() {
+    view.setAutoSaveCheckboxState(autosaveController.isEnabled());
     view.showSaveDialog();
   };
 };

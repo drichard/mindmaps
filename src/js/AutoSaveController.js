@@ -1,44 +1,51 @@
+/**
+ * Creates a new AutoSaveController. This controller is able to automatically
+ * save the document every X minutes. This setting is global for all mindmaps.
+ *
+ * @constructor
+ * @param {mindmaps.EventBus} eventBus
+ * @param {mindmaps.MindMapModel} mindmapModel
+ */
 mindmaps.AutoSaveController = function(eventBus, mindmapModel) {
-  var LS_KEY = "mindmaps.config.autosave";
-  var SAVE_INTERVAL = 1000 * 5;
+  var SAVE_INTERVAL = 1000 * 60; // 1 minute
   var timer = null;
-
 
   function save() {
     console.debug("Autosaving...");
-    // TODO DRY that up. @see SaveDocument.js#82
-    var doc = mindmapModel.getDocument();
-    doc.dates.modified = new Date();
-    doc.title = mindmapModel.getMindMap().getRoot().getCaption();
-    var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
-
-    if (success) {
-      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
-    }
+    mindmapModel.saveToLocalStorage();
   }
 
   function autosave() {
-    timer = setInterval(save, SAVE_INTERVAL);
-  }
-  
-  function stopAutosave() {
-    if (timer) {
-      clearInterval(timer);
+    if (!timer) {
+      timer = setInterval(save, SAVE_INTERVAL);
     }
   }
 
-  this.enable = function() {
-    autosave();
-    mindmaps.LocalStorage.put(LS_KEY, 1);
+  function stopAutosave() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
   }
 
+  /**
+   * Enable autosave.
+   */
+  this.enable = function() {
+    autosave();
+    mindmapModel.getDocument().setAutoSave(true);
+  }
+
+  /**
+   * Disable autosave.
+   */
   this.disable = function() {
     stopAutosave();
-    mindmaps.LocalStorage.put(LS_KEY, 0);
+    mindmapModel.getDocument().setAutoSave(false);
   }
 
   this.isEnabled = function() {
-    return mindmaps.LocalStorage.get(LS_KEY) == 1;
+    return mindmapModel.getDocument().isAutoSave();
   }
 
   this.init = function() {
@@ -49,7 +56,7 @@ mindmaps.AutoSaveController = function(eventBus, mindmapModel) {
         .bind(this));
   }
 
-  this.documentOpened = function() {
+  this.documentOpened = function(doc) {
     if (this.isEnabled()) {
       autosave();
     }

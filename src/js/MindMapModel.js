@@ -222,5 +222,23 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
   this.undoEvent = function(undoFunc, redoFunc) {
   };
 
+
+  /**
+   * Saves a document to the localstorage and publishes DOCUMENT_SAVED event on success.
+   *
+   * @returns {Boolean} whether the save was successful.
+   */
+  this.saveToLocalStorage = function() {
+    var doc = this.document;
+    doc.dates.modified = new Date();
+    doc.title = this.getMindMap().getRoot().getCaption();
+    var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
+    if (success) {
+      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
+    }
+
+    return success;
+  }
+
   this.init();
 };

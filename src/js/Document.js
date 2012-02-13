@@ -13,6 +13,7 @@ mindmaps.Document = function() {
   };
 
   this.dimensions = new mindmaps.Point(4000, 2000);
+  this.autosave = false;
 };
 
 /**
@@ -44,6 +45,7 @@ mindmaps.Document.fromObject = function(obj) {
   };
 
   doc.dimensions = mindmaps.Point.fromObject(obj.dimensions);
+  doc.autosave = obj.autosave;
 
   return doc;
 };
@@ -68,7 +70,8 @@ mindmaps.Document.prototype.toJSON = function() {
     title : this.title,
     mindmap : this.mindmap,
     dates : dates,
-    dimensions : this.dimensions
+    dimensions : this.dimensions,
+    autosave: this.autosave
   };
 };
 
@@ -134,3 +137,18 @@ mindmaps.Document.prototype.getWidth = function() {
 mindmaps.Document.prototype.getHeight = function() {
   return this.dimensions.y;
 };
+
+
+mindmaps.Document.prototype.isAutoSave = function() {
+  return this.autosave;
+}
+
+
+/**
+ * Sets autosave setting.
+ *
+ * @param {Boolean}
+ */
+mindmaps.Document.prototype.setAutoSave = function(autosave) {
+  this.autosave = autosave;
+}

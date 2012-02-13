@@ -1,5 +1,8 @@
 # Changelog
 
+## 2012-02-13
+- Added auto save feature for LocalStorage
+
 ## 2012-01-21
 - Added Shortcuts for Mac OSX users
 

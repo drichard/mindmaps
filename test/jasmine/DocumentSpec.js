@@ -33,4 +33,11 @@ describe("Document", function() {
     expect(restored instanceof mindmaps.Document).toBeTruthy();
     expect(restored).toEqual(doc);
   });
+
+  it("should set and remember autosave", function() {
+    doc.setAutoSave(true);
+    var json = doc.serialize();
+    var restored = mindmaps.Document.fromJSON(json);
+    expect(restored.isAutoSave()).toBeTruthy();
+  });
 });

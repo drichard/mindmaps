@@ -49,6 +49,8 @@ mindmaps.OpenDocumentView = function() {
 
     $("#template-open-table-item").tmpl(docs, {
       format : function(date) {
+        if (!date) return "";
+
         var day = date.getDate();
         var month = date.getMonth() + 1;
         var year = date.getFullYear();
