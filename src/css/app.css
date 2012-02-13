@@ -504,6 +504,11 @@ html,body {
   text-decoration: line-through;
 }
 
+.file-dialog {
+  /* overwrite aristo behaviour */
+  padding: 10px !important;
+}
+
 .file-dialog h1 {
   font-size: 18px;
   font-weight: bold;
@@ -511,8 +516,9 @@ html,body {
 }
 
 .file-dialog p {
-  margin: 8px 0;
+  margin: 8px 0 15px;
   font-size: 13px;
+  line-height: 15px;
 }
 
 .file-dialog .localstorage-filelist {
@@ -557,6 +563,14 @@ html,body {
 
 .file-dialog .localstorage-filelist tr:hover a.delete {
   display: inline;
+}
+
+#checkbox-autosave-localstorage {
+  margin-left: 20px;
+}
+
+#checkbox-autosave-localstorage + label {
+  font-size: 13px;
 }
 
 .file-dialog .seperator {
