@@ -167,7 +167,7 @@ task("copy-files", [ "minify-js" ], function() {
 desc("Update cache manifest");
 task("update-manifest", function() {
   // put new timestamp
-  var fileDir = publishDir + "cache.manifest";
+  var fileDir = publishDir + "cache.appcache";
   var contents = fs.readFileSync(fileDir, "utf8");
   contents = contents.replace("{{timestamp}}", Date.now());
   fs.writeFileSync(fileDir, contents);
