@@ -15,12 +15,12 @@ mindmaps.InspectorView = function() {
   var $underlineCheckbox = $("#inspector-checkbox-font-underline", $content);
   var $linethroughCheckbox = $("#inspector-checkbox-font-linethrough",
       $content);
-  var $applyToAllButton = $("#inspector-button-apply-all", $content);
+  var $branchColorChildrenButton = $("#inspector-button-branch-color-children", $content);
   var branchColorPicker = $("#inspector-branch-color-picker", $content);
   var fontColorPicker = $("#inspector-font-color-picker", $content);
   var $allButtons = [ $sizeDecreaseButton, $sizeIncreaseButton,
       $boldCheckbox, $italicCheckbox, $underlineCheckbox,
-      $linethroughCheckbox, $applyToAllButton ];
+      $linethroughCheckbox, $branchColorChildrenButton ];
   var $allColorpickers = [ branchColorPicker, fontColorPicker ];
 
   /**
@@ -107,7 +107,7 @@ mindmaps.InspectorView = function() {
    */
   this.init = function() {
     $(".buttonset", $content).buttonset();
-    $applyToAllButton.button();
+    $branchColorChildrenButton.button();
 
     $sizeDecreaseButton.click(function() {
       if (self.fontSizeDecreaseButtonClicked) {
@@ -176,9 +176,9 @@ mindmaps.InspectorView = function() {
       }
     });
 
-    $applyToAllButton.click(function() {
-      if (self.applyStylesToChildrenButtonClicked) {
-        self.applyStylesToChildrenButtonClicked();
+    $branchColorChildrenButton.click(function() {
+      if (self.branchColorChildrenButtonClicked) {
+        self.branchColorChildrenButtonClicked();
       }
     });
   };
@@ -247,6 +247,10 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
         mindmapModel.selectedNode, color);
     mindmapModel.executeAction(action);
   };
+
+  view.branchColorChildrenButtonClicked = function() {
+    console.log("apply children")
+  }
 
   /**
    * Update view on font events.
