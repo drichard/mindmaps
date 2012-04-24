@@ -34,6 +34,8 @@ var mindmaps = mindmaps || {};
  * Start up. This function is executed when the DOM is loaded.
  */
 $(function() {
+  removeEventLayerXY();
+
   // take car of old browsers
   createECMA5Shims();
   createHTML5Shims();
@@ -51,12 +53,32 @@ $(function() {
 });
 
 /**
- * Adds a confirmation dialog when the user navigates away from the app.
+ * Remove layerX and layerY from the jQuery event object, it causes heaps of deprecated
+ * warnings in WebKit browsers.
+ * See: http://stackoverflow.com/questions/7825448/webkit-issues-with-event-layerx-and-event-layery
+ *
+ * Can be removed when upgrading to jQuery 1.7+.
  */
+function removeEventLayerXY() {
+  // remove layerX and layerY
+  var all = $.event.props,
+  len = all.length,
+  res = [];
+
+  while (len--) {
+    var el = all[len];
+    if (el != 'layerX' && el != 'layerY') res.push(el);
+  }
+  $.event.props = res;
+}
+
+/**
+* Adds a confirmation dialog when the user navigates away from the app.
+*/
 function addUnloadHook () {
   window.onbeforeunload = function (e) {
     var msg = "Are you sure? Any unsaved progress will be lost."
-      e = e || window.event;
+    e = e || window.event;
 
     // For IE and Firefox prior to version 4
     if (e) {
@@ -84,8 +106,8 @@ function trackErrors() {
 
 // TODO make non global
 /**
- * Initialize the console object.
- */
+* Initialize the console object.
+*/
 function setupConsole() {
   var noOp = function() {
   };
@@ -112,8 +134,8 @@ function setupConsole() {
 }
 
 /**
- * Creates ECMA5 shims if the browser does not implement them.
- */
+* Creates ECMA5 shims if the browser does not implement them.
+*/
 function createECMA5Shims() {
   // from: https://github.com/kriskowal/es5-shim/blob/master/es5-shim.js
 
@@ -124,8 +146,8 @@ function createECMA5Shims() {
     Function.prototype.bind = function bind(that) { // .length is 1
       var target = this;
       if (typeof target.apply !== "function"
-          || typeof target.call !== "function")
-        return new TypeError();
+      || typeof target.call !== "function")
+      return new TypeError();
       var args = slice.call(arguments);
 
       function bound() {
@@ -137,12 +159,12 @@ function createECMA5Shims() {
           return self;
         } else {
           return target.call.apply(target, args.concat(slice
-              .call(arguments)));
+            .call(arguments)));
         }
 
       }
       bound.length = (typeof target === "function" ? Math.max(
-          target.length - args.length, 0) : 0);
+      target.length - args.length, 0) : 0);
       return bound;
     };
   }
@@ -193,7 +215,7 @@ function createECMA5Shims() {
       for ( var i = 0; i < this.length; i++)
         if (block.call(thisp, this[i]))
           values.push(this[i]);
-      return values;
+        return values;
     };
   }
 
@@ -204,7 +226,7 @@ function createECMA5Shims() {
       for ( var i = 0; i < this.length; i++)
         if (!block.call(thisp, this[i]))
           return false;
-      return true;
+        return true;
     };
   }
 
@@ -215,7 +237,7 @@ function createECMA5Shims() {
       for ( var i = 0; i < this.length; i++)
         if (block.call(thisp, this[i]))
           return true;
-      return false;
+        return false;
     };
   }
 
@@ -343,8 +365,8 @@ function createECMA5Shims() {
 }
 
 /**
- * Create shims for HTML5 functionality if not supported by browser.
- */
+* Create shims for HTML5 functionality if not supported by browser.
+*/
 function createHTML5Shims() {
   // localstorage dummy (does nothing)
   if (typeof window.localStorage == 'undefined') {
