@@ -367,6 +367,9 @@ mindmaps.action.SetFontColorAction.prototype = new mindmaps.action.Action();
 mindmaps.action.SetBranchColorAction = function(node, branchColor) {
   var oldColor = node.branchColor;
   this.execute = function() {
+    if (branchColor === node.branchColor) {
+      return false;
+    }
     node.branchColor = branchColor;
   };
 
@@ -376,3 +379,38 @@ mindmaps.action.SetBranchColorAction = function(node, branchColor) {
   };
 };
 mindmaps.action.SetBranchColorAction.prototype = new mindmaps.action.Action();
+
+
+/**
+* A composite action is a group of actions.
+*/
+mindmaps.action.CompositeAction = function() {
+  this.actions = [];
+};
+
+mindmaps.action.CompositeAction.prototype.addAction = function(action) {
+  this.actions.push(action);
+};
+
+/**
+* Apply fn on each action.
+*/
+mindmaps.action.CompositeAction.prototype.forEachAction = function(fn) {
+  this.actions.forEach(fn)
+};
+
+
+/**
+* Changes the branch color of all the node's children to branch
+* color of the node.
+*/
+mindmaps.action.SetChildrenBranchColorAction = function(node) {
+  mindmaps.action.CompositeAction.call(this);
+  var branchColor = node.branchColor;
+  var self = this;
+
+  node.forEachDescendant(function(desc) {
+    self.addAction(new mindmaps.action.SetBranchColorAction(desc, branchColor)); 
+  });
+}
+mindmaps.action.SetChildrenBranchColorAction.prototype = new mindmaps.action.CompositeAction();

@@ -13,7 +13,7 @@
  * @param {mindmaps.EventBus} eventBus
  * @param {mindmaps.CommandRegistry} commandRegistry
  */
-mindmaps.MindMapModel = function(eventBus, commandRegistry) {
+mindmaps.MindMapModel = function(eventBus, commandRegistry, undoController) {
   var self = this;
   this.document = null;
   this.selectedNode = null;
@@ -176,6 +176,14 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
    * @param {mindmaps.Action} action
    */
   this.executeAction = function(action) {
+    // a composite action consists of multiple actions which are
+    // processed individually.
+    if (action instanceof mindmaps.action.CompositeAction) {
+      var execute = this.executeAction.bind(this);
+      action.forEachAction(execute);
+      return;
+    }
+
     var executed = action.execute();
 
     // cancel action if false was returned
@@ -198,30 +206,15 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry) {
       };
 
       // register redo function
-      var redoFunc = null;
       if (action.redo) {
-        redoFunc = function() {
+        var redoFunc = function() {
           self.executeAction(action.redo());
         };
       }
 
-      // emit undo event
-      if (this.undoEvent) {
-        this.undoEvent(undoFunc, redoFunc);
-      }
+      undoController.addUndo(undoFunc, redoFunc);
     }
   };
-
-  /**
-   * Event that is fired when a new undo operation should be recorded.
-   * 
-   * @event
-   * @param {Function} undoFunc
-   * @param {Function} [redoFunc]
-   */
-  this.undoEvent = function(undoFunc, redoFunc) {
-  };
-
 
   /**
    * Saves a document to the localstorage and publishes DOCUMENT_SAVED event on success.

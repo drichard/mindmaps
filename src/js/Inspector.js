@@ -248,8 +248,13 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
     mindmapModel.executeAction(action);
   };
 
+  /**
+   * Change branch color of all the node's children.
+   */
   view.branchColorChildrenButtonClicked = function() {
-    console.log("apply children")
+    var action = new mindmaps.action.SetChildrenBranchColorAction(
+        mindmapModel.selectedNode);
+    mindmapModel.executeAction(action);
   }
 
   /**
