@@ -62,7 +62,7 @@ $(function() {
   trackErrors();
 
   if (!mindmaps.DEBUG) {
-    addUnloadHook();
+   // addUnloadHook();
   }
 
   // create a new app controller and go
