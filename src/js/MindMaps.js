@@ -29,6 +29,24 @@
  */
 var mindmaps = mindmaps || {};
 
+// experimental app cache invalidator. from:
+// http://www.html5rocks.com/en/tutorials/appcache/beginner/#toc-updating-cache
+(function() {
+  window.addEventListener('load', function(e) {
+    if (window.applicationCache) {
+      window.applicationCache.addEventListener('updateready', function(e) {
+        if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+          // Browser downloaded a new app cache.
+          // Swap it in and reload the page to get the new hotness.
+          window.applicationCache.swapCache();
+          window.location.reload();
+        } else {
+          // Manifest didn't changed. Nothing new to server.
+        }
+      }, false);
+    }
+  }, false);
+})();
 
 /**
  * Start up. This function is executed when the DOM is loaded.
