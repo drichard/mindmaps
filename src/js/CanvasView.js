@@ -630,7 +630,7 @@ mindmaps.DefaultCanvasView = function() {
   /**
    * Changes only the color of the branch leading up to it's parent.
    */
-  this.drawBranch = function(node, color) {
+  this.updateBranchColor = function(node, color) {
     var $node = $getNode(node);
     $node.css("border-bottom-color", color);
     
@@ -638,6 +638,14 @@ mindmaps.DefaultCanvasView = function() {
     if (!node.isRoot()) {
       drawNodeCanvas(node, color);
     }
+  };
+
+  /**
+   * Changes only the font color of a node.
+   */
+  this.updateFontColor = function(node, color) {
+    var $text = $getNodeCaption(node);
+    $text.css("color", color);
   };
 
   /**

@@ -56,6 +56,15 @@ mindmaps.Event = {
   NODE_FONT_CHANGED : "NodeFontChangedEvent",
 
   /**
+   * Preview event for node font color changes.
+   *
+   * @event
+   * @param {mindmaps.Node} node
+   * @param {String} color
+   */
+  NODE_FONT_COLOR_PREVIEW: "NodeFontColorPreviewEvent",
+
+  /**
    * @event
    * @param {mindmaps.Node} node
    */

@@ -317,13 +317,17 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
       view.updateNode(node);
     });
 
+    eventBus.subscribe(mindmaps.Event.NODE_FONT_COLOR_PREVIEW, function(node, color) {
+      view.updateFontColor(node, color);
+    });
+
     eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(
         node) {
       view.updateNode(node);
     });
     
     eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_PREVIEW, function(node, color) {
-      view.drawBranch(node, color)
+      view.updateBranchColor(node, color)
     });
 
     eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {

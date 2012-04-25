@@ -179,6 +179,12 @@ mindmaps.InspectorView = function() {
         if (self.fontColorPicked) {
           self.fontColorPicked(hex);
         }
+      },
+
+      move: function(hex) {
+        if (self.fontColorPreview) {
+          self.fontColorPreview(hex);
+        }
       }
     });
 
@@ -256,6 +262,11 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
     var action = new mindmaps.action.SetFontColorAction(
         mindmapModel.selectedNode, color);
     mindmapModel.executeAction(action);
+  };
+
+  view.fontColorPreview = function(color) {
+    eventBus.publish(mindmaps.Event.NODE_FONT_COLOR_PREVIEW, 
+        mindmapModel.selectedNode, color);
   };
 
   /**
