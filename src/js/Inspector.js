@@ -15,12 +15,12 @@ mindmaps.InspectorView = function() {
   var $underlineCheckbox = $("#inspector-checkbox-font-underline", $content);
   var $linethroughCheckbox = $("#inspector-checkbox-font-linethrough",
       $content);
-  var $applyToAllButton = $("#inspector-button-apply-all", $content);
+  var $branchColorChildrenButton = $("#inspector-button-branch-color-children", $content);
   var branchColorPicker = $("#inspector-branch-color-picker", $content);
   var fontColorPicker = $("#inspector-font-color-picker", $content);
   var $allButtons = [ $sizeDecreaseButton, $sizeIncreaseButton,
       $boldCheckbox, $italicCheckbox, $underlineCheckbox,
-      $linethroughCheckbox, $applyToAllButton ];
+      $linethroughCheckbox, $branchColorChildrenButton ];
   var $allColorpickers = [ branchColorPicker, fontColorPicker ];
 
   /**
@@ -107,7 +107,7 @@ mindmaps.InspectorView = function() {
    */
   this.init = function() {
     $(".buttonset", $content).buttonset();
-    $applyToAllButton.button();
+    $branchColorChildrenButton.button();
 
     $sizeDecreaseButton.click(function() {
       if (self.fontSizeDecreaseButtonClicked) {
@@ -156,9 +156,15 @@ mindmaps.InspectorView = function() {
           return;
         }
 
-        console.log("branch", hex);
+        console.log("hide branch", hex);
         if (self.branchColorPicked) {
           self.branchColorPicked(hex);
+        }
+      },
+
+      move : function(hex) {
+        if (self.branchColorPreview) {
+          self.branchColorPreview(hex);
         }
       }
     });
@@ -173,12 +179,18 @@ mindmaps.InspectorView = function() {
         if (self.fontColorPicked) {
           self.fontColorPicked(hex);
         }
+      },
+
+      move: function(hex) {
+        if (self.fontColorPreview) {
+          self.fontColorPreview(hex);
+        }
       }
     });
 
-    $applyToAllButton.click(function() {
-      if (self.applyStylesToChildrenButtonClicked) {
-        self.applyStylesToChildrenButtonClicked();
+    $branchColorChildrenButton.click(function() {
+      if (self.branchColorChildrenButtonClicked) {
+        self.branchColorChildrenButtonClicked();
       }
     });
   };
@@ -237,16 +249,34 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
   };
 
   view.branchColorPicked = function(color) {
-    var action = new mindmaps.action.SetBranchColorAction(
-        mindmapModel.selectedNode, color);
+    var action = new mindmaps.action.SetBranchColorAction(mindmapModel.selectedNode, color);
     mindmapModel.executeAction(action);
   };
+
+  view.branchColorPreview = function(color) {
+    eventBus.publish(mindmaps.Event.NODE_BRANCH_COLOR_PREVIEW, 
+        mindmapModel.selectedNode, color);
+  }
 
   view.fontColorPicked = function(color) {
     var action = new mindmaps.action.SetFontColorAction(
         mindmapModel.selectedNode, color);
     mindmapModel.executeAction(action);
   };
+
+  view.fontColorPreview = function(color) {
+    eventBus.publish(mindmaps.Event.NODE_FONT_COLOR_PREVIEW, 
+        mindmapModel.selectedNode, color);
+  };
+
+  /**
+   * Change branch color of all the node's children.
+   */
+  view.branchColorChildrenButtonClicked = function() {
+    var action = new mindmaps.action.SetChildrenBranchColorAction(
+        mindmapModel.selectedNode);
+    mindmapModel.executeAction(action);
+  }
 
   /**
    * Update view on font events.

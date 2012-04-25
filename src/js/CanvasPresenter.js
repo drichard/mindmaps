@@ -308,16 +308,28 @@ mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
     eventBus.subscribe(mindmaps.Event.NODE_OPENED, function(node) {
       view.openNode(node);
     });
+
     eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
       view.closeNode(node);
     });
+
     eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
       view.updateNode(node);
     });
+
+    eventBus.subscribe(mindmaps.Event.NODE_FONT_COLOR_PREVIEW, function(node, color) {
+      view.updateFontColor(node, color);
+    });
+
     eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(
         node) {
       view.updateNode(node);
     });
+    
+    eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_PREVIEW, function(node, color) {
+      view.updateBranchColor(node, color)
+    });
+
     eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
       view.setZoomFactor(zoomFactor);
       view.applyViewZoom();

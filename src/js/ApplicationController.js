@@ -8,7 +8,7 @@ mindmaps.ApplicationController = function() {
   var shortcutController = new mindmaps.ShortcutController();
   var commandRegistry = new mindmaps.CommandRegistry(shortcutController);
   var undoController = new mindmaps.UndoController(eventBus, commandRegistry);
-  var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry);
+  var mindmapModel = new mindmaps.MindMapModel(eventBus, commandRegistry, undoController);
   var clipboardController = new mindmaps.ClipboardController(eventBus,
       commandRegistry, mindmapModel);
   var helpController = new mindmaps.HelpController(eventBus, commandRegistry);
@@ -102,9 +102,6 @@ mindmaps.ApplicationController = function() {
       closeDocumentCommand.setEnabled(true);
       exportCommand.setEnabled(true);
     });
-
-    // connect undo events emitted from mindmap model with undo controller
-    mindmapModel.undoEvent = undoController.addUndo.bind(undoController);
   };
 
   /**

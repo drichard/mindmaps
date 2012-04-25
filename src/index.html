@@ -151,11 +151,11 @@
       <tr>
         <td>Branch color:</td>
         <td><input type="hidden" id="inspector-branch-color-picker"
-          class="colorpicker" /></td>
+          class="colorpicker" />
+          <button id="inspector-button-branch-color-children" title="Apply branch color to all children" class="right buttons-small buttons-less-padding">⟼  ⋲ </button>
+        </td>
       </tr>
     </table>
-    <!--<button id="inspector-button-apply-all" class="buttons-small">Apply
-      styles to children...</button>-->
   </div>
 </div>
 </script>
@@ -192,7 +192,7 @@
       </div>
     </div>
     <div id="canvas-container">
-      <div id="drawing-area"></div>
+      <div id="drawing-area" class="no-select"></div>
     </div>
     <div id="bottombar">
       <div id="about">

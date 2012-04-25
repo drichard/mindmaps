@@ -591,13 +591,14 @@ mindmaps.DefaultCanvasView = function() {
    * Redraws a node's branch to its parent.
    * 
    * @param {mindmaps.Node} node
+   * @param {String} optional color
    */
-  function drawNodeCanvas(node) {
+  function drawNodeCanvas(node, color) {
     var parent = node.getParent();
     var depth = node.getDepth();
     var offsetX = node.offset.x;
     var offsetY = node.offset.y;
-    var color = node.branchColor;
+    color = color || node.branchColor;
 
     var $node = $getNode(node);
     var $parent = $getNode(parent);
@@ -624,6 +625,27 @@ mindmaps.DefaultCanvasView = function() {
         drawNodeCanvas(child);
       });
     }
+  };
+
+  /**
+   * Changes only the color of the branch leading up to it's parent.
+   */
+  this.updateBranchColor = function(node, color) {
+    var $node = $getNode(node);
+    $node.css("border-bottom-color", color);
+    
+    // redraw canvas to parent
+    if (!node.isRoot()) {
+      drawNodeCanvas(node, color);
+    }
+  };
+
+  /**
+   * Changes only the font color of a node.
+   */
+  this.updateFontColor = function(node, color) {
+    var $text = $getNodeCaption(node);
+    $text.css("color", color);
   };
 
   /**

@@ -61,3 +61,7 @@ button {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.right {
+  float: right;
+}

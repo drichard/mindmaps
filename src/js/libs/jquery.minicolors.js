@@ -82,6 +82,11 @@
  * - center colorpicker beneath trigger element (hardcoded) 
  * - add invisible overlay
  */
+
+/*
+ * Changes by David (25/04/2012):
+ * - Add move callback
+ */
 if(jQuery) (function($) {
 	
 	$.extend($.fn, {
@@ -111,8 +116,8 @@ if(jQuery) (function($) {
 				input.data('trigger', trigger);
 				input.data('hsb', hsb);
 				if( o.change ) input.data('change', o.change);
-				
 				if (o.hide) input.data('hide', o.hide);
+				if (o.move) input.data('move', o.move);
 				
 				// Handle options
 				if( o.readonly ) input.attr('readonly', true);
@@ -259,7 +264,7 @@ if(jQuery) (function($) {
 				input.data('mousebutton', 0);
 				
 				// invisible overlay accept clicks outside the color picker area
-				var $overlay = $("<div class='miniColors-overlay'/>").css({
+				var $overlay = $("<div class='miniColors-overlay no-select'/>").css({
 					position: "absolute",
 					left: 0,
 					top: 0,
@@ -287,7 +292,6 @@ if(jQuery) (function($) {
 						event.preventDefault();
 						input.data('moving', 'colors');
 						moveColor(input, event);
-						return;
 					}
 					
 					if( $(event.target).hasClass('miniColors-hues') ) {
@@ -295,6 +299,10 @@ if(jQuery) (function($) {
 						input.data('moving', 'hues');
 						moveHue(input, event);
 					}
+
+          if (input.data('move')) {
+            input.data('move').call(input, input.val());
+          }
 				});
 				
 				selector.bind('mouseup.miniColors', function(event) {
@@ -306,6 +314,10 @@ if(jQuery) (function($) {
 					if( input.data('mousebutton') === 1 ) {
 						if( input.data('moving') === 'colors' ) moveColor(input, event);
 						if( input.data('moving') === 'hues' ) moveHue(input, event);
+
+            if (input.data('move')) {
+              input.data('move').call(input, input.val());
+            }
 					}
 				});
 				
