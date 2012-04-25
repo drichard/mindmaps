@@ -37,8 +37,8 @@ var mindmaps = mindmaps || {};
       window.applicationCache.addEventListener('updateready', function(e) {
         if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
           // Browser downloaded a new app cache.
-          // Swap it in and reload the page to get the new hotness.
           window.applicationCache.swapCache();
+          window.onbeforeunload = null;
           window.location.reload();
         } else {
           // Manifest didn't changed. Nothing new to server.
@@ -62,7 +62,7 @@ $(function() {
   trackErrors();
 
   if (!mindmaps.DEBUG) {
-   // addUnloadHook();
+    addUnloadHook();
   }
 
   // create a new app controller and go
