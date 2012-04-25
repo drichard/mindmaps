@@ -156,9 +156,15 @@ mindmaps.InspectorView = function() {
           return;
         }
 
-        console.log("branch", hex);
+        console.log("hide branch", hex);
         if (self.branchColorPicked) {
           self.branchColorPicked(hex);
+        }
+      },
+
+      move : function(hex) {
+        if (self.branchColorPreview) {
+          self.branchColorPreview(hex);
         }
       }
     });
@@ -237,10 +243,14 @@ mindmaps.InspectorPresenter = function(eventBus, mindmapModel, view) {
   };
 
   view.branchColorPicked = function(color) {
-    var action = new mindmaps.action.SetBranchColorAction(
-        mindmapModel.selectedNode, color);
+    var action = new mindmaps.action.SetBranchColorAction(mindmapModel.selectedNode, color);
     mindmapModel.executeAction(action);
   };
+
+  view.branchColorPreview = function(color) {
+    eventBus.publish(mindmaps.Event.NODE_BRANCH_COLOR_PREVIEW, 
+        mindmapModel.selectedNode, color);
+  }
 
   view.fontColorPicked = function(color) {
     var action = new mindmaps.action.SetFontColorAction(

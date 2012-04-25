@@ -64,6 +64,13 @@ mindmaps.Event = {
   /**
    * @event
    * @param {mindmaps.Node} node
+   * @param {String} color
+   */
+  NODE_BRANCH_COLOR_PREVIEW : "NodeBranchColorPreviewEvent",
+
+  /**
+   * @event
+   * @param {mindmaps.Node} node
    */
   NODE_CREATED : "NodeCreatedEvent",
 

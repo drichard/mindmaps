@@ -380,7 +380,6 @@ mindmaps.action.SetBranchColorAction = function(node, branchColor) {
 };
 mindmaps.action.SetBranchColorAction.prototype = new mindmaps.action.Action();
 
-
 /**
 * A composite action is a group of actions.
 */
