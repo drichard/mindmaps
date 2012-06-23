@@ -46,6 +46,8 @@ $(function() {
     addUnloadHook();
   }
 
+  filepicker.setKey('P9tQ4bicRwyIe8ZUsny5');
+
   // create a new app controller and go
   var appController = new mindmaps.ApplicationController();
   appController.go();

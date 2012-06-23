@@ -1,9 +1,9 @@
 /**
- * Creates a new SaveDocumentView. This view renders a dialog where the user can
- * save the mind map.
- * 
- * @constructor
- */
+* Creates a new SaveDocumentView. This view renders a dialog where the user can
+* save the mind map.
+* 
+* @constructor
+*/
 mindmaps.SaveDocumentView = function() {
   var self = this;
 
@@ -19,76 +19,128 @@ mindmaps.SaveDocumentView = function() {
     }
   });
 
-  var $localSorageButton = $("#button-save-localstorage").button().click(
-      function() {
-        if (self.localStorageButtonClicked) {
-          self.localStorageButtonClicked();
-        }
-      });
 
-  var $autoSaveCheckbox = $("#checkbox-autosave-localstorage").click(
+  var $saveCloudStorageButton = $("#button-save-cloudstorage").button().click(
+    function() {
+      if (self.cloudStorageButtonClicked) {
+        self.cloudStorageButtonClicked();
+      }
+    });
+
+  var $saveAsCloudStorageButton = $("#button-saveas-cloudstorage").button().click(
+    function() {
+      if (self.cloudStorageButtonClicked) {
+        self.cloudStorageButtonClicked(true);
+      }
+    });
+
+  $('.buttonset', $dialog).buttonset();
+
+  var $localSorageButton = $("#button-save-localstorage").button().click(
+    function() {
+      if (self.localStorageButtonClicked) {
+        self.localStorageButtonClicked();
+      }
+    });
+
+    var $autoSaveCheckbox = $("#checkbox-autosave-localstorage").click(
       function() {
         if (self.autoSaveCheckboxClicked) {
           self.autoSaveCheckboxClicked($(this).prop("checked"));
         }
       });
 
-  var $hddSaveButton = $("#button-save-hdd").button().downloadify({
-    filename : function() {
-      if (self.fileNameRequested) {
-        return self.fileNameRequested();
-      }
-    },
-    data : function() {
-      if (self.fileContentsRequested) {
-        return self.fileContentsRequested();
-      }
-    },
-    onComplete : function() {
-      if (self.saveToHddComplete) {
-        self.saveToHddComplete();
-      }
-    },
-    onError : function() {
-      console.log("error while saving to hdd");
-    },
-    swf : 'media/downloadify.swf',
-    downloadImage : 'img/transparent.png',
-    width : 65,
-    height : 29,
-    append : true
-  });
+      var $hddSaveButton = $("#button-save-hdd").button().downloadify({
+        filename : function() {
+          if (self.fileNameRequested) {
+            return self.fileNameRequested();
+          }
+        },
+        data : function() {
+          if (self.fileContentsRequested) {
+            return self.fileContentsRequested();
+          }
+        },
+        onComplete : function() {
+          if (self.saveToHddComplete) {
+            self.saveToHddComplete();
+          }
+        },
+        onError : function() {
+          console.log("error while saving to hdd");
+        },
+        swf : 'media/downloadify.swf',
+        downloadImage : 'img/transparent.png',
+        width : 65,
+        height : 29,
+        append : true
+      });
 
-  this.setAutoSaveCheckboxState = function(checked) {
-    $autoSaveCheckbox.prop("checked", checked);
-  }
+      this.setAutoSaveCheckboxState = function(checked) {
+        $autoSaveCheckbox.prop("checked", checked);
+      }
 
-  this.showSaveDialog = function() {
-    $dialog.dialog("open");
-  };
+      this.showSaveDialog = function() {
+        $dialog.dialog("open");
+      };
 
-  this.hideSaveDialog = function() {
-    $dialog.dialog("close");
-  };
+      this.hideSaveDialog = function() {
+        $dialog.dialog("close");
+      };
 };
 
 /**
- * Creates a new SaveDocumentPresenter. The presenter can store documents in the
- * local storage or to a hard disk.
- * 
- * @constructor
- * @param {mindmaps.EventBus} eventBus
- * @param {mindmaps.MindMapModel} mindmapModel
- * @param {mindmaps.SaveDocumentView} view
- * @param {mindmaps.AutoSaveController} autosaveController
- */
+* Creates a new SaveDocumentPresenter. The presenter can store documents in the
+* local storage or to a hard disk.
+* 
+* @constructor
+* @param {mindmaps.EventBus} eventBus
+* @param {mindmaps.MindMapModel} mindmapModel
+* @param {mindmaps.SaveDocumentView} view
+* @param {mindmaps.AutoSaveController} autosaveController
+*/
 mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController) {
+
+  view.cloudStorageButtonClicked = function(saveas) {
+    var doc = mindmapModel.getDocument();
+    var data = doc.prepareSave().serialize()
+
+    var success = function(url) {
+      filepicker.mm_currentFileHandle = url
+
+      console.log('saved to', url);
+      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
+      view.hideSaveDialog();
+    };
+
+    var error = function() {
+    };
+    
+    if (!saveas && filepicker.mm_currentFileHandle) {
+      $.ajax({
+        type:'POST',
+        url: filepicker.mm_currentFileHandle,
+        data: data, 
+        contentType: 'text/plain',
+        success: success,
+        error: error
+      });
+    } else {
+      filepicker.getUrlFromData(data, function(dataUrl) {
+        // TODO mimetype
+        filepicker.saveAs(dataUrl, 'text/plain', 
+          {modal: true, services: ["Dropbox", "Box"]},
+          success);
+      });
+    }
+  };
+
   /**
-   * View callback when local storage button was clicked. Saves the document
-   * in the local storage.
-   * 
-   * @ignore
-   */
+  * View callback when local storage button was clicked. Saves the document
+  * in the local storage.
+  * 
+  * @ignore
+  */
   view.localStorageButtonClicked = function() {
     var success = mindmapModel.saveToLocalStorage();
     if (success) {
@@ -100,10 +152,10 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
 
 
   /**
-   * View callback: Enables or disables the autosave function for localstorage.
-   *
-   * @ignore
-   */
+  * View callback: Enables or disables the autosave function for localstorage.
+  *
+  * @ignore
+  */
   view.autoSaveCheckboxClicked = function(checked) {
     if (checked) {
       autosaveController.enable();
@@ -113,33 +165,32 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   }
 
   /**
-   * View callback: Returns the filename for the document for saving on hard
-   * drive.
-   * 
-   * @ignore
-   * @returns {String}
-   */
+  * View callback: Returns the filename for the document for saving on hard
+  * drive.
+  * 
+  * @ignore
+  * @returns {String}
+  */
   view.fileNameRequested = function() {
     return mindmapModel.getMindMap().getRoot().getCaption() + ".json";
   };
 
   /**
-   * View callback: Returns the serialized document.
-   * 
-   * @ignore
-   * @returns {String}
-   */
+  * View callback: Returns the serialized document.
+  * 
+  * @ignore
+  * @returns {String}
+  */
   view.fileContentsRequested = function() {
     var doc = mindmapModel.getDocument();
-    doc.dates.modified = new Date();
-    return doc.serialize();
+    return doc.prepareSave().serialize();
   };
 
   /**
-   * View callback: Saving to the hard drive was sucessful.
-   * 
-   * @ignore
-   */
+  * View callback: Saving to the hard drive was sucessful.
+  * 
+  * @ignore
+  */
   view.saveToHddComplete = function() {
     var doc = mindmapModel.getDocument();
     eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);

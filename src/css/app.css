@@ -515,10 +515,19 @@ html,body {
   margin-bottom: 8px;
 }
 
+.file-dialog .highlight {
+  color: #14BB14;
+  margin-right: 4px;
+}
+
 .file-dialog p {
   margin: 8px 0 15px;
   font-size: 13px;
   line-height: 15px;
+}
+
+.file-dialog .cloud-buttons {
+  display: inline-block;
 }
 
 .file-dialog .localstorage-filelist {
@@ -565,19 +574,19 @@ html,body {
   display: inline;
 }
 
-#checkbox-autosave-localstorage {
+.file-dialog .autosave {
   margin-left: 20px;
 }
 
-#checkbox-autosave-localstorage + label {
+.file-dialog .autosave + label {
   font-size: 13px;
 }
 
 .file-dialog .seperator {
   display: block;
   clear: both;
-  border-top: 1px dotted grey;
-  margin: 10px 0;
+  border-top: 1px dashed #AAA;
+  margin: 15px 0;
   width: 100%;
 }
 
@@ -632,9 +641,9 @@ html,body {
 }
 
 .notification .content {
-  font-size: 12px;
+  font-size: 13px;
   color: #454545;
-  line-height: 14px;
+  line-height: 16px;
 }
 
 .notification .close-button {
@@ -705,6 +714,7 @@ html,body {
 #export-map-dialog .image-description {
   font-style: italic;
   padding-bottom: 10px;
+  font-size: 13px;
 }
 
 #export-preview {
