@@ -43,50 +43,50 @@ mindmaps.SaveDocumentView = function() {
       }
     });
 
-    var $autoSaveCheckbox = $("#checkbox-autosave-localstorage").click(
-      function() {
-        if (self.autoSaveCheckboxClicked) {
-          self.autoSaveCheckboxClicked($(this).prop("checked"));
-        }
-      });
-
-      var $hddSaveButton = $("#button-save-hdd").button().downloadify({
-        filename : function() {
-          if (self.fileNameRequested) {
-            return self.fileNameRequested();
-          }
-        },
-        data : function() {
-          if (self.fileContentsRequested) {
-            return self.fileContentsRequested();
-          }
-        },
-        onComplete : function() {
-          if (self.saveToHddComplete) {
-            self.saveToHddComplete();
-          }
-        },
-        onError : function() {
-          console.log("error while saving to hdd");
-        },
-        swf : 'media/downloadify.swf',
-        downloadImage : 'img/transparent.png',
-        width : 65,
-        height : 29,
-        append : true
-      });
-
-      this.setAutoSaveCheckboxState = function(checked) {
-        $autoSaveCheckbox.prop("checked", checked);
+  var $autoSaveCheckbox = $("#checkbox-autosave-localstorage").click(
+    function() {
+      if (self.autoSaveCheckboxClicked) {
+        self.autoSaveCheckboxClicked($(this).prop("checked"));
       }
+    });
 
-      this.showSaveDialog = function() {
-        $dialog.dialog("open");
-      };
+  var $hddSaveButton = $("#button-save-hdd").button().downloadify({
+    filename : function() {
+      if (self.fileNameRequested) {
+        return self.fileNameRequested();
+      }
+    },
+    data : function() {
+      if (self.fileContentsRequested) {
+        return self.fileContentsRequested();
+      }
+    },
+    onComplete : function() {
+      if (self.saveToHddComplete) {
+        self.saveToHddComplete();
+      }
+    },
+    onError : function() {
+      console.log("error while saving to hdd");
+    },
+    swf : 'media/downloadify.swf',
+    downloadImage : 'img/transparent.png',
+    width : 65,
+    height : 29,
+    append : true
+  });
 
-      this.hideSaveDialog = function() {
-        $dialog.dialog("close");
-      };
+  this.setAutoSaveCheckboxState = function(checked) {
+    $autoSaveCheckbox.prop("checked", checked);
+  }
+
+  this.showSaveDialog = function() {
+    $dialog.dialog("open");
+  };
+
+  this.hideSaveDialog = function() {
+    $dialog.dialog("close");
+  };
 };
 
 /**
@@ -103,8 +103,8 @@ mindmaps.SaveDocumentView = function() {
 mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController, filePicker) {
 
   /**
-   * Save in cloud button was clicked.
-   */
+  * Save in cloud button was clicked.
+  */
   view.cloudStorageButtonClicked = function(saveAs) {
     filePicker.save({
       saveAs: saveAs,
