@@ -1,10 +1,10 @@
 /**
- * Controller for interaction with the filepicker API. Provides open and save
+ * Class for interaction with the filepicker API. Provides open and save
  * from/to cloud storages.
  *
  * @constructor
  */
-mindmaps.FilePickerController = function(eventBus, mindmapModel) {
+mindmaps.FilePicker = function(eventBus, mindmapModel) {
   var filepicker = window.filepicker;
   filepicker.setKey('P9tQ4bicRwyIe8ZUsny5');
 

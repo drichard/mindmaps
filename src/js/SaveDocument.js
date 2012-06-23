@@ -98,15 +98,15 @@ mindmaps.SaveDocumentView = function() {
 * @param {mindmaps.MindMapModel} mindmapModel
 * @param {mindmaps.SaveDocumentView} view
 * @param {mindmaps.AutoSaveController} autosaveController
-* @param {mindmaps.FilePickerController} filePickerController
+* @param {mindmaps.FilePicker} filePicker
 */
-mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController, filePickerController) {
+mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController, filePicker) {
 
   /**
    * Save in cloud button was clicked.
    */
   view.cloudStorageButtonClicked = function(saveAs) {
-    filePickerController.save({
+    filePicker.save({
       saveAs: saveAs,
       success: function() {
         view.hideSaveDialog();

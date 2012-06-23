@@ -91,15 +91,15 @@ mindmaps.OpenDocumentView = function() {
 * @param {mindmaps.EventBus} eventBus
 * @param {mindmaps.MindMapModel} mindmapModel
 * @param {mindmaps.OpenDocumentView} view
-* @param {mindmaps.FilePickerController} filePickerController
+* @param {mindmaps.FilePicker} filePicker
 */
-mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePickerController) {
+mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePicker) {
 
   /**
    * Open file via cloud
    */
   view.openCloudButtonClicked = function(e) {
-    filePickerController.open({
+    filePicker.open({
       success: function() {
         view.hideOpenDialog();
       }
