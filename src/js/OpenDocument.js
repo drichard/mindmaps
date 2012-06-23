@@ -91,26 +91,18 @@ mindmaps.OpenDocumentView = function() {
 * @param {mindmaps.EventBus} eventBus
 * @param {mindmaps.MindMapModel} mindmapModel
 * @param {mindmaps.OpenDocumentView} view
+* @param {mindmaps.FilePickerController} filePickerController
 */
-mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view) {
+mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePickerController) {
 
+  /**
+   * Open file via cloud
+   */
   view.openCloudButtonClicked = function(e) {
-    // TODO mime type
-    filepicker.getFile("text/plain", {modal: true, services: ["Dropbox", "Box", "URL"]}, function(url, data) {
-      var filename = data.filename
-
-      // load mindmap
-      $.ajax({
-        url: url, 
-        success: function(data) {
-          filepicker.mm_currentFileHandle = url;
-          // TODO error handling
-          var doc = mindmaps.Document.fromJSON(data);
-          mindmapModel.setDocument(doc);
-          view.hideOpenDialog();
-        },
-        error: function() {
-        }});
+    filePickerController.open({
+      success: function() {
+        view.hideOpenDialog();
+      }
     });
   };
 

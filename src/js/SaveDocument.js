@@ -98,41 +98,20 @@ mindmaps.SaveDocumentView = function() {
 * @param {mindmaps.MindMapModel} mindmapModel
 * @param {mindmaps.SaveDocumentView} view
 * @param {mindmaps.AutoSaveController} autosaveController
+* @param {mindmaps.FilePickerController} filePickerController
 */
-mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController) {
+mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosaveController, filePickerController) {
 
-  view.cloudStorageButtonClicked = function(saveas) {
-    var doc = mindmapModel.getDocument();
-    var data = doc.prepareSave().serialize()
-
-    var success = function(url) {
-      filepicker.mm_currentFileHandle = url
-
-      console.log('saved to', url);
-      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
-      view.hideSaveDialog();
-    };
-
-    var error = function() {
-    };
-    
-    if (!saveas && filepicker.mm_currentFileHandle) {
-      $.ajax({
-        type:'POST',
-        url: filepicker.mm_currentFileHandle,
-        data: data, 
-        contentType: 'text/plain',
-        success: success,
-        error: error
-      });
-    } else {
-      filepicker.getUrlFromData(data, function(dataUrl) {
-        // TODO mimetype
-        filepicker.saveAs(dataUrl, 'text/plain', 
-          {modal: true, services: ["Dropbox", "Box"]},
-          success);
-      });
-    }
+  /**
+   * Save in cloud button was clicked.
+   */
+  view.cloudStorageButtonClicked = function(saveAs) {
+    filePickerController.save({
+      saveAs: saveAs,
+      success: function() {
+        view.hideSaveDialog();
+      }
+    });
   };
 
   /**
