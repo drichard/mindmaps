@@ -2,3 +2,4 @@
 .project
 .classpath
 bin/
+node_modules/
