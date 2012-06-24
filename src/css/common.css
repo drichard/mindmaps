@@ -46,6 +46,10 @@ button {
   margin: 0;
 }
 
+a:focus {
+  outline: none;
+}
+
 /*
   UTIL
 */
@@ -65,3 +69,4 @@ button {
 .right {
   float: right;
 }
+

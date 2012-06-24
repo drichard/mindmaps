@@ -85,6 +85,15 @@ mindmaps.Document.prototype.serialize = function() {
 };
 
 /**
+ * Updates modified date and title for saving.
+ */
+mindmaps.Document.prototype.prepareSave = function() {
+  this.dates.modified = new Date();
+  this.title = this.mindmap.getRoot().getCaption();
+  return this;
+};
+
+/**
  * Sort function for Array.sort().
  * 
  * @static

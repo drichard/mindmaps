@@ -222,9 +222,7 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry, undoController) {
    * @returns {Boolean} whether the save was successful.
    */
   this.saveToLocalStorage = function() {
-    var doc = this.document;
-    doc.dates.modified = new Date();
-    doc.title = this.getMindMap().getRoot().getCaption();
+    var doc = this.document.prepareSave();
     var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
     if (success) {
       eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);

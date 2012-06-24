@@ -15,6 +15,7 @@ mindmaps.ApplicationController = function() {
   var printController = new mindmaps.PrintController(eventBus,
       commandRegistry, mindmapModel);
   var autosaveController = new mindmaps.AutoSaveController(eventBus, mindmapModel);
+  var filePicker = new mindmaps.FilePicker(eventBus, mindmapModel);
 
   /**
    * Handles the new document command.
@@ -34,7 +35,7 @@ mindmaps.ApplicationController = function() {
    */
   function doSaveDocument() {
     var presenter = new mindmaps.SaveDocumentPresenter(eventBus,
-        mindmapModel, new mindmaps.SaveDocumentView(), autosaveController);
+        mindmapModel, new mindmaps.SaveDocumentView(), autosaveController, filePicker);
     presenter.go();
   }
 
@@ -55,7 +56,7 @@ mindmaps.ApplicationController = function() {
    */
   function doOpenDocument() {
     var presenter = new mindmaps.OpenDocumentPresenter(eventBus,
-        mindmapModel, new mindmaps.OpenDocumentView());
+        mindmapModel, new mindmaps.OpenDocumentView(), filePicker);
     presenter.go();
   }
 
