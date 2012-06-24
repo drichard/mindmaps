@@ -123,13 +123,11 @@ function trackErrors() {
   };
 }
 
-// TODO make non global
 /**
 * Initialize the console object.
 */
 function setupConsole() {
-  var noOp = function() {
-  };
+  var noOp = function() {};
 
   // provide console object and dummy functions if not built-in
   var console = window.console || {};
@@ -150,6 +148,7 @@ function setupConsole() {
       window.alert("Error: " + s);
     };
   }
+  window.console = console;
 }
 
 /**
