@@ -1,10 +1,15 @@
 var sys = require('sys');
 var static = require('node-static');
 
-//
-// Create a node-static server to serve the current directory
-//
-var file = new(static.Server)('bin', { cache: false, headers: {'X-Hello':'World!'} });
+// resolve debug or production path
+var path = 'src';
+
+var args = process.argv;
+if (args.length >= 3 && args[2] == '--production') {
+  path = 'bin';
+}
+
+var file = new(static.Server)(path, { cache: false, headers: {'X-Hello':'World!'} });
 
 require('http').createServer(function (request, response) {
   request.addListener('end', function () {
@@ -21,3 +26,4 @@ require('http').createServer(function (request, response) {
 }).listen(8080);
 
 sys.puts("> node-static is listening on http://127.0.0.1:8080");
+sys.puts("> and serving path: /" + path);
