@@ -511,6 +511,12 @@ html,body {
   line-height: 15px;
 }
 
+.file-dialog .error {
+  font-size: 13px;
+  color: #F70000;
+  margin-left: 10px;
+}
+
 .file-dialog .localstorage-filelist {
   width: 100%;
   margin: 12px 0;

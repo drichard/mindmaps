@@ -81,6 +81,10 @@ mindmaps.OpenDocumentView = function() {
   this.hideOpenDialog = function() {
     $dialog.dialog("close");
   };
+
+  this.showCloudError = function(msg) {
+    $dialog.find('.cloud-error').text(msg);
+  }
 };
 
 /**
@@ -102,6 +106,9 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
     filePicker.open({
       success: function() {
         view.hideOpenDialog();
+      },
+      error: function(msg) {
+        view.showCloudError(msg);
       }
     });
   };

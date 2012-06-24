@@ -26,6 +26,11 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
   this.open = function(options) {
     options = options || {};
 
+    if (!navigator.onLine) {
+      options.error && options.error("Cannot access cloud, it appears you are offline.");
+      return;
+    }
+
     filepicker.getFile(mimetype, openOptions, function(url, data) {
       // load mindmap
       $.ajax({
@@ -63,6 +68,11 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
    */
   this.save = function(options) {
     options = options || {};
+
+    if (!navigator.onLine) {
+      options.error && options.error("Cannot access cloud, it appears you are offline.");
+      return;
+    }
 
     var doc = mindmapModel.getDocument();
     var data = doc.prepareSave().serialize()
