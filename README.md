@@ -36,19 +36,19 @@ The finished build will appear in /bin.
 ## Host yourself
 All you need is a web server for static files. Copy all files from /bin into your web directory and 
 launch the app with index.html.
-Make sure your web server serves .manifest files with the mime type `text/cache-manifest` for the application to
+Make sure your web server serves .appcache files with the mime type `text/cache-manifest` for the application to
 be accessible offline.
 
 In Apache add the following line to your .htaccess:
 
 ```
-AddType text/cache-manifest .manifest
+AddType text/cache-manifest .appcache
 ```
 
 In nginx add this to conf/mime.types:
 
 ```
-text/cache-manifest manifest; 
+text/cache-manifest appcache; 
 ```
 
 ## License
