@@ -131,11 +131,9 @@ function setupConsole() {
 
   // provide console object and dummy functions if not built-in
   var console = window.console || {};
-  console.log = console.log || noOp;
-  console.info = console.info || noOp;
-  console.debug = console.debug || noOp;
-  console.warn = console.warn || noOp;
-  console.error = console.error || noOp;
+  ['log', 'info', 'debug', 'warn', 'error'].forEach(function(prop) {
+    console[prop] = console[prop] || noOp;
+  });
 
   // turn all console.xx calls into no-ops when in production mode except
   // for errors, do an alert.
@@ -148,6 +146,7 @@ function setupConsole() {
       window.alert("Error: " + s);
     };
   }
+
   window.console = console;
 }
 
