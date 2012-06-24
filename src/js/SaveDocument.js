@@ -27,15 +27,6 @@ mindmaps.SaveDocumentView = function() {
       }
     });
 
-  var $saveAsCloudStorageButton = $("#button-saveas-cloudstorage").button().click(
-    function() {
-      if (self.cloudStorageButtonClicked) {
-        self.cloudStorageButtonClicked(true);
-      }
-    });
-
-  $('.buttonset', $dialog).buttonset();
-
   var $localSorageButton = $("#button-save-localstorage").button().click(
     function() {
       if (self.localStorageButtonClicked) {
@@ -105,9 +96,8 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   /**
   * Save in cloud button was clicked.
   */
-  view.cloudStorageButtonClicked = function(saveAs) {
+  view.cloudStorageButtonClicked = function() {
     filePicker.save({
-      saveAs: saveAs,
       success: function() {
         view.hideSaveDialog();
       }
@@ -125,7 +115,7 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
     if (success) {
       view.hideSaveDialog();
     } else {
-      // TODO display error hint
+      eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, "Error while saving to local storage");
     }
   };
 

@@ -81,13 +81,10 @@
 <div id="save-dialog" class="file-dialog" title="Save mind map">
   <h1><span class="highlight">New!</span> In the Cloud: Dropbox and more</h1>
   <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Dropbox and Box accounts. More coming soon! Powered by <a href="http://www.filepicker.io" target="_blank">filepicker.io</a>.</p>
-  <div class="buttonset cloud-buttons">
-    <button id="button-save-cloudstorage">Save</button>
-    <button id="button-saveas-cloudstorage">as...</button>
-  </div>
+  <button id="button-save-cloudstorage">Save</button>
   <div class="seperator"></div>
   <h1>Local Storage</h1>
-  <p>You can save your mind map in your browser's local storage. Be aware that this is still experimental: the space is limited and there is no guarantee that the browser will keep this document forever.</p>
+  <p>You can save your mind map in your browser's local storage. Be aware that this is still experimental: the space is limited and there is no guarantee that the browser will keep this document forever. Useful for frequent backups in combination with cloud storage.</p>
   <button id="button-save-localstorage">Save</button>
   <input type="checkbox" class="autosave" id="checkbox-autosave-localstorage">
   <label for="checkbox-autosave-localstorage">Save automatically every minute.</label>
@@ -220,8 +217,8 @@
       </div>
     </div>
   </div>
-  <script
-    src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+  <script src="http://api.filepicker.io/v0/filepicker.js"></script>
 
   <!-- DEBUG -->
   <!-- set debug flag for all scripts. Will be removed in production -->
@@ -241,7 +238,6 @@
   <script src="js/libs/swfobject.js"></script>
   <script src="js/libs/downloadify.min.js"></script>
   <script src="js/libs/events.js"></script>
-  <script src="js/libs/filepicker.js"></script>
 
   <script src="js/MindMaps.js"></script>
   <script src="js/Command.js"></script>
