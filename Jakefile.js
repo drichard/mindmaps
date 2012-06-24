@@ -3,8 +3,8 @@ var path = require("path");
 var wrench = require("wrench");
 
 var indexFileName = "index.html";
-var srcDir = "../src/";
-var publishDir = "../bin/";
+var srcDir = "src/";
+var publishDir = "bin/";
 var scriptFilename = "script.js";
 var scriptDir = "js/";
 var regexScriptSection = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
@@ -191,8 +191,8 @@ task("deploy", [ "build" ], function() {
    * The command copies all files from /bin into github pages repo, commits
    * and pushes the changes.
    */
-  var command = "cp -r ../bin/* ../../drichard.github.com/mindmaps/; "
-      + "cd ../../drichard.github.com/mindmaps/; " + "git add .; "
+  var command = "cp -r bin/* ../drichard.github.com/mindmaps/; "
+      + "cd ../drichard.github.com/mindmaps/; " + "git add .; "
       + "git commit -a -m 'deploy mindmaps'; " + "git push;";
   exec(command, function(error, stdout, stderr) {
 
@@ -213,7 +213,7 @@ desc("Generate JSDoc");
 task("generate-docs", function() {
   console.log("Creating project documentation");
   var exec = require('child_process').exec;
-  var command = "../docs/generate.sh";
+  var command = "docs/generate.sh";
   exec(command, function(error, stdout, stderr) {
     if (error !== null) {
       console.log('exec error: ' + error);
