@@ -29,6 +29,26 @@
  */
 var mindmaps = mindmaps || {};
 
+
+// experimental app cache invalidator. from:
+// http://www.html5rocks.com/en/tutorials/appcache/beginner/#toc-updating-cache/
+// Check if a new cache is available on page load.
+window.addEventListener('load', function(e) {
+  window.applicationCache.addEventListener('updateready', function(e) {
+    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+      // Browser downloaded a new app cache.
+      window.applicationCache.swapCache();
+      window.onbeforeunload = null;
+      if (confirm('A new version of the app is available. Load it?')) {
+        window.location.reload();
+      }
+    } else {
+      // Manifest didn't changed. Nothing new to server.
+    }
+  }, false);
+
+}, false)
+
 /**
  * Start up. This function is executed when the DOM is loaded.
  */
