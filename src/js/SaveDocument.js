@@ -101,6 +101,8 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   * Save in cloud button was clicked.
   */
   view.cloudStorageButtonClicked = function() {
+    mindmaps.Util.trackEvent("Clicks", "cloud-save");
+
     filePicker.save({
       success: function() {
         view.hideSaveDialog();
@@ -118,6 +120,8 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   * @ignore
   */
   view.localStorageButtonClicked = function() {
+    mindmaps.Util.trackEvent("Clicks", "localstorage-save");
+
     var success = mindmapModel.saveToLocalStorage();
     if (success) {
       view.hideSaveDialog();
@@ -148,6 +152,8 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   * @returns {String}
   */
   view.fileNameRequested = function() {
+    mindmaps.Util.trackEvent("Clicks", "hdd-save");
+
     return mindmapModel.getMindMap().getRoot().getCaption() + ".json";
   };
 

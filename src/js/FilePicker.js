@@ -40,9 +40,8 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
           try {
             var doc = mindmaps.Document.fromJSON(data);
           } catch (e) {
-            console.error('Error while opening map from cloud', e);
             eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
-            return;
+            throw new Error('Error while opening map from cloud', e);
           }
 
           mindmapModel.setDocument(doc);

@@ -103,6 +103,8 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
    * Open file via cloud
    */
   view.openCloudButtonClicked = function(e) {
+    mindmaps.Util.trackEvent("Clicks", "cloud-open");
+
     filePicker.open({
       success: function() {
         view.hideOpenDialog();
@@ -113,7 +115,6 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
     });
   };
 
-  // TODO experimental, catch errrs
   // http://www.w3.org/TR/FileAPI/#dfn-filereader
   /**
   * View callback: external file has been selected. Try to read and parse a
@@ -122,12 +123,19 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
   * @ignore
   */
   view.openExernalFileClicked = function(e) {
+    mindmaps.Util.trackEvent("Clicks", "hdd-open");
+
     var files = e.target.files;
     var file = files[0];
 
     var reader = new FileReader();
     reader.onload = function() {
-      var doc = mindmaps.Document.fromJSON(reader.result);
+      try {
+        var doc = mindmaps.Document.fromJSON(reader.result);
+      } catch (e) {
+        eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
+        throw new Error('Error while opening map from hdd', e);
+      }
       mindmapModel.setDocument(doc);
       view.hideOpenDialog();
     };
@@ -143,6 +151,8 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
   * @param {mindmaps.Document} doc
   */
   view.documentClicked = function(doc) {
+    mindmaps.Util.trackEvent("Clicks", "localstorage-open");
+    
     mindmapModel.setDocument(doc);
     view.hideOpenDialog();
   };
