@@ -12,8 +12,7 @@
     "url": "http://github.com/drichard/mindmaps/issues"
   },
   "scripts": {
-    "start": "node server.js",
-    "build": "jake"
+    "postinstall" : "npm install -g jake"
   },
   "license": {
     "type": "AGPL",
@@ -23,7 +22,6 @@
     "node": ">=0.6"
   },
   "dependencies": {
-    "jake": ">=0.2.18",
     "node-static": ">=0.5.9",
     "uglify-js": ">=1.2.5",
     "wrench": ">=1.3.5"
