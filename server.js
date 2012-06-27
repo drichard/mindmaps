@@ -1,4 +1,4 @@
-var sys = require('sys');
+var sys = require('util');
 var static = require('node-static');
 
 // resolve debug or production path
