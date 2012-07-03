@@ -32,6 +32,9 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
     }
 
     filepicker.getFile(mimetype, openOptions, function(url, data) {
+      // load callback
+      options.load && options.load();
+
       // load mindmap
       $.ajax({
         url: url, 
@@ -41,7 +44,7 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
             var doc = mindmaps.Document.fromJSON(data);
           } catch (e) {
             eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
-            throw new Error('Error while opening map from cloud', e);
+            throw new Error('Error while parsing map from cloud', e);
           }
 
           mindmapModel.setDocument(doc);
@@ -51,10 +54,11 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
             options.success(doc);
           }
         },
-        error: function() {
+        error: function(jqXHR, textStatus, errorThrown) {
           if (options.error) {
-            options.error();
+            options.error("Error: Could not open mind map!");
           }
+          throw new Error('Error while loading map from filepicker. ' + textStatus + ' ' + errorThrown);
         }
       });
     });

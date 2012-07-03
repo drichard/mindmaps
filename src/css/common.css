@@ -70,3 +70,9 @@ a:focus {
   float: right;
 }
 
+.loading {
+  min-width: 16px;
+  min-height: 16px;
+  background-image: url("../img/ajax-loader.gif");
+  background-repeat: no-repeat;
+}

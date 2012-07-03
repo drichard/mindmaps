@@ -1,7 +1,7 @@
 {
   "name": "mindmaps",
   "description": "mindmaps is a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "keywords": ["html5", "mindmap", "offline"],
   "author": "David Richard",
   "repository": {

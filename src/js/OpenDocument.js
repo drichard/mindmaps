@@ -83,8 +83,18 @@ mindmaps.OpenDocumentView = function() {
   };
 
   this.showCloudError = function(msg) {
+    $dialog.find('.cloud-loading').removeClass('loading');
     $dialog.find('.cloud-error').text(msg);
-  }
+  };
+
+  this.showCloudLoading = function() {
+    $dialog.find('.cloud-error').text('');
+    $dialog.find('.cloud-loading').addClass('loading');
+  };
+
+  this.hideCloudLoading = function() {
+    $dialog.find('.cloud-loading').removeClass('loading');
+  };
 };
 
 /**
@@ -106,6 +116,9 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
     mindmaps.Util.trackEvent("Clicks", "cloud-open");
 
     filePicker.open({
+      load: function() {
+        view.showCloudLoading();
+      },
       success: function() {
         view.hideOpenDialog();
       },

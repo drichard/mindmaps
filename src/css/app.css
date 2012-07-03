@@ -516,6 +516,18 @@ html,body {
   margin-left: 10px;
 }
 
+.file-dialog .cloud-loading {
+  margin-left: 10px;
+  font-size: 13px;
+  display: none;
+  padding-left: 22px;
+  padding-top: 2px;
+}
+
+.file-dialog .cloud-loading.loading {
+  display: inline-block;
+}
+
 .file-dialog .localstorage-filelist {
   width: 100%;
   margin: 12px 0;
@@ -587,6 +599,7 @@ html,body {
 #button-save-hdd object {
   position: relative;
 }
+
 
 /**
 * NOTIFICATION

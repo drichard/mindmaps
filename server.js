@@ -9,7 +9,7 @@ if (args.length >= 3 && args[2] == '--production') {
   path = 'bin';
 }
 
-var file = new(static.Server)(path, { cache: false, headers: {'X-Hello':'World!'} });
+var file = new(static.Server)(path, { cache: false });
 
 require('http').createServer(function (request, response) {
   request.addListener('end', function () {
