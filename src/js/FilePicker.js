@@ -5,20 +5,33 @@
  * @constructor
  */
 mindmaps.FilePicker = function(eventBus, mindmapModel) {
-  var filepicker = window.filepicker;
-  filepicker.setKey('P9tQ4bicRwyIe8ZUsny5');
 
-  var mimetype = "application/json";
+  // filepicker is not defined when we are offline
+  if (window.filepicker) {
+    var filepicker = window.filepicker;
+    filepicker.setKey('P9tQ4bicRwyIe8ZUsny5');
 
-  var openOptions = {
-    modal: true,
-    services: ["Dropbox", "Box", "URL" ]
-  };
+    var mimetype = "application/json";
 
-  var saveOptions = {
-    modal: true,
-    services: ["Dropbox", "Box" ]
-  };
+    var openOptions = {
+      modal: true,
+      services: [
+        filepicker.SERVICES.GOOGLE_DRIVE,
+        filepicker.SERVICES.DROPBOX,
+        filepicker.SERVICES.BOX,
+        filepicker.SERVICES.URL
+      ]
+    };
+
+    var saveOptions = {
+      modal: true,
+      services: [
+        filepicker.SERVICES.GOOGLE_DRIVE,
+        filepicker.SERVICES.DROPBOX,
+        filepicker.SERVICES.BOX,
+      ]
+    };
+  }
 
   /**
    * Shows the open dialog and tries to open a mindmap.
@@ -26,7 +39,7 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
   this.open = function(options) {
     options = options || {};
 
-    if (!navigator.onLine) {
+    if (!filepicker || !navigator.onLine) {
       options.error && options.error("Cannot access cloud, it appears you are offline.");
       return;
     }
@@ -72,7 +85,7 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
   this.save = function(options) {
     options = options || {};
 
-    if (!navigator.onLine) {
+    if (!filepicker || !navigator.onLine) {
       options.error && options.error("Cannot access cloud, it appears you are offline.");
       return;
     }

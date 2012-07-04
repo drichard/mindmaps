@@ -54,7 +54,7 @@
 <script id="template-open" type="text/x-jquery-tmpl">
 <div id="open-dialog" class="file-dialog" title="Open mind map">
   <h1><span class="highlight">New!</span> From the Cloud: Dropbox and more</h1>
-  <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Dropbox and Box accounts. More coming soon! Powered by <a href="http://www.filepicker.io" target="_blank">filepicker.io</a>.</p>
+  <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Google Drive, Dropbox and more! Powered by <a href="http://www.filepicker.io" target="_blank">filepicker.io</a>.</p>
   <button id="button-open-cloud">Open</button>
   <span class="cloud-loading">Loading...</span>
   <span class="cloud-error error"></span>
@@ -83,7 +83,7 @@
 <script id="template-save" type="text/x-jquery-tmpl">
 <div id="save-dialog" class="file-dialog" title="Save mind map">
   <h1><span class="highlight">New!</span> In the Cloud: Dropbox and more</h1>
-  <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Dropbox and Box accounts. More coming soon! Powered by <a href="http://www.filepicker.io" target="_blank">filepicker.io</a>.</p>
+  <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Google Drive, Dropbox and more! Powered by <a href="http://www.filepicker.io" target="_blank">filepicker.io</a>.</p>
   <button id="button-save-cloudstorage">Save</button>
   <span class="cloud-error error"></span>
   <div class="seperator"></div>
@@ -221,7 +221,9 @@
       </div>
     </div>
   </div>
+
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+  <script src="//api.filepicker.io/v0/filepicker.js"></script>
 
   <!-- DEBUG -->
   <!-- set debug flag for all scripts. Will be removed in production -->
@@ -241,7 +243,6 @@
   <script src="js/libs/swfobject.js"></script>
   <script src="js/libs/downloadify.min.js"></script>
   <script src="js/libs/events.js"></script>
-  <script src="js/libs/filepicker.js"></script>
 
   <script src="js/MindMaps.js"></script>
   <script src="js/Command.js"></script>
