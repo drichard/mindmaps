@@ -24,6 +24,6 @@
   "dependencies": {
     "node-static": ">=0.5.9",
     "uglify-js": ">=1.2.5",
-    "wrench": ">=1.3.5"
+    "jake":">=0.3.4"
   }
 }

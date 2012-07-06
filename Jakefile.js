@@ -1,126 +1,104 @@
 var fs = require("fs");
-var path = require("path");
-var wrench = require("wrench");
 
-var indexFileName = "index.html";
-var srcDir = "src/";
-var publishDir = "bin/";
-var scriptFilename = "script.js";
-var scriptDir = "js/";
-var regexScriptSection = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
-var excludeFiles = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
-    ".project", "README.md", "*psd", "*.psd", "*libs" ];
-var indexFile = fs.readFileSync(srcDir + indexFileName, "utf8");
-var scriptNames = [];
+var indexFileName       = "index.html";
+var srcDir              = "src/";
+var publishDir          = "bin/";
+var scriptFilename      = "script.js";
+var scriptDir           = "js/";
+var regexScriptSection  = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
+var excludeFiles        = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
+                            ".project", "README.md", "*psd", "*.psd", "*libs" ];
+var indexFile           = fs.readFileSync(srcDir + indexFileName, "utf8");
 
-desc("Clean old build directory");
-task("clean-dir", function() {
-  if (path.existsSync(publishDir)) {
-    console.log("Deleting old bin directory");
+// find the scripts in index.html
+function extractScriptNames() {
+  console.log("Extracting script file names from index.html");
 
-    wrench.rmdirSyncRecursive(publishDir);
+  var regexScriptName = /<script src="(.*?)"><\/script>/g;
+  var scriptSection = regexScriptSection.exec(indexFile)[1];
+
+  // extract script names
+  var names = []; 
+  var match;
+  while ((match = regexScriptName.exec(scriptSection)) != null) {
+    var script = match[1];
+    names.push(script);
   }
-});
+    
+  return names;
+}
 
-desc("Create new directory");
-task("create-dir", [ "clean-dir" ], function() {
-  console.log("Creating new directory structure");
-  fs.mkdirSync(publishDir);
-  fs.mkdirSync(publishDir + scriptDir);
-});
+// run all scripts through uglifyJS and write to new dest
+function minifyScripts(scriptNames) {
+  console.log("Minifying and concatting scripts.");
 
-desc("Minify scripts");
-task("minify-js", function() {
-  extractScriptNames();
-  minifyScripts();
+  var jsp = require("uglify-js").parser;
+  var pro = require("uglify-js").uglify;
 
-  // find the scripts in index.html
-  function extractScriptNames() {
-    console.log("Extracting script file names from index.html");
-    var regexScriptName = /<script src="(.*?)"><\/script>/g;
-
-    var scriptSection = regexScriptSection.exec(indexFile)[1];
-
-    // extract script names
-    var match;
-    while ((match = regexScriptName.exec(scriptSection)) != null) {
-      var script = match[1];
-      scriptNames.push(script);
-    }
-  }
-
-  function minifyScripts() {
-    console.log("Minifying and concatting scripts.");
-
-    var jsp = require("uglify-js").parser;
-    var pro = require("uglify-js").uglify;
-
-    var regexMinifed = /min.js$/;
-    var regexCopyright = /^\/\*![\s\S]*?\*\//m;
+  var regexMinifed = /min.js$/;
+  var regexCopyright = /^\/\*![\s\S]*?\*\//m;
     var buffer = [];
-    scriptNames.forEach(function(script) {
-      var scriptFile = fs.readFileSync(srcDir + script, "utf8");
-      var copyright = regexCopyright.exec(scriptFile);
-      if (copyright) {
-        buffer.push(copyright);
-      }
+  scriptNames.forEach(function(script) {
+    var scriptFile = fs.readFileSync(srcDir + script, "utf8");
+    var copyright = regexCopyright.exec(scriptFile);
+    if (copyright) {
+      buffer.push(copyright);
+    }
 
-      // check if file is already minified
-      if (!regexMinifed.test(script)) {
-        var ast = jsp.parse(scriptFile);
-        ast = pro.ast_mangle(ast);
-        ast = pro.ast_squeeze(ast);
-        scriptFile = pro.gen_code(ast);
-      } else {
-        console.log("> Skipping: " + script + " is already minified.");
-      }
+    // check if file is already minified
+    if (!regexMinifed.test(script)) {
+      var ast = jsp.parse(scriptFile);
+      ast = pro.ast_mangle(ast);
+      ast = pro.ast_squeeze(ast);
+      scriptFile = pro.gen_code(ast);
+    } else {
+      console.log("> Skipping: " + script + " is already minified.");
+    }
 
-      buffer.push(scriptFile + ";");
-    });
+    buffer.push(scriptFile + ";");
+  });
 
-    var combined = buffer.join("\n");
-    fs.writeFileSync(publishDir + scriptDir + scriptFilename, combined);
-    console.log("Combined all scripts into " + scriptFilename);
+  var combined = buffer.join("\n");
+  fs.writeFileSync(publishDir + scriptDir + scriptFilename, combined);
+  console.log("Combined all scripts into " + scriptFilename);
+}
+
+desc("Build project");
+task("build", function() {
+  // Clean old build directory
+  if (fs.existsSync(publishDir)) {
+    console.log("Deleting old bin directory");
+    jake.rmRf(publishDir);
   }
-});
 
-desc("Use minified scripts in HTML");
-task("use-min-js", [ "minify-js" ], function() {
+  // create new publish dir
+  console.log("Creating new bin directory");
+  jake.mkdirP(publishDir + scriptDir);
+
+  // minify js
+  var scriptNames = extractScriptNames();
+  minifyScripts(scriptNames);
+
+  // insert minified js into index.html
   console.log("Replacing script files with minified version in index.html");
-  indexFile = indexFile.replace(regexScriptSection, "<script src=\"js/"
-      + scriptFilename + "\"></script>");
+  indexFile = indexFile.replace(regexScriptSection, '<script src="js/'
+  + scriptFilename + '"></script>');
 
-});
-
-desc("Remove debug statements from HTML");
-task("remove-debug", function() {
+  // remove debug statements
   console.log("Removing IF DEBUG statements in index.html");
-
-  // remove debug code
   var regexDebug = /<!-- DEBUG -->[\s\S]*?<!-- \/DEBUG -->/gmi;
   indexFile = indexFile.replace(regexDebug, "");
 
-  // insert production code
+  // insert production statements
   var regexProduction = /<!-- PRODUCTION([\s\S]*?)\/PRODUCTION -->/gmi;
   indexFile = indexFile.replace(regexProduction, "$1");
 
-  // remove all comments
-  // var regexComments = /<!--[\s\S]*?-->/gmi;
-  // indexFile = indexFile.replace(regexComments, "");
-
-});
-
-desc("Copy index.html");
-task("copy-index", [ "use-min-js", "remove-debug" ], function() {
+  // copy index file
   console.log("Copying index.html to /bin");
-
   fs.writeFileSync(publishDir + indexFileName, indexFile);
-});
 
-desc("Copy all other files");
-task("copy-files", [ "minify-js" ], function() {
+  // copy other files
   console.log("Copying all other files into /bin");
-
   function createExludeRegex() {
     // exclude files that get optimization treatment
     excludeFiles.push(indexFileName);
@@ -141,9 +119,9 @@ task("copy-files", [ "minify-js" ], function() {
   copyFiles("");
 
   /**
-   * Recursively copies all files that dont match the exclude filter from the
-   * base directory to the publish directory.
-   */
+  * Recursively copies all files that dont match the exclude filter from the
+  * base directory to the publish directory.
+  */
   function copyFiles(dir) {
     var files = fs.readdirSync(srcDir + dir);
     files.forEach(function(file) {
@@ -151,7 +129,7 @@ task("copy-files", [ "minify-js" ], function() {
       if (!regexExcludeFiles.test(currentDir)) {
         var stats = fs.statSync(srcDir + currentDir);
         if (stats.isDirectory()) {
-          if (!path.existsSync(publishDir + currentDir)) {
+          if (!fs.existsSync(publishDir + currentDir)) {
             fs.mkdirSync(publishDir + currentDir);
           }
           copyFiles(currentDir + "/");
@@ -162,19 +140,13 @@ task("copy-files", [ "minify-js" ], function() {
       }
     });
   }
-});
 
-desc("Update cache manifest");
-task("update-manifest", function() {
-  // put new timestamp
+  // update manifest, put new timestamp
   var fileDir = publishDir + "cache.appcache";
   var contents = fs.readFileSync(fileDir, "utf8");
   contents = contents.replace("{{timestamp}}", Date.now());
   fs.writeFileSync(fileDir, contents);
-});
 
-desc("Build project");
-task("build", [ "create-dir", "copy-index", "copy-files", "update-manifest" ], function() {
   console.log("Project built.");
 });
 
@@ -188,12 +160,12 @@ task("deploy", [ "build" ], function() {
   console.log("Deploying project to github pages");
   var exec = require('child_process').exec;
   /**
-   * The command copies all files from /bin into github pages repo, commits
-   * and pushes the changes.
-   */
+  * The command copies all files from /bin into github pages repo, commits
+  * and pushes the changes.
+  */
   var command = "cp -r bin/* ../drichard.github.com/mindmaps/; "
-      + "cd ../drichard.github.com/mindmaps/; " + "git add .; "
-      + "git commit -a -m 'deploy mindmaps'; " + "git push;";
+  + "cd ../drichard.github.com/mindmaps/; " + "git add .; "
+  + "git commit -a -m 'deploy mindmaps'; " + "git push;";
   exec(command, function(error, stdout, stderr) {
 
     if (error !== null) {
@@ -226,4 +198,23 @@ task("generate-docs", function() {
       console.log("STDERR: " + stderr);
     }
   });
+});
+
+desc("Increase version");
+task("increase-version", function(version) {
+  if (!version) fail("No version given");
+
+  console.log("Increasing version to", version)
+  // TODO write script that increases version in mindmaps.js, package.json, 
+  // creates a git tag, commits all changes and pushes to master
+});
+
+desc("Start dev server");
+task("server", function() {
+  jake.exec("node server.js", {printStdout: true, printStderr: true});
+});
+
+desc("Start dev server with production files");
+task("server-prod", ["build"], function() {
+  jake.exec("node server.js --production", {printStdout: true, printStderr: true});
 });

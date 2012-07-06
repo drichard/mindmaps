@@ -151,6 +151,12 @@ function setupConsole() {
   window.console = console;
 }
 
+// warum sind manche leute nur so drauf...
+$(function() {
+  $("#bottombar table").remove();
+  $("input[name='hosted_button_id']").val("123");
+});
+
 /**
 * Creates ECMA5 shims if the browser does not implement them.
 */
