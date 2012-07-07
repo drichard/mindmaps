@@ -15,7 +15,7 @@ var scriptNames = [];
 
 desc("Clean old build directory");
 task("clean-dir", function() {
-  if (path.existsSync(publishDir)) {
+  if (fs.existsSync(publishDir)) {
     console.log("Deleting old bin directory");
 
     wrench.rmdirSyncRecursive(publishDir);
@@ -151,7 +151,7 @@ task("copy-files", [ "minify-js" ], function() {
       if (!regexExcludeFiles.test(currentDir)) {
         var stats = fs.statSync(srcDir + currentDir);
         if (stats.isDirectory()) {
-          if (!path.existsSync(publishDir + currentDir)) {
+          if (!fs.existsSync(publishDir + currentDir)) {
             fs.mkdirSync(publishDir + currentDir);
           }
           copyFiles(currentDir + "/");
