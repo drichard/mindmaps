@@ -54,7 +54,12 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
         success: function(data) {
 
           try {
-            var doc = mindmaps.Document.fromJSON(data);
+            // convert to object first if response is a string
+            if (Object.prototype.toString.call(data) == '[object String]') {
+              data = JSON.parse(data);
+            }
+
+            var doc = mindmaps.Document.fromObject(data);
           } catch (e) {
             eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
             throw new Error('Error while parsing map from cloud', e);
