@@ -592,14 +592,6 @@ html,body {
   margin: 10px 0;
 }
 
-#button-save-hdd .ui-button-text {
-  position: absolute;
-}
-
-#button-save-hdd object {
-  position: relative;
-}
-
 
 /**
 * NOTIFICATION

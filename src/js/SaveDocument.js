@@ -41,35 +41,16 @@ mindmaps.SaveDocumentView = function() {
       }
     });
 
-  var $hddSaveButton = $("#button-save-hdd").button().downloadify({
-    filename : function() {
-      if (self.fileNameRequested) {
-        return self.fileNameRequested();
+  var $hddSaveButton = $("#button-save-hdd").button().click(
+    function () {
+      if (self.hddSaveButtonClicked) {
+        self.hddSaveButtonClicked();
       }
-    },
-    data : function() {
-      if (self.fileContentsRequested) {
-        return self.fileContentsRequested();
-      }
-    },
-    onComplete : function() {
-      if (self.saveToHddComplete) {
-        self.saveToHddComplete();
-      }
-    },
-    onError : function() {
-      console.log("error while saving to hdd");
-    },
-    swf : 'media/downloadify.swf',
-    downloadImage : 'img/transparent.png',
-    width : 65,
-    height : 29,
-    append : true
-  });
+    });
 
   this.setAutoSaveCheckboxState = function(checked) {
     $autoSaveCheckbox.prop("checked", checked);
-  }
+  };
 
   this.showSaveDialog = function() {
     $dialog.dialog("open");
@@ -142,38 +123,16 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
     } else {
       autosaveController.disable();
     }
-  }
+  };
 
-  /**
-  * View callback: Returns the filename for the document for saving on hard
-  * drive.
-  * 
-  * @ignore
-  * @returns {String}
-  */
-  view.fileNameRequested = function() {
+  view.hddSaveButtonClicked = function() {
     mindmaps.Util.trackEvent("Clicks", "hdd-save");
 
-    return mindmapModel.getMindMap().getRoot().getCaption() + ".json";
-  };
+    var filename = mindmapModel.getMindMap().getRoot().getCaption() + ".json";
+    var content = mindmapModel.getDocument().prepareSave().serialize();
+    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    window.saveAs(blob, filename);
 
-  /**
-  * View callback: Returns the serialized document.
-  * 
-  * @ignore
-  * @returns {String}
-  */
-  view.fileContentsRequested = function() {
-    var doc = mindmapModel.getDocument();
-    return doc.prepareSave().serialize();
-  };
-
-  /**
-  * View callback: Saving to the hard drive was sucessful.
-  * 
-  * @ignore
-  */
-  view.saveToHddComplete = function() {
     var doc = mindmapModel.getDocument();
     eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
     view.hideSaveDialog();
