@@ -1,5 +1,5 @@
 # mindmaps
-mindmaps is a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser. 
+mindmaps is a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.
 
 ## HTML5 goodness
 - Written entirely in JavaScript
@@ -10,15 +10,11 @@ mindmaps is a prototype of an HTML5 based mind mapping application. It lets you 
 
 
 ## Try it out
-The latest stable build is hosted [here] (http://drichard.org/mindmaps).
+The latest stable build is hosted [here](http://drichard.org/mindmaps).
 
 ## Build
-Although the application runs fine if you launch `/src/index.html`, be aware that this is just the DEBUG mode for development. In debug mode quite a lot of output is sent to the console, ApplicationCache is deactivated and all script files are served individually and uncompressed.
-
-If you plan to host the application please build it properly by running the build script.
-In order to build the application yourself you need to have node.js and a couple of modules installed. To install them simply run `npm install` in the root directory.
-
-Then run the jakefile with `jake`. The finished build will appear in `/bin`.
+* Run `npm run start` to launch a local dev server. The app will be hosted at [http://localhost:3000](http://localhost:3000).
+* Run `npm run build` to compile the production bundle. The artifacts will be located in `./bin`.
 
 
 ## Host yourself

@@ -155,32 +155,6 @@ task("default", [ "build" ], function() {
   // build on default
 });
 
-desc("Deploy project to github pages");
-task("deploy", [ "build" ], function() {
-  console.log("Deploying project to github pages");
-  var exec = require('child_process').exec;
-  /**
-  * The command copies all files from /bin into github pages repo, commits
-  * and pushes the changes.
-  */
-  var command = "cp -r bin/* ../drichard.github.com/mindmaps/; "
-  + "cd ../drichard.github.com/mindmaps/; " + "git add .; "
-  + "git commit -a -m 'deploy mindmaps'; " + "git push;";
-  exec(command, function(error, stdout, stderr) {
-
-    if (error !== null) {
-      console.log('exec error: ' + error);
-    } else {
-      console.log("Deployed all files successfully");
-      console.log("STDOUT:\n" + stdout);
-    }
-
-    if (stderr) {
-      console.log("STDERR: " + stderr);
-    }
-  });
-});
-
 desc("Generate JSDoc");
 task("generate-docs", function() {
   console.log("Creating project documentation");
@@ -198,23 +172,4 @@ task("generate-docs", function() {
       console.log("STDERR: " + stderr);
     }
   });
-});
-
-desc("Increase version");
-task("increase-version", function(version) {
-  if (!version) fail("No version given");
-
-  console.log("Increasing version to", version)
-  // TODO write script that increases version in mindmaps.js, package.json, 
-  // creates a git tag, commits all changes and pushes to master
-});
-
-desc("Start dev server");
-task("server", function() {
-  jake.exec("node server.js", {printStdout: true, printStderr: true});
-});
-
-desc("Start dev server with production files");
-task("server-prod", ["build"], function() {
-  jake.exec("node server.js --production", {printStdout: true, printStderr: true});
 });

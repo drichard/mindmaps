@@ -1,7 +1,7 @@
 {
   "name": "mindmaps",
   "description": "mindmaps is a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "keywords": ["html5", "mindmap", "offline"],
   "author": "David Richard",
   "repository": {
@@ -12,7 +12,10 @@
     "url": "http://github.com/drichard/mindmaps/issues"
   },
   "scripts": {
-    "postinstall" : "npm install -g jake"
+    "start": "cd src && python -m SimpleHTTPServer 3000",
+    "start:prod": "npm run build && cd bin && python -m SimpleHTTPServer 3000",
+    "build": "jake",
+    "deploy": "npm run build && gh-pages -d bin"
   },
   "license": {
     "type": "AGPL",
@@ -22,7 +25,7 @@
     "node": ">=0.6"
   },
   "dependencies": {
-    "node-static": "0.5.9",
+    "jake": "^8.0.15",
     "uglify-js": "1.2.5"
   }
 }
