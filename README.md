@@ -37,5 +37,14 @@ text/cache-manifest appcache;
 
 Alternatively, you can launch a local debug server with `npm start` which starts a server on localhost:8080.
 
+## Docker image
+As an alternative, you can run mindmaps in a container. Just run:
+
+```
+docker run -p 8080:80 rogierlommers:mindmaps
+```
+
+and point your browser to (localhost) port 8080.
+
 ## License
 mindmaps is licensed under AGPL V3, see LICENSE for more information.
