@@ -727,3 +727,22 @@ html,body {
   font-weight: bold;
   color: gray;
 }
+
+#banner {
+  padding: 10px;
+  background: rgb(49, 161, 223, 0.3);
+  font-size: 14px;
+  color: hsla(201, 73%, 28%, 1);
+  line-height: 1.41;
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+}
+
+#banner a {
+  color: inherit;
+  font-weight: bold;
+}
+
+#banner strong {
+  font-weight: bold;
+}
