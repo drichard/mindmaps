@@ -14,8 +14,7 @@
   "scripts": {
     "start": "cd src && python -m SimpleHTTPServer 3000",
     "start:prod": "npm run build && cd bin && python -m SimpleHTTPServer 3000",
-    "build": "jake",
-    "deploy": "npm run build && gh-pages -d bin"
+    "build": "jake"
   },
   "license": {
     "type": "AGPL",
