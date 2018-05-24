@@ -113,12 +113,16 @@ function addUnloadHook () {
 
 function trackErrors() {
   window.onerror = function(msg, url, line) {
-    if (!window._gaq) {
+    if (!window.gtag) {
       return;
     }
 
     // Track JS errors in GA.
-    _gaq.push([ '_trackEvent', 'Error Log', msg, url + '_' + line ]);
+    gtag('event', msg, {
+      event_category: 'Error Log',
+      event_label: msg,
+      value: url + '_' + line
+    });
 
     return false; // false prevents default error handling.
   };
