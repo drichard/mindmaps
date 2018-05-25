@@ -16,12 +16,11 @@ The latest stable build is hosted [here](https://www.mindmaps.app).
 
 ## Build
 * Run `npm run start` to launch a local dev server. The app will be hosted at [http://localhost:3000](http://localhost:3000).
-* Run `npm run build` to compile the production bundle. The artifacts will be located in `./bin`.
+* Run `npm run build` to compile the production bundle. The artifacts will be located in `./dist`.
 
 
 ## Host yourself
-All you need is a web server for static files. Copy all files from /bin into your web directory and 
-launch the app with index.html.
+All you need is a web server for static files. After building, copy all files from /dist into your web directory and launch the app with index.html.
 Make sure your web server serves .appcache files with the mime type `text/cache-manifest` for the application to
 be accessible offline.
 

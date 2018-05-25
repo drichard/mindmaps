@@ -1,7 +1,7 @@
 .settings/
 .project
 .classpath
-bin/
+dist/
 node_modules/
 .idea
 .vscode/

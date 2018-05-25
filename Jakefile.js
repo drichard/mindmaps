@@ -2,11 +2,11 @@ var fs = require("fs");
 
 var indexFileName       = "index.html";
 var srcDir              = "src/";
-var publishDir          = "bin/";
+var publishDir          = "dist/";
 var scriptFilename      = "script.js";
 var scriptDir           = "js/";
 var regexScriptSection  = /<!-- JS:LIB:BEGIN -->([\s\S]*?)<!-- JS:LIB:END -->/;
-var excludeFiles        = [ ".gitignore", ".git", "bin", "test", ".settings", "build",
+var excludeFiles        = [ ".gitignore", ".git", "dist", "test", ".settings", "build",
                             ".project", "README.md", "*psd", "*.psd", "*libs" ];
 var indexFile           = fs.readFileSync(srcDir + indexFileName, "utf8");
 
@@ -67,12 +67,12 @@ desc("Build project");
 task("build", function() {
   // Clean old build directory
   if (fs.existsSync(publishDir)) {
-    console.log("Deleting old bin directory");
+    console.log("Deleting old dist directory");
     jake.rmRf(publishDir);
   }
 
   // create new publish dir
-  console.log("Creating new bin directory");
+  console.log("Creating new dist directory");
   jake.mkdirP(publishDir + scriptDir);
 
   // minify js
@@ -94,11 +94,11 @@ task("build", function() {
   indexFile = indexFile.replace(regexProduction, "$1");
 
   // copy index file
-  console.log("Copying index.html to /bin");
+  console.log("Copying index.html to /dist");
   fs.writeFileSync(publishDir + indexFileName, indexFile);
 
   // copy other files
-  console.log("Copying all other files into /bin");
+  console.log("Copying all other files into /dist");
   function createExludeRegex() {
     // exclude files that get optimization treatment
     excludeFiles.push(indexFileName);

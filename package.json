@@ -16,7 +16,7 @@
     "url": "http://github.com/drichard/mindmaps/issues"
   },
   "scripts": {
-    "start": "cd src && python -m SimpleHTTPServer 3000",
+    "start": "http-server ./src -p 3000",
     "start:prod": "npm run build && cd bin && python -m SimpleHTTPServer 3000",
     "build": "jake"
   },
@@ -30,5 +30,8 @@
   "dependencies": {
     "jake": "^8.0.15",
     "uglify-js": "^3.3.27"
+  },
+  "devDependencies": {
+    "http-server": "^0.11.1"
   }
 }
