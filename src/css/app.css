@@ -746,3 +746,8 @@ html,body {
 #banner strong {
   font-weight: bold;
 }
+
+#filepicker_shade {
+  z-index: 10000;
+  background: inherit;
+}

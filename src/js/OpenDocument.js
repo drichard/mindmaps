@@ -114,16 +114,23 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
    */
   view.openCloudButtonClicked = function(e) {
     mindmaps.Util.trackEvent("Clicks", "cloud-open");
+    mindmaps.Util.trackEvent("CloudOpen", "click");
 
     filePicker.open({
       load: function() {
         view.showCloudLoading();
       },
+      cancel: function () {
+        view.hideCloudLoading();
+        mindmaps.Util.trackEvent("CloudOpen", "cancel");
+      },
       success: function() {
         view.hideOpenDialog();
+        mindmaps.Util.trackEvent("CloudOpen", "success");
       },
       error: function(msg) {
         view.showCloudError(msg);
+        mindmaps.Util.trackEvent("CloudOpen", "error", msg);
       }
     });
   };

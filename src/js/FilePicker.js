@@ -10,28 +10,9 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
   if (window.filepicker) {
     var filepicker = window.filepicker;
     filepicker.setKey('P9tQ4bicRwyIe8ZUsny5');
-
-    var mimetype = "application/json";
-
-    var openOptions = {
-      modal: true,
-      services: [
-        filepicker.SERVICES.GOOGLE_DRIVE,
-        filepicker.SERVICES.DROPBOX,
-        filepicker.SERVICES.BOX,
-        filepicker.SERVICES.URL
-      ]
-    };
-
-    var saveOptions = {
-      modal: true,
-      services: [
-        filepicker.SERVICES.GOOGLE_DRIVE,
-        filepicker.SERVICES.DROPBOX,
-        filepicker.SERVICES.BOX,
-      ]
-    };
   }
+
+  var mimetype = "application/json";
 
   /**
    * Shows the open dialog and tries to open a mindmap.
@@ -44,13 +25,13 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
       return;
     }
 
-    filepicker.getFile(mimetype, openOptions, function(url, data) {
-      // load callback
-      options.load && options.load();
+    // load callback
+    options.load && options.load();
 
+    function onSuccess(blob) {
       // load mindmap
       $.ajax({
-        url: url, 
+        url: blob.url, 
         success: function(data) {
 
           try {
@@ -79,13 +60,27 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
           throw new Error('Error while loading map from filepicker. ' + textStatus + ' ' + errorThrown);
         }
       });
-    });
+    }
+
+    function onError(e) {
+      if (e.code === 101) {
+        // 101 - The user closed the dialog without picking a file.
+        options.cancel && options.cancel();
+      } else {
+        throw new Error(e);
+      }
+    }
+
+    filepicker.pick({
+      mimetype: mimetype,
+      container: 'modal',
+      openTo: 'DROPBOX',
+      services: ['COMPUTER', 'GOOGLE_DRIVE', 'DROPBOX', 'BOX', 'SKYDRIVE']
+    }, onSuccess, onError);
   };
 
   /**
-   * Shows the save dialog where the user can save the current mindmap. Skips
-   * the dialog and saves directly when options.saveAs = true is passed and
-   * a cloud storage file is currently open.
+   * Shows the save dialog where the user can save the current mindmap.
    */
   this.save = function(options) {
     options = options || {};
@@ -95,21 +90,39 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
       return;
     }
 
-    var doc = mindmapModel.getDocument();
-    var data = doc.prepareSave().serialize()
+    // load callback
+    options.load && options.load();
 
-    var success = function(url) {
-      console.log('saved to:', url);
+    var doc = mindmapModel.getDocument().prepareSave();
+    var data = doc.serialize();
+
+    function onSuccess(blob) {
       eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
 
       if (options.success) {
         options.success();
       }
-    };
+    }
 
-    // save dialog
-    filepicker.getUrlFromData(data, function(dataUrl) {
-      filepicker.saveAs(dataUrl, mimetype, saveOptions, success);
+    function onError(e) {
+      if (e.code === 131) {
+        // 131 - The user closed the save dialog without picking a file.
+        options.cancel && options.cancel();
+      } else {
+        throw new Error(e);
+      }
+    }
+
+    var blob = new Blob([data], {type: 'application/json'});
+
+    filepicker.store(blob, function (storedBlob) {
+      filepicker.exportFile(storedBlob.url, {
+        mimetype: mimetype,
+        suggestedFilename: doc.title,
+        container: 'modal',
+        openTo: 'DROPBOX',
+        services: ['DROPBOX', 'BOX', 'SKYDRIVE', 'GOOGLE_DRIVE']
+      }, onSuccess, onError);
     });
   }
 }

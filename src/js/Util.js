@@ -7,6 +7,8 @@ mindmaps.Util = mindmaps.Util || {};
  * Tracks an event to google analytics.
  */
 mindmaps.Util.trackEvent = function(category, action, label) {
+    console.log('trackEvent:', category, action, label || '');
+    
     if (!window.gtag) {
       return;
     }
