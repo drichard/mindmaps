@@ -15,8 +15,9 @@ However, there is no reason to change any of that and it makes the code base qui
 The latest stable build is hosted [here](https://www.mindmaps.app).
 
 ## Build
+* First run `npm install` to install required dependencies
 * Run `npm run start` to launch a local dev server. The app will be hosted at [http://localhost:3000](http://localhost:3000).
-* Run `npm run build` to compile the production bundle. The artifacts will be located in `./dist`.
+* Run `npm run build` to compile the production bundle. The artifacts will be located in `/dist`.
 
 
 ## Host yourself
