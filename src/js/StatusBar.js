@@ -95,7 +95,7 @@ mindmaps.StatusNotificationController = function(eventBus, view) {
   eventBus.subscribe(mindmaps.Event.DOCUMENT_SAVED, function() {
     var n = new mindmaps.Notification($anchor, {
       position : "topRight",
-      expires : 2500,
+      expires : 3500,
       content : "Mind map saved"
     });
   });
@@ -104,7 +104,7 @@ mindmaps.StatusNotificationController = function(eventBus, view) {
     var n = new mindmaps.Notification($anchor, {
       position : "topRight",
       content : message,
-      expires : 2500,
+      expires : 3500,
       type: "info"
     });
   });
@@ -114,7 +114,7 @@ mindmaps.StatusNotificationController = function(eventBus, view) {
       position : "topRight",
       title: "Warning",
       content : message,
-      expires : 3000,
+      expires : 4000,
       type: "warn"
     });
   });
@@ -125,7 +125,7 @@ mindmaps.StatusNotificationController = function(eventBus, view) {
       position : "topRight",
       title: "Error",
       content : message,
-      expires : 3500,
+      expires : 4500,
       type: "error"
     });
   });
