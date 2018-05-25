@@ -61,8 +61,18 @@ mindmaps.SaveDocumentView = function() {
   };
 
   this.showCloudError = function(msg) {
+    $dialog.find('.cloud-loading').removeClass('loading');
     $dialog.find('.cloud-error').text(msg);
-  }
+  };
+
+  this.showCloudLoading = function() {
+    $dialog.find('.cloud-error').text('');
+    $dialog.find('.cloud-loading').addClass('loading');
+  };
+
+  this.hideCloudLoading = function() {
+    $dialog.find('.cloud-loading').removeClass('loading');
+  };
 };
 
 /**
@@ -83,13 +93,23 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
   */
   view.cloudStorageButtonClicked = function() {
     mindmaps.Util.trackEvent("Clicks", "cloud-save");
+    mindmaps.Util.trackEvent("CloudSave", "click");
 
     filePicker.save({
+      load: function() {
+        view.showCloudLoading();
+      },
+      cancel: function () {
+        view.hideCloudLoading();
+        mindmaps.Util.trackEvent("CloudSave", "cancel");
+      },
       success: function() {
         view.hideSaveDialog();
+        mindmaps.Util.trackEvent("CloudSave", "success");
       },
       error: function(msg) {
         view.showCloudError(msg);
+        mindmaps.Util.trackEvent("CloudSave", "error", msg);
       }
     });
   };

@@ -727,3 +727,8 @@ html,body {
   font-weight: bold;
   color: gray;
 }
+
+#filepicker_shade {
+  z-index: 10000;
+  background: inherit;
+}
