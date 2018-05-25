@@ -63,7 +63,6 @@ strong {
 
 .section:last-child {
   border-bottom: none;
-  margin-bottom: 0;
 }
 
 #head {
@@ -80,7 +79,7 @@ h1 {
   font-family: sans-serif;
   border-bottom: 4px solid #DDDDDD;
   color: #1C4257;
-  text-shadow: 2px 1px 8px #75A8C4;
+  text-shadow: 2px 1px 8px #75a8c4;
 }
 
 h2 {
@@ -89,13 +88,13 @@ h2 {
   padding-bottom: 10px;
   font-weight: bold;
   color: #1C4257;
-  text-shadow: 2px 1px 8px #75A8C4;
+  text-shadow: 1px 1px 8px #75a8c4ad;
 }
 
 .text {
   font-size: 16px;
   font-family: Georgia, serif;
-  line-height: 1.2em;
+  line-height: 1.4em;
 }
 
 .text p {
@@ -104,7 +103,7 @@ h2 {
 
 .text .feature {
   text-align: center;
-  margin: 15px auto;
+  margin: 20px auto;
   background-color: #F2F2F2;
   padding: 5px;
   box-shadow: 1px 1px 6px #AAA;
