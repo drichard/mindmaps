@@ -2,7 +2,11 @@
   "name": "mindmaps",
   "description": "mindmaps is a prototype of an HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.",
   "version": "0.8.0",
-  "keywords": ["html5", "mindmap", "offline"],
+  "keywords": [
+    "html5",
+    "mindmap",
+    "offline"
+  ],
   "author": "David Richard",
   "repository": {
     "type": "git",
@@ -25,6 +29,6 @@
   },
   "dependencies": {
     "jake": "^8.0.15",
-    "uglify-js": "1.2.5"
+    "uglify-js": "^3.3.27"
   }
 }
