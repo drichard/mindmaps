@@ -32,12 +32,11 @@ function extractScriptNames() {
 function minifyScripts(scriptNames) {
   console.log("Minifying and concatting scripts.");
 
-  var jsp = require("uglify-js").parser;
-  var pro = require("uglify-js").uglify;
+  var UglifyJS = require("uglify-js");
 
   var regexMinifed = /min.js$/;
   var regexCopyright = /^\/\*![\s\S]*?\*\//m;
-    var buffer = [];
+  var buffer = [];
   scriptNames.forEach(function(script) {
     var scriptFile = fs.readFileSync(srcDir + script, "utf8");
     var copyright = regexCopyright.exec(scriptFile);
@@ -47,10 +46,11 @@ function minifyScripts(scriptNames) {
 
     // check if file is already minified
     if (!regexMinifed.test(script)) {
-      var ast = jsp.parse(scriptFile);
-      ast = pro.ast_mangle(ast);
-      ast = pro.ast_squeeze(ast);
-      scriptFile = pro.gen_code(ast);
+      var result = UglifyJS.minify(scriptFile);
+      if (result.error) {
+        throw new Error(error);
+      }
+      scriptFile = result.code;
     } else {
       console.log("> Skipping: " + script + " is already minified.");
     }

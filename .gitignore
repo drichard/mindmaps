@@ -4,3 +4,4 @@
 bin/
 node_modules/
 .idea
+.vscode/
