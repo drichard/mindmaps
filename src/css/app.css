@@ -602,14 +602,14 @@ html,body {
   position: absolute;
   z-index: 10000;
   display: block;
-  padding: 7px;
+  padding: 10px;
   background-color: white;
   display: none;
 }
 
 .notification.info {
   border-color: #E2E2E2;
-  box-shadow: 1px 1px 7px 1px #B2B2B2;
+  box-shadow: 1px 1px 7px 1px #bdbdbd;
 }
 
 .notification.warn {
@@ -632,9 +632,9 @@ html,body {
 }
 
 .notification .content {
-  font-size: 13px;
+  font-size: 14px;
   color: #454545;
-  line-height: 16px;
+  line-height: 1.4;
 }
 
 .notification .close-button {
@@ -649,7 +649,7 @@ html,body {
   float: right;
   cursor: pointer;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   padding: 4px;
 }
