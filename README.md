@@ -12,7 +12,7 @@ However, there is no reason to change any of that and it makes the code base qui
 - Canvas API draws the mind map
 
 ## Try it out
-The latest stable build is hosted [here](http://drichard.org/mindmaps).
+The latest stable build is hosted [here](https://www.mindmaps.app).
 
 ## Build
 * Run `npm run start` to launch a local dev server. The app will be hosted at [http://localhost:3000](http://localhost:3000).
