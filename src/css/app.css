@@ -728,6 +728,27 @@ html,body {
   color: gray;
 }
 
+/* top banner */
+#banner {
+  padding: 10px;
+  background: rgba(49, 161, 223, 0.3);
+  font-size: 14px;
+  color: hsla(201, 73%, 28%, 1);
+  line-height: 1.41;
+  border-bottom: 1px solid;
+  border-top: 1px solid;
+}
+
+#banner a {
+  color: inherit;
+  font-weight: bold;
+}
+
+#banner strong {
+  font-weight: bold;
+}
+
+/* filepicker modal customization */
 #filepicker_shade {
   z-index: 10000;
   background: inherit;
