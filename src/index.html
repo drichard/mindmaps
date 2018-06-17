@@ -197,7 +197,7 @@
       // only show banner on drichard.org
       if (window.location.hostname === 'drichard.org') {
         document.write(
-          '<div id="banner"><strong>Attention:</strong> This app is moving soon to <a href="https://www.mindmaps.app" target="_blank">www.mindmaps.app</a>. Same application, but nicer domain and HTTPS. If you have any questions, please <a href="mailto:david+contact@drichard.org">contact me</a>.</div>'
+          '<div id="banner"><strong>Attention:</strong> This app is moving soon to <a href="https://www.mindmaps.app" target="_blank">www.mindmaps.app</a>. Mind maps stored in local storage will not be available on the new site. If you have any maps in local storage, please save them to file and import them on the new website. If you have any questions, please <a href="mailto:david+contact@drichard.org">contact me</a>.</div>'
         );
       }
     </script>
@@ -290,7 +290,6 @@
   <script src="js/ExportMap.js"></script>
   <script src="js/AutoSaveController.js"></script>
   <script src="js/FilePicker.js"></script>
-  <script src="js/LocalStorageMigration.js"></script>
   <!-- JS:LIB:END -->
 </body>
 </html>
