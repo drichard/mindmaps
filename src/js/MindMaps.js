@@ -50,6 +50,13 @@ window.addEventListener('load', function(e) {
 
 }, false)
 
+// manually redirect to mindmaps.app domain because app cache will keep serving the old index.html
+// even with the netlify redirects set up.
+if (window.location.hostname === 'drichard.org') {
+  window.onbeforeunload = null;
+  window.location.assign('https://www.mindmaps.app');
+}
+
 /**
  * Start up. This function is executed when the DOM is loaded.
  */
