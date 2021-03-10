@@ -66,31 +66,19 @@
 
 /* Interaction states
 ----------------------------------*/
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #B6B6B6; font-weight: normal; color: #4F4F4F; }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {border: none; font-weight: normal; color: #4F4F4F; }
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { 
-	background: url(images/bg_fallback.png) 0 0 repeat-x;
-	background: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(1, rgb(237,237,237)),
-    color-stop(0, rgb(196,196,196))
-	);
-	background: -moz-linear-gradient(
-		center top,
-		rgb(237,237,237),
-		rgb(196,196,196)
-	);
-	-webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
-	-moz-box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+	background-color: white;
 }
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #4F4F4F; text-decoration: none; }
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #9D9D9D; font-weight: normal; color: #313131; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+	font-weight: normal;
+	color: #313131; 
+}
 .ui-state-hover a, .ui-state-hover a:hover { color: #313131; text-decoration: none; }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { 
 	outline: none;
 	color: #1c4257; border: 1px solid #7096ab;
-	background: url(images/bg_fallback.png) 0 -50px repeat-x;
 	background: -webkit-gradient(
     linear,
     left bottom,
