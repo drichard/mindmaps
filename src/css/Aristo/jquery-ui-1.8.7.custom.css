@@ -450,8 +450,9 @@ button.ui-button-icons-only { width: 3.7em; }
 
 /*states*/
 .ui-button.ui-state-hover {
-	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255,255,255,0.8) inset; 
-	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255,255,255,0.8) inset;
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.08);
+	-moz-box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.08);
+	-webkit-box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.08);
 }
 .ui-button.ui-state-focus {
 	outline: none;
@@ -473,7 +474,7 @@ button.ui-button-icons-only { width: 3.7em; }
 }
  
 /*button text element */
-.ui-button .ui-button-text { display: block; line-height: 1.4; font-size: 14px; font-weight: bold; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+.ui-button .ui-button-text { display: block; line-height: 1.4; font-size: 14px; font-weight: bold }
 .ui-button-text-only .ui-button-text { padding: .4em 1em; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }
