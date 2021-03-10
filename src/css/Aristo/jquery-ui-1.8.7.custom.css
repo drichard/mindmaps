@@ -449,7 +449,7 @@ button.ui-button-icons-only { width: 3.7em; }
 }
 
 /*states*/
-.ui-button.ui-state-hover { 
+.ui-button.ui-state-hover {
 	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255,255,255,0.8) inset; 
 	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255,255,255,0.8) inset;
 }
