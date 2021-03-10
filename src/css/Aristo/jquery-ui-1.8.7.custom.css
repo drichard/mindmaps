@@ -555,9 +555,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
  *
  * http://docs.jquery.com/UI/Slider#theming
  */
-.ui-slider { position: relative; text-align: left; background: #d7d7d7; }
+.ui-slider { box-shadow: none !important; background-color: #EAEAEA; cursor: pointer; }
 .ui-slider { -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.5) inset; -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.5) inset; }
-.ui-slider .ui-slider-handle { background: url(images/slider_handles.png) 0px -23px no-repeat; position: absolute; z-index: 2; width: 23px; height: 23px; cursor: default; border: none; outline: none; -moz-box-shadow: none; -webkit-box-shadow: none; }
+.ui-slider .ui-slider-handle { background-image: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; background-color: blue; top: -4px; }
 .ui-slider  .ui-state-hover, .ui-slider  .ui-state-active { background-position: 0 0; }
 .ui-slider .ui-slider-range { background: #a3cae0; position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
 .ui-slider .ui-slider-range { -moz-box-shadow: 0 1px 2px rgba(17,35,45,0.6) inset; -webkit-box-shadow: 0 1px 2px rgba(17,35,45,0.6) inset; }
