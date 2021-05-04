@@ -1,3 +1,6 @@
+# PSA: This project is not actively maintained. I consider it feature complete for what it set out to do. I'll fix critical bugs should they pop up but I won't be adding new features.
+
+
 # mindmaps
 mindmaps is a HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.
 
