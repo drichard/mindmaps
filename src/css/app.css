@@ -11,7 +11,7 @@
  jquery ui
 */
 .ui-effects-transfer {
-  border: 2px dashed #AAA;
+  border: 1px dashed #AAA;
 }
 
 /*
@@ -30,27 +30,10 @@ html,body {
 }
 
 #topbar {
-  border-bottom: 1px solid #AAA;
   overflow: hidden; /* causes container to stretch vertically */
   width: 100%;
 }
 
-.logo-bg {
-  background: #31A1DF; /* Old browsers */
-  background: -moz-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(7%, #31A1DF),
-    color-stop(100%, #e5e5e5) ); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* Opera11.10+ */
-  background: -ms-linear-gradient(left, #31A1DF 7%, #e5e5e5 100%);
-  /* IE10+ */
-  filter: progid : DXImageTransform.Microsoft.gradient (startColorstr = '#31A1DF', endColorstr = '#E5E5E5', GradientType = 1 );
-  /* IE6-9 */
-  background: linear-gradient(left, #31A1DF 7%, #e5e5e5 100%); /* W3C */
-}
 
 .rotate-180 {
   -webkit-transition: all 1s ease-in-out;
@@ -77,18 +60,22 @@ html,body {
   float: left;
   width: 170px;
   height: 40px;
-  background-color: #AFC8F0;
-  margin-right: 10px;
+  margin: 0 2rem;
   color: white;
   font-size: 3em;
   text-align: center;
   overflow: hidden;
   padding-top: 3px;
-  text-shadow: 2px 1px 5px #1C4257;
+}
+
+.logo-bg {
+  background-color: #92BDD6;
+  border-radius: 10px;
 }
 
 #toolbar {
-  background-color: #E5E5E5;
+  background-color: #EAEAEA;
+  padding: 1rem 0;
   overflow: hidden;
   width: 100%;
 }
@@ -142,21 +129,23 @@ html,body {
   position: fixed; /* absolute caused scroll bar, depending on border */
   width: 100%;
   bottom: 0;
-  background: #EEE;
-  border-top: 1px solid #AAA;
+  background: #EAEAEA;
 }
 
 #statusbar {
-  height: 32px;
+  height: 4rem;
 }
 
 #statusbar .buttons {
-  margin-top: 4px;
+  margin-top: 0.7rem;
+}
+#statusbar .buttons button{
+  margin-right: 0.65rem;
 }
 
 #about {
   position: absolute;
-  top: 10px;
+  top: 1.5rem;
   left: 10px;
   color: #454545;
   font-size: 12px;
@@ -164,6 +153,7 @@ html,body {
 
 #about a {
   color: inherit;
+  text-decoration: none;
 }
 
 /* apply styles to button and wrapper div */
@@ -179,7 +169,7 @@ html,body {
 
 .buttons-less-padding .ui-button .ui-button-text,.buttons-less-padding.ui-button .ui-button-text
   {
-  padding: 0.2em 0.6em;
+  padding: 0.4em 0.9em;
 }
 
 #canvas-container {
@@ -247,14 +237,14 @@ html,body {
   cursor: default;
   background: white;
   border: 3px solid orange;
-  border-radius: 10px 10px 10px 10px;
+  border-radius: 2rem;
   left: -50px;
   position: absolute;
-  padding: 4px;
+  padding: 10px;
 }
 
 .mindmap .node-caption.root.selected {
-  border-color: red;
+  border-color: #b92020;
 }
 
 .mindmap .node-caption.root.edit {
