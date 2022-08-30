@@ -22,6 +22,10 @@ The latest stable build is hosted [here](https://www.mindmaps.app).
 * Run `npm run start` to launch a local dev server. The app will be hosted at [http://localhost:3000](http://localhost:3000).
 * Run `npm run build` to compile the production bundle. The artifacts will be located in `/dist`.
 
+## Build docker image
+* Run `docker build -t mindmaps:latest .` to build the image.
+* You can run `docker run --name mindmaps -p 8080:80 mindmaps:latest` and your container is
+reachable at [http://localhost:8080](http://localhost:8080)
 
 ## Host yourself
 All you need is a web server for static files. After building, copy all files from /dist into your web directory and launch the app with index.html.
