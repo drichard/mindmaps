@@ -1,46 +1,62 @@
-# PSA: This project is not actively maintained. I consider it feature complete for what it set out to do. I'll fix critical bugs should they pop up but I won't be adding new features.
+# If you have any doubt, feel free to contact me at cvazeem@gmail.com
+
+## Requirements
+--
+A simple webserver and PHP (Version 5 or above) if you want to save public mindmaps. Otherwise PHP is not needed.
+
+Extract the files and place it in the root directory of your website.
+
+'S3' folder is used to save the public mindmap files. If you are in linux, make that folder writable, ie, chmod 666
+
+# i. Google Drive
+
+Note: This sign-in will not work after February 6, 2023. Google is making changes. Goto the link below to know more about it.
+https://developers.googleblog.com/2021/06/upcoming-security-changes-to-googles-oauth-2.0-authorization-endpoint.html
+
+How to setup Google Drive:
+a. Setup apiKey, clientId, appId from Google Cloud console. Use your website name. Goto https://console.cloud.google.com/
+b. Open js/GoogleDrive.js
+c. Fill in 'apiKey, clientId, appId' which you obtained from the step, a.
+
+# ii. S3 storage (public storage)
+Make sure there is 'S3' folder in the root path. Make sure it contains two php files, process.php and processFilenames.php . Make 'S3' folder writable. If you are in linux, make that folder writable, ie, chmod 666
+Edit 'js/Config.js' and replace 'yourwebsite.com' with your website url.
+
+# iii. Sharemap.js
+To share your public map via Facebook, do the following changes.
+
+a. Create an App in facebook. Make sure your website is allowed as origin.
+
+Open Sharemap.js and make the following changes.
+a. Locate this line (number 28) and change https://www.facebook.com/dialog/feed?app_id=11111111&'
+to app_id='With your facebook app id'
+
+b. Change http://mindmapmaker.org/mind-map-maker.png (on line number 32) to your website
+c. Change https://app.mindmapmaker.org (on line number 34) to your website
+
+# iv. UrlShortener.js
+To share map via 'bit.ly' make changes in js/UrlShortener.js
+//Register for an account at bit.ly/a/sign_up
+Change 'var username="";' (on line number 12) with your username from bit.ly
+Change 'var actoken="";' (on line number 13) with your actoken from bit.ly
+
+# v. googledrive.php
+googledrive.php file is used to open a file from Google Drive where you previously saved. 
+Open 'googledrive.php' file and change https://yourwebsite.com/ to your website.
 
 
-# mindmaps
-mindmaps is a HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.
+Use the following nginx configuration too. My webserver is 'nginx'. This configuration works for nginx. If you use apache, you need to change the configuration.
 
-This project started in 2011 as an exploration into what's possible to do in browsers using modern APIs. Nowadays, most of this stuff is pretty common and the code base is a bit outdated. This was way before React, ES6, webpack. Heck, it doesn't even use Backbone.
+//////
+	if ($arg_state) {
+	  set $test  P;
+	}
+	
+	if ($uri !~ /googledrive\.php$) {
+		set $test  "${test}C";
+	}
 
-However, there is no reason to change any of that and it makes the code base quite easy to grok. There is no compilation step, no babel plugins, no frameworks. Just a JavaScript application and a very simple Model-View-Presenter pattern.
-
-## HTML5 stuff which was cool in 2011
-- 100% offline capable via ApplicationCache
-- Stores mind maps in LocalStorage
-- FileReader API reads stored mind maps from the hard drive
-- Canvas API draws the mind map
-
-## Try it out
-The latest stable build is hosted [here](https://www.mindmaps.app).
-
-## Build
-* First run `npm install` to install required dependencies
-* Run `npm run start` to launch a local dev server. The app will be hosted at [http://localhost:3000](http://localhost:3000).
-* Run `npm run build` to compile the production bundle. The artifacts will be located in `/dist`.
-
-
-## Host yourself
-All you need is a web server for static files. After building, copy all files from /dist into your web directory and launch the app with index.html.
-Make sure your web server serves .appcache files with the mime type `text/cache-manifest` for the application to
-be accessible offline.
-
-In Apache add the following line to your .htaccess:
-
-```
-AddType text/cache-manifest .appcache
-```
-
-In nginx add this to conf/mime.types:
-
-```
-text/cache-manifest appcache; 
-```
-
-Alternatively, you can launch a local debug server with `npm start` which starts a server on localhost:8080.
-
-## License
-mindmaps is licensed under AGPL V3, see LICENSE for more information.
+	if ($test = PC) {
+	 rewrite ^.*$ googledrive.php permanent;
+	}
+/////
