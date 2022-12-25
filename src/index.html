@@ -1,295 +1,712 @@
 <!doctype html>
-<!-- DEBUG -->
-<!-- disable offline caching in debug mode -->
-<html>
-<!-- /DEBUG -->
-<!-- PRODUCTION
 <html manifest="cache.appcache">
-/PRODUCTION -->
 <head>
 <meta charset="utf-8">
-<meta name="description" content="mindmaps is an HTML5 based mind mapping app. It lets you create neat looking mind maps in the browser." />
-<meta name="keywords" content="mind maps html5 mindmaps offline easy intuitive" />
+<meta name="description" content="Mindmap Maker is a free HTML5 cloud supported mindmap making webapp. Create neat looking mind maps in the browser. Mind map maker supports Google Drive. Use the mind map app wherever you are. This is a HTML5 based mind map making application." />
+<meta name="keywords" content="mindmap,mind map,mind map maker,mind maps" />
 <meta name="google" content="notranslate"/>
-<title>mindmaps</title>
-<link rel="icon" type="image/png" href="img/favicon.png" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Mindmap Maker</title>
+<link rel="icon" type="image/png" href="img/favicon.png"/>
+
+
+<link rel="stylesheet" type="text/css" href="css/main.css"/>
+<link rel="stylesheet" type="text/css" href="css/layout.css"/>
+
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Schoolbell:regular"/>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.9.1.custom.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/colorpicker.css"/>
+
+
 <link rel="stylesheet" href="css/common.css">
 <link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="css/Aristo/jquery-ui-1.8.7.custom.css" />
+<link rel="stylesheet" href="css/Aristo/jquery-ui-1.8.7.custom.css"/>
 <link rel="stylesheet" href="css/minicolors/jquery.miniColors.css">
 
+<link rel="stylesheet" href="css/font-awesome.min.css">
+
 <script id="template-float-panel" type="text/x-jquery-tmpl">
-<div class="ui-widget ui-dialog ui-corner-all ui-widget-content float-panel no-select">
-  <div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix">
-    <span class="ui-dialog-title">${title}</span>
-    <a class="ui-dialog-titlebar-close ui-corner-all" href="#" role="button">
-      <span class="ui-icon"></span>
-    </a>
-  </div>
-  <div class="ui-dialog-content ui-widget-content">
-  </div>
-</div>
+    <div class="ui-widget ui-dialog ui-corner-all ui-widget-content float-panel no-select">
+        <div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix">
+            <span class="ui-dialog-title">${title}</span>
+            <a class="ui-dialog-titlebar-close ui-corner-all" href="#" role="button">
+                <span class="ui-icon"></span>
+            </a>
+        </div>
+        <div class="ui-dialog-content ui-widget-content">
+        </div>
+    </div>
+</script>
+
+
+<script id="template-big-panel" type="text/x-jquery-tmpl">
+    <div class="ui-widget ui-dialog ui-corner-all ui-widget-content float-panel no-select">
+        <div class="ui-dialog-content ui-widget-content">
+        </div>
+    </div>
 </script>
 
 <script id="template-notification" type="text/x-jquery-tmpl">
-<div class="notification">
-  {{if closeButton}}
-  <a href="#" class="close-button">x</a>
-  {{/if}}
-  {{if title}}
-  <h1 class="title">{{html title}}</h1>
-  {{/if}}
-  <div class="content">{{html content}}</div>
-</div>
+    <div class="notification">
+        {{if closeButton}}
+        <a href="#" class="close-button">x</a>
+        {{/if}}
+        {{if title}}
+        <h1 class="title">{{html title}}</h1>
+        {{/if}}
+        <div class="content">{{html content}}</div>
+    </div>
 </script>
 
 <script id="template-open-table-item" type="text/x-jquery-tmpl">
-<tr>
-  <td><a class="title" href="#">${title}</a></td>
-  <td>${$item.format(dates.modified)}</td>
-  <td><a class="delete" href="#">delete</a></td>
-</tr>
+    <tr>
+        <td><a class="title" href="#">${title}</a></td>
+        <td>${$item.format(dates.modified)}</td>
+        <td><a class="delete" href="#">delete</a></td>
+    </tr>
+</script>
+
+<script id="template-open-table-item-server-urls" type="text/x-jquery-tmpl">
+    <tr>
+        <td><a class="title" href="#">${title}</a></td>
+        <td>${$item.format(dates)}</td>
+        <td><a class="delete" href="#">delete</a></td>
+    </tr>
 </script>
 
 <script id="template-open" type="text/x-jquery-tmpl">
-<div id="open-dialog" class="file-dialog" title="Open mind map">
-  <h1><span class="highlight">Works again!</span> In the Cloud: Dropbox and more</h1>
-  <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Google Drive, Dropbox and more! Powered by <a href="https://www.filestack.com/" target="_blank">filestack.com</a>.</p>
-  <button id="button-open-cloud">Open</button>
-  <span class="cloud-loading">Loading...</span>
-  <span class="cloud-error error"></span>
-  <div class="seperator"></div>
-  <h1>Local Storage</h1>
-  <p>This is a list of all mind maps that are saved in your browser's local storage. Click on the title of a map to open it.</p>
-  <table class="localstorage-filelist">
-    <thead>
-      <tr>
-        <th class="title">Title</th>
-        <th class="modified">Last Modified</th>
-        <th class="delete"></th>
-      </tr>
-    </thead>
-    <tbody class="document-list"></tbody>
-  </table>
-  <div class="seperator"></div>
-  <h1>From file</h1>
-  <p>Choose a mind map from your computer's hard drive.</p>
-  <div class="file-chooser">
-    <input type="file" />
-  </div>
-</div>
+    <div id="open-dialog" class="file-dialog" title="Open mind map">
+		<a href='http://mindmapmaker.org/storage-options-with-mindmaps.html' target='_blank'>Learn more</a> about storage options.<br /><br />
+		<h1><span class="highlight">New!</span> Public maps on Mindmap Storage Server</h1>
+
+        <p>Store maps publicly in mindmap storage to share it anonymously. The url of a map is only known to you and unless you share it others can't open or guess it.
+		This is a list of mind maps that are created by you. Click on the title of a map
+            to open it.</p>
+        <table class="server-filelist">
+            <thead>
+            <tr>
+                <th class="title">Title</th>
+                <th class="modified">Last Modified</th>
+                <th class="delete"></th>
+            </tr>
+            </thead>
+            <tbody class="server-document-list"></tbody>
+        </table>
+		 <span class="storageserver-loading">Loading...</span>
+		 <span class="storageserver-error error"></span>
+		<div class="seperator"></div>
+		<h1><span class="highlight">New!</span>Google Drive</h1>
+		<span style="color:red"><p>This sign-in will not work after February 6, 2023. <a href='https://developers.googleblog.com/2021/06/upcoming-security-changes-to-googles-oauth-2.0-authorization-endpoint.html' target='_blank'>Learn more</a></p></span>
+        <p>Mindmap now supports Google Drive natively. <a href='http://mindmapmaker.org/using-google-drive-with-mindmaps.html' target='_blank'>Learn more</a>
+		<br />&nbsp;<br />Either Click the 'Open' button below or go directly to <a href='https://drive.google.com' target='_blank'>Google Drive</a>
+		</p>
+        <button id="button-open-google-drive">Open</button>
+        <span class="google-drive-loading">Loading...</span>
+        <span class="google-drive-error error"></span>
+
+        <span class="google-drive-loading">Loading...</span>
+        <span class="google-drive-error error"></span>
+
+        <div class="seperator"></div>
+        <h1>Local Storage</h1>
+
+        <p>This is a list of all offline mind maps that are saved in your browser's local storage. Click on the title of a map
+            to open it.</p>
+        <table class="localstorage-filelist">
+            <thead>
+            <tr>
+                <th class="title">Title</th>
+                <th class="modified">Last Modified</th>
+                <th class="delete"></th>
+            </tr>
+            </thead>
+            <tbody class="document-list"></tbody>
+        </table>
+        <div class="seperator"></div>
+        <h1>From file</h1>
+
+        <p>Choose a mindmap from your computer's hard drive.</p>
+
+        <div class="file-chooser">
+            <input type="file"/>
+        </div>
+       
+    </div>
 </script>
 
 <script id="template-save" type="text/x-jquery-tmpl">
-<div id="save-dialog" class="file-dialog" title="Save mind map">
-  <h1><span class="highlight">Works again!</span> In the Cloud: Dropbox and more</h1>
-  <p>Open, save and share your mind maps online in your favorite cloud storage. Supports Google Drive, Dropbox and more! Powered by <a href="https://www.filestack.com/" target="_blank">filestack.com</a>.</p>
-  <button id="button-save-cloudstorage">Save</button>
-  <span class="cloud-loading">Loading...</span>
-  <span class="cloud-error error"></span>
-  <div class="seperator"></div>
-  <h1>Local Storage</h1>
-  <p>You can save your mind map in your browser's local storage. Be aware that this is still experimental: the space is limited and there is no guarantee that the browser will keep this document forever. Useful for frequent backups in combination with cloud storage.</p>
-  <button id="button-save-localstorage">Save</button>
-  <input type="checkbox" class="autosave" id="checkbox-autosave-localstorage">
-  <label for="checkbox-autosave-localstorage">Save automatically every minute.</label>
-  <div class="seperator"></div>
-  <h1>To file</h1>
-  <p>Save the mind map as a file on your computer.</p>
-  <button id="button-save-hdd">Save</button>
+    <div id="save-dialog" class="file-dialog" title="Save mind map">
+		<a href='http://mindmapmaker.org/storage-options-with-mindmaps.html' target='_blank'>Learn more</a> about storage options.<br /><br />
+		<h1><span class="highlight">New!</span> As public map in Mindmap Storage Server</h1>
+
+        <p>Store maps publicly in mindmap storage to share it anonymously. The url of a map is only known to you and unless you share it others can't open or guess it.</p>
+        <button id="button-save-storageserver">Save</button>
+		<span class="storageserver-loading">Saving...</span>
+        <span class="storageserver-error error"></span>
+		<div class="seperator"></div>
+		<h1><span class="highlight">New!</span>Google Drive</h1>
+		<span style="color:red"><p>This sign-in will not work after February 6, 2023. <a href='https://developers.googleblog.com/2021/06/upcoming-security-changes-to-googles-oauth-2.0-authorization-endpoint.html' target='_blank'>Learn more</a></p></span>
+		<p>Mindmap now supports Google Drive natively. Store your private maps. You can also share them with your friends via Google Drive. <a href='http://mindmapmaker.org/using-google-drive-with-mindmaps.html' target='_blank'>Learn more</a></p>
+        <button id="button-save-google-drive">Save</button>
+        <span class="google-drive-loading">Saving...</span>
+        <span class="google-drive-error error"></span>
+
+        <div class="seperator"></div>
+        <h1>Local Storage</h1>
+
+        <p>You can save your mindmap in your browser's local storage. Uses space in your HDD. Stays there unless you clear your local storage. Space of HDD is the only limit. Useful for
+            frequent backups in combination with cloud storage.</p>
+        <button id="button-save-localstorage">Save</button>
+        <input type="checkbox" class="autosave" id="checkbox-autosave-localstorage">
+        <label for="checkbox-autosave-localstorage">Save automatically every minute.</label>
+
+        <div class="seperator"></div>
+        <h1>To file</h1>
+
+        <p>Save the mindmap as a file on your computer.</p>
+
+        <button id="button-save-hdd">Save</button>
+        
+    </div>
+</script>
+
+<script id="template-share" type="text/x-jquery-tmpl">
+    <div id="share-dialog" class="file-dialog" title="Share your mindmap">
+		<center>
+		<a href='#' id='share-button-facebook' target='_blank'><img src='img/share-facebook.jpg'></a><br /><br /><br />
+		<a href='#' id='share-button-twitter' target='_blank'><img src='img/share-twitter.jpg'></a><br /><br /><br />
+		<a href='#' id='share-button-google' target='_blank'><img src='img/share-google.jpg'></a><br /><br /><br /></center>
+		<div class="seperator"></div>
+		<center><span style='font-size:15px;font-weight:bold'>Share URL: Click to highlight and then copy<br /><br />	</center>
+		<span style='font-size:15px;font-weight:bold'>Short Url <input type='text' size='25' id='share-map-short-url' value='' readonly>
+		<br /><br />Permanent Url <input type='text' id='share-map-permanent-url' value='' size='50' readonly></span>
+    </div>
+</script>
+
+<script id="template-urls-table-item" type="text/x-jquery-tmpl">
+    <tr>
+        <td><a class="url" href="${(url.substr(0,7) == 'http://' || url.substr(0,8) == 'https://' || url.substr(0,7) == 'file://')? url : 'http://'+url}" target="_blank">${url}</a></td>
+        <td><a class="delete" href="#">delete</a></td>
+    </tr>
+</script>
+
+
+<script id="template-urls-multi-url-display" type="text/x-jquery-tmpl">
+    <div>
+        <h1>URLs attached to node</h1>
+        <table class="url-list">
+            <thead>
+            <tr>
+                <th class="title">URL</th>
+                <th class="delete"></th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script id="template-attachment" class="ui-front" title='puke' type="text/x-jquery-tmpl">
+<div id="attachmentEditor" class="ui-front" style=""  title="Edit Attachment" hidden>
+<textarea id='attachment-data' style="width: 100%;"></textarea>
 </div>
+
+</script>
+
+<script id="template-add-image" type="text/x-jquery-tmpl">
+    <div id="addNodeImage" title="Add/Change node Image">
+	<div style="font-size:15px">
+	Click on the rectangle below to select an image or drag n drop an image to the rectangle area. <br /><br /><br />
+	</div>
+	<span style="float:left;font-size:15px">Image:</span>
+        <div id="node-image-preview-div" class="image">
+			  <img id="node-image-preview" />
+		  </div>
+		 <input type="file" id="choose-image-selectfile"/>
+	<div style="clear:both"><br /><br /></div>
+	<div id="image-properties" style="font-size:15px" hidden>
+	Alignment:  	<select id="image-property-alignment">
+							<option value="top">Top</option>
+							<option value="center">Centered (Behind Text)</option>
+							<option value="bottom">Bottom</option>
+							<option value="left">Left</option>
+							<option value="right">Right</option>
+					</select>
+	<br /><br />
+	Size:&nbsp;&nbsp;&nbsp;&nbsp; <input id='image-property-width' type="text" size="5"> x <input id='image-property-height' type="text" size="5"> 
+	<input type="checkbox" id='image-property-maintain-aspect-ratio' name='keepratio' checked> Maintain Aspect Ratio
+	</div>
+	</div>
+</script>
+
+<script id="template-urls" type="text/x-jquery-tmpl">
+    <div id="urls-dialog" class="file-dialog" title="Edit node URLs">
+        <div id="urls-text-field">
+            <div id="urls-direct-input">
+                <h1>Edit URL directly</h1>
+
+                <p><input type="text">
+                    <button>Add</button>
+                </p>
+                <div class="seperator"></div>
+            </div>
+            <div id="urls-dropdown-input">
+                <h1>Choose URL</h1>
+
+                <p><select/>
+                    <button>Add</button>
+                </p>
+                <span class="dropdown-error error"></span>
+            </div>
+            <div id="urls-search-dropdown-input">
+                <div class="seperator"></div>
+                <h1>Search for URL</h2>
+                    <p><input type="text">
+                        <button class="search">Search</button>
+                    </p>
+                    <span class="search-dropdown-error error"></span>
+
+                    <p>
+                        <select>
+                            <option>No URLs received yet. Please use the search field.</option>
+                        </select>
+                        <button class="add">Add</button>
+                    </p>
+            </div>
+        </div>
+    </div>
 </script>
 
 <script id="template-navigator" type="text/x-jquery-tmpl">
-<div id="navigator">
-  <div class="active">
-    <div id="navi-content">
-      <div id="navi-canvas-wrapper">
-        <canvas id="navi-canvas"></canvas>
-        <div id="navi-canvas-overlay"></div>
-      </div>
-      <div id="navi-controls">
-        <span id="navi-zoom-level"></span>
-        <div class="button-zoom" id="button-navi-zoom-out"></div>
-        <div id="navi-slider"></div>
-        <div class="button-zoom" id="button-navi-zoom-in"></div>
-      </div>
+    <div id="navigator">
+        <div class="active">
+            <div id="navi-content">
+                <div id="navi-canvas-wrapper">
+                    <canvas id="navi-canvas"></canvas>
+                    <div id="navi-canvas-overlay"></div>
+                </div>
+                <div id="navi-controls">
+                    <span id="navi-zoom-level"></span>
+
+                    <div class="button-zoom" id="button-navi-zoom-out"></div>
+                    <div id="navi-slider"></div>
+                    <div class="button-zoom" id="button-navi-zoom-in"></div>
+                </div>
+            </div>
+        </div>
+        <div class="inactive">
+        </div>
     </div>
-  </div>
-  <div class="inactive">
-  </div>
-</div>
 </script>
 
 
 <script id="template-inspector" type="text/x-jquery-tmpl">
-<div id="inspector">
-  <div id="inspector-content">
-    <table id="inspector-table">
-      <tr>
-        <td>Font size:</td>
-        <td><div
-            class="buttonset buttons-very-small buttons-less-padding">
-            <button id="inspector-button-font-size-decrease">A-</button>
-            <button id="inspector-button-font-size-increase">A+</button>
-          </div></td>
-      </tr>
-      <tr>
-        <td>Font style:</td>
-        <td><div
-            class="font-styles buttonset buttons-very-small buttons-less-padding">
-            <input type="checkbox" id="inspector-checkbox-font-bold" /> 
-            <label
-            for="inspector-checkbox-font-bold" id="inspector-label-font-bold">B</label>
-              
-            <input type="checkbox" id="inspector-checkbox-font-italic" /> 
-            <label
-            for="inspector-checkbox-font-italic" id="inspector-label-font-italic">I</label> 
-            
-            <input
-            type="checkbox" id="inspector-checkbox-font-underline" /> 
-            <label
-            for="inspector-checkbox-font-underline" id="inspector-label-font-underline">U</label> 
-            
-            <input
-            type="checkbox" id="inspector-checkbox-font-linethrough" />
-             <label
-            for="inspector-checkbox-font-linethrough" id="inspector-label-font-linethrough">S</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>Font color:</td>
-        <td><input type="hidden" id="inspector-font-color-picker"
-          class="colorpicker" /></td>
-      </tr>
-      <tr>
-        <td>Branch color:</td>
-        <td><input type="hidden" id="inspector-branch-color-picker"
-          class="colorpicker" />
-          <button id="inspector-button-branch-color-children" title="Apply branch color to all children" class="right buttons-small buttons-less-padding">Inherit</button>
-        </td>
-      </tr>
-    </table>
-  </div>
-</div>
+    <div id="inspector">
+        <div id="inspector-content">
+            <table id="inspector-table">
+			<tr>
+                    <td>
+                        <div class="buttonset buttons-very-small buttons-less-padding">
+							 <button id="inspector-button-border-show-hide">Toggle Border</button>
+                        </div>
+                    </td>
+					<td>Style: 
+					 <select id="inspector-button-border-style">
+							<option value="solid">Solid</option>
+							<option value="dashed">Dashed</option>
+							<option value="dotted">Dotted</option>
+							<option value="groove">Groove</option>
+							<option value="inset">Inset</option>
+							<option value="outset">Outset</option>
+					</select>
+					<button id="inspector-button-border-style-children" title="Apply border style to all children"
+                            class="right buttons-small buttons-less-padding">Inherit
+                    </button>
+				</td>
+            </tr>
+				<tr>
+                    <td>Font face:</td>
+                    <td>
+                        <select id="inspector-button-font-face-change">
+							<option value="Sans-serif" style="font-size:20px;font-family:'Sans-serif'">Sans-serif</option>
+							<option value="Serif" style="font-size:20px;font-family:'Serif'">Serif</option>
+							<option value="Stencil" style="font-size:20px;font-family:'Stencil'">Stencil</option>
+							<option value="Arial" style="font-size:20px;font-family:'Arial'">Arial</option>
+							<option value="Arial Black" style="font-size:20px;font-family:'Arial Black'">Arial Black</option>
+							<option value="Courier" style="font-size:20px;font-family:'Courier'">Courier</option>
+							<option value="Georgia" style="font-size:20px;font-family:'Georgia'">Georgia</option>
+							<option value="Courier New" style="font-size:20px;font-family:'Courier New'">Courier New</option>
+							<option value="Comic Sans MS" style="font-size:20px;font-family:'Comic Sans MS'">Comic Sans MS</option>
+							<option value="Helvetica" style="font-size:20px;font-family:'Helvetica'">Helvetica</option>
+							<option value="Impact" style="font-size:20px;font-family:'Impact'">Impact</option>
+							<option value="Lucida Grande" style="font-size:20px;font-family:'Lucida Grande'">Lucida Grande</option>
+							<option value="Lucida Sans" style="font-size:20px;font-family:'Lucida Sans'">Lucida Sans</option>
+							<option value="Tahoma" style="font-size:20px;font-family:'Tahoma'">Tahoma</option>
+							<option value="Times New Roman" style="font-size:20px;font-family:'Times New Roman'">Times New Roman</option>
+							<option value="Trebuchet MS" style="font-size:20px;font-family:'Trebuchet MS'">Trebuchet MS</option>
+							<option value="Verdana" style="font-size:20px;font-family:'Verdana'">Verdana</option>
+						</select>
+						<br />
+						<button id="inspector-button-font-face-children" title="Apply font style to all children"
+                                class="right buttons-small buttons-less-padding">Inherit
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Font size:</td>
+                    <td>
+                        <div
+                                class="buttonset buttons-very-small buttons-less-padding">
+                            <button id="inspector-button-font-size-decrease">A-</button>
+                            <button id="inspector-button-font-size-increase">A+</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Font style:</td>
+                    <td>
+                        <div
+                                class="font-styles buttonset buttons-very-small buttons-less-padding">
+                            <input type="checkbox" id="inspector-checkbox-font-bold"/>
+                            <label
+                                    for="inspector-checkbox-font-bold" id="inspector-label-font-bold">B</label>
+
+                            <input type="checkbox" id="inspector-checkbox-font-italic"/>
+                            <label
+                                    for="inspector-checkbox-font-italic" id="inspector-label-font-italic">I</label>
+
+                            <input
+                                    type="checkbox" id="inspector-checkbox-font-underline"/>
+                            <label
+                                    for="inspector-checkbox-font-underline"
+                                    id="inspector-label-font-underline">U</label>
+
+                            <input
+                                    type="checkbox" id="inspector-checkbox-font-linethrough"/>
+                            <label
+                                    for="inspector-checkbox-font-linethrough"
+                                    id="inspector-label-font-linethrough">S</label>
+
+						<button id="inspector-button-font-style-children" title="Apply font style to all children"
+                                class="right buttons-small buttons-less-padding">Inherit
+                        </button>
+						                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Line width:</td>
+                    <td>
+                        <div
+                                class="buttonset buttons-very-small buttons-less-padding">
+                            <button id="inspector-button-line-width-decrease">-</button>
+                            <button id="inspector-button-line-width-increase">+</button>
+                        </div>
+                    </td>
+                </tr>
+				<tr>
+                    <td>Connect:</td>
+                    <td>
+                        <button id="inspector-button-connect-node" title="Connect node to another non-related node"
+                                class="buttons-small buttons-less-padding">Connect
+                        </button>
+						 <button id="inspector-button-connect-node-remove" title="Remove connection"
+                                class="right buttons-small buttons-less-padding">Remove
+                        </button>
+                    </td>
+                </tr>
+				<tr id="node-connect-styles-row" hidden>
+                    <td><input type="text" id="inspector-connection-color-picker"/>
+                    </td>
+					<td>
+                        <select id="inspector-button-connection-style-change">
+							<option value="dashed">Dashed</option>
+							<option value="solid">Solid</option>
+							<option value="dotted">Dotted</option>
+						</select>
+                        <select id="inspector-button-connection-arrow-change">
+							<option value="0">No Arrow</option>
+							<option value="1">Single</option>
+							<option value="2">Double</option>
+						</select>
+                    </td>
+                </tr>
+				<tr>
+                    <td>Branch color:</td>
+                    <td><input type="text" id="inspector-branch-color-picker"/>
+                        <button id="inspector-button-branch-color-children" title="Apply branch color to all children"
+                                class="right buttons-small buttons-less-padding">Inherit
+                        </button>
+                    </td>
+                </tr>
+				<tr>
+                    <td>Border Color:</td>
+					<td><input type="text" id="inspector-border-color-picker"/>
+					<button id="inspector-button-border-color-children" title="Apply border color to all children"
+                            class="right buttons-small buttons-less-padding">Inherit
+                    </button>
+					</td>
+				</tr>
+				<tr>		
+                    <td>Background:</td>
+					<td><input type="text" id="inspector-border-background-color-picker"/>
+					<button id="inspector-button-background-color-children" title="Apply background color to all children"
+                            class="right buttons-small buttons-less-padding">Inherit
+                    </button>
+						</td>
+				</tr>
+				<tr>
+                    <td>Font color:</td>
+                    <td><input type="text" id="inspector-font-color-picker"/>
+					<button id="inspector-button-font-color-children" title="Apply font color to all children"
+                                class="right buttons-small buttons-less-padding">Inherit
+                        </button>
+					</td>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
 </script>
+
+
+<script id="template-draw" type="text/x-jquery-tmpl">
+    <div>
+        <div id="left-panel">
+            <!--button id="right-button" title="Tools" class="buttons-small buttons-less-padding">Tools</button-->
+
+
+            <div id="canvas-panel" class="block">
+                <canvas id="drawingCanvas" width="500" height="500"></canvas>
+
+            </div>
+
+        </div>
+        <div id="bottom-panel">
+            <div id="tools-panel" class="block">
+                <ul>
+                    <li class="tool-panel-button tool-button pencil-tool selected ">
+                        <i class="icon-pencil icon-3x"></i>
+                    </li>
+                    <li class="tool-panel-button tool-button eraser-tool">
+                        <i class="icon-tint icon-3x"></i>
+                    </li>
+
+                    <li class="tool-panel-button tool-button delete-tool">
+                        <i class="icon-trash icon-3x"></i>
+                    </li>
+
+                    <li class="tool-panel-button tool-button">
+                        <input class="brush-color"/>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="template-gesture" type="text/x-jquery-tmpl">
+    <div id="gesture-div" height="80%">
+        Gestures supported -
+        <ul>
+            <li ><i class="icon-arrow-right"/><i class="icon-arrow-down"/>Create Child</li>
+            <li><i class="icon-arrow-down"/><i class="icon-arrow-left"/>Create Sibling</li>
+            <li><i class="icon-arrow-right"/>Move Right</li>
+            <li><i class="icon-arrow-down"/>Move Down</li>
+            <li><i class="icon-arrow-left"/>Move Left</li>
+            <li><i class="icon-arrow-up"/>Move Up</li>
+        </ul>
+
+    </div>
+    <div id="gesture-log">
+
+    </div>
+
+</script>
+
 
 <script id="template-export-map" type="text/x-jquery-tmpl">
-<div id="export-map-dialog" title="Export mind map">
-  <h2 class='image-description'>To download the map right-click the
-    image and select "Save Image As"</h2>
-  <div id="export-preview"></div>
-</div>
-</script>
+    <div id="export-map-dialog" title="Export mind map">
+        <h2 class='image-description'>To download the map right-click the
+            image and select "Save Image As"</h2>
 
+        <div id="export-preview"></div>
+    </div>
+</script>
+<meta name="robots" content="noindex, follow">
 </head>
 <body>
-  <div id="print-area">
+<div id="print-area">
     <p class="print-placeholder">Please use the print option from the
-      mind map menu</p>
-  </div>
-  <!-- DEBUG -->
-  <div id="debug-warning">Running in DEBUG mode.</div>
-  <!-- /DEBUG -->
-  <div id="container">
-    <script>
-      // only show banner on drichard.org
-      if (window.location.hostname === 'drichard.org') {
-        document.write(
-          '<div id="banner"><strong>Attention:</strong> This app is moving soon to <a href="https://www.mindmaps.app" target="_blank">www.mindmaps.app</a>. Mind maps stored in local storage will not be available on the new site. If you have any maps in local storage, please save them to file and import them on the new website. If you have any questions, please <a href="mailto:david+contact@drichard.org">contact me</a>.</div>'
-        );
-      }
-    </script>
+        mind map menu</p>
+</div>
+<div id="notification-info"></div>
+<div id="container">
     <div id="topbar">
-      <div id="toolbar">
-        <div id="logo" class="logo-bg">
-          <span>mindmaps</span>
-        </div>
+        <div id="toolbar">
+            <div id="logo" class="logo-bg">
+                <span>mindmaps</span>
+            </div>
 
-        <div class="buttons">
-          <span class="buttons-left"> </span> <span class="buttons-right">
+            <div class="buttons">
+                <span class="buttons-left"> </span> <span class="buttons-right">
           </span>
+            </div>
         </div>
-
-      </div>
     </div>
     <div id="canvas-container">
-      <div id="drawing-area" class="no-select"></div>
+        <div id="drawing-area" class="no-select"></div>
     </div>
-    <div id="bottombar">
+   <div id="bottombar">
       <div id="about">
-        <a href="about.html" target="_blank">About mindmaps</a> <span
-          style="padding: 0 4px;">|</span> <a style="font-weight: bold"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSfETMwnwQQXx9aAEFA26jbuBJGkU9zLCW7Rj1Taf5u3k-2NYQ/viewform?usp=sf_link"
-          target="_blank">Leave Feedback</a>
+	  <span style="color: #560099;">
+	  <a href="https://www.youtube.com/watch?v=F3pxhrTccKk" target="_blank">Tutorial</a> </span>
+	  <span
+	  style="padding: 0 4px;">|</span>
+			<a href="key-shortcuts.html" target="_blank">Key Shortcuts</a>  </span>
+	  <span
+	  style="padding: 0 4px;">|</span>
+			<a href="about_mindmap.html" target="_blank">About</a>  </span>	
       </div>
-      <div id="statusbar">
-        <div
-          class="buttons buttons-right buttons-small buttons-less-padding"></div>
-      </div>
+        <div id="statusbar">
+            <div
+                    class="buttons buttons-right buttons-small buttons-less-padding"></div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-  <script src="//api.filestackapi.com/filestack.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+<div id="dialog-confirm" title="Are you sure?" hidden>
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span style="font-size: 15px">There are unsaved changes which will be lost.</span></p>
+</div>
 
-  <!-- DEBUG -->
-  <!-- set debug flag for all scripts. Will be removed in production -->
-  <script type="text/javascript">
-    var mindmaps = mindmaps || {};
-    mindmaps.DEBUG = true;
-  </script>
-  <!-- /DEBUG -->
+<div id="dialog-confirm-google-drive" title="Authorization Required" hidden>
+  <p><span class="ui-icon ui-icon-info" style="float:left; margin:0 7px 20px 0;"></span><span style="font-size: 15px">You are trying to access Google Drive storage. You need to login to your Google Account and authorize 
+  MindMap app to open or save files for you. Click 'Authorize' below to continue.</span></p>
+</div>
 
-  <!-- JS:LIB:BEGIN -->
-  <script src="js/libs/jquery-ui-1.8.11.custom.min.js"></script>
-  <script src="js/libs/dragscrollable.js"></script>
-  <script src="js/libs/jquery.hotkeys.js"></script>
-  <script src="js/libs/jquery.mousewheel.js"></script>
-  <script src="js/libs/jquery.minicolors.js"></script>
-  <script src="js/libs/jquery.tmpl.js"></script>
-  <script src="js/libs/events.js"></script>
 
-  <script src="js/MindMaps.js"></script>
-  <script src="js/Command.js"></script>
-  <script src="js/CommandRegistry.js"></script>
-  <script src="js/Action.js"></script>
-  <script src="js/Util.js"></script>
-  <script src="js/Point.js"></script>
-  <script src="js/Document.js"></script>
-  <script src="js/MindMap.js"></script>
-  <script src="js/Node.js"></script>
-  <script src="js/NodeMap.js"></script>
-  <script src="js/UndoManager.js"></script>
-  <script src="js/UndoController.js"></script>
-  <script src="js/ClipboardController.js"></script>
-  <script src="js/ZoomController.js"></script>
-  <script src="js/ShortcutController.js"></script>
-  <script src="js/HelpController.js"></script>
-  <script src="js/FloatPanel.js"></script>
-  <script src="js/Navigator.js"></script>
-  <script src="js/Inspector.js"></script>
-  <script src="js/ToolBar.js"></script>
-  <script src="js/StatusBar.js"></script>
-  <script src="js/CanvasDrawingTools.js"></script>
-  <script src="js/CanvasView.js"></script>
-  <script src="js/CanvasPresenter.js"></script>
-  <script src="js/ApplicationController.js"></script>
-  <script src="js/MindMapModel.js"></script>
-  <script src="js/NewDocument.js"></script>
-  <script src="js/OpenDocument.js"></script>
-  <script src="js/SaveDocument.js"></script>
-  <script src="js/MainViewController.js"></script>
-  <script src="js/Storage.js"></script>
-  <script src="js/Event.js"></script>
-  <script src="js/Notification.js"></script>
-  <script src="js/StaticCanvas.js"></script>
-  <script src="js/PrintController.js"></script>
-  <script src="js/ExportMap.js"></script>
-  <script src="js/AutoSaveController.js"></script>
-  <script src="js/FilePicker.js"></script>
-  <!-- JS:LIB:END -->
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> -->
+<!-- <script src="js/jquery-2.0.2.min.js"></script> -->
+
+<!-- JS:LIB:BEGIN -->
+
+
+<script type="text/javascript" src="js/libs/jquery/jquery-1.8.3.js"></script>
+<script src="js/libs/underscore-min.js"></script>
+<script type="text/javascript" src="js/libs/jquery/jquery-ui-1.9.2.custom.min.js"></script>
+
+
+<script type="text/javascript" src="js/libs/rxjs/rx.js"></script>
+<script type="text/javascript" src="js/libs/rxjs/rx.jQuery.js"></script>
+<script type="text/javascript" src="js/libs/mootools/MooTools-More-1.6.0-compressed.js"></script>
+<script type="text/javascript" src="js/libs/modernizr/modernizr-1.6.min.js"></script>
+
+<script type="text/javascript" src="js/fabric.js"></script>
+
+<script type="text/javascript" src="js/libs/hammer.js"></script>
+<script type="text/javascript" src="js/libs/jquery.hammer.js"></script>
+
+<script src="js/Moousture.js"></script>
+<script src="js/libs/iPhoneProbe.js"></script>
+
+
+<script type="text/javascript">
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, false);
+</script>
+
+
+<script src="js/libs/dragscrollable.js"></script>
+<script src="js/libs/jquery.hotkeys.js"></script>
+<script src="js/libs/jquery.mousewheel.js"></script>
+<script src="js/libs/jquery.minicolors.js"></script>
+<script src="js/libs/jquery.tmpl.js"></script>
+<script src="js/libs/events.js"></script>
+<script src="js/libs/jquery.ie.cors.js"></script>
+
+<script src="js/MindMaps.js"></script>
+<script src="js/FileSaver.min.js"></script>
+
+
+<script type="text/javascript" src="js/Responsive.js"></script>
+<script type="text/javascript" src="js/Mode.js"></script>
+
+<script src="js/jquery.colorPicker.js"></script>
+
+
+<script src="js/Util.js"></script>
+<script src="js/Geometry.js"></script>
+
+<script src="js/ckeditor.js"></script>
+<script src="js/adapters/jquery.js"></script>
+
+<script src="js/Config.js"></script>
+<script src="js/Command.js"></script>
+<script src="js/CommandRegistry.js"></script>
+<script src="js/Action.js"></script>
+<script src="js/Point.js"></script>
+<script src="js/Document.js"></script>
+<script src="js/Migration.js"></script>
+<script src="js/MindMap.js"></script>
+<script src="js/Node.js"></script>
+<script src="js/NodeMap.js"></script>
+<script src="js/UndoManager.js"></script>
+<script src="js/UndoController.js"></script>
+<script src="js/ClipboardController.js"></script>
+<script src="js/ZoomController.js"></script>
+<script src="js/ShortcutController.js"></script>
+<script src="js/HelpController.js"></script>
+<script src="js/FloatPanel.js"></script>
+<script src="js/Navigator.js"></script>
+<script src="js/Inspector.js"></script>
+
+
+<script src="js/ToolBar.js"></script>
+<script src="js/StatusBar.js"></script>
+<script src="js/CanvasDrawingTools.js"></script>
+<script src="js/CanvasView.js"></script>
+<script src="js/CanvasPresenter.js"></script>
+<script src="js/MindMapModel.js"></script>
+<script src="js/NewDocument.js"></script>
+<script src="js/OpenDocument.js"></script>
+<script src="js/SaveDocument.js"></script>
+<script src="js/MainViewController.js"></script>
+<script src="js/Storage.js"></script>
+<script src="js/Event.js"></script>
+<script src="js/Notification.js"></script>
+<script src="js/StaticCanvas.js"></script>
+<script src="js/PrintController.js"></script>
+<script src="js/ExportMap.js"></script>
+<script src="js/AutoSaveController.js"></script>
+<script src="js/FilePicker.js"></script>
+<script src="js/UrlShortener.js"></script>
+<script src="js/ShareMap.js"></script>
+<script src="js/GoogleDrive.js"></script>
+
+<script src="js/Plugin.js"></script>
+
+<!-- plugins -->
+<script src="js/Gesture.js"></script>
+<script src="js/Layout.js"></script>
+
+
+<script src="js/Attachment.js"></script>
+
+
+<script src="js/EditURLs.js"></script>
+<script src="js/ImageNode.js"></script>
+
+
+<script src="js/ApplicationController.js"></script>
+
+<script type="text/javascript">
+    document.body.addEventListener('touchmove', function (event) {
+        event.preventDefault();
+    }, false);
+</script>
+
 </body>
 </html>

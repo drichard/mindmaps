@@ -1,307 +1,346 @@
 mindmaps.CanvasDrawingUtil = {
-  /**
-   * Calculates the width of a branch for a node for the given depth
-   * 
-   * @param {Integer} depth the depth of the node
-   * @returns {Number}
-   */
-  getLineWidth : function(zoomFactor, depth) {
-    // var width = this.zoomFactor * (10 - depth);
-    var width = zoomFactor * (12 - depth * 2);
-
-    if (width < 2) {
-      width = 2;
+    getLineWidth: function(e, t, n) {
+        var r = e;
+        if (e.data) r = e.data().node;
+        var i = t * (12 - n * 2);
+        var s = 0;
+        if (r !== undefined) {
+            s = r.getLineWidthOffset()
+        }
+        i += s;
+        if (i < 2) {
+            i = 2
+        }
+        return i
+    },
+    roundedRect: function(t, n, r, i, s, o) {
+        t.beginPath();
+        t.moveTo(n, r + o);
+        t.lineTo(n, r + s - o);
+        t.quadraticCurveTo(n, r + s, n + o, r + s);
+        t.lineTo(n + i - o, r + s);
+        t.quadraticCurveTo(n + i, r + s, n + i, r + s - o);
+        t.lineTo(n + i, r + o);
+        t.quadraticCurveTo(n + i, r, n + i - o, r);
+        t.lineTo(n + o, r);
+        t.quadraticCurveTo(n, r, n, r + o);
+        t.stroke();
+        t.fill()
     }
-
-    return width;
-  },
-
-  /**
-   * Draws a rounded rectangle
-   * @param ctx
-   * @param x
-   * @param y
-   * @param width
-   * @param height
-   * @param radius
-   */
-  roundedRect : function roundedRect(ctx, x, y, width, height, radius) {
-    // from MDN docs
-    ctx.beginPath();
-    ctx.moveTo(x, y + radius);
-    ctx.lineTo(x, y + height - radius);
-    ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
-    ctx.lineTo(x + width - radius, y + height);
-    ctx.quadraticCurveTo(x + width, y + height, x + width, y + height
-        - radius);
-    ctx.lineTo(x + width, y + radius);
-    ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
-    ctx.lineTo(x + radius, y);
-    ctx.quadraticCurveTo(x, y, x, y + radius);
-    ctx.stroke();
-    ctx.fill();
-  }
 };
+mindmaps.CanvasConnectorDrawer = function() {
+    this.beforeDraw = function(e, t, n, r) {};
+    this.render = function(e, t, n, r, i, s, o, u, a, f, l, c) {
+        function D(e, t) {
+            try {
+                e.setLineDash(t)
+            } catch (n) {
+                try {
+                    e.mozDash = t
+                } catch (n) {} finally {}
+            } finally {}
+        }
 
-/**
- * Object that draws the line connection (the branch) between two nodes onto a
- * canvas object.
- * 
- * @constructor
- */
+        function P(e, t, n, r) {
+            this.x1 = e;
+            this.y1 = t;
+            this.x2 = n;
+            this.y2 = r
+        }
+        e.save();
+        i = i * f;
+        s = s * f;
+        n = n * f;
+        r = r * f;
+        n = n - i;
+        r = r - s;
+        offsetX = n;
+        offsetY = r;
+        var h = u.width();
+        var p = o.width();
+        var d = u.innerHeight();
+        var v = o.innerHeight();
+        var m, g;
+        var y = false;
+        var b, w, E, S;
+        var x;
+        var T = offsetX + p / 2 < h / 2;
+        if (T) {
+            var N = Math.abs(offsetX);
+            if (N > p) {
+                E = N - p + 1;
+                b = p;
+                m = true
+            } else {
+                b = -offsetX;
+                E = p + offsetX;
+                m = false;
+                y = true
+            }
+        } else {
+            if (offsetX > h) {
+                E = offsetX - h + 1;
+                b = h - offsetX;
+                m = false
+            } else {
+                E = h - offsetX;
+                b = 0;
+                m = true;
+                y = true
+            }
+        }
+        var C = 5;
+        var k = C / 2;
+        if (E < C) {
+            E = C
+        }
+        var L = offsetY + v < d;
+        if (L) {
+            w = v;
+            S = -offsetY - w;
+            g = true
+        } else {
+            w = d - offsetY;
+            S = -w;
+            g = false
+        }
+        var C = 5;
+        var k = C / 2;
+        if (S < C) {
+            S = C
+        }
+        this.beforeDraw(E, S, b, w);
+        var A, O, M, _;
+        if (m) {
+            A = 0;
+            M = E
+        } else {
+            A = E;
+            M = 0
+        }
+        if (g) {
+            O = 0;
+            _ = S
+        } else {
+            O = S;
+            _ = 0
+        }
+        e.lineWidth = 1;
+        e.strokeStyle = a;
+        e.fillStyle = a;
+        P.prototype.drawWithArrowheads = function(e, t) {
+            e.strokeStyle = t;
+            e.fillStyle = t;
+            e.lineWidth = 2;
+            e.beginPath();
+            e.moveTo(this.x1, this.y1);
+            e.lineTo(this.x2, this.y2);
+            e.stroke();
+            if (c == "2") {
+                var n = Math.atan((this.y2 - this.y1) / (this.x2 - this.x1));
+                n += (this.x2 > this.x1 ? -90 : 90) * Math.PI / 180;
+                this.drawArrowhead(e, this.x1, this.y1, n)
+            }
+            if (c == "2" || c == "1") {
+                var r = Math.atan((this.y2 - this.y1) / (this.x2 - this.x1));
+                r += (this.x2 > this.x1 ? 90 : -90) * Math.PI / 180;
+                this.drawArrowhead(e, this.x2, this.y2, r)
+            }
+        };
+        P.prototype.drawArrowhead = function(e, t, n, r) {
+            e.save();
+            e.beginPath();
+            e.translate(t, n);
+            e.rotate(r);
+            e.moveTo(0, 0);
+            e.lineTo(5, 20);
+            e.lineTo(-5, 20);
+            e.closePath();
+            e.restore();
+            e.fill()
+        };
+        var H = A;
+        var B = O;
+        var j = M;
+        var F = _;
+        e.strokeStyle = a;
+        if (l == "dashed") D(e, [8]);
+        else if (l == "dotted") D(e, [3]);
+        else if (l == "solid") D(e, [0]);
+        var I = new P(H, B, j, F);
+        I.drawWithArrowheads(e, a);
+        e.restore()
+    }
+};
 mindmaps.CanvasBranchDrawer = function() {
-  /**
-   * Callback during render() method. Is called after calculating the
-   * boundaries of the line and before actual drawing.
-   * 
-   * @event
-   */
-  this.beforeDraw = function(width, height, left, top) {
-
-  };
-
-  /**
-   * Render that.
-   * 
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {Integer} depth
-   * @param {Number} offsetX
-   * @param {Number} offsetY
-   * @param {jQuery} $node
-   * @param {jQuery} $parent
-   * @param {String} color
-   * @param {Number} zoomFactor
-   */
-  this.render = function(ctx, depth, offsetX, offsetY, $node, $parent, color,
-      zoomFactor) {
-
-    offsetX = offsetX * zoomFactor;
-    offsetY = offsetY * zoomFactor;
-
-    var pw = $parent.width();
-    var nw = $node.width();
-    var pih = $parent.innerHeight();
-    var nih = $node.innerHeight();
-
-    // line is drawn from node to parent
-    // draw direction
-    var leftToRight, topToBottom;
-
-    // node overlaps with parent above or delow
-    var overlap = false;
-
-    // canvas attributes
-    var left, top, width, height;
-    var bColor;
-
-    // position relative to parent
-    var nodeLeft = offsetX + nw / 2 < pw / 2;
-    if (nodeLeft) {
-      var aOffsetX = Math.abs(offsetX);
-      if (aOffsetX > nw) {
-        // normal left
-
-        // make it one pixel too wide to fix firefox rounding issues
-        width = aOffsetX - nw + 1;
-        left = nw;
-        leftToRight = true;
-
-        // bColor = "red";
-      } else {
-        // left overlap
-        left = -offsetX;
-        width = nw + offsetX;
-        leftToRight = false;
-        overlap = true;
-
-        // bColor = "orange";
-      }
-    } else {
-      if (offsetX > pw) {
-        // normal right
-
-        // make it one pixel too wide to fix firefox rounding issues
-        width = offsetX - pw + 1;
-        left = pw - offsetX;
-        leftToRight = false;
-
-        // bColor = "green";
-      } else {
-        // right overlap
-        width = pw - offsetX;
-        left = 0;
-        leftToRight = true;
-        overlap = true;
-
-        // bColor = "yellow";
-      }
+    this.beforeDraw = function(e, t, n, r) {};
+    this.render = function(e, t, n, r, i, s, o, u) {
+        n = n * u;
+        r = r * u;
+        var a = s.width();
+        var f = i.width();
+        var l = s.innerHeight();
+        var c = i.innerHeight();
+        var h, p;
+        var d = false;
+        var v, m, g, y;
+        var b;
+        var w = n + f / 2 < a / 2;
+        if (w) {
+            var E = Math.abs(n);
+            if (E > f) {
+                g = E - f + 1;
+                v = f;
+                h = true
+            } else {
+                v = -n;
+                g = f + n;
+                h = false;
+                d = true
+            }
+        } else {
+            if (n > a) {
+                g = n - a + 1;
+                v = a - n;
+                h = false
+            } else {
+                g = a - n;
+                v = 0;
+                h = true;
+                d = true
+            }
+        }
+        var S = mindmaps.CanvasDrawingUtil.getLineWidth(i, u, t);
+        var x = S / 2;
+        if (g < S) {
+            g = S
+        }
+        var T = r + c < l;
+        if (T) {
+            m = c;
+            y = s.outerHeight() - r - m;
+            p = true
+        } else {
+            m = l - r;
+            y = i.outerHeight() - m;
+            p = false
+        }
+        this.beforeDraw(g, y, v, m);
+        var N, C, k, L;
+        if (h) {
+            N = 0;
+            k = g
+        } else {
+            N = g;
+            k = 0
+        }
+        var A = mindmaps.CanvasDrawingUtil.getLineWidth(s, u, t - 1);
+        var O = (A - S) / 2;
+        if (p) {
+            C = 0 + x;
+            L = y - x - O
+        } else {
+            C = y - x;
+            L = 0 + x + O
+        }
+        if (!d) {
+            var M = N > k ? N / 5 : k - k / 5;
+            var _ = L;
+            var D = Math.abs(N - k) / 2;
+            var P = C
+        } else {
+            if (h) {
+                N += x;
+                k -= x
+            } else {
+                N -= x;
+                k += x
+            }
+            var D = N;
+            var P = Math.abs(C - L) / 2;
+            var M = k;
+            var _ = C > L ? C / 5 : L - L / 5
+        }
+        e.lineWidth = S;
+        e.strokeStyle = o;
+        e.fillStyle = o;
+        e.beginPath();
+        e.moveTo(N, C);
+        e.bezierCurveTo(D, P, M, _, k, L);
+        e.stroke();
+        var H = N;
+        var B = C;
+        var j = k;
+        var F = L;
+        var I = false;
+        if (I) {
+            e.strokeStyle = "#ff0000";
+            setLineDashCatch(e, [3]);
+            e.moveTo(H, B);
+            e.lineTo(j, F);
+            e.lineWidth = 1;
+            e.stroke();
+            setLineDashCatch(e, [0]);
+            e.beginPath();
+            e.fillStyle = "red";
+            e.arc(D, P, 4, 0, Math.PI * 2);
+            e.fill();
+            e.beginPath();
+            e.fillStyle = "green";
+            e.arc(M, _, 4, 0, Math.PI * 2);
+            e.fill()
+        }
     }
-
-    var lineWidth = mindmaps.CanvasDrawingUtil.getLineWidth(zoomFactor,
-        depth);
-    var halfLineWidth = lineWidth / 2;
-
-    // avoid zero widths
-    if (width < lineWidth) {
-      width = lineWidth;
-    }
-
-    var nodeAbove = offsetY + nih < pih;
-    if (nodeAbove) {
-      top = nih;
-      height = $parent.outerHeight() - offsetY - top;
-
-      topToBottom = true;
-    } else {
-      top = pih - offsetY;
-      height = $node.outerHeight() - top;
-
-      topToBottom = false;
-    }
-
-    // fire before draw event
-    this.beforeDraw(width, height, left, top);
-
-    // determine start and end coordinates
-    var startX, startY, endX, endY;
-    if (leftToRight) {
-      startX = 0;
-      endX = width;
-    } else {
-      startX = width;
-      endX = 0;
-    }
-
-    // calculate difference in line width to parent node
-    // and position line vertically centered to parent line
-    var pLineWidth = mindmaps.CanvasDrawingUtil.getLineWidth(zoomFactor,
-        depth - 1);
-    var diff = (pLineWidth - lineWidth) / 2;
-
-    if (topToBottom) {
-      startY = 0 + halfLineWidth;
-      endY = height - halfLineWidth - diff;
-    } else {
-      startY = height - halfLineWidth;
-      endY = 0 + halfLineWidth + diff;
-    }
-
-    // calculate bezier points
-    if (!overlap) {
-      var cp2x = startX > endX ? startX / 5 : endX - (endX / 5);
-      var cp2y = endY;
-
-      var cp1x = Math.abs(startX - endX) / 2;
-      var cp1y = startY;
-    } else {
-      // node overlaps with parent
-
-      // take left and right a bit away so line fits fully in canvas
-      if (leftToRight) {
-        startX += halfLineWidth;
-        endX -= halfLineWidth;
-      } else {
-        startX -= halfLineWidth;
-        endX += halfLineWidth;
-      }
-
-      // reversed bezier for overlap
-      var cp1x = startX;
-      var cp1y = Math.abs(startY - endY) / 2;
-
-      var cp2x = endX;
-      var cp2y = startY > endY ? startY / 5 : endY - (endY / 5);
-    }
-
-    // draw
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-    ctx.stroke();
-
-    var drawControlPoints = false;
-    if (drawControlPoints) {
-      // control points
-      ctx.beginPath();
-      ctx.fillStyle = "red";
-      ctx.arc(cp1x, cp1y, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.fillStyle = "green";
-      ctx.arc(cp2x, cp2y, 4, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  };
 };
-
-/**
- * Utility module that calculates how much space a text would take up in a node.
- * This is done through a dummy div that has the same formatting as the node and
- * gets the text injected.
- * 
- */
-mindmaps.TextMetrics = (function() {
-  var $div = $("<div/>", {
-    "class" : "node-text-behaviour"
-  }).css({
-    position : "absolute",
-    visibility : "hidden",
-    height : "auto",
-    width : "auto"
-  }).prependTo($("body"));
-
-  return {
-    /**
-     * @constant
-     */
-    ROOT_CAPTION_MIN_WIDTH : 100,
-
-    /**
-     * @constant
-     */
-    NODE_CAPTION_MIN_WIDTH : 70,
-
-    /**
-     * @constant
-     */
-    NODE_CAPTION_MAX_WIDTH : 150,
-
-    /**
-     * Calculates the width and height a node would have to provide to show
-     * the text.
-     * 
-     * @param {mindmaps.Node} node the node whose text is to be measured.
-     * @param {mindmaps.Node} [text] use this instead of the text of node
-     * @returns {Object} object with properties width and height.
-     */
-    getTextMetrics : function(node, zoomFactor, text) {
-      zoomFactor = zoomFactor || 1;
-      text = text || node.getCaption();
-      var font = node.text.font;
-      var minWidth = node.isRoot() ? this.ROOT_CAPTION_MIN_WIDTH
-          : this.NODE_CAPTION_MIN_WIDTH;
-      var maxWidth = this.NODE_CAPTION_MAX_WIDTH;
-
-      $div.css({
-        "font-size" : zoomFactor * font.size,
-        "min-width" : zoomFactor * minWidth,
-        "max-width" : zoomFactor * maxWidth,
-        "font-weight" : font.weight
-      }).text(text);
-
-      // add some safety pixels for firefox, otherwise it doesnt render
-      // right on textareas
-      var w = $div.width() + 2;
-      var h = $div.height() + 2;
-
-      return {
-        width : w,
-        height : h
-      };
+mindmaps.TextMetrics = function() {
+    var e = $("<div/>", {
+        "class": "node-text-behaviour"
+    }).css({
+        position: "absolute",
+        visibility: "hidden",
+        height: "auto",
+        width: "auto"
+    }).prependTo($("body"));
+    return {
+        ROOT_CAPTION_MIN_WIDTH: 100,
+        NODE_CAPTION_MIN_WIDTH: 70,
+        NODE_CAPTION_MAX_WIDTH: 150,
+        getTextMetrics: function(t, n, r) {
+            n = n || 1;
+            r = r || t.getCaption();
+            var i = t.getPluginData("style", "font");
+            var s = t.getPluginData("image", "data");
+            var o = t.isRoot() ? this.ROOT_CAPTION_MIN_WIDTH : this.NODE_CAPTION_MIN_WIDTH;
+            var u = this.NODE_CAPTION_MAX_WIDTH;
+            e.css({
+                "font-size": n * i.size,
+                "min-width": n * o,
+                "font-family": i.fontfamily,
+                "font-weight": i.weight
+            }).text(r);
+            if (s) {
+                if (s.align == "top" || s.align == "bottom") {
+                    var a = Math.max(e.width(), n * parseInt(s.width));
+                    var f = e.height() + n * parseInt(s.height)
+                } else if (s.align == "center") {
+                    var a = Math.max(e.width(), n * parseInt(s.width));
+                    var f = Math.max(e.height(), n * parseInt(s.height))
+                } else if (s.align == "right" || s.align == "left") {
+                    var a = e.width() + n * parseInt(s.width);
+                    var f = Math.max(e.height(), n * parseInt(s.height))
+                }
+            } else {
+                var a = e.width();
+                var f = e.height()
+            }
+            var l = parseInt(a + 2);
+            var c = parseInt(f + 2);
+            return {
+                width: l,
+                height: c,
+                fontW: e.width(),
+                fontH: e.height()
+            }
+        }
     }
-  };
-})();
+}()

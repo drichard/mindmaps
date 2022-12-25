@@ -1,81 +1,42 @@
-/**
- * Creates a new NodeMap object. Map implementation for nodes. The key is
- * automatically set to the node id.
- * 
- * @constructor
- */
 mindmaps.NodeMap = function() {
-  this.nodes = {};
-  this.count = 0;
+    this.nodes = {};
+    this.indexes = [];
+    this.count = 0
 };
-
-/**
- * Return a node by its ID.
- * 
- * @param {String} nodeId
- * @returns {mindmaps.Node}
- */
-mindmaps.NodeMap.prototype.get = function(nodeId) {
-  return this.nodes[nodeId];
+mindmaps.NodeMap.prototype.get = function(e) {
+    return this.nodes[e]
 };
-
-/**
- * Adds a node to the map if it hasn't been added before.
- * 
- * @param {mindmaps.Node} node
- * @returns {Boolean} true if added, false otherwise.
- */
-mindmaps.NodeMap.prototype.add = function(node) {
-  if (!this.nodes.hasOwnProperty(node.id)) {
-    this.nodes[node.id] = node;
-    this.count++;
-    return true;
-  }
-  return false;
+mindmaps.NodeMap.prototype.add = function(e) {
+    if (!this.nodes.hasOwnProperty(e.id)) {
+        this.nodes[e.id] = e;
+        this.indexes.push(e.id);
+        this.count++;
+        return true
+    }
+    return false
 };
-
-/**
- * Removes a node from the map.
- * 
- * @param {mindmaps.Node} node
- * @returns {Boolean} true if removed, false otherwise.
- */
-mindmaps.NodeMap.prototype.remove = function(node) {
-  if (this.nodes.hasOwnProperty(node.id)) {
-    delete this.nodes[node.id];
-    this.count--;
-    return true;
-  }
-  return false;
+mindmaps.NodeMap.prototype.remove = function(e) {
+    if (this.nodes.hasOwnProperty(e.id)) {
+        delete this.nodes[e.id];
+        var t = this.indexes.indexOf(e.id);
+        if (t >= 0) {
+            this.indexes.splice(t, 1)
+        }
+        this.count--;
+        return true
+    }
+    return false
 };
-
-/**
- * Returns the number of nodes in the map.
- * 
- * @returns {Number}
- */
 mindmaps.NodeMap.prototype.size = function() {
-  return this.count;
+    return this.count
 };
-
-/**
- * Returns all nodes in the map.
- * 
- * @returns {Array}
- */
 mindmaps.NodeMap.prototype.values = function() {
-  return Object.keys(this.nodes).map(function(key) {
-    return this.nodes[key];
-  }, this);
+    return Object.keys(this.nodes).map(function(e) {
+        return this.nodes[e]
+    }, this)
 };
-
-/**
- * Iterator for nodes.
- * 
- * @param {Function} callback, first argument should be the node.
- */
-mindmaps.NodeMap.prototype.each = function(callback) {
-  for ( var id in this.nodes) {
-    callback(this.nodes[id]);
-  }
-};
+mindmaps.NodeMap.prototype.each = function(e) {
+    for (var t in this.nodes) {
+        e(this.nodes[t])
+    }
+}

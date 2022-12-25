@@ -1,426 +1,264 @@
-/**
- * Creates a NavigatorView. This view shows a minified version of the mindmap +
- * controls for adjusting the zoom.
- * 
- * @constructor
- */
 mindmaps.NavigatorView = function() {
-  var self = this;
-
-  var $content = $("#template-navigator").tmpl();
-  var $contentActive = $content.children(".active").hide();
-  var $contentInactive = $content.children(".inactive").hide();
-  var $dragger = $("#navi-canvas-overlay", $content);
-  var $canvas = $("#navi-canvas", $content);
-
-  /**
-   * Returns the content.
-   * 
-   * @returns {jQuery}
-   */
-  this.getContent = function() {
-    return $content;
-  };
-
-  /**
-   * Shows the active content.
-   */
-  this.showActiveContent = function() {
-    $contentInactive.hide();
-    $contentActive.show();
-  };
-
-  /**
-   * Shows the inactive content.
-   */
-  this.showInactiveContent = function() {
-    $contentActive.hide();
-    $contentInactive.show();
-  };
-
-  /**
-   * Adjusts the size of the red rectangle.
-   * 
-   * @param {Number} width
-   * @param {Nubmer} height
-   */
-  this.setDraggerSize = function(width, height) {
-    $dragger.css({
-      width : width,
-      height : height
-    });
-  };
-
-  /**
-   * Sets the position of the dragger rectangle.
-   * 
-   * @param {Number} x
-   * @param {Number} y
-   */
-  this.setDraggerPosition = function(x, y) {
-    $dragger.css({
-      left : x,
-      top : y
-    });
-  };
-
-  /**
-   * Sets the height of the mini canvas.
-   * 
-   * @param {Number} height
-   */
-  this.setCanvasHeight = function(height) {
-    $("#navi-canvas", $content).css({
-      height : height
-    });
-  };
-
-  /**
-   * Gets the width of the mini canvas.
-   * 
-   * @returns {Number}
-   */
-  this.getCanvasWidth = function() {
-    return $("#navi-canvas", $content).width();
-  };
-
-  this.init = function(canvasSize) {
-    $("#navi-slider", $content).slider({
-      // TODO remove magic numbers. get values from presenter
-      min : 0,
-      max : 11,
-      step : 1,
-      value : 3,
-      slide : function(e, ui) {
-        if (self.sliderChanged) {
-          self.sliderChanged(ui.value);
-        }
-      }
-    });
-
-    $("#button-navi-zoom-in", $content).button({
-      text : false,
-      icons : {
-        primary : "ui-icon-zoomin"
-      }
-    }).click(function() {
-      if (self.buttonZoomInClicked) {
-        self.buttonZoomInClicked();
-      }
-    });
-
-    $("#button-navi-zoom-out", $content).button({
-      text : false,
-      icons : {
-        primary : "ui-icon-zoomout"
-      }
-    }).click(function() {
-      if (self.buttonZoomOutClicked) {
-        self.buttonZoomOutClicked();
-      }
-    });
-
-    // make draggable
-    $dragger.draggable({
-      containment : "parent",
-      start : function(e, ui) {
-        if (self.dragStart) {
-          self.dragStart();
-        }
-      },
-      drag : function(e, ui) {
-        if (self.dragging) {
-          var x = ui.position.left;
-          var y = ui.position.top;
-          self.dragging(x, y);
-        }
-      },
-      stop : function(e, ui) {
-        if (self.dragStop) {
-          self.dragStop();
-        }
-      }
-    });
-  };
-
-  /**
-   * Draws the complete mindmap onto the mini canvas.
-   * 
-   * @param {mindmaps.MindMap} mindmap
-   * @param {Number} scaleFactor
-   */
-  this.draw = function(mindmap, scaleFactor) {
-    var root = mindmap.root;
-    var canvas = $canvas[0];
-    var width = canvas.width;
-    var height = canvas.height;
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, width, height);
-    ctx.lineWidth = 1.8;
-
-    drawNode(root, width / 2, height / 2);
-
-    // draw rect for root
-    ctx.fillRect(width / 2 - 4, height / 2 - 2, 8, 4);
-
-    function scale(value) {
-      return value / scaleFactor;
-    }
-
-    function drawNode(node, x, y) {
-      ctx.save();
-      ctx.translate(x, y);
-
-      if (!node.collapseChildren) {
-        node.forEachChild(function(child) {
-          ctx.beginPath();
-          ctx.strokeStyle = child.branchColor;
-          ctx.moveTo(0, 0);
-          var posX = scale(child.offset.x);
-          var posY = scale(child.offset.y);
-          // var textWidth =
-          // ctx.measureText(child.getCaption()).width;
-          var textWidth = 5;
-
-          /**
-           * draw two lines: one going up to the node, and a second
-           * horizontal line for the node caption. if node is left of
-           * the parent (posX < 0), we shorten the first line and draw
-           * the rest horizontally to arrive at the node's offset
-           * position. in the other case, we draw the line to the
-           * node's offset and draw another for the text.
-           */
-          if (posX < 0) {
-            var firstStop = posX + textWidth;
-            var secondStop = posX;
-          } else {
-            var firstStop = posX;
-            var secondStop = posX + textWidth;
-          }
-          ctx.lineTo(firstStop, posY);
-          ctx.lineTo(secondStop, posY);
-
-          ctx.stroke();
-          drawNode(child, secondStop, posY);
+    var e = this;
+    var t = $("#template-navigator").tmpl();
+    var n = t.children(".active").hide();
+    var r = t.children(".inactive").hide();
+    var i = $("#navi-canvas-overlay", t);
+    var s = $("#navi-canvas", t);
+    this.getContent = function() {
+        return t
+    };
+    this.showActiveContent = function() {
+        r.hide();
+        n.show()
+    };
+    this.showInactiveContent = function() {
+        n.hide();
+        r.show()
+    };
+    this.setDraggerSize = function(e, t) {
+        i.css({
+            width: e,
+            height: t
+        })
+    };
+    this.setDraggerPosition = function(e, t) {
+        i.css({
+            left: e,
+            top: t
+        })
+    };
+    this.setCanvasHeight = function(e) {
+        $("#navi-canvas", t).css({
+            height: e
+        })
+    };
+    this.getCanvasWidth = function() {
+        return $("#navi-canvas", t).width()
+    };
+    this.init = function(n) {
+        $("#navi-slider", t).slider({
+            min: 0,
+            max: 11,
+            step: 1,
+            value: 3,
+            slide: function(t, n) {
+                if (e.sliderChanged) {
+                    e.sliderChanged(n.value)
+                }
+            }
         });
-      }
-      ctx.restore();
+        $("#button-navi-zoom-in", t).button({
+            text: false,
+            icons: {
+                primary: "ui-icon-zoomin"
+            }
+        }).click(function() {
+            if (e.buttonZoomInClicked) {
+                e.buttonZoomInClicked()
+            }
+        });
+        $("#button-navi-zoom-out", t).button({
+            text: false,
+            icons: {
+                primary: "ui-icon-zoomout"
+            }
+        }).click(function() {
+            if (e.buttonZoomOutClicked) {
+                e.buttonZoomOutClicked()
+            }
+        });
+        i.draggable({
+            containment: "parent",
+            start: function(t, n) {
+                if (e.dragStart) {
+                    e.dragStart()
+                }
+            },
+            drag: function(t, n) {
+                if (e.dragging) {
+                    var r = n.position.left;
+                    var i = n.position.top;
+                    e.dragging(r, i)
+                }
+            },
+            stop: function(t, n) {
+                if (e.dragStop) {
+                    e.dragStop()
+                }
+            }
+        })
+    };
+    this.draw = function(e, t) {
+        function a(e) {
+            return e / t
+        }
+
+        function f(e, t, n) {
+            u.save();
+            u.translate(t, n);
+            if (!e.collapseChildren) {
+                e.forEachChild(function(e) {
+                    u.beginPath();
+                    u.strokeStyle = e.getPluginData("style", "branchColor");
+                    u.moveTo(0, 0);
+                    var t = a(e.getPluginData("layout", "offset").x);
+                    var n = a(e.getPluginData("layout", "offset").y);
+                    var r = 5;
+                    if (t < 0) {
+                        var i = t + r;
+                        var s = t
+                    } else {
+                        var i = t;
+                        var s = t + r
+                    }
+                    u.lineTo(i, n);
+                    u.lineTo(s, n);
+                    u.stroke();
+                    f(e, s, n)
+                })
+            }
+            u.restore()
+        }
+        var n = e.root;
+        var r = s[0];
+        var i = r.width;
+        var o = r.height;
+        var u = r.getContext("2d");
+        u.clearRect(0, 0, i, o);
+        u.lineWidth = 1.8;
+        f(n, i / 2, o / 2);
+        u.fillRect(i / 2 - 4, o / 2 - 2, 8, 4)
+    };
+    this.showZoomLevel = function(e) {
+        $("#navi-zoom-level").text(e)
+    };
+    this.setSliderValue = function(e) {
+        $("#navi-slider").slider("value", e)
     }
-  };
-
-  /**
-   * Shows the zoom level as percentage.
-   * 
-   * @param {String} zoom
-   */
-  this.showZoomLevel = function(zoom) {
-    $("#navi-zoom-level").text(zoom);
-  };
-
-  /**
-   * Sets the value of the zoom slider.
-   * 
-   * @param {Integer} value
-   */
-  this.setSliderValue = function(value) {
-    $("#navi-slider").slider("value", value);
-  };
 };
-
-/**
- * Creates a new NavigatorPresenter.
- * 
- * @constructor
- * @param {mindmaps.EventBus} eventBus
- * @param {mindmaps.NavigatorView} view
- * @param {mindmaps.CanvasContainer} container
- * @param {mindmaps.ZoomController} zoomController
- */
-mindmaps.NavigatorPresenter = function(eventBus, view, container,
-    zoomController) {
-  var self = this;
-  var $container = container.getContent();
-  var viewDragging = false;
-  var scale = zoomController.DEFAULT_ZOOM;
-  var canvasSize = new mindmaps.Point();
-  var docSize = null;
-  var mindmap = null;
-
-  /**
-   * Calculates and sets the size of the dragger element.
-   */
-  function calculateDraggerSize() {
-    var cw = $container.width() / scale;
-    var ch = $container.height() / scale;
-    // doc.x / container.x = canvas.x / dragger.x
-    var width = (cw * canvasSize.x) / docSize.x;
-    var height = (ch * canvasSize.y) / docSize.y;
-
-    // limit size to bounds of canvas
-    if (width > canvasSize.x) {
-      width = canvasSize.x;
+mindmaps.NavigatorPresenter = function(e, t, n, r) {
+    function c() {
+        var e = s.width() / u;
+        var n = s.height() / u;
+        var r = e * a.x / f.x;
+        var i = n * a.y / f.y;
+        if (r > a.x) {
+            r = a.x
+        }
+        if (i > a.y) {
+            i = a.y
+        }
+        t.setDraggerSize(r, i)
     }
 
-    if (height > canvasSize.y) {
-      height = canvasSize.y;
+    function h() {
+        var e = t.getCanvasWidth();
+        var n = f.x / e;
+        var r = f.y / n;
+        t.setCanvasHeight(r);
+        a.x = e;
+        a.y = r
     }
 
-    view.setDraggerSize(width, height);
-  }
+    function p() {
+        var e = s.scrollLeft() / u;
+        var n = s.scrollTop() / u;
+        var r = e * a.x / f.x;
+        var i = n * a.y / f.y;
+        t.setDraggerPosition(r, i)
+    }
 
-  /**
-   * Calculates and sets the size of the mini canvas.
-   */
-  function calculateCanvasSize() {
-    var width = view.getCanvasWidth();
-    var _scale = docSize.x / width;
-    var height = docSize.y / _scale;
+    function d() {
+        var e = Math.round(u * 100) + " %";
+        t.showZoomLevel(e)
+    }
 
-    view.setCanvasHeight(height);
+    function v() {
+        var e = u / r.ZOOM_STEP - 1;
+        t.setSliderValue(e)
+    }
 
-    canvasSize.x = width;
-    canvasSize.y = height;
-  }
+    function m(e) {
+        f = e.dimensions;
+        l = e.mindmap;
+        h();
+        p();
+        c();
+        d();
+        v();
+        g();
+        t.showActiveContent();
+        s.bind("scroll.navigator-view", function() {
+            if (!o) {
+                p()
+            }
+        })
+    }
 
-  /**
-   * Calculates and sets the possition of the dragger element.
-   */
-  function calculateDraggerPosition() {
-    var sl = $container.scrollLeft() / scale;
-    var st = $container.scrollTop() / scale;
+    function g() {
+        if (f) {
+            var e = f.x / a.x;
+            t.draw(l, e)
+        }
+    }
 
-    // sl / dox = dl / cw
-    // dl = sl * cw / dox
-    var left = sl * canvasSize.x / docSize.x;
-    var top = st * canvasSize.y / docSize.y;
-    view.setDraggerPosition(left, top);
-  }
-
-  /**
-   * Calculates and sets the zoom level.
-   */
-  function calculateZoomLevel() {
-    var zoomlevel = scale * 100 + " %";
-    view.showZoomLevel(zoomlevel);
-  }
-
-  /**
-   * Calculates and sets the slider value for the zoom level.
-   */
-  function calculateSliderValue() {
-    var val = scale / zoomController.ZOOM_STEP - 1;
-    view.setSliderValue(val);
-  }
-
-  /**
-   * Initialize view when a document was opened.
-   */
-  function documentOpened(doc) {
-    docSize = doc.dimensions;
-    mindmap = doc.mindmap;
-
-    calculateCanvasSize();
-    calculateDraggerPosition();
-    calculateDraggerSize();
-    calculateZoomLevel();
-    calculateSliderValue();
-    renderView();
-
-    view.showActiveContent();
-
-    // move dragger when container was scrolled
-    $container.bind("scroll.navigator-view", function() {
-      if (!viewDragging) {
-        calculateDraggerPosition();
-      }
+    function y() {
+        f = null;
+        l = null;
+        u = 1;
+        s.unbind("scroll.navigator-view");
+        t.showInactiveContent()
+    }
+    var i = this;
+    var s = n.getContent();
+    var o = false;
+    var u = r.DEFAULT_ZOOM;
+    var a = new mindmaps.Point;
+    var f = null;
+    var l = null;
+    t.dragStart = function() {
+        o = true
+    };
+    t.dragging = function(e, t) {
+        var n = u * f.x * e / a.x;
+        var r = u * f.y * t / a.y;
+        s.scrollLeft(n).scrollTop(r)
+    };
+    t.dragStop = function() {
+        o = false
+    };
+    t.buttonZoomInClicked = function() {
+        r.zoomIn()
+    };
+    t.buttonZoomOutClicked = function() {
+        r.zoomOut()
+    };
+    t.sliderChanged = function(e) {
+        r.zoomTo((e + 1) * r.ZOOM_STEP)
+    };
+    n.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
+        if (f) {
+            c()
+        }
     });
-  }
-
-  /**
-   * Update the canvas of the view component.
-   */
-  function renderView() {
-    // draw canvas
-    var scale = docSize.x / canvasSize.x;
-    view.draw(mindmap, scale);
-  }
-
-  /**
-   * Reset when document was closed.
-   */
-  function documentClosed() {
-    docSize = null;
-    mindmap = null;
-    scale = 1;
-    // clean up
-    // remove listeners
-    $container.unbind("scroll.navigator-view");
-
-    view.showInactiveContent();
-  }
-
-  /**
-   * View callbacks.
-   * 
-   * @ignore
-   */
-
-  view.dragStart = function() {
-    viewDragging = true;
-  };
-
-  // scroll container when the dragger is dragged
-  view.dragging = function(x, y) {
-    var scrollLeft = scale * docSize.x * x / canvasSize.x;
-    var scrollTop = scale * docSize.y * y / canvasSize.y;
-    $container.scrollLeft(scrollLeft).scrollTop(scrollTop);
-  };
-
-  view.dragStop = function() {
-    viewDragging = false;
-  };
-
-  view.buttonZoomInClicked = function() {
-    zoomController.zoomIn();
-  };
-
-  view.buttonZoomOutClicked = function() {
-    zoomController.zoomOut();
-  };
-
-  view.sliderChanged = function(value) {
-    zoomController.zoomTo((value + 1) * zoomController.ZOOM_STEP);
-  };
-
-  // set dragger size when container was resized
-  container.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
-    if (docSize) {
-      calculateDraggerSize();
+    e.subscribe(mindmaps.Event.DOCUMENT_OPENED, m);
+    e.subscribe(mindmaps.Event.DOCUMENT_CLOSED, y);
+    e.subscribe(mindmaps.Event.NODE_MOVED, g);
+    e.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, g);
+    e.subscribe(mindmaps.Event.NODE_CREATED, g);
+    e.subscribe(mindmaps.Event.NODE_DELETED, g);
+    e.subscribe(mindmaps.Event.NODE_OPENED, g);
+    e.subscribe(mindmaps.Event.NODE_CLOSED, g);
+    e.subscribe(mindmaps.Event.ZOOM_CHANGED, function(e) {
+        u = e;
+        p();
+        c();
+        d();
+        v()
+    });
+    this.go = function() {
+        t.init();
+        t.showInactiveContent()
     }
-  });
-
-  // document events
-  eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, documentOpened);
-  eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, documentClosed);
-
-  // node events
-  eventBus.subscribe(mindmaps.Event.NODE_MOVED, renderView);
-  eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, renderView);
-  eventBus.subscribe(mindmaps.Event.NODE_CREATED, renderView);
-  eventBus.subscribe(mindmaps.Event.NODE_DELETED, renderView);
-  eventBus.subscribe(mindmaps.Event.NODE_OPENED, renderView);
-  eventBus.subscribe(mindmaps.Event.NODE_CLOSED, renderView);
-
-  eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
-    scale = zoomFactor;
-    calculateDraggerPosition();
-    calculateDraggerSize();
-    calculateZoomLevel();
-    calculateSliderValue();
-  });
-
-  this.go = function() {
-    view.init();
-    view.showInactiveContent();
-  };
-};
+}

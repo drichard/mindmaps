@@ -20,5 +20,9 @@ mindmaps.NewDocumentPresenter = function(eventBus, mindmapModel, view) {
   this.go = function() {
     var doc = new mindmaps.Document();
     mindmapModel.setDocument(doc);
+	mindmaps.currentMapId = 'new';
+	window.location.hash = 'm:new';
+	mindmaps.isMapLoadingConfirmationRequired = false;
+	mindmaps.ignoreHashChange = true;
   };
 };

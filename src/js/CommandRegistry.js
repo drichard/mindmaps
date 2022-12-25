@@ -1,60 +1,35 @@
-/**
- * Creates a new CommandRegistry.
- * 
- * @constructor
- * @param {mindmaps.ShortcutController} [shortcutController]
- */
-mindmaps.CommandRegistry = function(shortcutController) {
-  this.commands = {};
-
-  function registerShortcut(command) {
-    if (command.shortcut && command.execute) {
-      shortcutController.register(command.shortcut, command.execute
-          .bind(command));
-    }
-  }
-
-  function unregisterShortcut(command) {
-    if (command.shortcut) {
-      shortcutController.unregister(command.shortcut);
-    }
-  }
-
-  /**
-   * Returns a command object for the given command type.
-   * 
-   * @param commandType
-   * @returns {mindmaps.Command} a command object.
-   */
-  this.get = function(commandType) {
-    var command = this.commands[commandType];
-    if (!command) {
-      command = new commandType;
-      this.commands[commandType] = command;
-
-      if (shortcutController) {
-        registerShortcut(command);
-      }
-    }
-    return command;
-  };
-
-  /**
-   * Removes the command object for the given command type.
-   * 
-   * @param commandType
-   */
-  this.remove = function(commandType) {
-    // TODO remove by object
-    var command = this.commands[commandType];
-    if (!command) {
-      return;
+mindmaps.CommandRegistry = function(e) {
+    function t(t) {
+        if (t.shortcut && t.execute) {
+            e.register(t.shortcut, t.execute.bind(t))
+        }
     }
 
-    delete this.commands[commandType];
-
-    if (shortcutController) {
-      unregisterShortcut(command);
+    function n(t) {
+        if (t.shortcut) {
+            e.unregister(t.shortcut)
+        }
     }
-  };
-};
+    this.commands = {};
+    this.get = function(n) {
+        var r = this.commands[n];
+        if (!r) {
+            r = new n;
+            this.commands[n] = r;
+            if (e) {
+                t(r)
+            }
+        }
+        return r
+    };
+    this.remove = function(t) {
+        var r = this.commands[t];
+        if (!r) {
+            return
+        }
+        delete this.commands[t];
+        if (e) {
+            n(r)
+        }
+    }
+}

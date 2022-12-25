@@ -1,63 +1,63 @@
-/**
- * Creates a new ClipboardController.
- * Handles copy, cut and paste commands.
- * 
- * @constructor
- * 
- * @param {mindmaps.EventBus} eventBus
- * @param {mindmaps.CommandRegistry} commandRegistry
- * @param {mindmaps.MindMapModel} mindmapModel
- */
-mindmaps.ClipboardController = function(eventBus, commandRegistry, mindmapModel) {
-  var node, copyCommand, cutCommand, pasteCommand;
-
-  function init() {
-    copyCommand = commandRegistry.get(mindmaps.CopyNodeCommand);
-    copyCommand.setHandler(doCopy);
-
-    cutCommand = commandRegistry.get(mindmaps.CutNodeCommand);
-    cutCommand.setHandler(doCut);
-
-    pasteCommand = commandRegistry.get(mindmaps.PasteNodeCommand);
-    pasteCommand.setHandler(doPaste);
-    pasteCommand.setEnabled(false);
-
-    eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
-      copyCommand.setEnabled(false);
-      cutCommand.setEnabled(false);
-      pasteCommand.setEnabled(false);
-    });
-
-    eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
-      copyCommand.setEnabled(true);
-      cutCommand.setEnabled(true);
-      pasteCommand.setEnabled(node != null);
-    });
-
-  }
-
-  function copySelectedNode() {
-    node = mindmapModel.selectedNode.clone();
-    pasteCommand.setEnabled(true);
-  }
-
-  function doCopy() {
-    copySelectedNode();
-  }
-
-  function doCut() {
-    copySelectedNode();
-    mindmapModel.deleteNode(mindmapModel.selectedNode);
-  }
-
-  function doPaste() {
-    if (!node) {
-      return;
+mindmaps.ClipboardController = function(e, t, n) {
+    function a() {
+        i = t.get(mindmaps.CopyNodeCommand);
+        i.setHandler(l);
+        s = t.get(mindmaps.CutNodeCommand);
+        s.setHandler(c);
+        o = t.get(mindmaps.PasteNodeCommand);
+        o.setHandler(h);
+        e.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+            i.setEnabled(false);
+            s.setEnabled(false)
+        });
+        e.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+            i.setEnabled(true);
+            s.setEnabled(true);
+            o.setEnabled(true)
+        })
     }
 
-    // send a cloned copy of our node, so we can paste multiple times
-    mindmapModel.createNode(node.clone(), mindmapModel.selectedNode);
-  }
+    function f() {
+        r = n.selectedNode.clone();
+        u = (new Date).getTime();
+        mindmaps.LocalStorage.put("mindmaps.clipboard", JSON.stringify({
+            node: r.serialize(),
+            date: u
+        }))
+    }
 
-  init();
-};
+    function l() {
+        f()
+    }
+
+    function c() {
+        f();
+        n.deleteNode(n.selectedNode)
+    }
+
+    function h() {
+        var e = null;
+        try {
+            e = JSON.parse(mindmaps.LocalStorage.get("mindmaps.clipboard"))
+        } catch (t) {}
+        if (!r && !e) {
+            return
+        } else if (!r && e) {
+            var i;
+            var s = e.node;
+            if (s) i = mindmaps.Node.fromJSON(s);
+            n.createNode(i, n.selectedNode)
+        } else if (r && e) {
+            if (u < e.date) {
+                var i;
+                var s = e.node;
+                if (s) i = mindmaps.Node.fromJSON(s);
+                n.createNode(i, n.selectedNode)
+            } else {
+                n.createNode(r.clone(), n.selectedNode)
+            }
+        }
+    }
+    var r, i, s, o, u;
+    a()
+}

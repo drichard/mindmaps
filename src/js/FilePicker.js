@@ -1,128 +1,70 @@
-/**
- * Class for interaction with the filepicker API. Provides open and save
- * from/to cloud storages.
- *
- * @constructor
- */
-mindmaps.FilePicker = function(eventBus, mindmapModel) {
-
-  // filepicker is not defined when we are offline
-  if (window.filepicker) {
-    var filepicker = window.filepicker;
-    filepicker.setKey('P9tQ4bicRwyIe8ZUsny5');
-  }
-
-  var mimetype = "application/json";
-
-  /**
-   * Shows the open dialog and tries to open a mindmap.
-   */
-  this.open = function(options) {
-    options = options || {};
-
-    if (!filepicker || !navigator.onLine) {
-      options.error && options.error("Cannot access cloud, it appears you are offline.");
-      return;
-    }
-
-    // load callback
-    options.load && options.load();
-
-    function onSuccess(blob) {
-      // load mindmap
-      $.ajax({
-        url: blob.url, 
-        success: function(data) {
-
-          try {
-            // convert to object first if response is a string
-            if (Object.prototype.toString.call(data) == '[object String]') {
-              data = JSON.parse(data);
-            }
-
-            var doc = mindmaps.Document.fromObject(data);
-          } catch (e) {
-            eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
-            throw new Error('Error while parsing map from cloud', e);
-          }
-
-          mindmapModel.setDocument(doc);
-
-          // execute callback
-          if (options.success) {
-            options.success(doc);
-          }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          if (options.error) {
-            options.error("Error: Could not open mind map!");
-          }
-          throw new Error('Error while loading map from filepicker. ' + textStatus + ' ' + errorThrown);
+mindmaps.FilePicker = function(e, t) {
+    if (window.filepicker) {
+        var n = window.filepicker;
+        n.setKey("AOwfmt-sJTtu8XUog1YhEz");
+        var r = "application/json";
+        var i = {
+            modal: true,
+            zIndex: 1e4,
+            services: [n.SERVICES.GOOGLE_DRIVE, n.SERVICES.DROPBOX, n.SERVICES.BOX, n.SERVICES.URL]
+        };
+        var s = {
+            modal: true,
+            zIndex: 1e4,
+            services: [n.SERVICES.GOOGLE_DRIVE, n.SERVICES.DROPBOX, n.SERVICES.BOX]
         }
-      });
     }
-
-    function onError(e) {
-      if (e.code === 101) {
-        // 101 - The user closed the dialog without picking a file.
-        options.cancel && options.cancel();
-      } else {
-        throw new Error(e);
-      }
+    this.open = function(s) {
+        s = s || {};
+        if (!n || !navigator.onLine) {
+            s.error && s.error("Cannot access cloud, it appears you are offline.");
+            return
+        }
+        n.getFile(r, i, function(n, r) {
+            s.load && s.load();
+            $.ajax({
+                url: n,
+                success: function(n) {
+                    try {
+                        if (Object.prototype.toString.call(n) == "[object String]") {
+                            n = JSON.parse(n)
+                        }
+                        var r = mindmaps.Document.fromObject(n)
+                    } catch (i) {
+                        e.publish(mindmaps.Event.NOTIFICATION_ERROR, "File is not a valid mind map!");
+                        throw new Error("Error while parsing map from cloud", i)
+                    }
+                    t.setDocument(r);
+                    if (s.success) {
+                        s.success(r)
+                    }
+                },
+                error: function(e, t, n) {
+                    if (s.error) {
+                        s.error("Error: Could not open mind map!")
+                    }
+                    throw new Error("Error while loading map from filepicker. " + t + " " + n)
+                }
+            })
+        })
+    };
+    this.save = function(i) {
+        i = i || {};
+        if (!n || !navigator.onLine) {
+            i.error && i.error("Cannot access cloud, it appears you are offline.");
+            return
+        }
+        var o = t.getDocument();
+        var u = o.prepareSave().serialize();
+        var a = function(t) {
+            console.log("saved to:", t);
+            e.publish(mindmaps.Event.DOCUMENT_SAVED, o);
+            if (i.success) {
+                i.success()
+            }
+        };
+        n.getUrlFromData(u, function(e) {
+            n.saveAs(e, r, s, a)
+        })
     }
-
-    filepicker.pick({
-      mimetype: mimetype,
-      container: 'modal',
-      openTo: 'DROPBOX',
-      services: ['COMPUTER', 'GOOGLE_DRIVE', 'DROPBOX', 'BOX', 'SKYDRIVE']
-    }, onSuccess, onError);
-  };
-
-  /**
-   * Shows the save dialog where the user can save the current mindmap.
-   */
-  this.save = function(options) {
-    options = options || {};
-
-    if (!filepicker || !navigator.onLine) {
-      options.error && options.error("Cannot access cloud, it appears you are offline.");
-      return;
-    }
-
-    // load callback
-    options.load && options.load();
-
-    var doc = mindmapModel.getDocument().prepareSave();
-    var data = doc.serialize();
-
-    function onSuccess(blob) {
-      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
-
-      if (options.success) {
-        options.success();
-      }
-    }
-
-    function onError(e) {
-      if (e.code === 131) {
-        // 131 - The user closed the save dialog without picking a file.
-        options.cancel && options.cancel();
-      } else {
-        throw new Error(e);
-      }
-    }
-
-    var blob = new Blob([data], {type: 'application/json'});
-
-    filepicker.store(blob, function (storedBlob) {
-      filepicker.exportFile(storedBlob.url, {
-        mimetype: mimetype,
-        suggestedFilename: doc.title,
-        container: 'modal',
-        openTo: 'DROPBOX',
-        services: ['DROPBOX', 'BOX', 'SKYDRIVE', 'GOOGLE_DRIVE']
-      }, onSuccess, onError);
-    });
-  }
 }

@@ -1,991 +1,948 @@
-// TODO take container as argument,c reate drawing area dynamically. remove on
-// clear();, recreate on init()
-
-/**
- * Creates a new CanvasView. This is the base class for all canvas view
- * implementations.
- * 
- * @constructor
- */
 mindmaps.CanvasView = function() {
-  /**
-   * Returns the element that used to draw the map upon.
-   * 
-   * @returns {jQuery}
-   */
-  this.$getDrawingArea = function() {
-    return $("#drawing-area");
-  };
-
-  /**
-   * Returns the element that contains the drawing area.
-   * 
-   * @returns {jQuery}
-   */
-  this.$getContainer = function() {
-    return $("#canvas-container");
-  };
-
-  /**
-   * Scrolls the container to show the center of the drawing area.
-   */
-  this.center = function() {
-    var c = this.$getContainer();
-    var area = this.$getDrawingArea();
-    var w = area.width() - c.width();
-    var h = area.height() - c.height();
-    this.scroll(w / 2, h / 2);
-  };
-
-  /**
-   * Scrolls the container.
-   * 
-   * @param {Number} x
-   * @param {Number} y
-   */
-  this.scroll = function(x, y) {
-    var c = this.$getContainer();
-    c.scrollLeft(x).scrollTop(y);
-  };
-
-  /**
-   * Changes the size of the drawing area to match with with the new zoom
-   * factor and scrolls the container to adjust the view port.
-   */
-  this.applyViewZoom = function() {
-    var delta = this.zoomFactorDelta;
-    // console.log(delta);
-
-    var c = this.$getContainer();
-    var sl = c.scrollLeft();
-    var st = c.scrollTop();
-
-    var cw = c.width();
-    var ch = c.height();
-    var cx = cw / 2 + sl;
-    var cy = ch / 2 + st;
-
-    cx *= this.zoomFactorDelta;
-    cy *= this.zoomFactorDelta;
-
-    sl = cx - cw / 2;
-    st = cy - ch / 2;
-    // console.log(sl, st);
-
-    var drawingArea = this.$getDrawingArea();
-    var width = drawingArea.width();
-    var height = drawingArea.height();
-    drawingArea.width(width * delta).height(height * delta);
-
-    // scroll only after drawing area's width was set.
-    this.scroll(sl, st);
-
-    // adjust background size
-    var backgroundSize = parseFloat(drawingArea.css("background-size"));
-    if (isNaN(backgroundSize)) {
-      // parsing could possibly fail in the future.
-      console.warn("Could not set background-size!");
+    this.$getDrawingArea = function() {
+        return $("#drawing-area")
+    };
+    this.$getContainer = function() {
+        return $("#canvas-container")
+    };
+    this.center = function() {
+        var e = this.$getContainer();
+        var t = this.$getDrawingArea();
+        var n = t.width() - e.width();
+        var r = t.height() - e.height();
+        this.scroll(n / 2, r / 2)
+    };
+    this.scroll = function(e, t) {
+        var n = this.$getContainer();
+        n.scrollLeft(e).scrollTop(t)
+    };
+    this.applyViewZoom = function() {
+        var e = this.zoomFactorDelta;
+        var t = this.$getContainer();
+        var n = t.scrollLeft();
+        var r = t.scrollTop();
+        var i = t.width();
+        var s = t.height();
+        var o = i / 2 + n;
+        var u = s / 2 + r;
+        o *= this.zoomFactorDelta;
+        u *= this.zoomFactorDelta;
+        n = o - i / 2;
+        r = u - s / 2;
+        var a = this.$getDrawingArea();
+        var f = a.width();
+        var l = a.height();
+        a.width(f * e).height(l * e);
+        this.scroll(n, r);
+        var c = parseFloat(a.css("background-size"));
+        if (isNaN(c)) {
+            console.warn("Could not set background-size!")
+        }
+        a.css("background-size", c * e)
+    };
+    this.setDimensions = function(e, t) {
+        e = e * this.zoomFactor;
+        t = t * this.zoomFactor;
+        var n = this.$getDrawingArea();
+        n.width(e).height(t)
+    };
+    this.setZoomFactor = function(e) {
+        this.zoomFactorDelta = e / (this.zoomFactor || 1);
+        this.zoomFactor = e
     }
-    drawingArea.css("background-size", backgroundSize * delta);
-  };
-
-  /**
-   * Applies the new size according to current zoom factor.
-   * 
-   * @param {Integer} width
-   * @param {Integer} height
-   */
-  this.setDimensions = function(width, height) {
-    width = width * this.zoomFactor;
-    height = height * this.zoomFactor;
-
-    var drawingArea = this.$getDrawingArea();
-    drawingArea.width(width).height(height);
-  };
-
-  /**
-   * Sets the new zoom factor and stores the delta to the old one.
-   * 
-   * @param {Number} zoomFactor
-   */
-  this.setZoomFactor = function(zoomFactor) {
-    this.zoomFactorDelta = zoomFactor / (this.zoomFactor || 1);
-    this.zoomFactor = zoomFactor;
-  };
 };
-
-/**
- * Should draw the mind map onto the drawing area.
- * 
- * @param {mindmaps.MindMap} map
- */
-mindmaps.CanvasView.prototype.drawMap = function(map) {
-  throw new Error("Not implemented");
+mindmaps.CanvasView.prototype.drawMap = function(e) {
+    throw new Error("Not implemented")
 };
-
-/**
- * Creates a new DefaultCanvasView. This is the reference implementation for
- * drawing mind maps.
- * 
- * @extends mindmaps.CanvasView
- * @constructor
- */
 mindmaps.DefaultCanvasView = function() {
-  var self = this;
-  var nodeDragging = false;
-  var creator = new Creator(this);
-  var captionEditor = new CaptionEditor(this);
-  captionEditor.commit = function(node, text) {
-    if (self.nodeCaptionEditCommitted) {
-      self.nodeCaptionEditCommitted(node, text);
+    function a() {
+        e.$getContainer().dragscrollable({
+            dragSelector: "#drawing-area, canvas.line-canvas",
+            acceptPropagatedEvent: false,
+            delegateMode: true,
+            preventDefault: true
+        })
     }
-  };
 
-  var textMetrics = mindmaps.TextMetrics;
-  var branchDrawer = new mindmaps.CanvasBranchDrawer();
-  branchDrawer.beforeDraw = function(width, height, left, top) {
-    this.$canvas.attr({
-      width : width,
-      height : height
-    }).css({
-      left : left,
-      top : top
-    });
-  };
+    function f(e) {
+        return $("#node-canvas-" + e.id)
+    }
 
-  /**
-   * Enables dragging of the map with the mouse.
-   */
-  function makeDraggable() {
-    self.$getContainer().dragscrollable({
-      dragSelector : "#drawing-area, canvas.line-canvas",
-      acceptPropagatedEvent : false,
-      delegateMode : true,
-      preventDefault : true
-    });
-  }
+    function l(e, t) {
+        t = t || 0;
+        return $("#node-connector-canvas-" + e.id + "-" + t)
+    }
 
-  function $getNodeCanvas(node) {
-    return $("#node-canvas-" + node.id);
-  }
+    function c(e) {
+        return $("#node-" + e.id)
+    }
 
-  function $getNode(node) {
-    return $("#node-" + node.id);
-  }
+    function h(e) {
+        return $("#node-caption-" + e.id)
+    }
 
-  function $getNodeCaption(node) {
-    return $("#node-caption-" + node.id);
-  }
+    function p(t, n, r, i, s, u, a, f, l, c, h) {
+        var p = t[0];
+        var d = p.getContext("2d");
+        o.$canvas = t;
+        o.render(d, n, r, i, s, u, f, a, l, e.zoomFactor, c, h)
+    }
 
-  function drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
-      color) {
-    var canvas = $canvas[0];
-    var ctx = canvas.getContext("2d");
+    function d(e, t, n, r, i) {
+        i = i || false;
+        n = n || e.getPluginData("layout", "offset").x;
+        r = r || e.getPluginData("layout", "offset").y;
+        var s = mindmaps.getConnectedNodes().filter(function(t) {
+            return t.from == e.id
+        });
+        s.forEach(function(s) {
+            if ($("#node-" + s.from).length) g($("#node-connector-canvas-" + s.from + "-" + s.canvasId), t, n, r, true, s.from, s.to, e.getRoot(), i, s.style, s.arrow, s.color)
+        });
+        s = mindmaps.getConnectedNodes().filter(function(t) {
+            return t.to == e.id
+        });
+        s.forEach(function(s) {
+            if ($("#node-" + s.from).length) g($("#node-connector-canvas-" + s.from + "-" + s.canvasId), t, n, r, false, s.from, s.to, e.getRoot(), i, s.style, s.arrow, s.color)
+        });
+        if (i) e.forEachChild(function(e) {
+            if (b == e.id) d(e, e.getDepth(), w, E, true);
+            else d(e, e.getDepth(), e.getPluginData("layout", "offset").x, e.getPluginData("layout", "offset").y, true)
+        })
+    }
 
-    // set $canvas for beforeDraw() callback.
-    branchDrawer.$canvas = $canvas;
-    branchDrawer.render(ctx, depth, offsetX, offsetY, $node, $parent,
-        color, self.zoomFactor);
-  }
+    function v(e, t) {
+        var n = null;
+        if (e.id == t) n = e;
+        if (!n) e.forEachChild(function(e) {
+            if ((r = v(e, t)) !== null) n = r
+        });
+        return n
+    }
 
-  this.init = function() {
-    makeDraggable();
-    this.center();
-
-    var $drawingArea = this.$getDrawingArea();
-    $drawingArea.addClass("mindmap");
-
-    // setup delegates
-    $drawingArea.delegate("div.node-caption", "mousedown", function(e) {
-      var node = $(this).parent().data("node");
-      if (self.nodeMouseDown) {
-        self.nodeMouseDown(node);
-      }
-    });
-
-    $drawingArea.delegate("div.node-caption", "mouseup", function(e) {
-      var node = $(this).parent().data("node");
-      if (self.nodeMouseUp) {
-        self.nodeMouseUp(node);
-      }
-    });
-
-    $drawingArea.delegate("div.node-caption", "dblclick", function(e) {
-      var node = $(this).parent().data("node");
-      if (self.nodeDoubleClicked) {
-        self.nodeDoubleClicked(node);
-      }
-    });
-
-    $drawingArea.delegate("div.node-container", "mouseover", function(e) {
-      if (e.target === this) {
-        var node = $(this).data("node");
-        if (self.nodeMouseOver) {
-          self.nodeMouseOver(node);
+    function m(e) {
+        tmp = e.getParent();
+        while (tmp) {
+            if (tmp.getPluginData("layout", "foldChildren")) return true;
+            tmp = tmp.getParent()
         }
-      }
-      return false;
-    });
+        return false
+    }
 
-    $drawingArea.delegate("div.node-caption", "mouseover", function(e) {
-      if (e.target === this) {
-        var node = $(this).parent().data("node");
-        if (self.nodeCaptionMouseOver) {
-          self.nodeCaptionMouseOver(node);
+    function g(e, t, n, r, i, s, o, u, a, f, l, h) {
+        a = a || false;
+        s = v(u, s);
+        o = v(u, o);
+        if (!s || !o) return;
+        if (m(s) || m(o)) e.css("opacity", 0);
+        else e.css("opacity", 1);
+        if (a)
+            if (b == s.id || b == o.id) a = false;
+        var d = 0,
+            g = 0;
+        var y = 0,
+            S = 0;
+        if (i) {
+            d = n;
+            y = r;
+            g = o.getPluginData("layout", "offset").x;
+            S = o.getPluginData("layout", "offset").y
+        } else {
+            d = s.getPluginData("layout", "offset").x;
+            y = s.getPluginData("layout", "offset").y;
+            g = n;
+            S = r
         }
-      }
-      return false;
-    });
-
-    // mouse wheel listener
-    this.$getContainer().bind("mousewheel", function(e, delta) {
-      if (self.mouseWheeled) {
-        self.mouseWheeled(delta);
-      }
-    });
-  };
-
-  /**
-   * Clears the drawing area.
-   */
-  this.clear = function() {
-    var drawingArea = this.$getDrawingArea();
-    drawingArea.children().remove();
-    drawingArea.width(0).height(0);
-  };
-
-  /**
-   * Calculates the width of a branch for a node for the given depth
-   * 
-   * @param {Integer} depth the depth of the node
-   * @returns {Number}
-   */
-  this.getLineWidth = function(depth) {
-    return mindmaps.CanvasDrawingUtil.getLineWidth(this.zoomFactor, depth);
-  };
-
-  /**
-   * Draws the complete map onto the drawing area. This should only be called
-   * once for a mind map.
-   */
-  this.drawMap = function(map) {
-    var now = new Date().getTime();
-    var $drawingArea = this.$getDrawingArea();
-
-    // clear map first
-    $drawingArea.children().remove();
-
-    var root = map.root;
-
-    // 1.5. do NOT detach for now since DIV dont have widths and heights,
-    // and loading maps draws wrong canvases (or create nodes and then draw
-    // canvases)
-
-    var detach = false;
-    if (detach) {
-      // detach drawing area during map creation to avoid unnecessary DOM
-      // repaint events. (binary7 is 3 times faster)
-      var $parent = $drawingArea.parent();
-      $drawingArea.detach();
-      self.createNode(root, $drawingArea);
-      $drawingArea.appendTo($parent);
-    } else {
-      self.createNode(root, $drawingArea);
-    }
-
-    console.debug("draw map ms: ", new Date().getTime() - now);
-  };
-
-  /**
-   * Inserts a new node including all of its children into the DOM.
-   * 
-   * @param {mindmaps.Node} node - The model of the node.
-   * @param {jQuery} [$parent] - optional jquery parent object the new node is
-   *            appended to. Usually the parent node. If argument is omitted,
-   *            the getParent() method of the node is called to resolve the
-   *            parent.
-   * @param {Integer} [depth] - Optional. The depth of the tree relative to
-   *            the root. If argument is omitted the getDepth() method of the
-   *            node is called to resolve the depth.
-   */
-  this.createNode = function(node, $parent, depth) {
-    var parent = node.getParent();
-    var $parent = $parent || $getNode(parent);
-    var depth = depth || node.getDepth();
-    var offsetX = node.offset.x;
-    var offsetY = node.offset.y;
-
-    // div node container
-    var $node = $("<div/>", {
-      id : "node-" + node.id,
-      "class" : "node-container"
-    }).data({
-      node : node
-    }).css({
-      "font-size" : node.text.font.size
-    });
-    $node.appendTo($parent);
-
-    if (node.isRoot()) {
-      var w = this.getLineWidth(depth);
-      $node.css("border-bottom-width", w);
-    }
-
-    if (!node.isRoot()) {
-      // draw border and position manually only non-root nodes
-      var bThickness = this.getLineWidth(depth);
-      var bColor = node.branchColor;
-      var bb = bThickness + "px solid " + bColor;
-
-      $node.css({
-        left : this.zoomFactor * offsetX,
-        top : this.zoomFactor * offsetY,
-        "border-bottom" : bb
-      });
-
-      // node drag behaviour
-      /**
-       * Only attach the drag handler once we mouse over it. this speeds
-       * up loading of big maps.
-       */
-      $node.one("mouseenter", function() {
-        $node.draggable({
-          // could be set
-          // revert: true,
-          // revertDuration: 0,
-          handle : "div.node-caption:first",
-          start : function() {
-            nodeDragging = true;
-          },
-          drag : function(e, ui) {
-            // reposition and draw canvas while dragging
-            var offsetX = ui.position.left / self.zoomFactor;
-            var offsetY = ui.position.top / self.zoomFactor;
-            var color = node.branchColor;
-            var $canvas = $getNodeCanvas(node);
-
-            drawLineCanvas($canvas, depth, offsetX, offsetY, $node,
-                $parent, color);
-
-            // fire dragging event
-            if (self.nodeDragging) {
-              self.nodeDragging();
+        if (!s.isRoot()) {
+            tmp = s.getParent();
+            while (!tmp.isRoot()) {
+                if (!i && tmp.id == o.id) {
+                    d += n;
+                    y += r
+                } else if (a && tmp.id == b) {
+                    d += w;
+                    y += E
+                } else {
+                    d += tmp.getPluginData("layout", "offset").x;
+                    y += tmp.getPluginData("layout", "offset").y
+                }
+                tmp = tmp.getParent()
             }
-          },
-          stop : function(e, ui) {
-            nodeDragging = false;
-            var pos = new mindmaps.Point(ui.position.left
-                / self.zoomFactor, ui.position.top
-                / self.zoomFactor);
-
-            // fire dragged event
-            if (self.nodeDragged) {
-              self.nodeDragged(node, pos);
+        }
+        if (!o.isRoot()) {
+            tmp = o.getParent();
+            while (!tmp.isRoot()) {
+                if (i && tmp.id == s.id) {
+                    g += n;
+                    S += r
+                } else if (a && tmp.id == b) {
+                    g += w;
+                    S += E
+                } else {
+                    g += tmp.getPluginData("layout", "offset").x;
+                    S += tmp.getPluginData("layout", "offset").y
+                }
+                tmp = tmp.getParent()
             }
-          }
-        });
-      });
-    }
-
-    // text caption
-    var font = node.text.font;
-    var $text = $("<div/>", {
-      id : "node-caption-" + node.id,
-      "class" : "node-caption node-text-behaviour",
-      text : node.text.caption
-    }).css({
-      "color" : font.color,
-      "font-size" : this.zoomFactor * 100 + "%",
-      "font-weight" : font.weight,
-      "font-style" : font.style,
-      "text-decoration" : font.decoration
-    }).appendTo($node);
-
-    var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
-    $text.css(metrics);
-
-    // create fold button for parent if he hasn't one already
-    var parentAlreadyHasFoldButton = $parent.data("foldButton");
-    var nodeOrParentIsRoot = node.isRoot() || parent.isRoot();
-    if (!parentAlreadyHasFoldButton && !nodeOrParentIsRoot) {
-      this.createFoldButton(parent);
-    }
-
-    if (!node.isRoot()) {
-      // toggle visibility
-      if (parent.foldChildren) {
-        $node.hide();
-      } else {
-        $node.show();
-      }
-
-      // draw canvas to parent if node is not a root
-      var $canvas = $("<canvas/>", {
-        id : "node-canvas-" + node.id,
-        "class" : "line-canvas"
-      });
-
-      // position and draw connection
-      drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent,
-          node.branchColor);
-      $canvas.appendTo($node);
-    }
-
-    if (node.isRoot()) {
-      $node.children().andSelf().addClass("root");
-    }
-
-    // draw child nodes
-    node.forEachChild(function(child) {
-      self.createNode(child, $node, depth + 1);
-    });
-  };
-
-  /**
-   * Removes a node from the view and with it all its children and the branch
-   * leading to the parent.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.deleteNode = function(node) {
-    // detach creator first, we need still him
-    // creator.detach();
-
-    // delete all DOM below
-    var $node = $getNode(node);
-    $node.remove();
-  };
-
-  /**
-   * Highlights a node to show that it is selected.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.highlightNode = function(node) {
-    var $text = $getNodeCaption(node);
-    $text.addClass("selected");
-  };
-
-  /**
-   * Removes the hightlight of a node.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.unhighlightNode = function(node) {
-    var $text = $getNodeCaption(node);
-    $text.removeClass("selected");
-  };
-
-  /**
-   * Hides all children of a node.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.closeNode = function(node) {
-    var $node = $getNode(node);
-    $node.children(".node-container").hide();
-
-    var $foldButton = $node.children(".button-fold").first();
-    $foldButton.removeClass("open").addClass("closed");
-  };
-
-  /**
-   * Shows all children of a node.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.openNode = function(node) {
-    var $node = $getNode(node);
-    $node.children(".node-container").show();
-
-    var $foldButton = $node.children(".button-fold").first();
-    $foldButton.removeClass("closed").addClass("open");
-  };
-
-  /**
-   * Creates the fold button for a node that shows/hides its children.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.createFoldButton = function(node) {
-    var position = node.offset.x > 0 ? " right" : " left";
-    var openClosed = node.foldChildren ? " closed" : " open";
-    var $foldButton = $("<div/>", {
-      "class" : "button-fold no-select" + openClosed + position
-    }).click(function(e) {
-      // fire event
-      if (self.foldButtonClicked) {
-        self.foldButtonClicked(node);
-      }
-
-      e.preventDefault();
-      return false;
-    });
-
-    // remember that foldButton was set and attach to node
-    var $node = $getNode(node);
-    $node.data({
-      foldButton : true
-    }).append($foldButton);
-  };
-
-  /**
-   * Removes the fold button.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.removeFoldButton = function(node) {
-    var $node = $getNode(node);
-    $node.data({
-      foldButton : false
-    }).children(".button-fold").remove();
-  };
-
-  /**
-   * Goes into edit mode for a node.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.editNodeCaption = function(node) {
-    captionEditor.edit(node, this.$getDrawingArea());
-  };
-
-  /**
-   * Stops the current edit mode.
-   */
-  this.stopEditNodeCaption = function() {
-    captionEditor.stop();
-  };
-
-  /**
-   * Updates the text caption for a node.
-   * 
-   * @param {mindmaps.Node} node
-   * @param {String} value
-   */
-  this.setNodeText = function(node, value) {
-    var $text = $getNodeCaption(node);
-    var metrics = textMetrics.getTextMetrics(node, this.zoomFactor, value);
-    $text.css(metrics).text(value);
-  };
-
-  /**
-   * Get a reference to the creator tool.
-   * 
-   * @returns {Creator}
-   */
-  this.getCreator = function() {
-    return creator;
-  };
-
-  /**
-   * Returns whether a node is currently being dragged.
-   * 
-   * @returns {Boolean}
-   */
-  this.isNodeDragging = function() {
-    return nodeDragging;
-  };
-
-  /**
-   * Redraws a node's branch to its parent.
-   * 
-   * @param {mindmaps.Node} node
-   * @param {String} optional color
-   */
-  function drawNodeCanvas(node, color) {
-    var parent = node.getParent();
-    var depth = node.getDepth();
-    var offsetX = node.offset.x;
-    var offsetY = node.offset.y;
-    color = color || node.branchColor;
-
-    var $node = $getNode(node);
-    var $parent = $getNode(parent);
-    var $canvas = $getNodeCanvas(node);
-
-    drawLineCanvas($canvas, depth, offsetX, offsetY, $node, $parent, color);
-  }
-
-  /**
-   * Redraws all branches that a node is connected to.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.redrawNodeConnectors = function(node) {
-
-    // redraw canvas to parent
-    if (!node.isRoot()) {
-      drawNodeCanvas(node);
-    }
-
-    // redraw all child canvases
-    if (!node.isLeaf()) {
-      node.forEachChild(function(child) {
-        drawNodeCanvas(child);
-      });
-    }
-  };
-
-  /**
-   * Changes only the color of the branch leading up to it's parent.
-   */
-  this.updateBranchColor = function(node, color) {
-    var $node = $getNode(node);
-    $node.css("border-bottom-color", color);
-    
-    // redraw canvas to parent
-    if (!node.isRoot()) {
-      drawNodeCanvas(node, color);
-    }
-  };
-
-  /**
-   * Changes only the font color of a node.
-   */
-  this.updateFontColor = function(node, color) {
-    var $text = $getNodeCaption(node);
-    $text.css("color", color);
-  };
-
-  /**
-   * Does a complete visual update of a node to reflect all of its attributes.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.updateNode = function(node) {
-    var $node = $getNode(node);
-    var $text = $getNodeCaption(node);
-    var font = node.text.font;
-    $node.css({
-      "font-size" : font.size,
-      "border-bottom-color" : node.branchColor
-    });
-
-    var metrics = textMetrics.getTextMetrics(node, this.zoomFactor);
-
-    $text.css({
-      "color" : font.color,
-      "font-weight" : font.weight,
-      "font-style" : font.style,
-      "text-decoration" : font.decoration
-    }).css(metrics);
-
-    this.redrawNodeConnectors(node);
-  };
-
-  /**
-   * Moves the node a new position.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.positionNode = function(node) {
-    var $node = $getNode(node);
-    // TODO try animate
-    // position
-    $node.css({
-      left : this.zoomFactor * node.offset.x,
-      top : this.zoomFactor * node.offset.y
-    });
-
-    // redraw canvas to parent
-    drawNodeCanvas(node);
-  };
-
-  /**
-   * Redraws the complete map to adapt to a new zoom factor.
-   */
-  this.scaleMap = function() {
-    var zoomFactor = this.zoomFactor;
-    var $root = this.$getDrawingArea().children().first();
-    var root = $root.data("node");
-
-    var w = this.getLineWidth(0);
-    $root.css("border-bottom-width", w);
-
-    // handle root differently
-    var $text = $getNodeCaption(root);
-    var metrics = textMetrics.getTextMetrics(root, this.zoomFactor);
-    $text.css(
-        {
-          "font-size" : zoomFactor * 100 + "%",
-          "left" : zoomFactor
-              * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
-        }).css(metrics);
-
-    root.forEachChild(function(child) {
-      scale(child, 1);
-    });
-
-    function scale(node, depth) {
-      var $node = $getNode(node);
-
-      // draw border and position manually
-      var bWidth = self.getLineWidth(depth);
-
-      $node.css({
-        left : zoomFactor * node.offset.x,
-        top : zoomFactor * node.offset.y,
-        "border-bottom-width" : bWidth
-      });
-
-      var $text = $getNodeCaption(node);
-      $text.css({
-        "font-size" : zoomFactor * 100 + "%"
-      });
-
-      var metrics = textMetrics.getTextMetrics(node, self.zoomFactor);
-      $text.css(metrics);
-
-      // redraw canvas to parent
-      drawNodeCanvas(node);
-
-      // redraw all child canvases
-      if (!node.isLeaf()) {
-        node.forEachChild(function(child) {
-          scale(child, depth + 1);
-        });
-      }
-    }
-  };
-
-  /**
-   * Creates a new CaptionEditor. This tool offers an inline editor component
-   * to change a node's caption.
-   * 
-   * @constructor
-   * @param {mindmaps.CanvasView} view
-   */
-  function CaptionEditor(view) {
-    var self = this;
-    var attached = false;
-
-    // text input for node edits.
-    var $editor = $("<textarea/>", {
-      id : "caption-editor",
-      "class" : "node-text-behaviour"
-    }).bind("keydown", "esc", function() {
-      self.stop();
-    }).bind("keydown", "return", function() {
-      commitText();
-    }).mousedown(function(e) {
-      // avoid premature canceling
-      e.stopPropagation();
-    }).blur(function() {
-      commitText();
-    }).bind(
-        "input",
-        function() {
-          var metrics = textMetrics.getTextMetrics(self.node,
-              view.zoomFactor, $editor.val());
-          $editor.css(metrics);
-          alignBranches();
-        });
-
-    function commitText() {
-      if (attached && self.commit) {
-        self.commit(self.node, $editor.val());
-      }
-    }
-
-    function alignBranches() {
-      // slightly defer execution for better performance on slow
-      // browsers
-      setTimeout(function() {
-        view.redrawNodeConnectors(self.node);
-      }, 1);
-    }
-
-    /**
-     * Attaches the textarea to the node and temporarily removes the
-     * original node caption.
-     * 
-     * @param {mindmaps.Node} node
-     * @param {jQuery} $cancelArea
-     */
-    this.edit = function(node, $cancelArea) {
-      if (attached) {
-        return;
-      }
-      this.node = node;
-      attached = true;
-
-      // TODO put text into span and hide()
-      this.$text = $getNodeCaption(node);
-      this.$cancelArea = $cancelArea;
-
-      this.text = this.$text.text();
-
-      this.$text.css({
-        width : "auto",
-        height : "auto"
-      }).empty().addClass("edit");
-
-      // jquery ui prevents blur() event from happening when dragging a
-      // draggable. need this
-      // workaround to detect click on other draggable
-      $cancelArea.bind("mousedown.editNodeCaption", function(e) {
-        commitText();
-      });
-
-      var metrics = textMetrics.getTextMetrics(self.node,
-          view.zoomFactor, this.text);
-      $editor.attr({
-        value : this.text
-      }).css(metrics).appendTo(this.$text).select();
-
-    };
-
-    /**
-     * Removes the editor from the node and restores its old text value.
-     */
-    this.stop = function() {
-      if (attached) {
-        attached = false;
-        this.$text.removeClass("edit");
-        $editor.detach();
-        this.$cancelArea.unbind("mousedown.editNodeCaption");
-        view.setNodeText(this.node, this.text);
-
-        alignBranches();
-      }
-    };
-  }
-
-  /**
-   * Creates a new Creator. This tool is used to drag out new branches to
-   * create new nodes.
-   * 
-   * @constructor
-   * @param {mindmaps.CanvasView} view
-   * @returns {Creator}
-   */
-  function Creator(view) {
-    var self = this;
-    var dragging = false;
-
-    this.node = null;
-    this.lineColor = null;
-
-    var $wrapper = $("<div/>", {
-      id : "creator-wrapper"
-    }).bind("remove", function(e) {
-      // detach the creator when some removed the node or opened a new map
-      self.detach();
-      // and avoid removing from DOM
-      e.stopImmediatePropagation();
-
-      console.debug("creator detached.");
-      return false;
-    });
-
-    // red dot creator element
-    var $nub = $("<div/>", {
-      id : "creator-nub"
-    }).appendTo($wrapper);
-
-    var $fakeNode = $("<div/>", {
-      id : "creator-fakenode"
-    }).appendTo($nub);
-
-    // canvas used by the creator tool to draw new lines
-    var $canvas = $("<canvas/>", {
-      id : "creator-canvas",
-      "class" : "line-canvas"
-    }).hide().appendTo($wrapper);
-
-    // make it draggable
-    $wrapper.draggable({
-      revert : true,
-      revertDuration : 0,
-      start : function() {
-        dragging = true;
-        // show creator canvas
-        $canvas.show();
-        if (self.dragStarted) {
-          self.lineColor = self.dragStarted(self.node);
         }
-      },
-      drag : function(e, ui) {
-        // update creator canvas
-        var offsetX = ui.position.left / view.zoomFactor;
-        var offsetY = ui.position.top / view.zoomFactor;
+        p(e, t, d, y, g, S, c(o), c(s), h, f, l)
+    }
 
-        // set depth+1 because we are drawing the canvas for the child
-        var $node = $getNode(self.node);
-        drawLineCanvas($canvas, self.depth + 1, offsetX, offsetY,
-            $fakeNode, $node, self.lineColor);
-      },
-      stop : function(e, ui) {
-        dragging = false;
-        // remove creator canvas, gets replaced by real canvas
-        $canvas.hide();
-        if (self.dragStopped) {
-          var $wp = $wrapper.position();
-          var $wpLeft = $wp.left / view.zoomFactor;
-          var $wpTop = $wp.top / view.zoomFactor;
-          var nubLeft = ui.position.left / view.zoomFactor;
-          var nubTop = ui.position.top / view.zoomFactor;
+    function y(t, n, r, i, s, o, a) {
+        var f = t[0];
+        var l = f.getContext("2d");
+        u.$canvas = t;
+        u.render(l, n, r, i, s, o, a, e.zoomFactor)
+    }
 
-          var distance = mindmaps.Util.distance($wpLeft - nubLeft,
-              $wpTop - nubTop);
-          self.dragStopped(self.node, nubLeft, nubTop, distance);
+    function S(e, t) {
+        var n = e.getParent();
+        var r = e.getDepth();
+        var i = e.getPluginData("layout", "offset").x;
+        var s = e.getPluginData("layout", "offset").y;
+        t = t || e.getPluginData("style", "branchColor");
+        var o = c(e);
+        var u = c(n);
+        var a = f(e);
+        y(a, r, i, s, o, u, t)
+    }
+
+    function x(e) {
+        function i() {
+            if (n && t.commit) {
+                t.commit(t.node, r.val())
+            }
         }
 
-        // remove any positioning that the draggable might have caused
-        $wrapper.css({
-          left : "",
-          top : ""
+        function o() {
+            setTimeout(function() {
+                e.redrawNodeConnectors(t.node)
+            }, 1)
+        }
+        var t = this;
+        var n = false;
+        var r = $("<textarea/>", {
+            id: "caption-editor",
+            "class": "node-text-behaviour"
+        }).bind("keydown", "esc", function() {
+            t.stop()
+        }).bind("keydown", "return", function() {
+            i()
+        }).mousedown(function(e) {
+            e.stopPropagation()
+        }).blur(function() {
+            i()
+        }).bind("input", function() {
+            var n = s.getTextMetrics(t.node, e.zoomFactor, r.val());
+            r.css(n);
+            o()
         });
-      }
-    });
+        this.edit = function(o, u) {
+            if (n) {
+                return
+            }
+            this.node = o;
+            n = true;
+            var a = o.getPluginData("image", "data");
+            this.$text = h(o);
+            this.$cancelArea = u;
+            this.text = this.$text.text();
+            this.$text.css({
+                width: "auto",
+                height: "auto"
+            }).empty().addClass("edit");
+            u.bind("mousedown.editNodeCaption", function(e) {
+                i()
+            });
+            var f = s.getTextMetrics(t.node, e.zoomFactor, this.text);
+            r.attr({
+                value: this.text
+            }).css(f).appendTo(this.$text).select();
+            if (a) {
+                if (a.align == "bottom") this.$text.css({
+                    "padding-top": "0px",
+                    "text-align": "center"
+                });
+                if (a.align == "top") this.$text.css({
+                    height: f.fontH,
+                    "padding-top": "" + this.zoomFactor * a.height + "px",
+                    "text-align": "center"
+                });
+                if (a.align == "left") this.$text.css({
+                    width: f.width,
+                    height: f.height,
+                    "padding-top": "0px",
+                    "text-align": "right"
+                });
+                if (a.align == "center") this.$text.css({
+                    width: f.width,
+                    height: f.height,
+                    "padding-top": "0px",
+                    "text-align": "center"
+                });
+                if (a.align == "right") this.$text.css({
+                    width: f.width,
+                    height: f.height,
+                    "padding-top": "0px",
+                    "text-align": "left"
+                })
+            }
+        };
+        this.stop = function() {
+            if (n) {
+                n = false;
+                this.$text.removeClass("edit");
+                r.detach();
+                this.$cancelArea.unbind("mousedown.editNodeCaption");
+                e.setNodeText(this.node, this.text);
+                o()
+            }
+        }
+    }
 
-    /**
-     * Attaches the tool to a node.
-     * 
-     * @param {mindmaps.Node} node
-     */
-    this.attachToNode = function(node) {
-      if (this.node === node) {
-        return;
-      }
-      this.node = node;
-
-      // position the nub correctly
-      $wrapper.removeClass("left right");
-      if (node.offset.x > 0) {
-        $wrapper.addClass("right");
-      } else if (node.offset.x < 0) {
-        $wrapper.addClass("left");
-      }
-
-      // set border on our fake node for correct line drawing
-      this.depth = node.getDepth();
-      var w = view.getLineWidth(this.depth + 1);
-      $fakeNode.css("border-bottom-width", w);
-
-      var $node = $getNode(node);
-      $wrapper.appendTo($node);
+    function T(e) {
+        var t = this;
+        var n = false;
+        this.node = null;
+        this.lineColor = null;
+        var r = $("<div/>", {
+            id: "creator-wrapper"
+        }).bind("remove", function(e) {
+            t.detach();
+            e.stopImmediatePropagation();
+            console.debug("creator detached.");
+            return false
+        });
+        var i = $("<div/>", {
+            id: "creator-nub"
+        }).appendTo(r);
+        var s = $("<div/>", {
+            id: "creator-fakenode"
+        }).appendTo(i);
+        var o = $("<canvas/>", {
+            id: "creator-canvas",
+            "class": "line-canvas"
+        }).hide().appendTo(r);
+        r.draggable({
+            revert: true,
+            revertDuration: 0,
+            start: function() {
+                n = true;
+                o.show();
+                if (t.dragStarted) {
+                    t.lineColor = t.dragStarted(t.node)
+                }
+            },
+            drag: function(n, r) {
+                var i = r.position.left / e.zoomFactor;
+                var u = r.position.top / e.zoomFactor;
+                var a = c(t.node);
+                y(o, t.depth + 1, i, u, s, a, t.lineColor)
+            },
+            stop: function(i, s) {
+                n = false;
+                o.hide();
+                if (t.dragStopped) {
+                    var u = r.position();
+                    var a = u.left / e.zoomFactor;
+                    var f = u.top / e.zoomFactor;
+                    var l = s.position.left / e.zoomFactor;
+                    var c = s.position.top / e.zoomFactor;
+                    var h = mindmaps.Util.distance(a - l, f - c);
+                    t.dragStopped(t.node, l, c, h)
+                }
+                r.css({
+                    left: "",
+                    top: ""
+                })
+            }
+        });
+        this.attachToNode = function(t) {
+            if (this.node === t) {
+                return
+            }
+            this.node = t;
+            r.removeClass("left right");
+            if (t.getPluginData("layout", "offset").x > 0) {
+                r.addClass("right")
+            } else if (t.getPluginData("layout", "offset").x < 0) {
+                r.addClass("left")
+            }
+            var n = c(t);
+            this.depth = t.getDepth();
+            var i = e.getLineWidth(n, this.depth + 1);
+            s.css("border-bottom-width", i);
+            r.appendTo(n)
+        };
+        this.detach = function() {
+            r.detach();
+            this.node = null
+        };
+        this.isDragging = function() {
+            return n
+        }
+    }
+    var e = this;
+	var exx = this;
+    var t = false;
+    var n = new T(this);
+    var i = new x(this);
+    i.commit = function(t, n) {
+        if (e.nodeCaptionEditCommitted) {
+            e.nodeCaptionEditCommitted(t, n)
+        }
     };
-
-    /**
-     * Removes the tool from the current node.
-     */
-    this.detach = function() {
-      $wrapper.detach();
-      this.node = null;
+    var s = mindmaps.TextMetrics;
+    var o = new mindmaps.CanvasConnectorDrawer;
+    o.beforeDraw = function(e, t, n, r) {
+        this.$canvas.attr({
+            width: e,
+            height: t
+        }).css({
+            left: n,
+            top: r
+        })
     };
-
-    /**
-     * Returns whether the tool is currently in use being dragged.
-     * 
-     * @returns {Boolean}
-     */
-    this.isDragging = function() {
-      return dragging;
+    var u = new mindmaps.CanvasBranchDrawer;
+    u.beforeDraw = function(e, t, n, r) {
+        this.$canvas.attr({
+            width: e,
+            height: t
+        }).css({
+            left: n,
+            top: r
+        })
     };
-  }
+    this.init = function() {
+        a();
+        this.center();
+        var t = this.$getDrawingArea();
+        t.addClass("mindmap");
+        t.delegate("div.node-caption", "mousedown", function(t) {
+            var n = $(this).parent().data("node");
+            if (e.nodeMouseDown) {
+                e.nodeMouseDown(n)
+            }
+        });
+        t.delegate("div.node-caption", "mouseup", function(t) {
+            var n = $(this).parent().data("node");
+            if (e.nodeMouseUp) {
+                e.nodeMouseUp(n)
+            }
+        });
+        t.delegate("div.node-caption", "dblclick", function(t) {
+            var n = $(this).parent().data("node");
+            if (e.nodeDoubleClicked) {
+                e.nodeDoubleClicked(n)
+            }
+        });
+        t.delegate("div.node-container", "mouseover", function(t) {
+            if (t.target === this) {
+                var n = $(this).data("node");
+                if (e.nodeMouseOver) {
+                    e.nodeMouseOver(n)
+                }
+            }
+            return false
+        });
+        t.delegate("div.node-caption", "mouseover", function(t) {
+            if (t.target === this) {
+                var n = $(this).parent().data("node");
+                if (e.nodeCaptionMouseOver) {
+                    e.nodeCaptionMouseOver(n)
+                }
+            }
+            return false
+        });
+        this.$getContainer().bind("mousewheel", function(t) {
+            var n = t.originalEvent.wheelDelta || -t.originalEvent.detail;
+            if (e.mouseWheeled) {
+                e.mouseWheeled(n)
+            }
+        });
+        if (mindmaps.responsive.isTouchDevice) {
+            this.$getContainer().hammer({}).bind("transform", function(t) {
+                console.log(t);
+                if (e.pinch) {
+                    e.pinch(t.scale)
+                }
+            }).bind("dragstart", function(t) {
+                window.xstart = e.$getContainer().scrollLeft();
+                window.ystart = e.$getContainer().scrollTop();
+                var n = t.originalEvent.touches;
+                if (n.length == 1) {
+                    var r = n[0].target;
+                    if (r && r.className.search("node-caption") > -1 && r.className.search("root") <= -1) {
+                        console.log("on node but no root");
+                        window.dragOnNode = true;
+                        window.dragTarget = r;
+                        var i = $(r).parent();
+                        window.beginDragX = i.position().left;
+                        window.beginDragY = i.position().top
+                    } else {
+                        window.dragOnNode = false
+                    }
+                } else {
+                    window.dragOnNode = false
+                }
+            }).bind("drag", function(t) {
+                if (window.dragOnNode) {
+                    var n = $(window.dragTarget).parent();
+                    var r = n.data("node");
+                    var i = window.beginDragX + t.distanceX;
+                    var s = window.beginDragY + t.distanceY;
+                    window.draggingLeft = i;
+                    window.draggingTop = s;
+                    n.css("left", i);
+                    n.css("top", s);
+                    var o = i / e.zoomFactor;
+                    var u = s / e.zoomFactor;
+                    var a = r.getPluginData("style", "branchColor");
+                    var l = f(r);
+                    var h = r.getDepth();
+                    y(l, h, o, u, c(r), c(r.parent), a);
+                    d(r, h, o, u);
+                    if (e.nodeDragging) {
+                        e.nodeDragging()
+                    }
+                } else {
+                    var p = t.originalEvent.touches;
+                    var v = p[0].target;
+                    if (v.id == "drawing-area") {
+                        var m = e.$getContainer();
+                        m.scrollLeft(window.xstart - t.distanceX).scrollTop(window.ystart - t.distanceY)
+                    }
+                }
+            }).bind("dragend", function(t) {
+                if (window.dragOnNode) {
+                    var n = $(window.dragTarget).parent();
+                    var r = n.data("node");
+                    if (e.nodeDragged) {
+                        var i = new mindmaps.Point(window.draggingLeft / e.zoomFactor, window.draggingTop / e.zoomFactor);
+                        e.nodeDragged(r, i)
+                    }
+                    window.dragOnNode = false
+                }
+            }).bind("doubletap", function(t) {
+                e.tow_tap()
+            }).bind("tap", function(t) {
+                var n = t.originalEvent.touches;
+                if (n.length == 1) {
+                    var r = n[0].target;
+                    if (r && r.className.search("node-caption") > -1) {
+                        console.log("on node");
+                        e.nodeMouseDown($(r).parent().data("node"))
+                    }
+                }
+            })
+        }
+    };
+    this.clear = function() {
+        var e = this.$getDrawingArea();
+        e.children().remove();
+        e.width(0).height(0)
+    };
+    this.getLineWidth = function(e, t) {
+        return mindmaps.CanvasDrawingUtil.getLineWidth(e, this.zoomFactor, t)
+    };
+    this.drawMap = function(t) {
+        var n = (new Date).getTime();
+        var r = this.$getDrawingArea();
+        r.children().remove();
+        var i = t.root;
+        var s = false;
+        if (s) {
+            var o = r.parent();
+            r.detach();
+            e.createNode(i, r);
+            r.appendTo(o)
+        } else {
+            e.createNode(i, r)
+        }
+        console.debug("draw map ms: ", (new Date).getTime() - n)
+    };
+    var b, w, E;
+    this.createNode = function(n, r, i) {
+        var o = n.getParent();
+        var r = r || c(o);
+        var i = i || n.getDepth();
+        var u = n.getPluginData("layout", "offset");
+        var a = u ? u.x : 0;
+        var l = u ? u.y : 0;
+        var h = $("<div/>", {
+            id: "node-" + n.id,
+            "class": "node-container"
+        }).data({
+            node: n
+        }).css({
+            "font-size": n.getPluginData("style", "font").size
+        });
+        h.appendTo(r);
+        if (n.isRoot()) {
+            var p = this.getLineWidth(h, i);
+            h.css("border-bottom-width", p)
+        }
+        if (!n.isRoot()) {
+            var v = this.getLineWidth(h, i);
+            var m = n.getPluginData("style", "branchColor");
+            var g = v + "px solid " + m;
+            h.css({
+                left: this.zoomFactor * a,
+                top: this.zoomFactor * l,
+                "border-bottom": g
+            });
+            h.one("mouseenter", function() {
+                h.draggable({
+                    handle: "div.node-caption:first",
+                    start: function() {
+                        t = true
+                    },
+                    drag: function(t, s) {
+                        var o = s.position.left / e.zoomFactor;
+                        var u = s.position.top / e.zoomFactor;
+                        var a = n.getPluginData("style", "branchColor");
+                        var l = f(n);
+                        y(l, i, o, u, h, r, a);
+                        b = n.id;
+                        w = o;
+                        E = u;
+                        d(n, i, o, u, true);
+                        if (e.nodeDragging) {
+                            e.nodeDragging()
+                        }
+                    },
+                    stop: function(r, i) {
+                        t = false;
+                        var s = new mindmaps.Point(i.position.left / e.zoomFactor, i.position.top / e.zoomFactor);
+                        if (e.nodeDragged) {
+                            e.nodeDragged(n, s)
+                        }
+                    }
+                })
+            })
+        }
+        var S = n.getPluginData("style", "font");
+        var x = $("<div/>", {
+            id: "node-caption-" + n.id,
+            "class": "node-caption node-text-behaviour border",
+            text: n.text.caption
+        }).css({
+            color: S.color,
+            "font-size": this.zoomFactor * 100 + "%",
+            "font-weight": S.weight,
+            "font-style": S.style,
+            "font-family": S.fontfamily,
+            "text-decoration": S.decoration,
+            "background-size": "40px 30px"
+        }).appendTo(h);
+        var T = s.getTextMetrics(n, this.zoomFactor);
+        x.css(T);
+        var N = $("<div/>", {
+            id: "node-pluginIcons-" + n.id,
+            "class": "node-pluginIcons"
+        }).css("width", "100%");
+        mindmaps.util.plugins.ui.createOnNode(N, n);
+        var C = r.data("foldButton");
+        var k = n.isRoot() || o.isRoot();
+        if (!C && !k) {
+            this.createFoldButton(o)
+        }
+        if (!n.isRoot()) {
+            if (o.getPluginData("layout", "foldChildren")) {
+                h.hide()
+            } else {
+                h.show()
+            }
+            var L = $("<canvas/>", {
+                id: "node-canvas-" + n.id,
+                "class": "line-canvas"
+            });
+            y(L, i, a, l, h, r, n.getPluginData("style", "branchColor"));
+            L.appendTo(h)
+        }
+        var A = mindmaps.getConnectedNodes().filter(function(e) {
+            return e.from == n.id
+        });
+        A.forEach(function(e) {
+            if ($("#node-connector-canvas-" + e.from + "-" + e.canvasId).length <= 0) {
+                var t = $("<canvas/>", {
+                    id: "node-connector-canvas-" + e.from + "-" + e.canvasId,
+                    "class": "line-canvas"
+                });
+                if ($("#node-" + e.from).length) t.appendTo($("#node-" + e.from))
+            }
+        });
+        d(n, i, n.getPluginData("layout", "offset").x, n.getPluginData("layout", "offset").y);
+        if (n.isRoot()) {
+            h.children().andSelf().addClass("root")
+        }
+        n.forEachChild(function(t) {
+            e.createNode(t, h, i + 1)
+        });
+        _.chain(mindmaps.plugins).each(function(e, t) {
+            e.onCreateNode(n)
+        })
+        //this 3 statement created by ms to click on plugin icon
+        $("#node-attachment-" + n.id).on('click', function() {
+            exx.pluginclick($("#node-" + n.id).data("node"),'attachment');
+        })
+        $("#node-draw-" + n.id).on('click', function() {
+            exx.pluginclick($("#node-" + n.id).data("node"),'draw');
+        })
+        $("#node-url-" + n.id).on('click', function() {
+            exx.pluginclick($("#node-" + n.id).data("node"),'url');
+        })
+    };
+    this.deleteNode = function(e) {
+        var t = c(e);
+        t.remove()
+    };
+    this.highlightNode = function(e) {
+        var t = h(e);
+        t.addClass("selected");
+        this.updateNode(e);
+        t.addClass("selected")
+    };
+    this.unhighlightNode = function(e) {
+        var t = h(e);
+        this.updateNode(e);
+        t.removeClass("selected")
+    };
+    this.closeNode = function(e) {
+        var t = c(e);
+        t.children(".node-container").hide();
+        var n = t.children(".button-fold").first();
+        n.removeClass("open").addClass("closed")
+    };
+    this.openNode = function(e) {
+        var t = c(e);
+        t.children(".node-container").show();
+        var n = t.children(".button-fold").first();
+        n.removeClass("closed").addClass("open")
+    };
+    this.createFoldButton = function(t) {
+        var n = t.getPluginData("layout", "offset").x > 0 ? " right" : " left";
+        var r = t.getPluginData("layout", "foldChildren") ? " closed" : " open";
+        var i = $("<div/>", {
+            "class": "button-fold no-select" + r + n
+        }).click(function(n) {
+            if (e.foldButtonClicked) {
+                e.foldButtonClicked(t)
+            }
+            n.preventDefault();
+            return false
+        });
+        var s = c(t);
+        s.data({
+            foldButton: true
+        }).append(i)
+    };
+    this.removeFoldButton = function(e) {
+        var t = c(e);
+        t.data({
+            foldButton: false
+        }).children(".button-fold").remove()
+    };
+    this.editNodeCaption = function(e) {
+        i.edit(e, this.$getDrawingArea())
+    };
+    this.stopEditNodeCaption = function() {
+        i.stop()
+    };
+    this.setNodeText = function(e, t) {
+        var n = h(e);
+        var r = s.getTextMetrics(e, this.zoomFactor, t);
+        n.css(r).text(t);
+        mindmaps.util.plugins.ui.placeOnNode(mindmaps.util.plugins.ui.pluginIcons(e), e)
+    };
+    this.getCreator = function() {
+        return n
+    };
+    this.isNodeDragging = function() {
+        return t
+    };
+    this.redrawNodeConnectors = function(e) {
+        if (!e.isRoot()) {
+            S(e)
+        }
+        if (!e.isLeaf()) {
+            e.forEachChild(function(e) {
+                S(e)
+            })
+        }
+    };
+    this.updateBranchColor = function(e, t) {
+        var n = c(e);
+        n.css("border-bottom-color", t);
+        if (!e.isRoot()) {
+            S(e, t)
+        }
+    };
+    this.updateFontColor = function(e, t) {
+        var n = h(e);
+        n.css("color", t)
+    };
+    this.updateNode = function(e) {
+        var t = this.selectedNode === e;
+        var n = c(e);
+        if (!n.length) return;
+        var r = h(e);
+        var i = e.getPluginData("style", "font");
+        var o = e.getPluginData("style", "border") || {
+            visible: true,
+            style: "dashed",
+            color: "#ffa500",
+            background: "#ffffff"
+        };
+        var u = e.getPluginData("image", "data");
+        if (u) {
+            bkgrndsize = "" + this.zoomFactor * parseInt(u.width) + "px " + this.zoomFactor * parseInt(u.height) + "px";
+            bkgrnd = "url('" + u.data + "') no-repeat " + u.align
+        }
+        var a = this.getLineWidth(n, e.getDepth());
+        n.css({
+            "font-size": i.size,
+            "border-bottom-width": a,
+            "border-bottom-color": e.getPluginData("style", "branchColor")
+        });
+        var f = s.getTextMetrics(e, this.zoomFactor);
+        r.css({
+            color: i.color,
+            "font-weight": i.weight,
+            "font-style": i.style,
+            "font-family": i.fontfamily,
+            "text-decoration": i.decoration,
+            "background-color": o.background,
+            background: "",
+            "background-size": ""
+        });
+        if (u) {
+            if (u.align == "top") r.css({
+                width: f.width,
+                height: f.height - this.zoomFactor * u.height,
+                "padding-top": "" + this.zoomFactor * u.height + "px",
+                "text-align": "center"
+            });
+            else if (u.align == "center") {
+                r.css({
+                    width: f.width,
+                    height: f.height,
+                    "padding-top": "0px",
+                    "text-align": "center"
+                });
+                if (u.height > f.fontH) r.css({
+                    "padding-top": "" + (f.height / 2 - f.fontH / 2 - 1) + "px",
+                    height: f.height - (f.height / 2 - f.fontH / 2 - 1)
+                })
+            } else if (u.align == "bottom") r.css({
+                width: f.width,
+                height: f.height,
+                "padding-top": "0px",
+                "text-align": "center"
+            });
+            else if (u.align == "right") r.css({
+                width: f.width,
+                height: f.height - (f.height / 2 - f.fontH / 2 - 1),
+                "padding-top": "" + (f.height / 2 - f.fontH / 2 - 1) + "px",
+                "text-align": "left"
+            });
+            else if (u.align == "left") r.css({
+                width: f.width,
+                height: f.height - (f.height / 2 - f.fontH / 2 - 1),
+                "padding-top": "" + (f.height / 2 - f.fontH / 2 - 1) + "px",
+                "text-align": "right"
+            })
+        } else r.css({
+            width: f.width,
+            height: f.height,
+            "padding-top": "0px",
+            "text-align": "center"
+        });
+        if (u) {
+            r.css("background", bkgrnd);
+            r.css("background-size", bkgrndsize);
+            r.css("background-color", o.background)
+        } else r.css("background-color", o.background); {
+            if (!o.visible && r.hasClass("border")) r.removeClass("border");
+            if (o.visible && !r.hasClass("border")) r.addClass("border");
+            if (o.visible) {
+                var l = "#node-caption-" + e.id + ".border";
+                $(l).css({
+                    "border-style": o.style,
+                    "border-color": o.color
+                })
+            }
+            if (o.visible) {
+                $("#inspector-button-border-show-hide span").text("Hide Border");
+                $("#inspector-button-border-style").removeAttr("disabled");
+                $("#inspector-border-color-picker").removeAttr("disabled")
+            } else {
+                $("#inspector-button-border-show-hide span").text("Show Border");
+                $("#inspector-button-border-style").attr("disabled", "disabled");
+                $("#inspector-border-color-picker").attr("disabled", "disabled")
+            }
+        }
+        _.chain(mindmaps.plugins).sortBy("startOrder").each(function(n, r) {
+            n.onNodeUpdate(e, t)
+        });
+        var p = $("#node-pluginIcons-" + e.id);
+        mindmaps.util.plugins.ui.placeOnNode(p, e);
+        this.redrawNodeConnectors(e);
+        d(e, e.getDepth(), e.getPluginData("layout", "offset").x, e.getPluginData("layout", "offset").y)
+    };
+    this.positionNode = function(e) {
+        var t = c(e);
+        t.css({
+            left: this.zoomFactor * e.getPluginData("layout", "offset").x,
+            top: this.zoomFactor * e.getPluginData("layout", "offset").y
+        });
+        S(e)
+    };
+    this.scaleMap = function() {
+        function f(n, r) {
+            var i = c(n);
+            var o = e.getLineWidth(i, r);
+            i.css({
+                left: t * n.getPluginData("layout", "offset").x,
+                top: t * n.getPluginData("layout", "offset").y,
+                "border-bottom-width": o
+            });
+            var u = h(n);
+            u.css({
+                "font-size": t * 100 + "%"
+            });
+            var a = s.getTextMetrics(n, e.zoomFactor);
+            u.css(a);
+            var l = $("#node-pluginIcons-" + n.id);
+            mindmaps.util.plugins.ui.placeOnNode(l, n);
+            l.css({
+                "font-size": t * 100 + "%"
+            });
+            S(n);
+            if (!n.isLeaf()) {
+                n.forEachChild(function(e) {
+                    f(e, r + 1)
+                })
+            }
+        }
+        var t = this.zoomFactor;
+        var n = this.$getDrawingArea().children().first();
+        var r = n.data("node");
+        var i = this.getLineWidth(n, 0);
+        n.css("border-bottom-width", i);
+        var o = h(r);
+        var u = s.getTextMetrics(r, this.zoomFactor);
+        o.css({
+            "font-size": t * 100 + "%",
+            left: t * -mindmaps.TextMetrics.ROOT_CAPTION_MIN_WIDTH / 2
+        }).css(u);
+        var a = $("#node-pluginIcons-" + r.id);
+        mindmaps.util.plugins.ui.placeOnNode(a, r);
+        a.css({
+            "font-size": t * 100 + "%"
+        });
+        r.forEachChild(function(e) {
+            f(e, 1)
+        })
+    }
 };
-
-// inherit from base canvas view
-mindmaps.DefaultCanvasView.prototype = new mindmaps.CanvasView();
+mindmaps.DefaultCanvasView.prototype = new mindmaps.CanvasView
