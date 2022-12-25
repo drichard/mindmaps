@@ -1,259 +1,248 @@
-/**
- * Creates a new FloatPanelFactory. This factory object can create new instances
- * of mindmaps.FloatPanel that are constrained inside the container.
- * 
- * @constructor
- * @param container
- */
-mindmaps.FloatPanelFactory = function(container) {
-  var $container = container.getContent();
-  var dialogs = [];
-  var paddingRight = 15;
-  var paddingTop = 5;
-
-  function setPosition(dialog) {
-    // reposition dialog on window resize
-    container.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
-      dialogs.forEach(function(dialog) {
-        if (dialog.visible) {
-          dialog.ensurePosition();
+mindmaps.FloatPanelFactory = function(e) {
+    function s(s) {
+        e.subscribe(mindmaps.CanvasContainer.Event.RESIZED, function() {
+            n.forEach(function(e) {
+                if (e.visible) {
+                    e.ensurePosition()
+                }
+            })
+        });
+        var o = t.outerWidth();
+        var u = t.offset().top;
+        var a = s.width();
+        var f = s.height();
+        var l = n.reduce(function(e, t) {
+            return e + t.height() + i
+        }, 0);
+        s.setPosition(o - a - r, u + i + l)
+    }
+    var t = e.getContent();
+    var n = [];
+    var r = 15;
+    var i = 5;
+    this.create = function(e, r) {
+        var i = new mindmaps.FloatPanel(e, t, r);
+        s(i);
+        n.push(i);
+        return i
+    };
+    this.bigPanel = function(e, r, i, o, u) {
+        var a = new mindmaps.BigPanel(e, t, r, i, o, u);
+        s(a);
+        n.push(a);
+        return a
+    }
+};
+mindmaps.FloatPanel = function(e, t, n) {
+    var r = this;
+    var i = false;
+    this.caption = e;
+    this.visible = false;
+    this.animationDuration = 200;
+    this.setContent = function(e) {
+        this.clearContent();
+        $("div.ui-dialog-content", this.$widget).append(e)
+    };
+    this.clearContent = function() {
+        $("div.ui-dialog-content", this.$widget).children().detach()
+    };
+    this.$widget = function() {
+        var i = $("#template-float-panel").tmpl({
+            title: e
+        });
+        i.find(".ui-dialog-titlebar-close").click(function() {
+            r.hide()
+        });
+        if (n) {
+            i.find(".ui-dialog-content").append(n)
         }
-      });
-    });
-
-    var ccw = $container.outerWidth();
-    var hh = $container.offset().top;
-    var dw = dialog.width();
-    var dh = dialog.height();
-    var heightOffset = dialogs.reduce(function(memo, dialog) {
-      return memo + dialog.height() + paddingTop;
-    }, 0);
-
-    dialog.setPosition(ccw - dw - paddingRight, hh + paddingTop
-        + heightOffset);
-  }
-
-  /**
-   * Creates a new FloatPanel.
-   * 
-   * @param {String} caption the float panel title
-   * @param {jQuery} $content the content as a jquery object
-   * @returns {mindmaps.FloatPanel}
-   */
-  this.create = function(caption, $content) {
-    var dialog = new mindmaps.FloatPanel(caption, $container, $content);
-    setPosition(dialog);
-    dialogs.push(dialog);
-    return dialog;
-  };
+        i.draggable({
+            containment: "parent",
+            handle: "div.ui-dialog-titlebar",
+            opacity: .75
+        }).hide().appendTo(t);
+        return i
+    }();
+    this.hide = function() {
+        if (!i && this.visible) {
+            this.visible = false;
+            this.$widget.fadeOut(this.animationDuration * 1.5);
+            if (this.$hideTarget) {
+                this.transfer(this.$widget, this.$hideTarget)
+            }
+        }
+    };
+    this.show = function() {
+        if (!i && !this.visible) {
+            this.visible = true;
+            this.$widget.fadeIn(this.animationDuration * 1.5);
+            this.ensurePosition();
+            if (this.$hideTarget) {
+                this.transfer(this.$hideTarget, this.$widget)
+            }
+        }
+    };
+    this.toggle = function() {
+        if (this.visible) {
+            this.hide()
+        } else {
+            this.show()
+        }
+    };
+    this.transfer = function(e, t) {
+        i = true;
+        var n = t.offset(),
+            r = {
+                top: n.top,
+                left: n.left,
+                height: t.innerHeight(),
+                width: t.innerWidth()
+            },
+            s = e.offset(),
+            o = $('<div class="ui-effects-transfer"></div>').appendTo(document.body).css({
+                top: s.top,
+                left: s.left,
+                height: e.innerHeight(),
+                width: e.innerWidth(),
+                position: "absolute"
+            }).animate(r, this.animationDuration, "linear", function() {
+                o.remove();
+                i = false
+            })
+    };
+    this.width = function() {
+        return this.$widget.outerWidth()
+    };
+    this.height = function() {
+        return this.$widget.outerHeight()
+    };
+    this.offset = function() {
+        return this.$widget.offset()
+    };
+    this.setPosition = function(e, t) {
+        this.$widget.offset({
+            left: e,
+            top: t
+        })
+    };
+    this.ensurePosition = function() {
+        console.log(this.$widget.offset().left);
+        var e = t.outerWidth();
+        var n = t.outerHeight();
+        var r = t.offset().left;
+        var i = t.offset().top;
+        var s = this.width();
+        var o = this.height();
+        var u = this.offset().left;
+        var a = this.offset().top;
+        if (e + r < s + u && e >= s) {
+            this.setPosition(e + r - s, a)
+        }
+        if (n + i < o + a && n >= o) {
+            this.setPosition(u, n + i - o)
+        }
+    };
+    this.setHideTarget = function(e) {
+        this.$hideTarget = e
+    }
 };
-
-/**
- * A reusable, draggable panel gui element. The panel is contained within the
- * container. When a $hideTarget is set, the hide/show animations will show a
- * transfer effect.
- * 
- * @constructor
- * @param {String} caption the float panel title
- * @param {jQuery} $container the surrounding container jquery object
- * @param {jQuery} $content the content as a jquery object
- */
-mindmaps.FloatPanel = function(caption, $container, $content) {
-  var self = this;
-  var animating = false;
-
-  this.caption = caption;
-  this.visible = false;
-  this.animationDuration = 400;
-
-  /**
-   * Replaces the content in the panel.
-   * 
-   * @param {jQuery} $content
-   */
-  this.setContent = function($content) {
-    this.clearContent();
-    $("div.ui-dialog-content", this.$widget).append($content);
-  };
-
-  /**
-   * Clears the content of the panel.
-   */
-  this.clearContent = function() {
-    $("div.ui-dialog-content", this.$widget).children().detach();
-  };
-
-  /**
-   * @private
-   */
-  this.$widget = (function() {
-    var $panel = $("#template-float-panel").tmpl({
-      title : caption
-    });
-    
-    // hide button
-    $panel.find(".ui-dialog-titlebar-close").click(function() {
-      self.hide();
-    });
-
-    // add content panel
-    if ($content) {
-      $panel.find(".ui-dialog-content").append($content);
+mindmaps.BigPanel = function(e, t, n, r, i, s) {
+    var o = this;
+    var u = false;
+    this.caption = e;
+    this.visible = false;
+    this.animationDuration = 200;
+    this.$container = t;
+    this.showCallBack = i;
+    this.hideCallBack = s;
+    this.setContent = function(e) {
+        this.clearContent();
+        $("div.ui-dialog-content", this.$widget).append(e)
+    };
+    this.clearContent = function() {
+        $("div.ui-dialog-content", this.$widget).children().detach()
+    };
+    this.$widget = function() {
+        var e = $("#template-big-panel").tmpl();
+        if (n) {
+            e.find(".ui-dialog-content").append(n)
+        }
+        e.css("opacity", .75).css("border", "5px solid ");
+        e.hide().appendTo(t);
+        return e
+    }();
+    this.hide = function() {
+        if (!u && this.visible) {
+            this.visible = false;
+            this.$widget.fadeOut(this.animationDuration * 1.5);
+            if (this.$hideTarget) {
+                this.transfer(this.$widget, this.$hideTarget)
+            }
+        }
+        if (this.hideCallBack) this.hideCallBack()
+    };
+    this.show = function() {
+        if (!u && !this.visible) {
+            this.visible = true;
+            this.$widget.fadeIn(this.animationDuration * 1.5);
+            this.ensurePosition();
+            if (this.$hideTarget) {
+                this.transfer(this.$hideTarget, this.$widget)
+            }
+        }
+        if (this.showCallBack) this.showCallBack()
+    };
+    this.toggle = function() {
+        if (this.visible) {
+            this.hide()
+        } else {
+            this.show()
+        }
+    };
+    this.transfer = function(e, t) {
+        u = true;
+        var n = t.offset(),
+            r = {
+                top: n.top,
+                left: n.left,
+                height: t.innerHeight(),
+                width: t.innerWidth()
+            },
+            i = e.offset(),
+            s = $('<div class="ui-effects-transfer"></div>').appendTo(document.body).css({
+                top: i.top,
+                left: i.left,
+                height: e.innerHeight(),
+                width: e.innerWidth(),
+                position: "absolute"
+            }).animate(r, this.animationDuration, "linear", function() {
+                s.remove();
+                u = false
+            })
+    };
+    this.width = function() {
+        return this.$widget.outerWidth()
+    };
+    this.height = function() {
+        return this.$widget.outerHeight()
+    };
+    this.offset = function() {
+        return this.$widget.offset()
+    };
+    this.setPosition = function(e, t) {
+        this.$widget.offset({
+            left: e,
+            top: t
+        })
+    };
+    this.ensurePosition = function() {
+        var e = o.$container.width();
+        var t = o.$container.height();
+        r.resize(e * .95, t * .95);
+        o.setPosition(o.$container.offset().left + e * .02, o.$container.offset().top + t * .02);
+        r.can.calcOffset()
+    };
+    this.setHideTarget = function(e) {
+        this.$hideTarget = e
     }
-    
-    // make draggable, hide, append to container
-    $panel.draggable({
-      containment : "parent",
-      handle : "div.ui-dialog-titlebar",
-      opacity : 0.75
-    }).hide().appendTo($container);
-    
-    return $panel;
-  })();
-
-  /**
-   * Hides the panel. Will show transfer effect if $hideTarget is set.
-   */
-  this.hide = function() {
-    if (!animating && this.visible) {
-      this.visible = false;
-      this.$widget.fadeOut(this.animationDuration * 1.5);
-
-      // show transfer effect is hide target is set
-      if (this.$hideTarget) {
-        this.transfer(this.$widget, this.$hideTarget);
-      }
-    }
-  };
-
-  /**
-   * Shows the panel. Will show transfer effect if $hideTarget is set.
-   */
-  this.show = function() {
-    if (!animating && !this.visible) {
-      this.visible = true;
-      this.$widget.fadeIn(this.animationDuration * 1.5);
-      this.ensurePosition();
-
-      // show transfer effect is hide target is set
-      if (this.$hideTarget) {
-        this.transfer(this.$hideTarget, this.$widget);
-      }
-    }
-  };
-
-  /**
-   * Shows or hides the panel.
-   */
-  this.toggle = function() {
-    if (this.visible) {
-      this.hide();
-    } else {
-      this.show();
-    }
-  };
-
-  /**
-   * Shows a transfer effect.
-   * 
-   * @private
-   * @param {jQuery} $from
-   * @param {jQuery} $to
-   */
-  this.transfer = function($from, $to) {
-    animating = true;
-    var endPosition = $to.offset(), animation = {
-      top : endPosition.top,
-      left : endPosition.left,
-      height : $to.innerHeight(),
-      width : $to.innerWidth()
-    }, startPosition = $from.offset(), transfer = $(
-        '<div class="ui-effects-transfer"></div>').appendTo(
-        document.body).css({
-      top : startPosition.top,
-      left : startPosition.left,
-      height : $from.innerHeight(),
-      width : $from.innerWidth(),
-      position : 'absolute'
-    }).animate(animation, this.animationDuration, "linear", function() {
-      // end
-      transfer.remove();
-      animating = false;
-    });
-  };
-
-  /**
-   * 
-   * @returns {Number} the width.
-   */
-  this.width = function() {
-    return this.$widget.outerWidth();
-  };
-
-  /**
-   * 
-   * @returns {Number} the height.
-   */
-  this.height = function() {
-    return this.$widget.outerHeight();
-  };
-
-  /**
-   * 
-   * @returns {Object} the offset
-   */
-  this.offset = function() {
-    return this.$widget.offset();
-  };
-
-  /**
-   * Sets the position of the panel relative to the container.
-   * 
-   * @param {Number} x
-   * @param {Number} y
-   */
-  this.setPosition = function(x, y) {
-    this.$widget.offset({
-      left : x,
-      top : y
-    });
-  };
-
-  /**
-   * Moves panel into view port if position exceeds the bounds of the
-   * container.
-   * 
-   * @private
-   */
-  this.ensurePosition = function() {
-    var cw = $container.outerWidth();
-    var ch = $container.outerHeight();
-    var col = $container.offset().left;
-    var cot = $container.offset().top;
-    var dw = this.width();
-    var dh = this.height();
-    var dol = this.offset().left;
-    var dot = this.offset().top;
-
-    // window width is too small for current dialog position but bigger than
-    // dialog width
-    if (cw + col < dw + dol && cw >= dw) {
-      this.setPosition(cw + col - dw, dot);
-    }
-
-    // window height is too small for current dialog position but bigger
-    // than dialog height
-    if (ch + cot < dh + dot && ch >= dh) {
-      this.setPosition(dol, ch + cot - dh);
-    }
-  };
-
-  /**
-   * Sets the hide target for the panel.
-   * 
-   * @param {jQuery} $target
-   */
-  this.setHideTarget = function($target) {
-    this.$hideTarget = $target;
-  };
-};
+}

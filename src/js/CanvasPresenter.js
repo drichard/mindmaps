@@ -1,342 +1,183 @@
-/**
- * Creates a new CanvasPresenter. The canvas presenter is responsible for drawing the mind map onto a
- * canvas view and reacting to user input on the map (e.g. dragging a node, double clicking it etc.)
- * 
- * @constructor
- * @param {mindmaps.EventBus} eventBus
- * @param {mindmaps.CommandRegistry} commandRegistry
- * @param {mindmaps.MindMapModel} mindmapModel
- * @param {mindmaps.CanvasView} view
- * @param {mindmaps.ZoomController} zoomController
- */
-mindmaps.CanvasPresenter = function(eventBus, commandRegistry, mindmapModel,
-    view, zoomController) {
-  var self = this;
-  var creator = view.getCreator();
-
-  /**
-   * Initializes this presenter.
-   */
-  this.init = function() {
-    var editCaptionCommand = commandRegistry
-        .get(mindmaps.EditNodeCaptionCommand);
-    editCaptionCommand.setHandler(this.editNodeCaption.bind(this));
-
-    var toggleNodeFoldedCommand = commandRegistry
-        .get(mindmaps.ToggleNodeFoldedCommand);
-    toggleNodeFoldedCommand.setHandler(toggleFold);
-  };
-
-  /**
-   * Handles the edit caption command. Tells view to start edit mode for node.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.editNodeCaption = function(node) {
-    if (!node) {
-      node = mindmapModel.selectedNode;
-    }
-    view.editNodeCaption(node);
-  };
-
-  /**
-   * Toggles the fold state of a node.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  var toggleFold = function(node) {
-    if (!node) {
-      node = mindmapModel.selectedNode;
+mindmaps.CanvasPresenter = function(e, n, o, t, i) {
+    function d(e) {
+        t.setZoomFactor(i.DEFAULT_ZOOM);
+        var n = e.dimensions;
+        t.setDimensions(n.x, n.y);
+        var d = e.mindmap;
+        t.drawMap(d), t.center(), o.selectNode(d.root), t.updateNode(d.root), d.root.forEachDescendant(function(e) {
+            t.updateNode(e)
+        })
     }
 
-    // toggle node visibility
-    var action = new mindmaps.action.ToggleNodeFoldAction(node);
-    mindmapModel.executeAction(action);
-  };
-
-  /**
-   * Tells the view to select a node.
-   * 
-   * @param {mindmaps.Node} selectedNode
-   * @param {mindmaps.Node} oldSelectedNode
-   */
-  var selectNode = function(selectedNode, oldSelectedNode) {
-
-    // deselect old node
-    if (oldSelectedNode) {
-      view.unhighlightNode(oldSelectedNode);
-    }
-    view.highlightNode(selectedNode);
-  };
-
-  // listen to events from view
-  /**
-   * View callback: Zoom on mouse wheel.
-   * 
-   * @ignore
-   */
-  view.mouseWheeled = function(delta) {
-    view.stopEditNodeCaption();
-
-    if (delta > 0) {
-      zoomController.zoomIn();
-    } else {
-      zoomController.zoomOut();
-    }
-  };
-
-  /**
-   * View callback: Attach creator to node if mouse hovers over node.
-   * 
-   * @ignore
-   */
-  view.nodeMouseOver = function(node) {
-    if (view.isNodeDragging() || creator.isDragging()) {
-      // dont relocate the creator if we are dragging
-    } else {
-      creator.attachToNode(node);
-    }
-  };
-
-  /**
-   * View callback: Attach creator to node if mouse hovers over node caption.
-   * 
-   * @ignore
-   */
-  view.nodeCaptionMouseOver = function(node) {
-    if (view.isNodeDragging() || creator.isDragging()) {
-      // dont relocate the creator if we are dragging
-    } else {
-      creator.attachToNode(node);
-    }
-  };
-
-  /**
-   * View callback: Select node if mouse was pressed.
-   * 
-   * @ignore
-   */
-  view.nodeMouseDown = function(node) {
-    mindmapModel.selectNode(node);
-    // show creator
-    creator.attachToNode(node);
-  };
-
-  // view.nodeMouseUp = function(node) {
-  // };
-
-  /**
-   * View callback: Go into edit mode when node was double clicked.
-   * 
-   * @ignore
-   */
-  view.nodeDoubleClicked = function(node) {
-    view.editNodeCaption(node);
-  };
-
-  // view.nodeDragging = function() {
-  // };
-
-  /**
-   * View callback: Execute MoveNodeAction when node was dragged.
-   * 
-   * @ignore
-   */
-  view.nodeDragged = function(node, offset) {
-    // view has updated itself
-
-    // update model
-    var action = new mindmaps.action.MoveNodeAction(node, offset);
-    mindmapModel.executeAction(action);
-  };
-
-  /**
-   * View callback: Toggle fold mode when fold button was clicked.
-   * 
-   * @ignore
-   */
-  view.foldButtonClicked = function(node) {
-    toggleFold(node);
-  };
-
-  // CREATOR TOOL
-  /**
-   * View callback: Return new random color to view when creator tool was
-   * started to drag.
-   * 
-   * @ignore
-   */
-  creator.dragStarted = function(node) {
-    // set edge color for new node. inherit from parent or random when root
-    var color = node.isRoot() ? mindmaps.Util.randomColor()
-        : node.branchColor;
-    return color;
-  };
-
-  /**
-   * View callback: Create a new node when creator tool was stopped.
-   * 
-   * @ignore
-   */
-  creator.dragStopped = function(parent, offsetX, offsetY, distance) {
-    // disregard if the creator was only dragged a bit
-    if (distance < 50) {
-      return;
-    }
-
-    // update the model
-    var node = new mindmaps.Node();
-    node.branchColor = creator.lineColor;
-    node.offset = new mindmaps.Point(offsetX, offsetY);
-    // indicate that we want to set this nodes caption after creation
-    node.shouldEditCaption = true;
-
-    mindmapModel.createNode(node, parent);
-  };
-
-  /**
-   * View callback: Change node caption when text change was committed in
-   * view.
-   * 
-   * @ignore
-   * @param {mindmaps.Node} node
-   * @param {String} str
-   */
-  view.nodeCaptionEditCommitted = function(node, str) {
-    // avoid whitespace only strings
-    var str = $.trim(str);
-    if (!str) {
-      return;
-    }
-
-    view.stopEditNodeCaption();
-    mindmapModel.changeNodeCaption(node, str);
-  };
-
-  this.go = function() {
-    view.init();
-  };
-
-  /**
-   * Draw the mind map on the canvas.
-   * 
-   * @param {mindmaps.Document} doc
-   */
-  function showMindMap(doc) {
-    view.setZoomFactor(zoomController.DEFAULT_ZOOM);
-    var dimensions = doc.dimensions;
-    view.setDimensions(dimensions.x, dimensions.y);
-    var map = doc.mindmap;
-    view.drawMap(map);
-    view.center();
-
-    mindmapModel.selectNode(map.root);
-  }
-
-  /**
-   * Hook up with EventBus.
-   */
-  function bind() {
-    // listen to global events
-    eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(doc,
-        newDocument) {
-      showMindMap(doc);
-
-      // if (doc.isNew()) {
-      // // edit root node on start
-      // var root = doc.mindmap.root;
-      // view.editNodeCaption(root);
-      // }
-    });
-
-    eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function(doc) {
-      view.clear();
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_MOVED, function(node) {
-      view.positionNode(node);
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, function(
-        node) {
-      view.setNodeText(node, node.getCaption());
-
-      // redraw node in case height has changed
-      // TODO maybe only redraw if height has changed
-      view.redrawNodeConnectors(node);
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_CREATED, function(node) {
-      view.createNode(node);
-
-      // edit node caption immediately if requested
-      if (node.shouldEditCaption) {
-        delete node.shouldEditCaption;
-        // open parent node when creating a new child and the other
-        // children are hidden
-        var parent = node.getParent();
-        if (parent.foldChildren) {
-          var action = new mindmaps.action.OpenNodeAction(parent);
-          mindmapModel.executeAction(action);
+    function a() {
+        function n(e) {
+            var t = o.getDocument().getConnectedNodes().filter(function(n) {
+                    return n.from != e.id && n.to != e.id
+                }),
+                i = o.getDocument().getConnectedNodes().filter(function(n) {
+                    return n.from == e.id || n.to == e.id
+                });
+            i.forEach(function(e) {
+                $("#node-" + e.from).length && $("#node-connector-canvas-" + e.from + "-" + e.canvasId).length && ($("#node-connector-canvas-" + e.from + "-" + e.canvasId).remove(), console.log("removed canvas"))
+            }), o.getDocument().setConnectedNodes(t), e.forEachChild(function(e) {
+                n(e)
+            })
         }
 
-        // select and go into edit mode on new node
-        mindmapModel.selectNode(node);
-        // attach creator manually, sometimes the mouseover listener wont fire
-        creator.attachToNode(node);
-        view.editNodeCaption(node);
-      }
-    });
+        function i(e) {
+            var n = o.getDocument().getConnectedNodes().filter(function(n) {
+                return n.from == e.id || n.to == e.id
+            });
+            n.forEach(function(e) {
+                $("#node-connector-canvas-" + e.from + "-" + e.canvasId).length && ($("#node-connector-canvas-" + e.from + "-" + e.canvasId).css("opacity", 1), console.log("show"))
+            }), e.forEachChild(function(e) {
+                i(e)
+            })
+        }
 
-    eventBus.subscribe(mindmaps.Event.NODE_DELETED, function(node, parent) {
-      // select parent if we are deleting a selected node or a descendant
-      var selected = mindmapModel.selectedNode;
-      if (node === selected || node.isDescendant(selected)) {
-        // deselectCurrentNode();
-        mindmapModel.selectNode(parent);
-      }
+        function a(e) {
+            var n = o.getDocument().getConnectedNodes().filter(function(n) {
+                return n.from == e.id || n.to == e.id
+            });
+            n.forEach(function(e) {
+                $("#node-connector-canvas-" + e.from + "-" + e.canvasId).length && $("#node-connector-canvas-" + e.from + "-" + e.canvasId).css("opacity", 0)
+            }), e.forEachChild(function(e) {
+                a(e)
+            })
+        }
+        e.subscribe(mindmaps.Event.DOCUMENT_OPENED, function(e) {
+            d(e)
+        }), e.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+            t.clear()
+        }), e.subscribe(mindmaps.Event.NODE_MOVED, function(e) {
+            t.positionNode(e), t.updateNode(e)
+        }), e.subscribe(mindmaps.Event.NODE_TEXT_CAPTION_CHANGED, function(e) {
+            t.setNodeText(e, e.getCaption()), t.updateNode(e), t.redrawNodeConnectors(e)
+        }), e.subscribe(mindmaps.Event.NODE_LINE_WIDTH_CHANGED, function(e) {
+            for (var n = e; !n.isRoot();) t.updateNode(n), n = n.getParent()
+        }), e.subscribe(mindmaps.Event.NODE_CREATED, function(e) {
+            t.createNode(e);
+            for (var n = e; !n.isRoot();) t.updateNode(n), n = n.getParent();
+            if (mindmaps.responsive.isTouchDevice || mindmaps.mode.inHD) {
+                var i = e.getParent();
+                if (i.getPluginData("layout", "foldChildren")) {
+                    var d = new mindmaps.action.OpenNodeAction(i);
+                    o.executeAction(d)
+                }
+                o.selectNode(e)
+            } else if (e.shouldEditCaption) {
+                delete e.shouldEditCaption;
+                var i = e.getParent();
+                if (i.getPluginData("layout", "foldChildren")) {
+                    var d = new mindmaps.action.OpenNodeAction(i);
+                    o.executeAction(d)
+                }
+                o.selectNode(e), c.attachToNode(e), t.editNodeCaption(e)
+            }
+        }), e.subscribe(mindmaps.Event.NODE_DELETED, function(e, i) {
+            console.log("deleting node");
+            var d = o.selectedNode;
+            (e === d || e.isDescendant(d)) && o.selectNode(i), n(e), console.log("nodes is " + o.getDocument().getConnectedNodes().length), t.deleteNode(e), i.isLeaf() && t.removeFoldButton(i)
+        }), e.subscribe(mindmaps.Event.CONNECTED_TWO_NODES, function(e, n) {
+            console.log("connected " + e.getCaption() + "," + n.getCaption());
+            var t = new mindmaps.action.ConnectTwoNodesAction(e, n, "dashed", "#ff0000", "0");
+            o.executeAction(t)
+        }), e.subscribe(mindmaps.Event.CONNECTION_COLOR_CHANGED, function() {}), e.subscribe(mindmaps.Event.NODE_SELECTED, r), e.subscribe(mindmaps.Event.NODE_OPENED, function(e) {
+            e.forEachChild(function(e) {
+                i(e)
+            }), t.openNode(e)
+        }), e.subscribe(mindmaps.Event.NODE_CLOSED, function(e) {
+            e.forEachChild(function(e) {
+                a(e)
+            }), t.closeNode(e)
+        }), e.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(e) {
+            t.updateNode(e)
+        }), e.subscribe(mindmaps.Event.TWO_NODES_CONNECTED, function(e, n) {
+            t.updateNode(e), t.updateNode(n)
+        }), e.subscribe(mindmaps.Event.TWO_NODES_DISCONNECTED, function(e, n) {
+            t.updateNode(e), t.updateNode(n)
+        }), e.subscribe(mindmaps.Event.CONNECTION_COLOR_CHANGED, function(e) {
+            t.updateNode(e)
+        }), e.subscribe(mindmaps.Event.NODE_BORDER_CHANGED, function(e) {
+            console.log("node border changed"), t.updateNode(e)
+        }), e.subscribe(mindmaps.Event.NODE_FONT_COLOR_PREVIEW, function(e, n) {
+            t.updateFontColor(e, n)
+        }), e.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(e) {
+            t.updateNode(e)
+        }), e.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_PREVIEW, function(e, n) {
+            t.updateBranchColor(e, n)
+        }), e.subscribe(mindmaps.Event.ZOOM_CHANGED, function(e) {
+            t.setZoomFactor(e), t.applyViewZoom(), t.scaleMap();
+            var n = o.getDocument();
+            if (n) {
+                var i = n.mindmap;
+                t.updateNode(i.root), i.root.forEachDescendant(function(e) {
+                    t.updateNode(e)
+                })
+            }
+        })
+    }
+    var c = t.getCreator();
+    this.init = function() {
+        var e = n.get(mindmaps.EditNodeCaptionCommand);
+        e.setHandler(this.editNodeCaption.bind(this));
+        var o = n.get(mindmaps.ToggleNodeFoldedCommand);
+        o.setHandler(s)
+    }, this.editNodeCaption = function(e) {
+        e || (e = o.selectedNode), t.editNodeCaption(e)
+    };
+    var s = function(e) {
+            e || (e = o.selectedNode);
+            var n = new mindmaps.action.ToggleNodeFoldAction(e);
+            o.executeAction(n)
+        },
+        r = function(e, n) {
+            t.selectedNode = e, n && t.unhighlightNode(n), t.highlightNode(e)
+        };
+    t.mouseWheeled = function(e) {
+        t.stopEditNodeCaption(), e > 0 ? i.zoomIn(.1) : 0 > e && i.zoomOut(.1)
+    }, t.pinch = function(e) {
+        t.stopEditNodeCaption(), i.zoomByScale(e)
+    }, t.tow_tap = function() {
+        t.stopEditNodeCaption(), i.zoomToOne()
+    }, t.nodeMouseOver = function(e) {
+        t.isNodeDragging() || c.isDragging() || c.attachToNode(e)
+    }, t.nodeCaptionMouseOver = function(e) {
+        t.isNodeDragging() || c.isDragging() || c.attachToNode(e)
+    }, t.nodeMouseDown = function(e) {
+        o.selectNode(e), c.attachToNode(e)
+    }, t.nodeDoubleClicked = function(e) {
+        t.editNodeCaption(e)
+    }, t.nodeDragged = function(e, n) {
+        var t = new mindmaps.action.MoveNodeAction(e, n);
+        o.executeAction(t)
+    }, t.foldButtonClicked = function(e) {
+        s(e)
+    }, c.dragStarted = function(e) {
+        var n = e.isRoot() ? mindmaps.Util.randomColor() : e.getPluginData("style", "branchColor");
+        return n
+    }, c.dragStopped = function(e, n, t, i) {
+        if (!(50 > i)) {
+            var d = new mindmaps.Node;
+            d.setPluginData("style", "branchColor", c.lineColor), d.setPluginData("layout", "offset", new mindmaps.Point(n, t)), d.shouldEditCaption = !0, o.createNode(d, e)
+        }
+    }, t.nodeCaptionEditCommitted = function(e, n) {
+        var n = $.trim(n);
+        n && (t.stopEditNodeCaption(), o.changeNodeCaption(e, n))
+    }, t.pluginclick = function(e,icon) {
+        //this function created by ms to click on plugin icon
+        o.selectNode(e);
+        if(icon=="attachment") {
+            $('#inspector-button-attachment').trigger('click')
+        }
+        if(icon=="draw") {
+			console.log("need work");
 
-      // update view
-      view.deleteNode(node);
-      if (parent.isLeaf()) {
-        view.removeFoldButton(parent);
-      }
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_SELECTED, selectNode);
-    
-    eventBus.subscribe(mindmaps.Event.NODE_OPENED, function(node) {
-      view.openNode(node);
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_CLOSED, function(node) {
-      view.closeNode(node);
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_FONT_CHANGED, function(node) {
-      view.updateNode(node);
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_FONT_COLOR_PREVIEW, function(node, color) {
-      view.updateFontColor(node, color);
-    });
-
-    eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_CHANGED, function(
-        node) {
-      view.updateNode(node);
-    });
-    
-    eventBus.subscribe(mindmaps.Event.NODE_BRANCH_COLOR_PREVIEW, function(node, color) {
-      view.updateBranchColor(node, color)
-    });
-
-    eventBus.subscribe(mindmaps.Event.ZOOM_CHANGED, function(zoomFactor) {
-      view.setZoomFactor(zoomFactor);
-      view.applyViewZoom();
-      view.scaleMap();
-    });
-  }
-
-  bind();
-  this.init();
+        }
+        if(icon=="url") {
+            $('#inspector-button-urls').trigger('click')
+        }
+    }, this.go = function() {
+        t.init()
+    }, a(), this.init()
 };

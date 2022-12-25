@@ -1,131 +1,70 @@
-/**
- * 
- * Creates a new mind map.
- * 
- * @constructor
- * @param {mindmaps.Node} [root]
- */
-mindmaps.MindMap = function(root) {
-  /**
-   * nodes is only used for quick lookup of a node by id. Each node must be
-   * registered in this map via createNode() or addNode(node).
-   */
-  this.nodes = new mindmaps.NodeMap();
-
-  if (root) {
-    this.root = root;
-  } else {
-    this.root = new mindmaps.Node();
-    this.root.text.font.size = 20;
-    this.root.text.font.weight = "bold";
-    this.root.text.caption = "Central Idea";
-  }
-
-  this.addNode(this.root);
+mindmaps.MindMap = function(e) {
+    this.nodes = new mindmaps.NodeMap;
+    if (e) {
+        this.root = e
+    } else {
+        this.root = new mindmaps.Node;
+        this.root.text = {
+            caption: "Central Idea"
+        };
+        this.root.setPluginData("style", "font", {
+            style: "normal",
+            weight: "bold",
+            fontfamily: "sans-serif",
+            decoration: "none",
+            size: 20,
+            color: "#000000"
+        });
+        this.root.setPluginData("style", "border", {
+            visible: true,
+            style: "dashed",
+            color: "#ffa500",
+            background: "#ffffff"
+        })
+    }
+    this.addNode(this.root)
 };
-
-/**
- * Creates a new mind map object from JSON String.
- * 
- * @static
- * @param {String} json
- * @returns {mindmaps.MindMap}
- */
-mindmaps.MindMap.fromJSON = function(json) {
-  return mindmaps.MindMap.fromObject(JSON.parse(json));
+mindmaps.MindMap.fromJSON = function(e) {
+    return mindmaps.MindMap.fromObject(JSON.parse(e))
 };
-
-/**
- * Creates a new mind map object from generic object.
- * 
- * @static
- * @param {Object} obj
- * @returns {mindmaps.MindMap}
- */
-mindmaps.MindMap.fromObject = function(obj) {
-  var root = mindmaps.Node.fromObject(obj.root);
-  var mm = new mindmaps.MindMap(root);
-
-  // register all nodes in the map
-  root.forEachDescendant(function(descendant) {
-    mm.addNode(descendant);
-  });
-
-  return mm;
+mindmaps.MindMap.fromObject = function(e) {
+    var t = mindmaps.Node.fromObject(e.root);
+    var n = new mindmaps.MindMap(t);
+    t.forEachDescendant(function(e) {
+        n.addNode(e)
+    });
+    return n
 };
-
-/**
- * Called by JSON.stringify().
- * 
- * @private
- * 
- */
 mindmaps.MindMap.prototype.toJSON = function() {
-  var obj = {
-    root : this.root
-  };
-  return obj;
+    var e = {
+        root: this.root
+    };
+    return e
 };
-
-/**
- * Creates a JSON representation of the mind map.
- * 
- * @returns {String}
- */
 mindmaps.MindMap.prototype.serialize = function() {
-  return JSON.stringify(this);
+    return JSON.stringify(this)
 };
-
-/**
- * Create a node and add to nodes map.
- * 
- * @returns {mindmaps.Node}
- */
 mindmaps.MindMap.prototype.createNode = function() {
-  var node = new mindmaps.Node();
-  this.addNode(node);
-  return node;
+    var e = new mindmaps.Node;
+    this.addNode(e);
+    return e
 };
-
-/**
- * Adds an existing node and all its children to the nodes map.
- * 
- * @param {mindmaps.Node} node
- */
-mindmaps.MindMap.prototype.addNode = function(node) {
-  this.nodes.add(node);
-
-  // add all children
-  var self = this;
-  node.forEachDescendant(function(descendant) {
-    self.nodes.add(descendant);
-  });
+mindmaps.MindMap.prototype.addNode = function(e) {
+    this.nodes.add(e);
+    var t = this;
+    e.forEachDescendant(function(e) {
+        t.nodes.add(e)
+    })
 };
-
-/**
- * Removes a node from the mind map. Severs tie to the parent.
- * 
- * @param {mindmaps.Node} node
- */
-mindmaps.MindMap.prototype.removeNode = function(node) {
-  // detach node from parent
-  var parent = node.parent;
-  parent.removeChild(node);
-
-  // clear nodes table: remove node and its children
-  var self = this;
-  node.forEachDescendant(function(descendant) {
-    self.nodes.remove(descendant);
-  });
-
-  this.nodes.remove(node);
+mindmaps.MindMap.prototype.removeNode = function(e) {
+    var t = e.parent;
+    t.removeChild(e);
+    var n = this;
+    e.forEachDescendant(function(e) {
+        n.nodes.remove(e)
+    });
+    this.nodes.remove(e)
 };
-
-/**
- * Get the root of the mind map.
- * 
- * @returns {mindmaps.Node}
- */
 mindmaps.MindMap.prototype.getRoot = function() {
-  return this.root;
-};
+    return this.root
+}

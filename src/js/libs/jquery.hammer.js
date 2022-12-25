@@ -1,0 +1,1 @@
+jQuery.fn.hammer=function(e){return this.each(function(){var t=new Hammer(this,e);var n=jQuery(this);n.data("hammer",t);var r=["hold","tap","doubletap","transformstart","transform","transformend","dragstart","drag","dragend","swipe","release"];for(var i=0;i<r.length;i++){t["on"+r[i]]=function(e,t){return function(n){e.trigger(jQuery.Event(t,n))}}(n,r[i])}})}

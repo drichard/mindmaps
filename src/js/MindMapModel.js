@@ -1,235 +1,258 @@
-/**
- * <pre>
- * Creates a new MindMapModel. 
- * 
- * This object represents the underlying mind map model and provides access 
- * to the document, the mind map and the currently selected node.
- * 
- * All changes to the mind map pass through this object, either through calling
- * methods directly or using the executeAction() method to perform NodeActions.
- * </pre>
- * 
- * @constructor
- * @param {mindmaps.EventBus} eventBus
- * @param {mindmaps.CommandRegistry} commandRegistry
- */
-mindmaps.MindMapModel = function(eventBus, commandRegistry, undoController) {
-  var self = this;
-  this.document = null;
-  this.selectedNode = null;
-
-  /**
-   * Gets the current document.
-   * 
-   * @returns {mindmaps.Document} the current document.
-   */
-  this.getDocument = function() {
-    return this.document;
-  };
-
-  /**
-   * Sets the current document and will publish a DOCUMENT_OPENED or
-   * DOCUMENT_CLOSED event.
-   * 
-   * @param {mindmaps.Document} doc or pass null to close the document
-   */
-  this.setDocument = function(doc) {
-    this.document = doc;
-    if (doc) {
-      eventBus.publish(mindmaps.Event.DOCUMENT_OPENED, doc);
-    } else {
-      eventBus.publish(mindmaps.Event.DOCUMENT_CLOSED);
-    }
-  };
-
-  /**
-   * Gets the current mind map associated with the document.
-   * 
-   * @returns {mindmaps.MindMap} the mind map or null
-   */
-  this.getMindMap = function() {
-    if (this.document) {
-      return this.document.mindmap;
-    }
-    return null;
-  };
-
-  /**
-   * Initialise.
-   * 
-   * @private
-   */
-  this.init = function() {
-    var createNodeCommand = commandRegistry.get(mindmaps.CreateNodeCommand);
-    createNodeCommand.setHandler(this.createNode.bind(this));
-
-    var createSiblingNodeCommand = commandRegistry
-        .get(mindmaps.CreateSiblingNodeCommand);
-    createSiblingNodeCommand.setHandler(this.createSiblingNode.bind(this));
-
-    var deleteNodeCommand = commandRegistry.get(mindmaps.DeleteNodeCommand);
-    deleteNodeCommand.setHandler(this.deleteNode.bind(this));
-
-    eventBus.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
-      createNodeCommand.setEnabled(false);
-      createSiblingNodeCommand.setEnabled(false);
-      deleteNodeCommand.setEnabled(false);
-    });
-
-    eventBus.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
-      createNodeCommand.setEnabled(true);
-      createSiblingNodeCommand.setEnabled(true);
-      deleteNodeCommand.setEnabled(true);
-    });
-  };
-
-  /**
-   * Deletes a node or the currently selected one if no argument is passed.
-   * 
-   * @param {mindmaps.Node} [node] defaults to currently selected.
-   */
-  this.deleteNode = function(node) {
-    if (!node) {
-      node = this.selectedNode;
-    }
-    var map = this.getMindMap();
-    var action = new mindmaps.action.DeleteNodeAction(node, map);
-    this.executeAction(action);
-  };
-
-  /**
-   * Attaches a new node the mind map. If invoked without arguments, it will
-   * add a new child to the selected node with an automatically generated
-   * position.
-   * 
-   * @param {mindmaps.Node} node the new node
-   * @param {mindmaps.Node} parent
-   */
-  this.createNode = function(node, parent) {
-    var map = this.getMindMap();
-    if (!(node && parent)) {
-      parent = this.selectedNode;
-      var action = new mindmaps.action.CreateAutoPositionedNodeAction(
-          parent, map);
-    } else {
-      var action = new mindmaps.action.CreateNodeAction(node, parent, map);
-    }
-
-    this.executeAction(action);
-  };
-
-  /**
-   * Creates a new auto positioned node as a sibling to the current selected
-   * node.
-   */
-  this.createSiblingNode = function() {
-    var map = this.getMindMap();
-    var selected = this.selectedNode;
-    var parent = selected.getParent();
-
-    // root nodes dont have a parent
-    if (parent === null) {
-      return;
-    }
-
-    var action = new mindmaps.action.CreateAutoPositionedNodeAction(parent,
-        map);
-    this.executeAction(action);
-  };
-
-  /**
-   * Sets the node as the currently selected.
-   * 
-   * @param {mindmaps.Node} node
-   */
-  this.selectNode = function(node) {
-    if (node === this.selectedNode) {
-      return;
-    }
-
-    var oldSelected = this.selectedNode;
-    this.selectedNode = node;
-    eventBus.publish(mindmaps.Event.NODE_SELECTED, node, oldSelected);
-  };
-
-  /**
-   * Changes the caption for the passed node or for the selected one if node
-   * is null.
-   * 
-   * @param {mindmaps.Node} node
-   * @param {String} caption
-   */
-  this.changeNodeCaption = function(node, caption) {
-    if (!node) {
-      node = this.selectedNode;
-    }
-
-    var action = new mindmaps.action.ChangeNodeCaptionAction(node, caption);
-    this.executeAction(action);
-  };
-
-  /**
-   * Executes a node action. An executed action might raise an event over the
-   * event bus and cause an undo event to be emitted via
-   * MindMapModel#undoAction.
-   * 
-   * @param {mindmaps.Action} action
-   */
-  this.executeAction = function(action) {
-    // a composite action consists of multiple actions which are
-    // processed individually.
-    if (action instanceof mindmaps.action.CompositeAction) {
-      var execute = this.executeAction.bind(this);
-      action.forEachAction(execute);
-      return;
-    }
-
-    var executed = action.execute();
-
-    // cancel action if false was returned
-    if (executed !== undefined && !executed) {
-      return false;
-    }
-
-    // publish event
-    if (action.event) {
-      if (!Array.isArray(action.event)) {
-        action.event = [ action.event ];
-      }
-      eventBus.publish.apply(eventBus, action.event);
-    }
-
-    // register undo function if available
-    if (action.undo) {
-      var undoFunc = function() {
-        self.executeAction(action.undo());
-      };
-
-      // register redo function
-      if (action.redo) {
-        var redoFunc = function() {
-          self.executeAction(action.redo());
-        };
-      }
-
-      undoController.addUndo(undoFunc, redoFunc);
-    }
-  };
-
-  /**
-   * Saves a document to the localstorage and publishes DOCUMENT_SAVED event on success.
-   *
-   * @returns {Boolean} whether the save was successful.
-   */
-  this.saveToLocalStorage = function() {
-    var doc = this.document.prepareSave();
-    var success = mindmaps.LocalDocumentStorage.saveDocument(doc);
-    if (success) {
-      eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
-    }
-
-    return success;
-  }
-
-  this.init();
-};
+mindmaps.MindMapModel = function(e, t, n) {
+    var r = this;
+    this.document = null;
+    this.selectedNode = null;
+    this.getDocument = function() {
+        return this.document
+    };
+    this.setDocument = function(t) {
+        this.document = t;
+        if (t) {
+            e.publish(mindmaps.Event.DOCUMENT_OPENED, t)
+        } else {
+            e.publish(mindmaps.Event.DOCUMENT_CLOSED)
+        }
+    };
+    this.getMindMap = function() {
+        if (this.document) {
+            return this.document.mindmap
+        }
+        return null
+    };
+    this.init = function() {
+        var n = t.get(mindmaps.CreateNodeCommand);
+        n.setHandler(this.createNode.bind(this));
+        var i = t.get(mindmaps.CreateSiblingNodeCommand);
+        i.setHandler(this.createSiblingNode.bind(this));
+        var s = t.get(mindmaps.DeleteNodeCommand);
+        s.setHandler(this.deleteNode.bind(this));
+        var o = t.get(mindmaps.SelectParentNodeCommand);
+        o.setHandler(this.selectParent.bind(this));
+        var u = t.get(mindmaps.SelectChildFirstNodeCommand);
+        u.setHandler(this.selectChildFirst.bind(this));
+        var a = t.get(mindmaps.SelectSiblingNextNodeCommand);
+        a.setHandler(this.selectSiblingN.bind(this));
+        var f = t.get(mindmaps.SelectSiblingPrevNodeCommand);
+        f.setHandler(this.selectSiblingP.bind(this));
+        e.subscribe(mindmaps.Event.DOCUMENT_CLOSED, function() {
+            n.setEnabled(false);
+            i.setEnabled(false);
+            s.setEnabled(false);
+            o.setEnabled(false);
+            u.setEnabled(false);
+            a.setEnabled(false);
+            f.setEnabled(false)
+        });
+        e.subscribe(mindmaps.Event.DOCUMENT_OPENED, function() {
+            n.setEnabled(true);
+            i.setEnabled(true);
+            s.setEnabled(true);
+            o.setEnabled(true);
+            u.setEnabled(true);
+            a.setEnabled(true);
+            f.setEnabled(true)
+        });
+        e.subscribe(mindmaps.Event.NODE_SELECTED, function(e) {
+            i.setEnabled(r.getParent(e));
+            s.setEnabled(r.getParent(e));
+            o.setEnabled(r.getParent(e));
+            u.setEnabled(r.getChildFirst(e));
+            a.setEnabled(r.getSiblingN(e));
+            f.setEnabled(r.getSiblingP(e))
+        })
+    };
+    this.deleteNode = function(e) {
+        if (!e) {
+            e = this.selectedNode
+        }
+        var t = this.getMindMap();
+        var n = new mindmaps.action.DeleteNodeAction(e, t);
+        this.executeAction(n)
+    };
+    this.createNode = function(e, t) {
+        var n = this.getMindMap();
+        if (!(e && t)) {
+            t = this.selectedNode;
+            var r = new mindmaps.action.CreateAutoPositionedNodeAction(t, n)
+        } else {
+            var r = new mindmaps.action.CreateNodeAction(e, t, n)
+        }
+        this.executeAction(r)
+    };
+    this.createSiblingNode = function() {
+        var e = this.getMindMap();
+        var t = this.selectedNode;
+        var n = t.getParent();
+        if (n === null) {
+            return
+        }
+        var r = new mindmaps.action.CreateAutoPositionedNodeAction(n, e);
+        this.executeAction(r)
+    };
+    this.selectNode = function(t) {
+        if (t === this.selectedNode) {
+            return
+        }
+        var n = this.selectedNode;
+        this.selectedNode = t;
+        e.publish(mindmaps.Event.NODE_SELECTED, t, n)
+    };
+    this.selectParent = function() {
+        if (r.selectedNode) {
+            var e = r.selectedNode;
+            var t = r.getParent(e);
+            if (t) {
+                r.selectNode(t)
+            }
+        }
+    };
+    this.selectChildFirst = function() {
+        if (r.selectedNode) {
+            var e = r.selectedNode;
+            var t = r.getChildFirst(e);
+            if (t) {
+                r.selectNode(t)
+            }
+        }
+    };
+    this.selectSiblingN = function() {
+        if (r.selectedNode) {
+            var e = r.selectedNode;
+            var t = r.getSiblingN(e);
+            if (t) {
+                r.selectNode(t)
+            }
+        }
+    };
+    this.selectSiblingP = function() {
+        if (r.selectedNode) {
+            var e = r.selectedNode;
+            var t = r.getSiblingP(e);
+            if (t) {
+                r.selectNode(t)
+            }
+        }
+    };
+    this.getParent = function(e) {
+        return e.parent
+    };
+    this.getChildFirst = function(e) {
+        if (e.children && e.children.count > 0) {
+            var t = e.children.nodes[e.children.indexes[0]];
+            return t
+        }
+        return null
+    };
+    this.getChildLast = function(e) {
+        if (e.children && e.children.count > 0) {
+            var t = e.children.nodes[e.children.indexes[e.children.indexes.length - 1]];
+            return t
+        }
+        return null
+    };
+    this.getSiblingN = function(e) {
+        if (e.parent) {
+            var t = e.parent;
+            if (t.children && t.children.count > 0) {
+                var n = t.children.indexes.indexOf(e.id);
+                if (n >= 0 && n < t.children.count - 1) {
+                    var r = t.children.nodes[t.children.indexes[n + 1]];
+                    return r
+                }
+            }
+        }
+        return null
+    };
+    this.getSiblingP = function(e) {
+        if (e.parent) {
+            var t = e.parent;
+            if (t.children && t.children.count > 0) {
+                var n = t.children.indexes.indexOf(e.id);
+                if (n > 0) {
+                    var r = t.children.nodes[t.children.indexes[n - 1]];
+                    return r
+                }
+            }
+        }
+        return null
+    };
+    this.changeNodeCaption = function(e, t) {
+        if (!e) {
+            e = this.selectedNode
+        }
+        var n = new mindmaps.action.ChangeNodeCaptionAction(e, t);
+        this.executeAction(n)
+    };
+    this.executeAction = function(t) {
+        if (t instanceof mindmaps.action.CompositeAction) {
+            var i = this.executeAction.bind(this);
+            t.forEachAction(i);
+            return
+        }
+        var s = t.execute();
+        if (s !== undefined && !s) {
+            return false
+        }
+        if (t.event) {
+            if (!Array.isArray(t.event)) {
+                t.event = [t.event]
+            }
+            e.publish.apply(e, t.event)
+        }
+        if (t.undo) {
+            var o = function() {
+                r.executeAction(t.undo())
+            };
+            if (t.redo) {
+                var u = function() {
+                    r.executeAction(t.redo())
+                }
+            }
+            n.addUndo(o, u)
+        }
+    };
+    this.saveToLocalStorage = function() {
+        var t = this.document.prepareSave();
+        var n = mindmaps.LocalDocumentStorage.saveDocument(t);
+        if (n) {
+            e.publish(mindmaps.Event.DOCUMENT_SAVED, t)
+        }
+        return n
+    };
+    this.saveToStorageServer = function(t) {
+        var n = this.document.prepareSave();
+        mindmaps.ServerStorage.saveDocument(n, {
+            start: function() {
+                t.start()
+            },
+            success: function() {
+                e.publish(mindmaps.Event.DOCUMENT_SAVED, n);
+                t.success()
+            },
+            error: function(e) {
+                t.error(e)
+            }
+        })
+    };
+    this.saveToGoogleDrive = function(t) {
+        var n = this.document.prepareSave();
+        mindmaps.GoogleDrive.saveDocument(n, {
+            start: function() {
+                t.start()
+            },
+            success: function() {
+                e.publish(mindmaps.Event.DOCUMENT_SAVED, n);
+                console.log("save drive succes");
+                t.success()
+            },
+            error: function(e) {
+                console.log("save drive error");
+                t.error(e)
+            },
+            notify: function(e) {
+                t.notify(e)
+            }
+        })
+    };
+    this.init()
+}

@@ -1,313 +1,208 @@
-/**
- * Creates a new node.
- * 
- * @constructor
- */
 mindmaps.Node = function() {
-  this.id = mindmaps.Util.getId();
-  this.parent = null;
-  this.children = new mindmaps.NodeMap();
-  this.text = {
-    caption : "New Idea",
-    font : {
-      style : "normal",
-      weight : "normal",
-      decoration : "none",
-      /** unit: pixel */
-      size : 15,
-      color : "#000000"
-    }
-  };
-  this.offset = new mindmaps.Point();
-  this.foldChildren = false;
-  this.branchColor = "#000000";
-};
-
-/**
- * Creates a deep copy of this node, where all nodes have a new IDs.
- * 
- * @returns {mindmaps.Node} the cloned node
- */
-mindmaps.Node.prototype.clone = function() {
-  var clone = new mindmaps.Node();
-  var text = {
-    caption : this.text.caption
-  };
-  var font = {
-    weight : this.text.font.weight,
-    style : this.text.font.style,
-    decoration : this.text.font.decoration,
-    size : this.text.font.size,
-    color : this.text.font.color
-  };
-  text.font = font;
-  clone.text = text;
-  clone.offset = this.offset.clone();
-  clone.foldChildren = this.foldChildren;
-  clone.branchColor = this.branchColor;
-
-  this.forEachChild(function(child) {
-    var childClone = child.clone();
-    clone.addChild(childClone);
-  });
-
-  return clone;
-};
-
-/**
- * Creates a new node object from JSON String.
- * 
- * @param {String} json
- * @returns {mindmaps.Node}
- */
-mindmaps.Node.fromJSON = function(json) {
-  return mindmaps.Node.fromObject(JSON.parse(json));
-};
-
-/**
- * Creates a new node object from a generic object.
- * 
- * @param {Object} obj
- * @returns {mindmaps.Node}
- */
-mindmaps.Node.fromObject = function(obj) {
-  var node = new mindmaps.Node();
-  node.id = obj.id;
-  node.text = obj.text;
-  node.offset = mindmaps.Point.fromObject(obj.offset);
-  node.foldChildren = obj.foldChildren;
-  node.branchColor = obj.branchColor;
-
-  // extract all children from array of objects
-  obj.children.forEach(function(child) {
-    var childNode = mindmaps.Node.fromObject(child);
-    node.addChild(childNode);
-  });
-
-  return node;
-};
-
-/**
- * Returns a presentation of this node and its children ready for serialization.
- * Called by JSON.stringify().
- * 
- * @private
- */
-mindmaps.Node.prototype.toJSON = function() {
-  // TODO see if we cant improve this
-  // http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
-  // copy all children into array
-  var self = this;
-  var children = (function() {
-    var result = [];
-    self.forEachChild(function(child) {
-      result.push(child.toJSON());
+    this.id = mindmaps.Util.getId();
+    this.parent = null;
+    this.children = new mindmaps.NodeMap;
+    this.pluginData = {};
+    this.text = {
+        caption: "New Idea"
+    };
+    this.setPluginData("style", "font", {
+        style: "normal",
+        weight: "normal",
+        decoration: "none",
+        fontfamily: "sans-serif",
+        size: 15,
+        color: "#000000"
     });
-    return result;
-  })();
-
-  var obj = {
-    id : this.id,
-    // store parent as id since we have to avoid circular references
-    parentId : this.parent ? this.parent.id : null,
-    text : this.text,
-    offset : this.offset,
-    foldChildren : this.foldChildren,
-    branchColor : this.branchColor,
-    children : children
-  };
-
-  return obj;
+    this.setPluginData("style", "border", {
+        visible: true,
+        style: "dashed",
+        color: "#ffa500",
+        background: "#ffffff"
+    });
+    this.setPluginData("style", "lineWidthOffset", 0);
+    this.setPluginData("style", "branchColor", "#000000");
+    this.setPluginData("layout", "offset", new mindmaps.Point);
+    this.setPluginData("layout", "foldChildren", false)
 };
-
-/**
- * Creates a JSON representation of the node.
- * 
- * @returns {String}
- */
+mindmaps.Node.prototype.clone = function() {
+    var e = new mindmaps.Node;
+    var t = {
+        caption: this.text.caption
+    };
+    e.text = t;
+    e.pluginData = $.extend(true, {}, this.pluginData);
+    this.forEachChild(function(t) {
+        var n = t.clone();
+        e.addChild(n)
+    });
+    return e
+};
+mindmaps.Node.prototype.cloneForExport = function() {
+    var e = new mindmaps.Node;
+    var t = {
+        caption: this.text.caption
+    };
+    e.id = this.id;
+    e.text = t;
+    e.pluginData = $.extend(true, {}, this.pluginData);
+    this.forEachChild(function(t) {
+        var n = t.cloneForExport();
+        e.addChild(n)
+    });
+    return e
+};
+mindmaps.Node.fromJSON = function(e) {
+    return mindmaps.Node.fromObject(JSON.parse(e))
+};
+mindmaps.Node.fromObject = function(e) {
+    var t = new mindmaps.Node;
+    t.id = e.id;
+    t.text = e.text;
+    if (e.pluginData) {
+        t.pluginData = e.pluginData
+    }
+    _(mindmaps.migrations).each(function(n) {
+        if (n.onNode) {
+            n.onNode(t, e)
+        }
+    });
+    e.children.forEach(function(e) {
+        var n = mindmaps.Node.fromObject(e);
+        t.addChild(n)
+    });
+    return t
+};
+mindmaps.Node.prototype.toJSON = function() {
+    var e = this;
+    var t = function() {
+        var t = [];
+        e.forEachChild(function(e) {
+            t.push(e.toJSON())
+        });
+        return t
+    }();
+    var n = {
+        id: this.id,
+        parentId: this.parent ? this.parent.id : null,
+        text: this.text,
+        pluginData: this.pluginData,
+        children: t
+    };
+    return n
+};
 mindmaps.Node.prototype.serialize = function() {
-  return JSON.stringify(this);
+    return JSON.stringify(this)
 };
-
-/**
- * Adds a child to the node.
- * 
- * @param {mindmaps.Node} node
- */
-mindmaps.Node.prototype.addChild = function(node) {
-  node.parent = this;
-  this.children.add(node);
+mindmaps.Node.prototype.addChild = function(e) {
+    e.parent = this;
+    this.children.add(e)
 };
-
-/**
- * Removes a direct child.
- * 
- * @param {mindmaps.Node} node
- */
-mindmaps.Node.prototype.removeChild = function(node) {
-  node.parent = null;
-  this.children.remove(node);
+mindmaps.Node.prototype.removeChild = function(e) {
+    e.parent = null;
+    this.children.remove(e)
 };
-
-/**
- * Returns whether this node is a root.
- * 
- * @returns {Boolean}
- */
 mindmaps.Node.prototype.isRoot = function() {
-  return this.parent === null;
+    return this.parent === null
 };
-
-/**
- * Returns whether this node is a leaf.
- * 
- * @returns {Boolean}
- */
 mindmaps.Node.prototype.isLeaf = function() {
-  return this.children.size() === 0;
+    return this.children.size() === 0
 };
-
-/**
- * Returns the parent node.
- * 
- * @returns {mindmaps.Node}
- */
 mindmaps.Node.prototype.getParent = function() {
-  return this.parent;
+    return this.parent
 };
-
-/**
- * Returns the root if this node is part of a tree structure, otherwise it
- * returns itself.
- * 
- * @returns {mindmaps.Node} The root of the tree structure.
- */
 mindmaps.Node.prototype.getRoot = function() {
-  var root = this;
-  while (root.parent) {
-    root = root.parent;
-  }
-
-  return root;
+    var e = this;
+    while (e.parent) {
+        e = e.parent
+    }
+    return e
 };
-
-/**
- * Gets the position of the node relative to the root.
- * 
- * @returns {mindmaps.Point}
- */
 mindmaps.Node.prototype.getPosition = function() {
-  var pos = this.offset.clone();
-  var node = this.parent;
-
-  while (node) {
-    pos.add(node.offset);
-    node = node.parent;
-  }
-  return pos;
+    var e = this.getPluginData("layout", "offset");
+    var t = new mindmaps.Point(e.x, e.y);
+    var n = t.clone();
+    var r = this.parent;
+    while (r) {
+        n.add(r.getPluginData("layout", "offset"));
+        r = r.parent
+    }
+    return n
 };
-
-/**
- * Gets the depth of the node. Root has a depth of 0.
- * 
- * @returns {Number}
- */
 mindmaps.Node.prototype.getDepth = function() {
-  var node = this.parent;
-  var depth = 0;
-
-  while (node) {
-    depth++;
-    node = node.parent;
-  }
-
-  return depth;
-};
-
-/**
- * Gets the children of the node. Traverses the whole sub tree if recursive is
- * true.
- * 
- * @param recursive
- * @returns {Array}
- * @deprecated
- */
-mindmaps.Node.prototype.getChildren = function(recursive) {
-  var nodes = [];
-
-  this.children.each(function(node) {
-    if (recursive) {
-      var childNodes = node.getChildren(true);
-      childNodes.forEach(function(child) {
-        nodes.push(child);
-      });
+    var e = this.parent;
+    var t = 0;
+    while (e) {
+        t++;
+        e = e.parent
     }
-    nodes.push(node);
-  });
-
-  return nodes;
+    return t
 };
-
-/**
- * Iterator. Traverses all child nodes.
- * 
- * @param {Function} func
- */
-mindmaps.Node.prototype.forEachChild = function(func) {
-  this.children.each(func);
+mindmaps.Node.prototype.getLineWidthOffset = function() {
+    var e = 0;
+    this.forEachDescendant(function(t) {
+        if (t.getPluginData("style", "lineWidthOffset") > e) {
+            e = t.getPluginData("style", "lineWidthOffset")
+        }
+    });
+    return this.getPluginData("style", "lineWidthOffset") + e
 };
-
-/**
- * Iterator. Traverses all child nodes recursively.
- * 
- * @param {Function} func
- */
-mindmaps.Node.prototype.forEachDescendant = function(func) {
-  this.children.each(function(node) {
-    func(node);
-    node.forEachDescendant(func);
-  });
+mindmaps.Node.prototype.getChildren = function(e) {
+    var t = [];
+    this.children.each(function(n) {
+        if (e) {
+            var r = n.getChildren(true);
+            r.forEach(function(e) {
+                t.push(e)
+            })
+        }
+        t.push(n)
+    });
+    return t
 };
-
-/**
- * Sets the caption for the node
- * 
- * @param {String} caption
- */
-mindmaps.Node.prototype.setCaption = function(caption) {
-  this.text.caption = caption;
+mindmaps.Node.prototype.forEachChild = function(e) {
+    this.children.each(e)
 };
-
-/**
- * Gets the caption for the node.
- * 
- * @returns {String}
- */
+mindmaps.Node.prototype.forEachDescendant = function(e) {
+    this.children.each(function(t) {
+        e(t);
+        t.forEachDescendant(e)
+    })
+};
+mindmaps.Node.prototype.setCaption = function(e) {
+    this.text.caption = e
+};
 mindmaps.Node.prototype.getCaption = function() {
-  return this.text.caption;
+    return this.text.caption
 };
-
-/**
- * Tests (depth-first) whether the other node is a descendant of this node.
- * 
- * @param {mindmaps.Node} other
- * @returns {Boolean} true if descendant, false otherwise.
- */
-mindmaps.Node.prototype.isDescendant = function(other) {
-  function test(node) {
-    var children = node.children.values();
-    for ( var i = 0, len = children.length; i < len; i++) {
-      var child = children[i];
-      if (test(child)) {
-        return true;
-      }
-
-      if (child === other) {
-        return true;
-      }
+mindmaps.Node.prototype.isDescendant = function(e) {
+    function t(n) {
+        var r = n.children.values();
+        for (var i = 0, s = r.length; i < s; i++) {
+            var o = r[i];
+            if (t(o)) {
+                return true
+            }
+            if (o === e) {
+                return true
+            }
+        }
+        return false
     }
-    return false;
-  }
-
-  return test(this);
+    return t(this)
 };
+mindmaps.Node.prototype.getPluginData = function(e, t) {
+    this.pluginData = this.pluginData || {};
+    this.pluginData[e] = this.pluginData[e] || {};
+    return this.pluginData[e][t]
+};
+mindmaps.Node.prototype.setPluginData = function(e, t, n) {
+    var r = $.extend(true, {}, this.pluginData);
+    this.pluginData = this.pluginData || {};
+    this.pluginData[e] = this.pluginData[e] || {};
+    this.pluginData[e][t] = n;
+    if (!this.getPluginData("style", "font")) {
+        console.log("not here");
+        console.log(r)
+    }
+}
